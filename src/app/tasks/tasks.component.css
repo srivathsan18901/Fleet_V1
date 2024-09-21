@@ -1,0 +1,569 @@
+/* Main Content Styling */
+.layout-container {
+  display: flex;
+  height: 100vh; /* Full-screen height */
+}
+
+.content-container {
+  flex-grow: 1; /* Allows the content to grow */
+  margin-left: 3rem; /* Equivalent to ml-64 (256px) */
+  padding: 3rem; /* Equivalent to p-8 */
+  height: 100vh;
+  overflow: hidden;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  }
+
+  /* Header section styles */
+  .header-section {
+    margin-bottom: 20px;
+  }
+
+  .header-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #DA2127;
+    margin: 0;
+  }
+
+  .subheader-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .subheader-text {
+    font-size: 16px;
+    color: #333;
+  }
+
+  .subheader-icon {
+    width: 23px;
+    height: 13px;
+  }
+
+  /* Table Container Styling */
+  .table-container {
+    width: 103%;
+    border-radius: 10px;
+    margin-top: 20px;
+    max-height: 30rem;
+    overflow-y: auto;
+  }
+
+  /* Table Styling */
+  table {
+
+
+    border-collapse: collapse;
+    width: 100%;
+    border-radius: 10px;
+    border-spacing: 0;
+    border: 1px solid #ccc;
+  }
+  thead {
+    position: sticky;
+    top: 0;
+
+    background-color: #FFCDCD; /* Ensure the header has a background color */
+  }
+  tbody {
+    border-radius: 0 0 10px 10px; /* Bottom corners rounded */
+  }
+
+
+  th, td {
+    border: 1px solid #ffffff;
+    padding: 5px;
+    height: 30px;
+    text-align: center;
+  }
+
+  th {
+    background-color: #FFCDCD;
+    padding: 10px 20px;
+    color: #000000;
+    font-size: 13px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+  }
+
+  td {
+    font-size: 13px;
+  }
+
+  tr:hover {
+    background-color: #f2f2f2;
+  }
+
+  tr:nth-child(even) {
+    background-color: #FFF1F1;
+  }
+
+  /* Button Container Styling */
+  .button-container {
+    margin-top: 10px;
+  }
+
+  .button {
+    background-color: #FFFFFF;
+    color: #000000;
+    width: 185px;
+    height: 50px;
+    border-radius: 0.5rem;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+    font-size: 17px;
+    cursor: pointer;
+    margin-right: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+
+  .button:last-child {
+    margin-right: 0;
+  }
+
+  .active-button {
+    background-color: #ff3333;
+    color: #FFFFFF;
+    transform: scale(1.05);
+  }
+
+  .transition-active {
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
+  }
+ /* Export Button Container */
+/* Export Button Container */
+.export-button-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  .export-button {
+    padding: 10px 20px;
+    background-color: #ff3333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  /* Export Popup Styles */
+  .export-popup {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4.1px);
+    justify-content: center;
+    align-items: center;
+  }
+
+  .popup-content {
+    position: relative; /* Important for positioning the close button */
+    font-size: 36px; /* Ensures that the font size stays large */
+    font-family: 'Arial', sans-serif; /* Explicitly set the font family */
+    font-weight: bold;
+    color: #DA2127;
+    padding: 60px;
+    background: #fff;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 600px;
+    margin: auto;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+
+  .popup-content .button-container button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #dedede;
+    font-size: 18px;
+    color: #212121;
+    cursor: pointer;
+    width: 200px; /* Set a fixed width for all buttons */
+    text-align: center;
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+  }
+
+  .popup-content .button-container button:hover {
+    background-color: #ff3333;
+    color: #fdfdfd;
+  }
+
+  /* Close Button Styles */
+  .close-button {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+
+  .close-button svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
+  }
+
+  .close-button:hover {
+    background-color: #da2127;
+  }
+
+  .close-button:hover svg {
+    fill: white; /* Change color on hover */
+  }
+
+  /* Main container for the search bar and filters */
+  /* Main container for search bar and date filters */
+
+  .search-filter-container {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Space between search bar and date filters */
+    width:500px;
+    gap: 5px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    border: 0px solid #ccc;
+    border-radius: 25px;
+    overflow: hidden;
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 500px; /* Adjust as needed */
+  }
+
+  .search-box input {
+    border: none;
+    padding: 10px 15px;
+    outline: none;
+    width: 100%; /* Take full width */
+    font-size: 14px;
+    border-radius: 25px 0 0 25px; /* Matching the radius of the search box */
+  }
+  .search-box input::placeholder {
+    color: #aaa;
+  }
+
+  th, td {
+    border: 1px solid #ffffff;
+    padding:10px 5px 10px 10px;
+    height: 30px;
+  }
+  td{
+    text-align: center;
+    padding-left: 20px;
+  }
+
+  .search-btn {
+    background-color: #ff5c5c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 25px 25px 0;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .search-btn img {
+    width: 50px; /* Adjust size as needed */
+    height: 24px; /* Adjust size as needed */
+  }
+  .search-btn:hover {
+    background-color: #e64e4e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+
+/* tasks.component.css */
+
+/* tasks.component.css */
+
+/* tasks.component.css */
+
+/* Container for paginator */
+.paginator-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 5px;
+}
+
+/* Paginator wrapper */
+.mat-paginator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px; /* Spacing between buttons */
+}
+
+/* Paginator buttons */
+.mat-paginator .mat-paginator-navigation-previous,
+.mat-paginator .mat-paginator-navigation-next {
+  width: 40px;
+  height: 40px;
+  background-color: #e0e0e0; /* Grey background for disabled state */
+  border-radius: 8px; /* Rounded corners */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: not-allowed;
+  border: none;
+}
+
+.mat-paginator .mat-paginator-navigation-previous.mat-button-disabled,
+.mat-paginator .mat-paginator-navigation-next.mat-button-disabled {
+  background-color: #e0e0e0; /* Grey background for disabled state */
+  color: #a0a0a0; /* Disabled color */
+}
+
+.mat-paginator .mat-paginator-navigation-previous:not(.mat-button-disabled),
+.mat-paginator .mat-paginator-navigation-next:not(.mat-button-disabled) {
+  cursor: pointer;
+  background-color: #ffffff; /* White background for active state */
+  border: 1px solid #dcdcdc;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.mat-paginator .mat-paginator-navigation-previous:hover:not(.mat-button-disabled),
+.mat-paginator .mat-paginator-navigation-next:hover:not(.mat-button-disabled) {
+  background-color: #f0f0f0; /* Hover effect */
+  border-color: #c0c0c0;
+}
+
+/* Paginator numbers */
+.mat-paginator .mat-paginator-range-label,
+.mat-paginator .mat-paginator-page-size,
+.mat-paginator .mat-paginator-icon {
+  display: none; /* Hide unwanted elements like range and page-size selectors */
+}
+
+.mat-paginator .mat-page-number {
+  width: 40px;
+  height: 40px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  color: #333;
+  font-size: 16px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+}
+
+.mat-paginator .mat-page-number.active {
+  border: 2px solid #6c3eff; /* Purple border for the active page */
+  color: #6c3eff;
+}
+
+.mat-paginator .mat-page-number:hover {
+  background-color: #f5f5f5;
+}
+
+/* Ellipsis */
+.mat-paginator .ellipsis {
+  font-size: 18px;
+  color: #999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 40px;
+  height: 40px;
+}
+
+/* Hide paginator buttons when not needed */
+.mat-paginator .mat-paginator-navigation-previous.mat-button-disabled,
+.mat-paginator .mat-paginator-navigation-next.mat-button-disabled {
+  pointer-events: none; /* Disabled cursor when inactive */
+}
+
+/* CSS for Pause and Cancel Buttons */
+
+/* .btn-common {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  min-width: 90px;
+  text-align: center;
+  margin-right: 10px;
+  position: relative;
+} */
+
+
+
+
+.switch-container {
+  display: flex;
+  align-items: center; /* Vertical alignment */
+  justify-content: center; /* Horizontal centering */
+  gap: 10px; /* Space between the switch and the button */
+  width: 100%; /* Ensures container spans the full width of the table cell */
+
+
+}
+.btn-cancel {
+  background-color: #f44336; /* Red for cancel */
+  color: white;
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 30px;
+  border: 2px solid #dcdcdc;
+  /* background: #e0e0e0; */
+  /* box-shadow: 7px 7px 23px #bebebe, -7px -7px 23px #ffffff; */
+  overflow: hidden;
+  border-radius: 20px;
+  text-align: center;
+  margin-right: 10px; /* Space between buttons */
+  position: relative; /* Remove z-index to avoid stacking issues */
+}
+
+.btn-cancel:hover {
+  background-color: #d32f2f;
+}
+
+/*
+new button */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 80px;
+  height: 25px;
+  border: 2px solid #dcdcdc;
+  background: #e0e0e0;
+  box-shadow: 7px 7px 23px #bebebe, -7px -7px 23px #ffffff;
+  overflow: hidden;
+  border-radius: 20px;
+  text-align: center;
+  margin-right: 10px; /* Space between buttons */
+  position: relative; /* Remove z-index to avoid stacking issues */
+
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-family: sans-serif;
+}
+
+.slider--0 {
+  color: rgb(0, 0, 0);
+  font-weight: 600;
+  background-color: #e6e6e6;
+}
+
+.slider--1 div {
+  transition: 0.5s;
+}
+
+.slider--1 div {
+  position: absolute;
+  width: 100%;
+  height: 50%;
+  left: 0;
+}
+
+.chbox:checked ~ .slider--1 div:first-child {
+  transform: translateY(-100%);
+  transition-delay: 1s;
+}
+
+.chbox:checked ~ .slider--1 div:last-child {
+  transform: translateY(100%);
+  transition-delay: 1s;
+}
+
+.chbox:checked ~ .slider--2 {
+  transform: translateX(100%);
+  transition-delay: 0.5s;
+}
+
+.chbox:checked ~ .slider--3 {
+  transform: translateX(-100%);
+  transition-delay: 0s;
+}
+
+.slider--1 div:first-child {
+  transform: translateY(0);
+  top: 0;
+  background-color: #f3f3f3;
+  transition-delay: 0s;
+}
+
+.slider--1 div:last-child {
+  transform: translateY(0);
+  bottom: 0;
+  background-color: #f3f3f3;
+  border-top: 1px solid #e0e0e0;
+  transition-delay: 0s;
+}
+
+.slider--2 {
+  background-color: #e6e6e6;
+  transition-delay: 0.5s;
+  transform: translateX(0);
+  border-left: 1px solid #d2d2d2;
+}
+
+.slider--3 {
+  /* background-color: #d2d2d2; */
+  transition-delay: 1s;
+  transform: translateX(0);
+  color: white;
+  border-right: 1px solid #d2d2d2;
+  background-color: #49d84e;
+}

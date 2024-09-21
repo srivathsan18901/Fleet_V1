@@ -1,0 +1,224 @@
+<div class="container" #screen>
+  <app-sidenavbar></app-sidenavbar>
+  <div class="mainContent">
+    <div class="robot-dashboard-container">
+      <!-- <app-operation-pie
+        [series]="[510, 142, 340, 590, 340]"
+        [labels]="['Completed', 'Inprogress', 'ToDo', 'Error', 'Cancelled']"
+        [legendFontSize]="'14px'"
+        [dataLabelFontSize]="'14px'"
+        [chartWidth]="470"
+        [fillType]="'gradient'"
+        [titleText]="'Operations'"
+        [legendFontSize]="'16px'"
+        [dataLabelFontSize]="'18px'">
+    </app-operation-pie> -->
+      <!-- Slider Buttons for Navigation -->
+      <div class="slider-buttons-container">
+        <div class="slider-buttons">
+          <button
+            (click)="setView('operation')"
+            [class.active]="currentView === 'operation'"
+          >
+            Operation
+          </button>
+          <button
+            (click)="setView('robot')"
+            [class.active]="currentView === 'robot'"
+          >
+            Robot
+          </button>
+          <div
+            class="slider"
+            [ngClass]="{
+              left: currentView === 'operation',
+              right: currentView === 'robot'
+            }"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Stat Cards Section -->
+      <!-- Stat card 1 -->
+      <div class="statistics-container">
+        <div class="stat-card stat-card-1">
+          <div class="stat-value">Average speed</div>
+          <h2>214</h2>
+          <div class="stat-change positive">+18.34% <span>&uarr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Stat card 2 -->
+        <div class="stat-card stat-card-2">
+          <div class="stat-value">Total distance</div>
+          <h2>127</h2>
+          <div class="stat-change positive">+33.06% <span>&uarr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Stat card 3 -->
+        <div class="stat-card stat-card-3">
+          <div class="stat-value">Robot utilization</div>
+          <h2>40</h2>
+          <div class="stat-change negative">-5.12% <span>&darr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+        <!-- Stat card 4 -->
+        <div class="stat-card stat-card-4">
+          <div class="stat-value">Network connection</div>
+          <h2>89 %</h2>
+          <div class="stat-change positive">+18.34% <span>&uarr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+
+      <!-- <div class="charts-container">
+              <div class="robot-uptime-chart">
+                
+                <app-chart-timeline></app-chart-timeline>
+              </div>
+              <app-operation-pie
+                [series]="[510, 142, 340, 590, 340]"
+                [labels]="['Completed', 'Inprogress', 'ToDo', 'Error', 'Cancelled']"
+                [legendFontSize]="'14px'"
+                [dataLabelFontSize]="'14px'"
+                [chartWidth]="470"
+                [fillType]="'gradient'"
+                [titleText]="'Operations'"
+                [legendFontSize]="'16px'"
+                [dataLabelFontSize]="'18px'">
+              </app-operation-pie>
+            </div> -->
+
+      <div class="charts-container">
+        <!-- <app-operation-pie
+                [series]="[310, 142, 240]"
+                [labels]="['Error', 'Inactive','Error']"
+                [legendFontSize]="'14px'"
+                [dataLabelFontSize]="'14px'"
+                [chartWidth]="470"
+                [fillType]="'gradient'"
+                [titleText]="'Operations'"
+                [legendFontSize]="'16px'"
+                [dataLabelFontSize]="'18px'">
+              </app-operation-pie> -->
+        <div class="robot-uptime-chart">
+          <app-chart-timeline></app-chart-timeline>
+        </div>
+        <div class="radial">
+          <app-radial-chart>
+            [labels]="['Completed', 'Inprogress', 'ToDo', 'Error', 'Cancelled']"
+            [legendFontSize]="'14px'" [dataLabelFontSize]="'14px'"
+          </app-radial-chart>
+        </div>
+      </div>
+
+      <div class="dashboard-container">
+        <!-- Robot Activity Section -->
+        <div class="robot-activity-container">
+          <div class="section-header">
+            <h3>Robot Activities</h3>
+            <div class="search-box">
+              <input
+                type="text"
+                placeholder="Search activities..."
+                (input)="onSearch($event)"
+              />
+            </div>
+            <button class="view-all-btn">View All</button>
+          </div>
+          <table class="activity-table">
+            <tr *ngFor="let activity of filteredRobotActivities">
+              <td>{{ activity.roboId }}</td>
+              <td>{{ activity.roboName }}</td>
+              <td>{{ activity.task }}</td>
+              <td>{{ activity.taskStatus }}</td>
+              <td>{{ activity.desc }}</td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- Notifications Section -->
+        <div class="notifications-container">
+          <div class="section-header">
+            <h3>Notifications</h3>
+            <div class="search-box">
+              <input
+                type="text"
+                placeholder="Search notifications..."
+                (input)="onSearchNotifications($event)"
+              />
+            </div>
+            <button class="view-all-btn">View All</button>
+          </div>
+          <table class="notifications-table">
+            <tr *ngFor="let notification of filteredNotifications">
+              <td>{{ notification.message }}</td>
+              <td>{{ notification.timestamp }}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

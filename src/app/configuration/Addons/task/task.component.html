@@ -1,0 +1,39 @@
+<div class="container1">
+  <div class="content-fluid1">
+    <div class="general">
+      <!-- <form> -->
+        <div class="container">
+          <div class="form-control">
+            <div class="head1">
+              <h4><b>Task Manager</b></h4>
+            <div class="radio">
+              <h6>Task Manager Type: </h6>
+                <div class="category-container">
+                  <div *ngFor="let category of categories" class="field-checkbox">
+                    <p-radioButton
+                      [inputId]="category.key"
+                      name="category"
+                      [value]="category"
+                      [(ngModel)]="selectedCategory">
+                    </p-radioButton>
+                    <label [for]="category.key" class="category-label">
+                      {{ category.name }}
+                    </label>
+                  </div>
+                </div>
+
+          </div>
+        </div>
+        <div class=" ">
+          <p-button
+            label="Submit"
+            type="submit"
+            class="block mt-1 pt-2 "
+            icon="pi pi-check-circle"
+            styleClass="p-button-danger p-button1"
+          ></p-button>
+        </div>
+      <!-- </form> -->
+    </div>
+  </div>
+</div>

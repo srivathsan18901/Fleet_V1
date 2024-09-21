@@ -1,0 +1,107 @@
+
+<div id="container">
+  
+  <!-- Sidebar -->
+  <app-sidenavbar></app-sidenavbar>
+  
+  <!-- Main Content -->
+  <div class="mainContent">
+    
+    <!-- Canvases -->
+    <!-- <canvas *ngIf="showModelCanvas" id="modelCanvas" (mousedown)="panStartModelCanvas($event)"></canvas> -->
+    <canvas id="myCanvas" (mousedown)="panStart($event)"  (mouseleave)="onMouseLeave()"></canvas>
+    
+    <!-- ON Button -->
+    <div class="ONBtn" (click)="startStopOpt()">
+      <img [src]="getOnBtnImage()" (click)="toggleONBtn()" />
+    </div>
+    
+    <!-- Floor Selector -->
+    <div class="FloorSelector" *ngIf="ONBtn"></div>
+    
+    <!-- Canvas Options (Zoom, Pan, Capture, etc.) -->
+    <div class="CanvasOptions">
+      <span class="empty"></span>
+      
+      <!-- Zoom In -->
+      <div class="tooltip">
+        <img src="../../assets/CanvasOptions/Zoom.svg" class="Zoom" (click)="zoomIn()" />
+        <span class="tooltiptext">Zoom In</span>
+      </div>
+      
+      <!-- Zoom Out -->
+      <div class="tooltip">
+        <img src="../../assets/CanvasOptions/ZoomOut.svg" class="ZoomOut" (click)="zoomOut()" />
+        <span class="tooltiptext">Zoom Out</span>
+      </div>
+      
+      <!-- Pan -->
+      <div class="tooltip">
+        <img src="../../assets/CanvasOptions/Pan.svg" class="Expand" (click)="togglePan()" />
+        <span class="tooltiptext">Pan</span>
+      </div>
+      
+      <!-- Capture -->
+      <div class="tooltip">
+        <img src="../../assets/CanvasOptions/Capture.svg" class="Capture" (click)="captureCanvas()" />
+        <span class="tooltiptext">Capture</span>
+      </div>
+      
+      <!-- Record -->
+      <div class="tooltip">
+        <img 
+          [src]="recording ? '../../assets/CanvasOptions/StopRecord.svg' : '../../assets/CanvasOptions/Record.svg'" 
+          class="Save" 
+          (click)="toggleRecording()" 
+        />
+        <span class="tooltiptext">{{ recording ? "Stop Recording" : "Start Recording" }}</span>
+      </div>
+      
+      <!-- Dashboard -->
+      <div class="tooltip">
+        <img src="../../assets/CanvasOptions/Dashboard.svg" class="Pointer" (click)="toggleDashboard()" />
+        <span class="tooltiptext">Dashboard</span>
+      </div>
+      
+      <!-- Model Canvas -->
+      <div class="tooltip">
+        <img src="../../assets/CanvasOptions/Model.svg" class="ModelCanvas" (click)="toggleModelCanvas()" />
+        <span class="tooltiptext">Map Option</span>
+      </div>
+    </div>
+
+    <!-- Dashboard Charts and Graphs -->
+    <div class="GraphAndCharts" *ngIf="showDashboard">
+      
+      <!-- Uptime and Robot Charts -->
+      <div class="Chart2_Chart3">
+        <div class="Chart2-container">
+          <div class="Chart2" [ngClass]="{ blurred: ONBtn }">
+            <p>Uptime</p>
+            <div class="U-Chart">
+              <app-uptime [ONBtn]="this.ONBtn"></app-uptime>
+            </div>
+          </div>
+        </div>
+        <div class="Chart3-container">
+          <div class="Chart3" [ngClass]="{ blurred: ONBtn }">
+            <p>Robot</p>
+            <div class="R-Chart">
+              <app-chart [ONBtn]="this.ONBtn"></app-chart>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Throughput Chart -->
+      <div class="Chart1-container">
+        <div class="Chart1" [ngClass]="{ blurred: ONBtn }">
+          <app-throughput [ONBtn]="this.ONBtn"></app-throughput>
+        </div>
+      </div>
+      
+    </div>
+
+  </div>
+
+</div>

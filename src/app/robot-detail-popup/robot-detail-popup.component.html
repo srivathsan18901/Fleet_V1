@@ -1,0 +1,493 @@
+<div class="popup-content">
+  <!-- <app-fullscreen-button></app-fullscreen-button> -->
+    <div class="popup-header">
+      <h2>{{data.name}}</h2>
+
+
+      
+      <!-- emergency stop -->
+      <div class="switch demo3">
+        <input type="checkbox" id="emergencyStop" />
+        <label for="emergencyStop"><i></i></label>
+        <span class="tooltip">Emergency Stop</span>
+      </div>
+
+    
+    <!-- wifi module -->
+    <div class="wifi-signal absolute z-50 top-[0px]  w-[80vw] h-[30vh]">
+      <div class="wifi-style flex z-50">
+        <div class="wifi" [ngClass]="currentSignalClass"></div> 
+      </div>
+    </div>
+
+    <!-- Status container -->
+    <div class="status-container z-50 top-[0px]  w-[10vw] h-[8vh]">
+      <span class="status-indicator" [ngClass]="isActive ? 'active' : 'inactive'"></span>
+      <span class="status-text">{{ isActive ? 'Active' : 'Inactive' }}</span>
+    </div>
+    
+    <!-- connect button -->
+    <button 
+      class="status-button absolute z-50 top-[0px] w-[10vw] h-[8vh] 
+      {{ isConnected ? 'connected' : '' }}" 
+      (click)="toggleConnection()">
+      {{ isConnected ? 'Disconnect' : 'Connect' }}
+    </button>
+
+    
+
+    <div class="robot-detail-container relative">
+      <svg
+      width="590" 
+      height="832"
+      viewBox="0 0 590 832" 
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <rect width="590" height="580" rx="15" fill="white" /> 
+    </svg>
+ 
+   </div>
+  <div class="robot-image-container">
+    <img [src]="data.imageUrl" alt="{{data.name}}" class="robot-image">
+  </div>
+
+  
+  <div class="battery-frame">
+    <div class="battery-container">
+      <div class="battery">
+        <div class="battery-level"
+             [ngStyle]="{'height': data.batteryPercentage + '%'}"
+             [ngClass]="getBatteryColor(data.batteryPercentage)">
+        </div>
+        <!-- Charging icon will only show if charging is true -->
+        <div *ngIf="data.isCharging" class="charging-icon">
+          <img class="charging-image" src="assets/icons/charging1.png" alt="Charging" />
+        </div>
+      </div>
+      <!-- <p class="battery-percentage">{{ data.batteryPercentage }}%</p> -->
+      <!-- <p>{{ data.isCharging ? 'Charging' : 'Not Charging' }}</p> -->
+    </div>
+    
+    <!-- Battery Details -->
+      <div class="battery-details">
+        <div class="average-discharge">
+          <span class="discharge-distance">{{ data.averagedischarge }} m</span>
+          <span class="discharge-label">Average Discharge</span>
+        </div>
+        <div class="battery-status-container">
+          <span class="battery-percentage">{{ data.batteryPercentage }} %</span>
+          <span class="battery-label">Battery</span>
+        </div>
+        <div class="average-charging-time">
+          <span class="charging-time">{{ data.averageChargingTime }} m</span>
+          <span class="charging-time-label">Average Charging Time</span>
+        </div>
+      </div>
+
+  </div>
+
+
+  
+  <div class="speed-container">
+    <div class="current-speed-container">
+      <span class="label">Current speed</span>
+      <div class="speed-value-container">
+        <span class="speed-value">{{ data.currentspeed }}</span>
+        <span class="unit">m/s</span>
+      </div>
+    </div>
+  
+    <div class="speed-details-container">
+      <div class="average-speed-container">
+        <div class="speed-value-container">
+          <span class="speed-value">{{ data.averagespeed }}</span>
+          <span class="unit">m/s</span>
+        </div>
+        <span class="label">Average speed</span>
+  
+        <!-- Added Average Transfer Time -->
+        <div class="transfer-time-container">
+          <div class="transfer-value-container">
+            <span class="time-value">{{ data.averagetransfertime }}</span>
+            <span class="unit">min</span>
+          </div>
+          <span class="label">Average Transfer Time</span>
+        </div>
+      </div>
+  
+      <div class="maximum-speed-container">
+        <div class="speed-value-container">
+          <span class="speed-value">{{ data.maximumspeed }}</span>
+          <span class="unit">m/s</span>
+        </div>
+        <span class="label">Maximum speed</span>
+  
+        <!-- Added Average Docking Time -->
+        <div class="docking-time-container">
+          <div class="docking-value-container">
+            <span class="time-value">{{ data.averagedockingtime }}</span>
+            <span class="unit">min</span>
+          </div>
+          <span class="label">Average Docking Time</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  
+  <!-- Details ( current task and map) -->
+  <div class="frame-1597881883_1874-1899">
+    <div class="details-container">
+      <div class="details-content">
+        <span class="details-title">Details</span>
+        <div class="details-info">
+          <div class="current-task">
+            <span class="current-task-label">Current task:</span>
+            <span class="current-task-value">Transporting materials </span>
+          </div>
+          <div class="current-map">
+            <span class="current-map-label">Current map:</span>
+            <span class="current-map-value">MATE Unit-1</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+   <!-- Total pick and drop -->
+<div class="pick-drop-container">
+  <div class="pick-drop-info">
+    <div class="fork-lift-icon">
+      <svg
+        width="30"
+        height="30"
+        viewBox="0 0 30 30"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+      >
+        <rect width="30" height="30" fill="url(#pattern0_1872_1888)" />
+        <defs>
+          <pattern
+            id="pattern0_1872_1888"
+            patternContentUnits="objectBoundingBox"
+            width="1"
+            height="1"
+          >
+            <use xlink:href="#image0_1872_1888" transform="scale(0.02)" />
+          </pattern>
+          <image
+            id="image0_1872_1888"
+            width="50"
+            height="50"
+            xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAADR0lEQVR4nO2aTUhVQRiGj6H9FwlBGBGU1qYwqE1IW0GKfly4S7AW6i4IA5PAFrUo27jICCLChQsNd5aWLfoRIkgN2mRSEZQS2B94sT+eGJwLn9M55557nDn3GveFu/m+mXfmPWfmzHfecz2vgOwBbAWOAKu8pQpgC/CNedzzliqAGhai3FuKADYAP4SQlqQGXgHcBX6TGT+B90Cv3gNFAZxDos9IUkIOEh9PgR0+nM2izR+gLAkhdSwOX4B9BmeZFpBGcy6E1IX8GoBLwJTR5yOw0eAdEfmhxIV40fqsBG4aYq4ZbVqMvVXqTERcIbpfEXBHdFVPqk0iX24IrffyUYgCsNPYC+c8AWBc5Pq9fBWiAAyI7h+AEpFrF7lZYI2Xx0IOGUuoVuQqg3L5KETtlQlBMWzkX4lct9XJ2xSiOc4YV36XyHUYZ87yOGMkJaRU74E0OkWuyhBZbVWATSGa55ag+Q6s0/Fl+sBMo8uqAAdC9hpXvknkukR8WomzJsC2EM31TFC9FPFqQ2SVlck7FKJqMYkDOl4CzIh4hzUBjoSod5tPgq5H5LpF/I2VybsSovkuG8XiZh2vNe5WpRUBYuDjxgC9Pr+rwP6IfNv96i9gtfGIbrcpQj1pvhINanINMeqvSRHvF/Fxm0Iekh1SquKNwHvU6Ldbx+udOCzAHNnjSaZzQBlzxjI6JSoAtW/sOizEx+kI3M9F+ytOHRbiIxXwUJA/+V5/26nDQrJodeawkCx+iTNlxKrDQvI47MRhIXnU6XG3WXVYciVEAXhhzWHJsZDz1hyWHAjpceKw4H8+3AfGLEx6VHMpToljYvxJKw6LMcCUrH2Ak4sQcULwVOjX2zQGAxyWz9LcW4yQVp98nDsz6sNzVuRnQhyWwZBK4QawJ0hIys8sEPkHMYQM+/A0ifysiJsOSya8CxIiH4GPZFWrvkT5rO8oUH0qjMk+FvkxYw6dWXC/DRLSZjRUAzbq+LRRXvSF3PY+3SaNac3RqMv+wCUMrNd7JVMRGrq01gKvI1yJC74EC7kuRuCZcObIM7+EwsRcB4oj8BTrtmEi/vlwahX6zrTpp1RKb0D13l0T8w8DA5ojpc+TVqffRgoooID/D38BZcMzcWbJlJYAAAAASUVORK5CYII="
+          />
+        </defs>
+      </svg>
+    </div>
+    <span class="pick-drop-label">Total Pick / Drop</span>
+  </div>
+  <span class="pick-drop-values">{{ data.totalPicks }} / {{ data.totalDrops }}</span>
+</div>
+
+
+    <!-- network strength -->
+    <!-- Network strength -->
+<div class="networkstrength-container">
+  <div class="networkstrength-content">
+    <div class="networkstrength-icon">
+      <div class="network-icon">
+        <svg
+          width="26"
+          height="26"
+          viewBox="0 0 25 26"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
+          <rect
+            y="0.5"
+            width="25"
+            height="25"
+            fill="url(#pattern0)"
+          />
+          <defs>
+            <pattern
+              id="pattern0"
+              patternContentUnits="objectBoundingBox"
+              width="1"
+              height="1"
+            >
+              <use
+                xlink:href="#image0"
+                transform="scale(0.02)"
+              />
+            </pattern>
+            <image
+              id="image0"
+              width="50"
+              height="50"
+              xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACbElEQVR4nO2YO2tUQRSAr1iYSCA20SSFFsEmoBYpkrVSTHwFC4uglVj5HzSx00JRO5W0kSjkAYplbDQQFAuf+PoDWsVsVFRc8snBU2yuMzdzd+c+FuaDgeUyc+58O48zc6MoEAgEAoESALQD+4AxYBy4AkwC01om9dm41pG67WXo+BbgKHAVeA7USE9N24rgEYmZp8B+4DawjH+WNXYlq85vAk4Az8iPl8AZYLMvCZk+bymON8DhZgR6gSnKw0NgZ1qJk8BXyscqcNpFoE0XW9m5ad3hgG3AE08vktF8ASwA97Us6DNfI/0Y6IxL9ACvmgj6GrgGjALbHUZ+h9a9rou5mZ2tpz7wIFBNGaSqHdnrtvISxSTL32iwD4PxYBXHQCvAhEzFZgUs0/uiYz+q1sTpIHN33VCub7tV9nvgMvAAeK+Z+rcW+f1O18slYETaJGz99xqS2EBGRmHMUv8gcAf4QXq+a646YIl9ytCXjSXqAgzVBfgA9BnqyL//FH8sAcOG9+wGPtZJDDlJxGQeAV2GHW6W7JgBumPv7NK+pJNIkBsGvpA9n4FDXjptkJCT6B/yowac8y3RrQs+b1bi08yHzEBGlykbVW9rwiDjmjRll7mlifOslgl99slRopKJhIPMTz2y9DvE6Ne6vwqRSJCZA3ZFKZE2wHwhEjEZOZKflzu95W6zBzgOHNPfbZbvARc0ViUqAtPBUROpJLVvlhvezH8nVkusQgA69FC55rCY1/SjXUdUJvg3PRZJz6JpWhZKA3kmuzyRo0x5JVLIlF/CQaZ1JBJkWk/CINO6ErETQDEZOxAIBAKByI2/DDEvW7dnkFoAAAAASUVORK5CYII="
+            />
+          </defs>
+        </svg>
+      </div>
+      <span class="networkstrength-label">Network Strength</span>
+    </div>
+    <span class="networkstrength-value">{{ data.networkstrength }}</span>
+  </div>
+</div>
+
+
+    <!-- Battery temperature -->
+<!-- Robot temperature -->
+<div class="robottemperature-container">
+  <div class="robottemperature-content">
+    <div class="robottemperature-header">
+      <div class="temperature-icon-container">
+        <div class="temperature-icon">
+          <svg
+          width="25"
+          height="26"
+          viewBox="0 0 25 26"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          xmlns:xlink="http://www.w3.org/1999/xlink"
+        >
+          <rect
+            y="0.5"
+            width="25"
+            height="25"
+            fill="url(#pattern0_1871_1869)"
+          />
+          <defs>
+            <pattern
+              id="pattern0_1871_1869"
+              patternContentUnits="objectBoundingBox"
+              width="1"
+              height="1"
+            >
+              <use
+                xlink:href="#image0_1871_1869"
+                transform="scale(0.02)"
+              />
+            </pattern>
+            <image
+              id="image0_1871_1869"
+              width="50"
+              height="50"
+              xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAC0ElEQVR4nO2ayWtUQRCHO1ET3I2iuOEGgkHBxFP0ogjiIdEIjkIMJohBEDHxT/Col8QVFXH5B4zeogZzGkRwwwjiTcQVRAQ3FDSfFFMPiva9mUF0Xs84HzSE6nrD7zf9utKpjnNVqpQPwASgC7gCPNYhP++WOVcOAKuApyTzBFjpQgZoBD5QGMlZ4UIEqAUeGrFjwCWgQ8dljUXcl2dcaABbvG99e0xOxstpdaEBnDMCB/PkXTV5Z1xoADeNwL48eX0m74YLDSBrBHbmyes0eVlXIUZeAkd0ZFwZG/HZXFrV/85Ia2lV/z0jb7TanZUjjQuBit/swDqgJcGInMl26FjuQjUC7DSxTIE98h1oDtVIv4n1FzAidIRqZMDEBmKMfALuAXeBk0B9uRopj81OYSOyGsuApcB4V8ZGLK+AxZVgROiqBCN3gNlp+/jvN3vWhQaVUH7JdVBG/8DIaDCdFKAGOO1t3LY8Rtq83FMuBIBDnjBpQtTlMVLnNSqE3rRNLAQ+GkGD0XkJWAKMmLlbwCKdqweumTn5jAVpGjluxDwDpmp8D/CV3/kC7NKcacBzf8VKDjAOeGuEdGt8E/CTZH4A643hiNfymWkYafa+6ckat/3fJG5r7hRv5ZrSMNJuBDzS2HyKQ5rZs/QZW7a3pmGkxwgY1lgTxdOozwyb2N40jGwzAh5obI53dZCE7KGGmFexPe098s1ULHtUSWLEVC5pOkSsTutYIg22iB6Nt3jifMT0Gs3d51Wt2pIbUSEnjJAXwAxzDHkfY+Jd1N8FZmoTO+JYKiZUzDzgsxEjR4+JOtcAHNDrt4vAfmC6zk3yNrl0U+amZiTm4gZt7SS+61rZ5P7QctCFAHAhpioNiUC9W5TRC1yP+a1/3oUCuaP84SJLb8SYXvCE8feIBdiovapCyOu3wYUMudVZCxzV1yv6F44hXQEpzzVp66xSxRXHL7gOJelUu+IfAAAAAElFTkSuQmCC"
+            />
+          </defs>
+        </svg>
+        </div>
+      </div>
+      <span class="robottemperature-label">Robot Temperature</span>
+    </div>
+    <span class="robottemperature-value">{{ data.temperature }}</span>
+  </div>
+</div>
+
+
+
+    <!-- Robot utilization -->
+    <!-- Robot utilization -->
+<div class="robot-utilization-container">
+  <div class="robot-utilization-content">
+    <div class="robot-utilization-header">
+      <div class="utilization-icon-container">
+        <div class="utilization-icon">
+          <svg
+            width="25"
+            height="26"
+            viewBox="0 0 25 26"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            xmlns:xlink="http://www.w3.org/1999/xlink"
+          >
+            <rect y="0.5" width="25" height="25" fill="url(#utilization-pattern)" />
+            <defs>
+              <pattern
+                id="utilization-pattern"
+                patternContentUnits="objectBoundingBox"
+                width="1"
+                height="1"
+              >
+                <use xlink:href="#utilization-image" transform="scale(0.02)" />
+              </pattern>
+              <image
+                id="utilization-image"
+                width="50"
+                height="50"
+                xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACLElEQVR4nO2ZvUscQRiHpwtBDMFCrYwfjf+DinYBTZEmcGrKgFqKH2WQw16xlDPp/RuS9EmwE4uQYAo/QfBObRT1CYMjTIbb3N7uOze7YX+wcLw78/7m2Xf2dndGKU8CXgGfgSvg0vyeUHkSsEq0yioP4qESjTSusi7gizXgc2ABWASqVvyTyrqAC2vAi1Z8yYrXQg5wAPgIHMWYOvVAlpvodwR8APqlIUb0VaR5VU0llhP2rwHDUhDPgBPC6RholwCZcxJvAiXgjTnKAoMtW/lKQMU5PyMBoufqo77WOd8FXKeA0H076+T9brXZkgDZthJuR7TRf7H3CSB0n/mkvk0pbkJgDFg37eMcuu1oWt/YEk8YypcCJJ0oKtLiqQW0AS+jXkPIQ0WAXuCHyXkDvPPui3BC4Dmw7zxP7oCpPFZkpc7D8cCrr1RC4EkDmN8+fEUTmnviJzAZAXMLvJb2VZIJDcS+NWAX5r0byxwI0AP8cqaQhnnr01c0YQREbBiyANIAIh8gCEAEB5GCCP1hJQYRDEQaIiSIXvfa+wfEpA9fX1NrUKISWbnZN4CzNJUIAgJ0Ay+cWAdwmgYiBMiCeY/qdeLdPn19gOyY+C7wNJlD874+QNaAaf39nSx7Mt9EKta1UoqiIhHSS/rWXP2mWiT+3laoSCScdZ7WFWejR/ooORdPbKOn/b/YetPSG5LOPnmrVAWGlKT0Gq0p+WELAA6MV58oRKFChVTu9QepzRwrzYBP9AAAAABJRU5ErkJggg=="
+              />
+            </defs>
+          </svg>
+        </div>
+      </div>
+      <span class="robot-utilization-label">Robot Utilization</span>
+    </div>
+    <span class="robot-utilization-value">{{ data.robotutilization }}</span> 
+  </div>
+</div>
+
+
+
+    <!-- memory  -->
+    <div class="memory-container">
+      <div class="memory-content">
+        <div class="memory-icon-container">
+          <div class="memory-icon">
+            <svg
+                width="25"
+                height="26"
+                viewBox="0 0 25 26"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <rect
+                  y="0.5"
+                  width="25"
+                  height="25"
+                  fill="url(#pattern0_1871_1872)"
+                />
+                <defs>
+                  <pattern
+                    id="pattern0_1871_1872"
+                    patternContentUnits="objectBoundingBox"
+                    width="1"
+                    height="1"
+                  >
+                    <use
+                      xlink:href="#image0_1871_1872"
+                      transform="scale(0.02)"
+                    />
+                  </pattern>
+                  <image
+                    id="image0_1871_1872"
+                    width="50"
+                    height="50"
+                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAAB1klEQVR4nO2ZvUoDQRSFU2uhlT8PoYLBqIXiGxhbg41R68TGPoURGyXkCTSxFwuF9IKNNttqFSWk0ELFIsIniyOMl1F3l8DOrvPBMMWZnZvDQHbn3EzG4XA4UgkwB1wALTXnhD4InCjdH2XDHtua3gQGwtToC0CN79SEvij0jmGPjlizEKZGXwDqokhd6EtC7xr26Io1S2Fq9AVgTxSpCj0r9FvDHrdizXSYGn0BGAbWgS01DxnW5JXujwmDPqnpy1Fq/F+AMWAT2LFkbACjYU2sAa/YxwtQCGpiFnjHXnrATBAj/ovKdo6DGLkxPNgGzoFH7OA6iBFPPHT59SkBjAP3xI8XxciG0A9JqJGq0M9IqJE3oATMA/vYgRfFiI14zohleO5ELMNzJ2IZnjuRGNhVL+GSeikn8kRO/wglEmPkQPwm/8qdSCNt/8qgJZhXUYyYLlZx8KRi04eoF6sG9nMUxMiMuuDbSs9PNf80oswUVPRiG8/AaiATmplRoAhU1N9fnKOiItSRUCZSDZ8Bc1EFzMUfQuwVLaSeNOhTmp6PUsOWtsKdWJONo61QT0ujp5aW1ltOxaYtNX8LktWnRFNrdpYMe5Q1vWFohuZ+q+FwOByZ1PABMqgh1DVa2hQAAAAASUVORK5CYII="
+                  />
+                </defs>
+              </svg>
+          </div>
+          <span class="memory-text">Memory</span>
+    </div>
+    <span class="memory-value">{{ data.memory }}</span>
+      </div>
+    </div>
+
+
+
+
+
+    <!-- Cpu utilization -->
+    <!-- CPU utilization -->
+<div class="cpu-utilization-container">
+  <div class="cpu-utilization-content">
+    <div class="cpu-utilization-icon-text">
+      <div class="cpu-icon-background">
+        <div class="cpu-icon">
+          <svg
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <rect width="25" height="25" fill="url(#pattern0_1871_1863)" />
+                <defs>
+                  <pattern
+                    id="pattern0_1871_1863"
+                    patternContentUnits="objectBoundingBox"
+                    width="1"
+                    height="1"
+                  >
+                    <use
+                      xlink:href="#image0_1871_1863"
+                      transform="scale(0.02)"
+                    />
+                  </pattern>
+                  <image
+                    id="image0_1871_1863"
+                    width="50"
+                    height="50"
+                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAABl0lEQVR4nO2asW7CMBCGMyBmkGBBbIWuDLxAhr5EqcQSqUseoCsSrdQ3QUJsjAwsPA1DZ9qBr7KUSu6RiKRx4uD6l27hbOwvd4njc4LAyxEBEfCh2Vb4e8KvrCfabIU/sgES81t74e9zqb5osxf+2IP8VS5FZAg8aDYV/rbwK2uLNlPhH9YOcrMC7oE3YAWsK7YV8AqMTUM8AV/Ur09gZjISNiB0mJEJEJVOtrU0AaLyVdcBeK/YDmLMlQkQdfPpWpT+0+tjLsSY6yKd58CzZoOmgQADMcd5Wuej6Bw2ECQUvx89CDcQkQ2w02xSJLWAbsq71TXrFgSZiDluilydvCDyauVRWASklDyIrYgAnSTPf6xVMiLnlD37uQwI0BJz7BhfR/I8UbLGaNQ6gge5FD4igUM3e5b8OpJPfmXPlDMvjfiNlXnhd4iBQ8WHLDUJxHSBTj0tXiq2XRUFOlUVd6JkOk4KybZ0Au5KgyQwM0swJ+DRCIQGM0rSrK6DnqWxSPwL4cphKA4dT8cepGERiZz4qMYrqEbfZa+n6y72FhEAAAAASUVORK5CYII="
+                  />
+                </defs>
+              </svg>
+        </div>
+      </div>
+      <span class="cpu-utilization-text">CPU Utilization</span>
+    </div>
+    <span class="cpu-utilization-value">{{ data.cpuutilization }}</span>
+  </div>
+</div>
+
+
+    <!-- Error -->
+    <div class="cpu_1864-1820">
+      <div class="frame-1597881876_1864-1821">
+        <div class="frame-1597881875_1864-1822">
+          <div class="frame-1597881874_1864-1823">
+            <div class="error_1864-1846">
+              <svg
+                width="25"
+                height="26"
+                viewBox="0 0 25 26"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <rect
+                  y="0.5"
+                  width="25"
+                  height="25"
+                  fill="url(#pattern0_1864_1846)"
+                />
+                <defs>
+                  <pattern
+                    id="pattern0_1864_1846"
+                    patternContentUnits="objectBoundingBox"
+                    width="1"
+                    height="1"
+                  >
+                    <use
+                      xlink:href="#image0_1864_1846"
+                      transform="scale(0.02)"
+                    />
+                  </pattern>
+                  <image
+                    id="image0_1864_1846"
+                    width="50"
+                    height="50"
+                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACDElEQVR4nO3YTYhNUQDA8cM0oUkkpRRRilIWFAuLsZtihxWy8rEhHzspGuzQ7Niyo1mSxShKMgsLI2WjlFIyaUryOcxPp568mHn3vvvOe+/eer86dXvdzj3/Xr137gmhp6easDeOUGXYjF+1sTVUEebhkb+exM9C1WC//+0LVYJFeDNLyFsMhKrABXMbDlWAVfjcIOQL1oSyw23ZboUyw3bMyGcwlBHm46n8nqEvlA0Oa96hUCZYjHcFQt5jSSgLXFHc5VAGWIdvLYR8x/oyhNzVujvdjhjKWOAPTNVGvG5kqFsR/XiZsbjhnNsWtbn6uxFyUrZzdfefz3H/iU5HLMOHNoRMYXknQ67nWFSRkOhapyI2Ylr7Qn5iUydCxnIuqGhI9KDdEXs0p2hItLtdEQvwSudCXmNhO0LONrmQVkOiM6kjVuCjzod8wsqUITcLLCJFSHQjVcSW2klht0JmsC3FaeHjggtIFRKNt3RKiYNakyokOlA0YqB2MtiKZna/WYqdUuKS1jXzPpLHxWYjVmecFnbLV6xtJmQ00YOn676RvBvNLKN5I3ZI53TdvKcSzjuYFdGHiYQPPF4397GE8040PKXEUWm1KyQ6MlfEUkxKK+5g79dGvE5pMq55tpAR1XP134gNiX7nO206vnrXh9xTXWN/Inapvp0x5IXqex5DHqq+8YZ/kD09obDfSx/r+Qgn+vUAAAAASUVORK5CYII="
+                  />
+                </defs>
+              </svg>
+            </div>
+          </div>
+          <span class="text-error_1864-1825">Error</span>
+        </div>
+        <span class="error-value">{{ data.error }}</span>
+      </div>
+      <!-- <div class="button-container">
+        <button mat-button color="warn" (click)="onClose()">
+          <span class="button-text">Close</span>
+        </button>
+      </div> -->
+    </div>
+  </div>
+    
+
+    <div class="id-info-item">
+      <strong>ID:</strong> {{data.id}}
+    </div>
+  
+</div>
+
+  

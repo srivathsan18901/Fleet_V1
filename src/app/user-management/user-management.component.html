@@ -1,0 +1,293 @@
+<app-sidenavbar></app-sidenavbar>
+<div class=" mainContent">
+
+    
+    <!-- Title and Button -->
+    <div class="flex w-full items-center justify-between">
+      <!-- Title -->
+      <!-- Header section -->
+      <div class="header-section">
+        <h1 class="header-title">User management</h1>
+        <div class="subheader-container">
+          <div class="subheader-text">View and Edit Tasks</div>
+          <img
+            src="../../assets/icons/i-icon.svg"
+            alt="Icon"
+            class="subheader-icon"
+          />
+        </div>
+      </div>
+
+      <!-- Button -->
+      <span (click)="userCreatePopUpOpen(false)">
+        <button class="px-10 py-3 text-[14px] rounded-md bg-[#ff3333] font-semibold text-white">Create User</button>
+      </span>
+    </div>
+    <!-- Table -->
+    <div class="flex flex-col items-center justify-start gap-3 w-full">
+      <!-- Table Title -->
+      <span class="w-full h-[55px] text-[14px] text-black font-semibold rounded-[6px] bg-[#ffcdcd] flex items-center justify-between px-4">
+        <span class="w-[30%] text-[14px] flex items-center justify-between">
+          <p class=" text-[14px] flex items-center justify-start w-full  border-white">Name</p>
+        </span>
+        <span class="flex text-[14px] w-[80%] items-center justify-between">
+          <p class="w-full text-[14px] flex items-center justify-start 2 border-white">User Type</p>
+          <p class="w-full text-[14px] flex items-center justify-start  border-white">Created By</p>
+          <p class="w-full text-[14px] flex items-center justify-start  border-white">Created on</p>
+          <p class="w-full text-[14px] flex items-center justify-center  border-white">Options</p>
+        </span>
+      </span>
+      <!-- Table Rows -->
+      <span class="flex flex-col w-full items-center justify-start gap-[5px] h-[420px] px-[6px] pb-3 ">
+        @if(userCredentials.length === 0){<p class="flex items-center py-5 text-[14px] text-[#9e9e9e]">- No data Found -</p>}
+        @if(userCredentials.length != 0) {
+          @for (user of userCredentials; track user) {
+            <span class="w-full twoColors py-2  text-black font-medium rounded-[6px] duration-300 flex items-center justify-between px-3">
+              <span class="w-[30%] flex items-center justify-between  border-black">
+                <p class="flex text-[14px] items-center justify-start capitalize w-full">{{user!.userName}}</p>
+              </span>
+              <span class="flex text-[14px] w-[80%] items-center justify-between">
+                <p class="w-full text-[14px] flex items-center justify-start  border-black">{{user!.userRole}}</p>
+                <p class="w-full text-[14px] flex items-center justify-start capitalizeborder-r-2 border-black">{{user!.createdBy}}</p>
+                <p class="w-full text-[14px] flex items-center justify-start  border-black">{{user!.createdOn}}</p>
+
+
+                <span class="flex gap-5 items-center justify-center w-full">
+                    <button class="edit-button" (click)="userPermissionPopUpOpen(user!.userName)">
+                        <svg class="edit-svgIcon" viewBox="0 0 512 512">
+                          <path d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"></path>
+                        </svg>
+                      </button>
+
+
+                      <button class="delete-button" (click)="getDeleteUser(user!.userName, user!.userRole)">
+                        <svg class="delete-svgIcon" viewBox="0 0 448 512">
+                          <path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path>
+                        </svg>
+                      </button>
+
+
+                </span>
+
+              </span>
+            </span>
+          }
+        }
+      </span>
+    </div>
+
+
+
+
+  </div>
+
+
+  <!-- Create User Popup -->
+  <div [ngClass]="{'hidden': !userCreatePopUp}" class="absolute flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50">
+    <div class="popup w-[700px] py-10 bg-[#D9D9D9]">
+      <!-- Title -->
+      <span class="flex flex-col items-start justify-center gap-3.5">
+        <p class=" text-[35px] text-black font-bold">Create User</p>
+        <p class=" flex items-center justify-center gap-2 text-[14px] font-medium text-[#7B7B7B]">
+          Create an New User
+          <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_513_29001)">
+            <path d="M12.4987 2.08301C6.75495 2.08301 2.08203 6.75592 2.08203 12.4997C2.08203 18.2434 6.75495 22.9163 12.4987 22.9163C18.2424 22.9163 22.9154 18.2434 22.9154 12.4997C22.9154 6.75592 18.2424 2.08301 12.4987 2.08301ZM13.5404 17.708H11.457V11.458H13.5404V17.708ZM13.5404 9.37467H11.457V7.29134H13.5404V9.37467Z" fill="black"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_513_29001">
+            <rect width="25" height="25" fill="white"/>
+            </clipPath>
+            </defs>
+          </svg>
+        </p>
+      </span>
+      <!-- User Credentials Form -->
+      <div class="w-full h-full flex flex-col items-start justify-start mt-10 gap-7">
+        <!-- Username and UserRole -->
+        <span class="w-full flex items-center justify-center gap-5">
+          <input [(ngModel)] = "userName" type="text" placeholder="Username" class="w-full text-[15px] font-medium py-2 pt-5 px-5 outline-none bg-transparent border-b-2 border-black">
+          <!-- DropDown -->
+          <span class="relative w-[30%] flex px-4 py-3 items-center justify-between gap-5" (click)="userRoleChange()">
+            <p class="font-semibold capitalize text-[14px]">{{userRole}}</p>
+            <svg [ngClass]="{'rotateArrow': userRoleOCstate}" class="duration-300 shadow" width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7.00007 12.3125L0 5.42194L2.33335 3.125L7.00007 7.71879L11.6667 3.125L14 5.42194L7.00007 12.3125Z" fill="black"/>
+              </svg>
+
+              <!-- DropDown Options -->
+            @if (userRoleOCstate) {
+              <span class="absolute enterAnimation bg-white top-[100%] z-50 w-full px-2 py-3 rounded-sm flex flex-col items-center justify-center gap-3">
+                @for (user of userRoleCredentials; track user) {
+                  <p class="w-full font-semibold text-[14px] capitalize hover:bg-[#a3a3a3] p-2 rounded-md cursor-pointer pl-2" (click)="changeUserRole(user.order)">{{user.userRole}}</p>
+                }
+              </span>
+            }
+          </span>
+        </span>
+        <!-- Password and Confrim password with show password button -->
+        <span class="w-full flex-col relative flex items-start justify-between gap-3">
+          <span class="w-full flex gap-10 items-center justify-center">
+            <span class="w-full relative flex items-center justify-end">
+              <input [(ngModel)] = "passWord" type="{{passwordType}}" placeholder="Password" class="bg-transparent w-full font-medium text-[15px] py-2 pt-5 px-5 outline-none border-b-2 border-black">
+              <p class="absolute text-[10px] right-2 bottom-3 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer" (click)="showPassword()">{{passwordView}}</p>
+            </span>
+
+            <span class="w-full relative flex items-center justify-end">
+              <input [(ngModel)] = "confrimPassword" type="{{confrimPasswordType}}" placeholder="Confrim Password" class="bg-transparent w-full font-medium text-[15px] py-2 pt-5 px-5 outline-none border-b-2 border-black">
+              <p class="absolute text-[10px] right-2 bottom-3 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer" (click)="showConfrimPassword()">{{confrimPasswordView}}</p>
+            </span>
+          </span>
+          <p class="absolute top-[calc(100%+5px)] text-red-500">{{errorMessage}}</p>
+        </span>
+
+        <div class="flex gap-7 mt-10">
+          <button (click)="createUser()" class="w-[120px] py-[8px] rounded-md bg-[#D30000] text-[14px] text-white font-semibold">Create User</button>
+          <button (click)="userCreatePopUpOpen(true)" class="w-[120px] py-[8px] rounded-md border-2 border-[#D30000] text-[14px] text-[#D30000] font-semibold">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Permission Popup -->
+   <div [ngClass]="{'hidden': !userPermissionOCstate}" class="absolute  flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50">
+      <div class="w-[900px] scale-85 h-[680px] py-14 bg-[#D9D9D9] rounded-[20px] px-14 flex gap-1 flex-col">
+        <!-- Title and Close Button -->
+        <span class="flex items-center justify-between w-full mb-3">
+          <span class="flex flex-col items-start justify-center  gap-3.5">
+            <p class="text-[38px]  text-[#DA2127] font-bold">User Permission</p>
+            <p class="flex items-center text-[14px] justify-between gap-2 text-[#7B7B7B] font-medium">
+              Edit the user permission
+              <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <g clip-path="url(#clip0_513_29001)">
+                <path d="M12.4987 2.08301C6.75495 2.08301 2.08203 6.75592 2.08203 12.4997C2.08203 18.2434 6.75495 22.9163 12.4987 22.9163C18.2424 22.9163 22.9154 18.2434 22.9154 12.4997C22.9154 6.75592 18.2424 2.08301 12.4987 2.08301ZM13.5404 17.708H11.457V11.458H13.5404V17.708ZM13.5404 9.37467H11.457V7.29134H13.5404V9.37467Z" fill="black"/>
+                </g>
+                <defs>
+                <clipPath id="clip0_513_29001">
+                <rect width="25" height="25" fill="white"/>
+                </clipPath>
+                </defs>
+                </svg>
+            </p>
+          </span>
+          <svg (click)="userPermissionPopUpClose()"  class="cursor-pointer p-1 bg-transparent hover:drop-shadow-lg" width="36" height="35" viewBox="0 0 36 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M28.5625 9.00739L26.0551 6.5L17.7812 14.7739L9.50739 6.5L7 9.00739L15.2739 17.2812L7 25.5551L9.50739 28.0625L17.7812 19.7886L26.0551 28.0625L28.5625 25.5551L20.2886 17.2812L28.5625 9.00739Z" fill="#D30000"/>
+            </svg>
+        </span>
+
+        <span class="flex flex-col items-start justify-center gap-3 w-full">
+          @for (permission of userPermissionOptions; track permission) {
+            <span class="w-full flex flex-col border-b-2 pb-5 gap-3 text-[#535353]">
+              <span class="flex gap-3 items-center">
+                <p class="flex text-[20px] font-semibold text-black">{{permission.nameTag}}</p>
+              </span>
+                <span class="grid grid-cols-5 w-full font-medium text-[14px] items-center">
+
+                  <!-- Enable Toggle -->
+                  <span class="w-full flex items-center justify-start gap-3">
+                    <label class="switch">
+                      <input type="checkbox" [checked]="userPermissionState[permission.order][permission.isAvail]" (change)="changeUserPermission(permission.order, permission.isAvail)" class="sr-only peer">
+                      <span class="slider"></span>
+                    </label>
+                    <p class="text-[15px] font-medium">ENABLE</p>
+                </span>
+
+                  <!-- Create Toggle -->
+                  <span class="w-full flex items-center justify-start gap-3">
+                  
+                    <label class="switch">
+                      <input type="checkbox" [checked]="userPermissionState[permission.order][permission.create]" (change)="changeUserPermission(permission.order, permission.create)" class="sr-only peer">
+
+                      <span class="slider"></span>
+                    </label>
+                    <p class="text-[15px] font-medium">CREATE</p>
+                  
+                </span>
+
+                  <!-- Edit Toggle -->
+                  <span class="w-full flex items-center justify-start gap-3">
+                  
+                    <input type="checkbox" [checked]="userPermissionState[permission.order][permission.edit]" (change)="changeUserPermission(permission.order, permission.edit)" class="sr-only peer">
+                    <label class="switch">
+                      <input type="checkbox" [checked]="userPermissionState[permission.order][permission.edit]" (change)="changeUserPermission(permission.order, permission.edit)" class="sr-only peer">
+
+                      <span class="slider"></span>
+                    </label>
+                    <p class="text-[15px] font-medium">EDIT</p>
+                  
+                </span>
+
+                  <!-- Delete Toggle -->
+                  <span class="w-full flex items-center justify-start gap-3">
+                  
+                    <label class="switch">
+                      <input type="checkbox" [checked]="userPermissionState[permission.order][permission.delete]" (change)="changeUserPermission(permission.order, permission.delete)" class="sr-only peer">
+
+                      <span class="slider"></span>
+                    </label>
+                    <p class="text-[15px] font-medium">DELETE</p>
+                  
+                </span>
+
+                  <!-- View Toggle -->
+                  <span class="w-full flex items-center justify-start gap-3">
+                 
+                    <input type="checkbox" [checked]="userPermissionState[permission.order][permission.view]" (change)="changeUserPermission(permission.order, permission.view)" class="sr-only peer">
+                    <label class="switch">
+                      <input type="checkbox" [checked]="userPermissionState[permission.order][permission.view]" (change)="changeUserPermission(permission.order, permission.view)" class="sr-only peer">
+
+                      <span class="slider"></span>
+                    </label>
+                    <p class="text-[15px] font-medium text-center">VIEW</p>
+
+                
+                </span>
+
+                </span>
+              </span>
+            }
+          </span>
+
+
+        <span class="mt-7 w-full flex items-center justify-end">
+          <button class="px-10 py-3 bg-[#D30000] rounded-md text-white font-semibold text-[14px]" (click)="saveEditPermission()">Edit Permission</button>
+        </span>
+      </div>
+   </div>
+
+
+   <!-- Delete User Permission -->
+   <div [ngClass]="{'hidden': !deleteUserOCstate}" class="absolute flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50">
+    <div class="w-[600px] bg-white flex flex-col gap-5 rounded-[20px] shadow-[0_0_100px_#00000060] border-l-[22px] border-[#D30000] p-10">
+       <!-- Title -->
+       <span class="flex flex-col items-start justify-center">
+        <p class=" text-[35px] text-black font-bold">Delete</p>
+        <p class=" flex items-center justify-center gap-2 text-[14px] font-medium text-[#7B7B7B]">
+          Delete an user
+          <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <g clip-path="url(#clip0_513_29001)">
+            <path d="M12.4987 2.08301C6.75495 2.08301 2.08203 6.75592 2.08203 12.4997C2.08203 18.2434 6.75495 22.9163 12.4987 22.9163C18.2424 22.9163 22.9154 18.2434 22.9154 12.4997C22.9154 6.75592 18.2424 2.08301 12.4987 2.08301ZM13.5404 17.708H11.457V11.458H13.5404V17.708ZM13.5404 9.37467H11.457V7.29134H13.5404V9.37467Z" fill="black"/>
+            </g>
+            <defs>
+            <clipPath id="clip0_513_29001">
+            <rect width="25" height="25" fill="white"/>
+            </clipPath>
+            </defs>
+            </svg>
+        </p>
+      </span>
+
+      <p class="flex text-[16px] font-normal">Are you sure to delete the user ?</p>
+
+      <span class="flex w-full justify-end items-center mt-10">
+        <span class="flex justify-between items-center gap-5">
+          <p (click)="deleteUser(deleteUserName,deleteUserRole)" class="cursor-pointer flex px-10 py-2.5 bg-[#D30000] text-white border-2 border-[#D30000] rounded-md ">Delete</p>
+          <p (click)="deleteUserPopUp()" class="cursor-pointer flex px-10 py-2.5 border-2 rounded-md border-[#D30000] text-[#D30000]">Cancel</p>
+        </span>
+      </span>
+    </div>
+   </div>
+
+
+
+
+

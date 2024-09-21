@@ -1,0 +1,33 @@
+<div class="faq-container">
+    <app-sidenavbar></app-sidenavbar>
+
+     <!-- Back button at the top -->
+  <div class="back-button" (click)="goBackToSupport()">
+    <img src="assets/icons/back-icon.svg" alt="Back" />
+    <span>Back to Support</span>
+    
+    <div class="faq-header">
+      <h1>Frequently Asked Questions</h1>
+      <p>Quick answers to questions you may have. Can’t find what you’re looking for? Check out our 
+        <a href="/documentation" target="_blank">full documentation</a>.
+      </p>
+      <button class="documentation-btn" (click)="goToDocumentation()">Documentation</button>
+    </div>
+  
+    <div class="faq-list">
+      <div *ngFor="let faq of faqs" class="faq-item">
+        <div class="faq-icon">
+          <img [src]="faq.iconUrl" alt="FAQ Icon">
+        </div>
+        <div class="faq-content">
+          <h3>{{ faq.question }}</h3>
+          <p>{{ faq.answer }}</p>
+        </div>
+      </div>
+    </div>
+  
+    <div class="load-more">
+      <button (click)="loadMore()">Load more</button>
+    </div>
+  </div>
+  

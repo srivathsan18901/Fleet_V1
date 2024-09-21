@@ -1,0 +1,9 @@
+mat-dialog-actions button{
+    padding: 10px ;
+    background-color: #ff3333;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-right: 10px;
+}

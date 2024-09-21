@@ -1,0 +1,68 @@
+.radial-chart-container {
+  display: flex; /* Align chart and labels horizontally */
+  align-items: flex-start; /* Align items to the top */
+  gap: 20px; /* Space between the chart and labels */
+}
+
+#chart {
+  position: relative;
+  width: 100%; /* Adjust to fit the container */
+  max-width: 600px; /* Adjust as needed */
+}
+
+#chart h1 {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+  padding: 0;
+  color: #333;
+  position: absolute;
+  top: 0; /* Positioned at the top of the chart */
+  left: 0; /* Positioned at the left of the chart */
+}
+
+.chart-labels {
+  display: flex;
+  flex-direction: column; /* Arrange labels vertically */
+  align-items: flex-start; /* Align labels to the start (left) */
+  gap:20px;
+  margin-top: 80px;
+}
+
+.label-item {
+  display: flex;
+  align-items: center; /* Center items vertically */
+  margin-bottom: 10px; /* Space between label items */
+}
+
+.label-color {
+  display: inline-block;
+  width: 20px; /* Size of the color indicator */
+  height: 20px;
+  border-radius: 50%; /* Circular color indicator */
+  margin-right: 10px; /* Space between color and text */
+}
+
+.healthy-color {
+  background-color: #00e396; /* Healthy color */
+}
+
+.inactive-color {
+  background-color: #feb019; /* Inactive color */
+}
+
+.error-color {
+  background-color: #ff4560; /* Error color */
+}
+
+.label-text {
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 10px; /* Space between text and value */
+}
+
+.label-value {
+  font-size: 16px;
+  font-weight: bold;
+  color: #555; /* Adjust color as needed */
+}

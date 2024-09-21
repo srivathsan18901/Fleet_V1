@@ -1,0 +1,29 @@
+<div class="radial-chart-container">
+  <div id="chart">
+    <h1>Robots</h1>
+    <apx-chart
+      [series]="chartOptions.series ?? []"
+      [chart]="chartOptions.chart ?? { type: 'radialBar', height: 300 }"
+      [plotOptions]="chartOptions.plotOptions ?? {}"
+      [labels]="chartOptions.labels ?? []"
+    ></apx-chart>
+  </div>
+
+  <div class="chart-labels">
+    <div class="label-item">
+      <span class="label-color healthy-color"></span>
+      <span class="label-text">Healthy</span>
+      <span class="label-value">{{ roboStatePie[0] }}</span>
+    </div>
+    <div class="label-item">
+      <span class="label-color inactive-color"></span>
+      <span class="label-text">Inactive</span>
+      <span class="label-value">{{ roboStatePie[1] }}</span>
+    </div>
+    <div class="label-item">
+      <span class="label-color error-color"></span>
+      <span class="label-text">Error</span>
+      <span class="label-value">{{ roboStatePie[2] }}</span>
+    </div>
+  </div>
+</div>

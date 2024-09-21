@@ -1,0 +1,63 @@
+<div class="container1">
+  <div class="content-fluid1">
+    <div class="general">
+      <!-- <form> -->
+        <div class="container">
+          <div class="form-control">
+            <div class="field">
+              <label for="name">Fleet Server Mode :  </label>
+              <input class="input" type="number" min="0"  placeholder="Enter" style="width: 10rem;" pInputText required/>
+            </div>
+            <div class="field">
+              <label for="name" style="margin-right: 5rem;">Server IP : </label>
+              <input type="text" placeholder="Enter IP" minlength="7" maxlength="15" size="15"  pInputText/>
+            </div>
+            <div class="field">
+              <label for="name" style="margin-right: 4rem">Server Port :  </label>
+              <input class="input" placeholder="Enter Port" type="number" min="1000" oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" max="9999"  placeholder="Enter" pInputText required/>
+            </div>
+          </div>
+
+          <div class="form2">
+            <div class="field">
+              <label for="ip" style="margin-right: 2rem;">Database IP : </label>
+              <input type="text" Enter IP placeholder="Enter IP" minlength="7" maxlength="15" size="15" style="width: 10rem;"  pInputText/>
+            </div>
+            <div class="field">
+              <label for="type">Database Type : </label><br>
+              <p-dropdown appendTo="body"  [options]="dtype" [(ngModel)]="selectedDb" optionLabel="name" placeholder="Select"></p-dropdown>
+            </div>
+            <div class="field">
+              <label for="type">Server IP Type : </label><br>
+              <p-dropdown appendTo="body" [options]="dtype" [(ngModel)]="selectedDb" optionLabel="name" placeholder="Select"></p-dropdown>
+            </div>
+          </div>
+
+          <div class="form3">
+            <div class="field">
+              <label for="type" style="margin-right: 3rem;">Database Name : </label>
+              <input type="text" placeholder="Enter DB name" style="width: 10rem;" pInputText/>
+            </div>
+            <div class="field">
+              <label for="type">Robot Manager Type : </label><br>
+              <p-dropdown appendTo="body"  [options]="dtype" [(ngModel)]="selectedDb" optionLabel="name" placeholder="Select"></p-dropdown>
+            </div>
+            <div class="field">
+              <label for="type" style="margin-right: 1rem;">Task Manager Type  : </label><br>
+              <p-dropdown appendTo="body"  [options]="dtype" [(ngModel)]="selectedDb" optionLabel="name" placeholder="Select"></p-dropdown>
+            </div>
+          </div>
+          <div class="field mt-1">
+            <p-button
+              label="Submit"
+              type="submit"
+              class="block mt-1 pt-2"
+              icon="pi pi-check-circle"
+              styleClass="p-button-danger p-button1"
+            ></p-button>
+          </div>
+        </div>
+      <!-- </form> -->
+    </div>
+  </div>
+</div>

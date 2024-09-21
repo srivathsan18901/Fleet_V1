@@ -1,0 +1,193 @@
+<div class="container" #screen>
+  <app-sidenavbar></app-sidenavbar>
+  <app-fullscreen-button></app-fullscreen-button>
+  <div class="mainContent">
+    <!-- Router outlet for displaying the appropriate view -->
+    <!-- Slider button -->
+
+    <div class="slider-buttons-container">
+      <div class="slider-buttons">
+        <button
+          (click)="setView('operation')"
+          [class.active]="currentView === 'operation'"
+        >
+          Operation
+        </button>
+        <button
+          (click)="setView('robot')"
+          [class.active]="currentView === 'robot'"
+        >
+          Robot
+        </button>
+        <div
+          class="slider"
+          [ngClass]="{
+            left: currentView === 'operation',
+            right: currentView === 'robot'
+          }"
+        ></div>
+      </div>
+    </div>
+    <div *ngIf="currentView === 'operation'">
+      <!-- Stat card 1 -->
+      <div class="statistics-container">
+        <div class="stat-card stat-card-1">
+          <div class="stat-value">System throughput</div>
+          <h2>214</h2>
+          <div class="stat-change positive">+18.34% <span>&uarr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Stat card 2 -->
+        <div class="stat-card stat-card-2">
+          <div class="stat-value">System uptime</div>
+          <h2>127</h2>
+          <div class="stat-change positive">+33.06% <span>&uarr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <!-- Stat card 3 -->
+        <div class="stat-card stat-card-3">
+          <div class="stat-value">Success rate</div>
+          <h2>40</h2>
+          <div class="stat-change negative">-5.12% <span>&darr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+        <!-- Stat card 4 -->
+        <div class="stat-card stat-card-4">
+          <div class="stat-value">Responsiveness</div>
+          <h2>214</h2>
+          <div class="stat-change positive">+18.34% <span>&uarr;</span></div>
+          <div class="stat-chart">
+            <section>
+              <div class="loading">
+                <svg width="140px" height="100px">
+                  <polyline
+                    id="back"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                  <polyline
+                    id="front"
+                    points="0,45.486 38.514,45.486 44.595,33.324 50.676,45.486 57.771,45.486 62.838,55.622 71.959,9 80.067,63.729 84.122,45.486 97.297,45.486 103.379,40.419 110.473,45.486 150,45.486"
+                  ></polyline>
+                </svg>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="charts-container">
+      <div class="area-chart-container">
+        <app-area-chart></app-area-chart>
+      </div>
+      <div class="donut-chart-container">
+        <app-gradient-donut
+          [series]="operationPie"
+          [labels]="['Completed', 'Inprogress', 'ToDo', 'Error', 'Cancelled']"
+          [legendFontSize]="'14px'"
+          [dataLabelFontSize]="'14px'"
+          [chartWidth]="490"
+          [fillType]="'gradient'"
+          [titleText]="'Operations'"
+          [legendFontSize]="'16px'"
+          [dataLabelFontSize]="'18px'"
+        >
+        </app-gradient-donut>
+      </div>
+    </div>
+
+    <div class="dashboard-container">
+      <!-- Robot Activity Section -->
+      <div class="robot-activity-container">
+        <div class="section-header">
+          <h3>Operation Activities</h3>
+          <div class="search-box">
+            <input
+              type="text"
+              placeholder="Search activities..."
+              (input)="onSearch($event)"
+            />
+          </div>
+          <button class="view-all-btn">View All</button>
+        </div>
+        <table class="activity-table">
+          <tr *ngFor="let activity of this.filteredOperationActivities">
+            <td>{{ activity.taskId }}</td>
+            <td>{{ activity.taskName }}</td>
+            <td>{{ activity.status }}</td>
+            <!-- - {{ acctivity.progress }}% - {{ activity.status }} -->
+          </tr>
+        </table>
+      </div>
+
+      <!-- Notifications Section -->
+      <div class="notifications-container">
+        <div class="section-header">
+          <h3>Notifications</h3>
+          <div class="search-box">
+            <input
+              type="text"
+              placeholder="Search notifications..."
+              (input)="onSearchNotifications($event)"
+            />
+          </div>
+          <button class="view-all-btn">View All</button>
+        </div>
+        <table class="notifications-table">
+          <tr *ngFor="let notification of filteredNotifications">
+            <td>{{ notification.message }} - {{ notification.timestamp }}</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <!-- Router outlet for displaying the appropriate view -->
+    <router-outlet></router-outlet>
+  </div>
+</div>

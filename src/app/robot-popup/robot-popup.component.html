@@ -1,0 +1,46 @@
+<div class="popup-overlay1" *ngIf="isVisible">
+  <div class="popup-content">
+    <h4>Select Robots</h4>
+
+    <div *ngIf="availableRobots.length > 0; else noRobotsMessage">
+      <table>
+        <thead>
+          <tr>
+            <th>Select</th>
+            <th>S.no</th>
+            <th>Manufacturer</th>
+            <th>Name</th>
+            <th>IP Address</th>
+            <!-- <th>MAC Address</th> -->
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let robot of listedRobo; index as i">
+            <td>
+              <input type="checkbox" [(ngModel)]="robot.selected" />
+            </td>
+            <td>{{ i + 1 }}</td>
+            <td>{{robot.grossInfo.manufacturer}}</td>
+            <td>{{ robot.roboName }}</td>
+            <td>{{ robot.ipAdd }}</td>
+            <!-- <td>{{ robot.macAdd }}</td> -->
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="showError" class="error-message">
+        Please select at least one robot.
+      </div>
+
+      <div>
+        <button type="button" (click)="addSelectedRobots()">Place</button>
+        <button type="button" (click)="closePopup()">Close</button>
+      </div>
+    </div>
+
+    <ng-template #noRobotsMessage>
+      <p>No robot to show, please add robot.</p>
+      <button type="button" (click)="closePopup()">Close</button>
+    </ng-template>
+  </div>
+</div>

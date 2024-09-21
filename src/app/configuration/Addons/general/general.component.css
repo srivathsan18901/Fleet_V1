@@ -1,0 +1,84 @@
+.form-control, .form2, .form3 {
+  display: flex;
+  flex-direction: column;
+  width: 30%;
+  margin-right: 20px;
+}
+
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin: 2%;
+  margin-top: 1%;
+  margin-bottom: 0px;
+}
+
+.field {
+  margin-bottom: 15px;
+}
+
+
+/* Button styling */
+.button {
+  /* width: 70%; */
+  height: 31px;
+  padding: 0.5rem 1rem;
+  margin-top: 20rem;
+  font-size: 0.8rem;
+}
+
+/* Button class specific to p-button-danger */
+::ng-deep .p-button.p-button-danger {
+  /* width: 70% !important; */
+  height: 31px !important;
+  /* margin-top: 19rem; */
+}
+
+::ng-deep .p-button {
+  padding: 0.5rem 1rem !important;
+  font-size: 0.8rem !important;
+}
+
+label {
+  /* font-weight: bold; */
+  margin-right: 10px;
+}
+
+/* input {
+  width: 100%;
+} */
+
+input[type="text"],
+input[type="number"] {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+br {
+  display: none;
+}
+
+.container1{
+  border: 1px solid #000;
+  border-radius: 15px;
+}
+
+::ng-deep{
+  .p-button.p-button-danger{
+      width: 70% !important;
+      height: 31px !important;
+  }
+  .p-button{
+    padding: 0.5rem .1rem !important;
+    font-size: .8rem !important;
+  }
+}
+
+.button{
+  width: 70%;
+  height: 31px;
+  padding: 0.5rem .1rem;
+  font-size: .8rem
+}

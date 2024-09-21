@@ -1,0 +1,4 @@
+<div [@fadeAnimation]="getRouteAnimationData(outlet)" [@.disabled]="!outlet.isActivated">
+  <p-toast></p-toast>
+  <router-outlet #outlet="outlet"></router-outlet>
+</div>

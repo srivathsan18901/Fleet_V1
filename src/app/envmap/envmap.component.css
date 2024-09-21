@@ -1,0 +1,748 @@
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 30px 30px 30px 30px;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  overflow: auto; /* Enables vertical scrolling */
+  justify-content: center;
+  backdrop-filter: blur(5px);
+  pointer-events: none;
+}
+.UDform{
+  padding: 10px;
+}
+.popup-overlay1 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 30px 30px 30px 30px;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  overflow: auto; /* Enables vertical scrolling */
+  justify-content: center;
+  backdrop-filter: blur(5px);
+}
+.popup-content {
+  background: white;
+  border-radius: 20px;
+  width: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto; /* Enables scrolling within the content */
+}
+.popup-content1 {
+  background: white;
+  border-radius: 20px;
+  padding: 30px;
+  gap: 20px;
+  width: auto;
+  max-height: 500px;
+  overflow: auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: auto; /* Enables scrolling within the content */
+}
+.popup-content1 input{
+  text-align: center;
+  border: 1px solid black;
+  font-size: 10px;
+  border-bottom: 1px solid black;
+}
+.popup-content1 select{
+  text-align: center;
+  border-radius: 5px;
+  font-size: 15px;
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+
+.popup-content1 button{
+  margin: 10px;
+}
+.popup-content.dynamic-size {
+  width: auto;
+  height: auto;
+  padding: 20px;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.popup-content.fixed-size {
+  width: 1440px;
+  height: 650px;
+}
+#Edgepopupcontent{
+  max-width: 1000px;
+  gap:20px
+}
+.form-buttons{
+  margin: 20px 20px 0px 20px;
+}
+#formBTN{
+  margin-right: 10px;
+}
+h2 {
+  font-size: 20px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+}
+/* Class to disable pointer events on the canvas */
+.disable-interaction {
+  pointer-events: none;
+  opacity: 0.5; /* Optional, to visually indicate it's disabled */
+}
+
+.error-message {
+  color: red;
+  font-size: 10px;
+}
+.upload-image img {
+  width: 120px;
+  margin: 0px 120px;
+  height: auto;
+  cursor: pointer;
+}
+
+.file-name {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-wrapper {
+  display: flex;
+  align-items: flex-start;
+  width: 100%;
+  gap: 10px;
+  justify-content: space-between;
+}
+.Res1{
+  display: flex;
+  align-items: flex-start;
+}
+#resolution{
+  /* width: 120px;
+  border: none;
+  font-size: xx-small; */
+  border-bottom:1px solid #000000;
+}
+.OpenandLocate{
+  margin-left: 15px;
+
+}
+#X,#Y,#θ{
+  width: 50px;
+  margin-top: 10px;
+}
+.image-popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  pointer-events: none;
+  overflow:auto;
+}
+
+.image-popup-content {
+  background-color: #fff;
+  border-radius: 8px;
+  z-index: 1010; /* Content layer above the overlay */
+  position: relative;
+  pointer-events: auto;
+}
+
+.image-popup-content canvas {
+  display: block;
+  margin: 0 auto;
+}
+.validation-error{
+  font-size: 10px;
+  color: #ff3333;
+  /* padding: 10px; */
+}
+/* .image-popup-content .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: #ff7373;
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+} */
+
+.form-container,
+.form1-container {
+  margin-top: 10px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-container label,.form1-container label,.form1-container p {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+.form-container input {
+  width: 150px;
+  padding: 8px;
+  margin-bottom: 10px;
+
+  border-bottom:1px solid #000000;
+  border-radius: 4px;
+  text-align: center;
+}
+.separator {
+  width: 2px; /* Thickness of the vertical line */
+  background-color: #000000; /* Color of the vertical line */
+  height: 160px; /* Full height of the parent container */
+  margin: 20px 20px;
+}
+#or{
+  font-size: 10px;
+  margin: 10px 5px;
+}
+.form1-container input{
+  width: 150px;
+  padding: 2px;
+  margin: 5px 0px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+}
+
+.button-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+/* .button-container button :hover{
+    background-color: #ff3333;
+    color: #fff;
+
+} */
+.image-container {
+  /* margin-top: 10px; */
+  position: relative;
+}
+
+.closenode-btn,.savenode-btn,.Delnode-btn{
+  margin: 5px;
+}
+
+
+canvas {
+  border: 1px solid #ccc;
+  max-height: 95vh; /* Ensure content doesn't exceed viewport height */
+  max-width: 1420px;
+  /* width: 1400px;
+  height: 580px; */
+}
+.plottinglayer{
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  left: 0;
+  max-height: 95vh; /* Ensure content doesn't exceed viewport height */
+  max-width: 1420px;
+  /* width: 100px;
+  height: 50px; */
+  /* border: 5px solid red; */
+  background-color: transparent;
+  /* background-color: #ffffff; */
+  z-index: 1;
+  pointer-events: none; /* Allows clicks to pass through to the underlying canvas */
+}
+.maplayer{
+  z-index: 1;
+}
+.close-btn {
+  position: absolute;
+  top: -5px;
+  right: 2px;
+  border: 1px solid red;
+  background-color: white;
+  color: #ff7373;
+  font-size: 20px;
+  font-weight: bolder;
+  padding: 5px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.intermediate-nodes-dialog {
+  position: absolute;
+  background-color: rgba(255, 255, 255, 0.467);
+  backdrop-filter: blur(5px);
+  padding: 5px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+
+  border-radius: 20px;
+}
+.dialog-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.dialog-content h3{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 15px;
+  padding-left: 20px;
+  font-weight: bold;
+  color: #000000;
+}
+
+.options-container {
+  margin: 0px;
+
+  position: absolute;
+  bottom: 13px;
+  left: 5px;
+  z-index: 10; /* Higher than the canvas */
+  pointer-events: auto; /* Allow interaction */
+}
+
+.options-container button {
+  padding: 4px;
+  background-color: rgba(100, 92, 92, 0.238);
+  border: none;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.options-container button img {
+  width: 30px; /* Adjust width as needed */
+  height: auto; /* Keeps aspect ratio */
+  opacity: 1; /* Slightly dim the image on hover */
+}
+.node_details{
+  margin: 0px 20px 0px 20px;
+  padding: 15px;
+  flex-direction: column;
+  border-radius: 10px;
+}
+/* .node_details {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+} */
+.label {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+}
+.input-group {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+  align-content: center;
+  flex-wrap: wrap;
+}
+.input-group1 {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 1rem;
+  justify-content: space-between;
+  align-content: center;
+  flex-wrap: wrap;
+}
+
+.action-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  margin-bottom: 1rem;
+  align-items: flex-start;
+}
+
+.action-buttons {
+  display: flex;
+  flex-direction: column;
+}
+
+.action-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.Node-btn {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.validation-error {
+  color: red;
+  /* margin-top: 0.5rem; */
+}
+
+
+.action-div{
+  margin: 10px;
+}
+.action-item{
+  display: inline;
+  margin: 5px;
+}
+.nodepopup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  backdrop-filter: blur(8px); /* Blur effect */
+  z-index: 999; /* Make sure it’s behind the popup */
+}
+
+.node-details-popup {
+  position: fixed; /* Position relative to the viewport */
+  top: 50%;        /* Center vertically */
+  left: 50%;       /* Center horizontally */
+  transform: translate(-50%, -50%); /* Adjust for exact centering */
+  background-color: rgb(255, 255, 255);
+  border-radius: 20px;
+  padding: 20px;
+  box-shadow: 0px 2px 10px rgb(0, 0, 0);
+  z-index: 1000; /* Ensure it's above the overlay */
+  display: flex;
+  gap:10px;
+}
+
+.node-details-popup p{
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: bold;
+  font-size: 20px;
+  color: #4a3f3f;
+}
+.action-form{
+  border-radius: 10px;
+  background-color: #ee4c4c60;
+  box-shadow: 0px 2px 10px rgb(0, 0, 0);
+}
+.node-details-popup input{
+
+  /* border-bottom: 1px solid black; */
+  /* border-radius: 3px; */
+  /* background-color: transparent; */
+  border: 1px solid #ccc;
+}
+/* .sampleCSS {
+  display: flex;
+
+  font-size: 10px;
+  font-weight: bold;
+} */
+.sampleCSS {
+  display: flex;
+  flex-direction: row;
+  margin: 20px;
+}
+
+.action-container select{
+
+  border-bottom:1px solid black ;
+  background-color: transparent;
+  font-size: 15px;
+  margin-left: 10px;
+}
+.move-action-form select{
+
+  /* border-bottom:1px solid black ; */
+  /* background-color: transparent; */
+  font-size: 10px;
+  margin-left: 10px;
+  border: #ccc;
+  border-radius: 5px;
+}
+.move-action-form input{
+  width: 50px;
+}
+.action-button{
+  background-color: rgba(255, 0, 0, 0.493);
+  font-size: 10px;
+  color: #f8f8f8;
+}
+
+.distance-error-message{
+  font-size: 10px;
+  font-weight: bold;
+  color: red;
+}
+
+.delete-icon{
+  background-color: rgba(205, 48, 48, 0.493);
+  font-size: 10px;
+  font-weight: bold;
+  border-radius: 90px;
+  padding: 5px;
+  margin-left: 5px;
+}
+
+.move-action-form label{
+  font-size: 12px;
+  font-weight: bold;
+  margin-right: 10px;
+}
+.move-action-form p{
+  color: #ff3333;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 20px;
+  font-weight: bold;
+}
+.move-action-form1{
+  border: #ccc;
+    border-radius: 5px;
+}
+.move-action-form{
+  padding: 10px;
+}
+.Node-btn{
+  padding: 20px 20px 0px 20px;
+}
+.calibration-layer {
+  position: absolute;
+  bottom: 10px;
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  background-color: #c0b3b372;
+  padding: 5px;
+  gap: 10px;
+  border-radius: 8px;
+  z-index: 10;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+  z-index: 10; /* Higher than the canvas */
+  pointer-events: auto; /* Allow interaction */
+}
+.dropdown button:hover{
+  background-color: #ff3333;
+  color: white;
+}
+.dropdown-button {
+  background-color: #ff3333;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #ff3333;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 10px;
+  bottom: 100%; /* Position the dropdown above the button */
+  left: 0; /* Aligns the dropdown with the left edge of the button */
+  margin-bottom: 0px; /* Adds space between the button and the dropdown */
+  z-index: 10;
+  text-align: center;
+  flex-direction: column; /* Stack buttons vertically */
+}
+
+.dropdown:hover .dropdown-content {
+  display: flex;
+}
+
+.dropdown-content button {
+  background-color:transparent;
+  color: rgb(255, 255, 255);
+  padding: 5px;
+  text-align: center;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.dropdown-content button:hover {
+  background-color: #b93636;
+}
+/* .close-btn:hover {
+  background-color: #dad8d8;
+} */
+
+button {
+  padding: 10px;
+  background-color: #ff3333;
+  color: #fff;
+  font-size: 15px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.image-popup-overlay{
+  z-index: 1000; /* Base layer for the entire popup */
+}
+.save-btn, .clear-btn {
+  position: absolute;
+  bottom: 0px; /* Adjust as needed */
+  right: 70px; /* Adjust as needed */
+  background-color: #ff3333;
+  margin-bottom: 10px;
+  z-index: 1030;
+}
+.save-btn {
+  right: 10px; /* Position it to the right */
+}
+
+.clear-btn {
+  right: 80px; /* Position it to the left of the Save button */
+}
+.OpenandLocate{
+  padding: 10px;
+  background-color: #ff3333;
+  color: #fff;
+  font-size: 13px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.distance-dialog-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(104, 99, 99, 0.332);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1040;
+}
+
+.distance-dialog {
+  background-color: rgba(255, 255, 255, 0.521);
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+  backdrop-filter: blur(5px);
+}
+
+.distance-dialog h3 {
+  margin-bottom: 10px;
+  font-size: 15px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+}
+
+.distance-dialog input {
+  margin-bottom: 10px;
+  width: 100%;
+  padding: 8px;
+  /* border-radius: 20px; */
+  font-size: 10px;
+  /* border: 1px solid black; */
+
+}
+
+.distance-dialog button {
+  padding: 10px ;
+  background-color: #ff3333;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+
+
+
+  /* Close Button Styles */
+  .close-button {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+
+  .close-button svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
+  }
+
+  .close-button:hover {
+    background-color: #da2127;
+  }
+
+  .close-button:hover svg {
+    fill: white; /* Change color on hover */
+  }
+
+  .input-groupg {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .input-groupg label {
+    flex-basis: 30%; /* Adjust width of labels */
+    min-width: 150px; /* Minimum width for labels */
+  }
+
+  .input-groupg input,
+  .input-groupg select {
+    height: 32px;
+    flex-basis: 18%;
+    min-width: 3px;
+    width: 6rem;
+  }
+
+
+.small-dropdown {
+      height: 12px !important; /* Override default height */
+      font-size: small; /* Adjust font size accordingly for readability */
+}
+
+

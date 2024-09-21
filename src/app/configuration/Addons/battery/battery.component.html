@@ -1,0 +1,45 @@
+<div class="container1">
+  <div class="content-fluid1">
+    <div class="general">
+      <!-- <form> -->
+        <div class="container">
+          <div class="form-control">
+            <div class="field">
+              <label for="name">Minimum Battery :  </label>
+              <input class="input" type="number" min="0"  placeholder="Enter Battery" style="width: 10rem;" pInputText required/>
+            </div>
+            <div class="field">
+              <label for="name">Maximum Battery : </label>
+              <input type="number" placeholder="Enter Battery" minlength="7" maxlength="15" size="15" style="width: 10rem;"  pInputText/>
+            </div>
+            <div class="field">
+              <label for="name">Warning Battery :  </label>
+              <input class="input" placeholder="Enter Battery" type="number" style="width: 10rem;" min="1000" oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);" max="9999"  placeholder="Enter" pInputText required/>
+            </div>
+          </div>
+
+          <div class="form2">
+            <div class="field">
+              <label for="ip">Warning Voltage : </label>
+              <input type="number"  placeholder="Enter Voltage" minlength="7" maxlength="15" size="15" style="width: 10rem;"  pInputText/>
+            </div>
+            <div class="field">
+              <label for="type">Minimum Voltage :</label><br>
+              <input type="number"  placeholder="Enter Voltage" minlength="7" maxlength="15" size="15" style="width: 10rem;"  pInputText/>
+            </div>
+
+          <div class="field mt-1">
+            <p-button
+              label="Submit"
+              type="submit"
+              class="block mt-1 pt-2 "
+              icon="pi pi-check-circle"
+              styleClass="p-button-danger p-button1"
+            ></p-button>
+          </div>
+        </div>
+        </div>
+      <!-- </form> -->
+    </div>
+  </div>
+</div>

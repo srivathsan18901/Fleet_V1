@@ -1,0 +1,58 @@
+<div class="container1">
+  <div class="content-fluid1">
+    <div class="general">
+      <!-- <form> -->
+        <div class="container">
+          <div class="form-control">
+            <div class="head1">
+              <h4><b>WES Communications:</b></h4>
+              <div class="field">
+                <label for="name">External Inteface IP :  </label>
+                <input class="input" type="number" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/>
+
+                <label for="name" style="margin-left: 8rem;">External Inteface Type : </label>
+                <input type="text" placeholder="Enter IP"  pInputText/>
+              </div>
+            </div>
+            <div class="head2">
+              <h4><b>Communication</b> </h4>
+              <div class="field2">
+                <label for="name" style="margin-right: 1.5rem;">Robot Inteface IP :  </label>
+                <input class="input" type="number" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/>
+
+                <label for="name" style="margin-left: 8rem;margin-right: 2rem;">Robot Inteface Type : </label>
+                <input type="text" placeholder="Enter IP"  pInputText/>
+              </div>
+            </div>
+            <div class="radio">
+              <h4><b>Robot Communications:</b></h4>
+                <h4>Select an option:</h4>
+                <div class="category-container">
+                  <div *ngFor="let category of categories" class="field-checkbox">
+                    <p-radioButton
+                      [inputId]="category.key"
+                      name="category"
+                      [value]="category"
+                      [(ngModel)]="selectedCategory">
+                    </p-radioButton>
+                    <label [for]="category.key" class="category-label">
+                      {{ category.name }}
+                    </label>
+                  </div>
+                </div>
+
+          </div>
+        </div>
+        <div class="field mt-1">
+          <p-button
+            label="Submit"
+            type="submit"
+            class="block mt-1 pt-2 "
+            icon="pi pi-check-circle"
+            styleClass="p-button-danger p-button1"
+          ></p-button>
+        </div>
+      <!-- </form> -->
+    </div>
+  </div>
+</div>

@@ -1,0 +1,90 @@
+<div class="topbar">
+  <div class="TopbarContents">
+    <app-fullscreen-button></app-fullscreen-button>
+    <img
+      src="../../assets/icons/Notification_icon.svg"
+      routerLink="/notification"
+      (click)="toggleNotificationPopup()"
+      class="Nlogo"
+    />
+    <img
+      src="../../assets/icons/Lan_icon.svg"
+      routerLink="/language"
+      class="Llogo"
+    />
+    <div class="Profile">
+      <img
+        src="../../assets/icons/Profile_icon.svg"
+        alt="profile pic"
+        routerLink="/profile"
+        class="PPicon"
+        (click)="toggleProfilePopup()"
+      />
+      <div class="profile-info">
+        <p class="username">{{ username }}</p>
+        <p class="userrole">{{ userrole }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar">
+  <div class="sidebar">
+    <img src="../../assets/Motherson_logo.svg" class="Logo" />
+
+    <div class="icons">
+      <div class="icon1" routerLink="/dashboard" routerLinkActive="active">
+        <img src="../../assets/icons/dashboard_icon copy.svg" class="Dlogo" />
+        <span class="label">Dashboard</span>
+      </div>
+      <div class="icon2" routerLink="/statistics" routerLinkActive="active">
+        <img src="../../assets/icons/Statistics.svg" class="Slogo" />
+        <span class="label">Statistics</span>
+      </div>
+      <div class="icon3" routerLink="/robots" routerLinkActive="active">
+        <img src="../../assets/icons/Statistics_icon.svg" class="Slogo" />
+        <span class="label">Robots</span>
+      </div>
+      <div class="icon4" routerLink="/configuration" routerLinkActive="active">
+        <img src="../../assets/icons/Configuration_icons.svg" class="Clogo" />
+        <span class="label">Configuration</span>
+      </div>
+      <div class="icon5" routerLink="/Reports" routerLinkActive="active">
+        <img src="../../assets/icons/Logs_icons.svg" class="Llogo" />
+        <span class="label">Error logs</span>
+      </div>
+      <div class="icon6" routerLink="/tasks" routerLinkActive="active">
+        <img src="../../assets/icons/Tasks_icons.svg" class="Llogo" />
+        <span class="label">Tasks</span>
+      </div>
+      <div class="icon7" routerLink="/usermanagement" routerLinkActive="active">
+        <img src="../../assets/icons/Usermanagement_icons.svg" class="Llogo" />
+        <span class="label">User Management</span>
+      </div>
+      <div class="icon8" routerLink="/support" routerLinkActive="active">
+        <img src="../../assets/icons/support.svg" class="Llogo" />
+        <span class="label">Support</span>
+      </div>
+    </div>
+      <!-- <div class="icon5" routerLink="/usermanagement">
+      <img
+        src="../../assets/icons/Usermanagement_icons.svg"
+        routerLink="/usermanagement"
+        class="Ulogo"
+      />
+      <span class="label">User Management</span>
+    </div> -->
+    <div class="icons logout-icon" (click)="logout()">
+      <img src="../../assets/icons/Logout_icon.svg" class="Outlogo" />
+      <span class="label">Logout</span>
+    </div>
+  </div>
+</div>
+<div class="notification-popup" *ngIf="showNotificationPopup">
+  <!-- Your notification content here -->
+  <p>No new notifications</p>
+</div>
+<div class="Profile-popup" *ngIf="showProfilePopup">
+  <!-- Your notification content here -->
+  <p>Hi,{{ username }}</p>
+</div>

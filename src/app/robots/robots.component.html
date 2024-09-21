@@ -1,0 +1,216 @@
+<div class="layout-container">
+  <app-sidenavbar></app-sidenavbar>
+  <app-fullscreen-button></app-fullscreen-button>
+  <div class="content-container">
+    <div class="main-content">
+      <!-- Add this button somewhere in your robot page, e.g., in the header or toolbar -->
+
+     
+       
+      
+      
+
+
+      <!-- Header section -->
+      <div class="header-section mb-4">
+        <h1 class="header-title">Robot Details</h1>
+        <div class="subheader-container">
+          <div class="subheader-text">Create and edit task reports</div>
+          <img
+            src="../../assets/icons/i-icon.svg"
+            alt="Icon"
+            class="subheader-icon"
+          />
+        </div>
+
+
+
+
+        <!-- Search and Date Filters -->
+        <div class="search-filter-container">
+          <!-- Search Bar -->
+          <div class="search-box">
+            <input type="text" placeholder="Search For Something..." />
+            <button class="search-btn">
+              <img src="../../assets/icons/download-removebg-preview.png" alt="Search" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <!-- <div class="action-buttons">
+          <button (click)="togglePopup()" class="add-robots-button">+ Add Robots</button>
+        </div> -->
+
+        <!-- Card Container -->
+        <!-- <div class="card" *ngFor="let robot of robots" (click)="openRobotDetail(robot)"> -->
+          <div class="card-container-wrapper mt-4">
+            <div class="card-container">
+              <div *ngFor="let robot of robots; let i = index; trackBy: trackByIndex"
+                  [ngClass]="{ 'highlighted-card': i === centerIndex, 'blurred-card': i !== centerIndex }"
+                  class="card">
+
+                <div class="top-section">
+                  <div class="icons">
+                    <!-- <div class="menu-icon" (click)="toggleMenu(i)">
+                      &#x22EE; 
+                    </div> -->
+
+                    <div class="wifi-signal">
+                      <div class="wifi-style">
+                        <div class="wifi" [ngClass]="mapSignalToClass(robot.SignalStrength)"></div>
+                      </div>
+                    </div>
+                    
+                    <!-- battery-container -->
+                    <div class="battery-container">
+                      <div class="battery">
+                        <div class="battery-level"
+                             [ngStyle]="{'height': robot.batteryPercentage + '%'}"
+                             [ngClass]="getBatteryColor(robot.batteryPercentage)">
+                        </div>
+                        <!-- Charging icon will only show if charging is true -->
+                        <div *ngIf="robot.isCharging" class="charging-icon">
+                          <img class="charging-image" src="assets/icons/charging1.png" alt="Charging" />
+                        </div>
+                      </div>
+                      <!-- <p class="battery-percentage">{{ data.batteryPercentage }}%</p> -->
+                      <!-- <p>{{ data.isCharging ? 'Charging' : 'Not Charging' }}</p> -->
+                    </div>
+
+                    
+                    <!-- <div class="popup-menu" [class.show]="menuOpenIndex === i">
+                      <ul>
+                        <li (click)="editRobot(i)" style="color: white;">Edit</li>
+                        <li (click)="deleteRobot(i)" style="color: white;">Delete</li>
+                      </ul>
+                    </div> -->
+                  </div>
+                  <img [src]="robot.imageUrl" alt="{{ robot.name }}" class="robot-image">
+                </div>
+
+                <div class="bottom-section">
+                  
+                  <!-- <img src="../../assets/icons/wifi.png" alt="WiFi Icon" class="wifi-icon"> -->
+                  <h2 class="card-header title">{{ robot.name }}</h2>
+                  
+                  <!-- <svg class="wifi-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="white"><path d="M12 18c1.104 0 2-.896 2-2h-4c0 1.104.896 2 2 2zm6.202-3c-.478-1.196-1.788-2-3.202-2s-2.724.804-3.202 2h-2.096c-.478-1.196-1.788-2-3.202-2s-2.724.804-3.202 2h-.4c1.037-3.042 4.218-5 7.8-5s6.763 1.958 7.8 5h-.4zm-6.202-5c3.582 0 6.763 1.958 7.8 5h-1.6c-1.037-3.042-4.218-5-7.8-5s-6.763 1.958-7.8 5h-1.6c1.037-3.042 4.218-5 7.8-5zm0-5c4.851 0 9.162 2.568 11.406 6.5l-1.737 1.002c-2.02-3.513-5.764-5.754-9.669-5.754s-7.649 2.241-9.669 5.754l-1.737-1.002c2.244-3.932 6.555-6.5 11.406-6.5z"/></svg>              -->
+                  <div class="card-id-status">
+                    
+                    <p>ID: {{ robot.id }}</p> <!-- Display ID -->
+                    <p>S.no: {{ robot.serialNumber }}</p> <!-- Display Serial Number -->
+                    <p>Status: <span class="robot-status">{{ robot.status }}</span></p> <!-- Display Status -->
+                    
+                  </div>
+
+                  <!-- Add a dedicated button or area to trigger the popup -->
+                  <div class="details-button-wrapper">
+                    <button class="details-button" (click)="openRobotDetail(robot)">
+                      View Details
+                    </button>
+                  </div>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- <div *ngFor="let robot of robots">
+
+            <app-battery [batteryPercentage]="robot.batteryPercentage" [isCharging]="robot.ischarging"></app-battery>
+          </div> -->
+
+      <!-- Add Robot Popup -->
+      <!-- <div *ngIf="showPopup" class="popup-overlay" (click)="togglePopup()">
+        <div class="popup" (click)="$event.stopPropagation()">
+          <h2>Add New Robot</h2>
+          <form (ngSubmit)="addRobot()">
+            <label for="name">Name:</label>
+            <input id="name" [(ngModel)]="newRobot.name" name="name" required />
+
+            <label for="imageUrl">Image URL:</label>
+            <input
+              id="imageUrl"
+              [(ngModel)]="newRobot.imageUrl"
+              name="imageUrl"
+              required
+            />
+
+            <label for="serialNumber">serial number</label>
+            <input
+              id="S.no"
+              [(ngModel)]="newRobot.serialNumber"
+              name="serialNumber"
+              required
+            />
+
+            <label for="speed">Status:</label>
+            <input
+              id="Status"
+              [(ngModel)]="newRobot.status"
+              name="S.no"
+              required
+            /> -->
+
+
+
+            <!-- <div class="flex">
+              <button type="submit">Add Robot</button>
+              <button type="button" (click)="togglePopup()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div> -->
+
+      <!-- Edit Robot Popup -->
+      <!-- <div *ngIf="isEditPopupOpen" class="popup-overlay">
+        <div class="popup">
+          <h2>Edit Robot</h2>
+          <form (ngSubmit)="saveRobot()">
+            <div class="mb-4">
+              <label for="name">Name</label>
+              <input
+                id="name"
+                [(ngModel)]="editRobotData.name"
+                name="name"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="imageUrl">Image URL</label>
+              <input
+                id="imageUrl"
+                [(ngModel)]="editRobotData.imageUrl"
+                name="imageUrl"
+                required
+              />
+            </div>
+
+            <div class="mb-4">
+              <label for="Battery">Battery</label>
+              <input
+                id="speed"
+                [(ngModel)]="editRobotData.battery"
+                name="battery"
+                required
+              />
+            </div>
+            <div class="mb-4">
+              <label for="serialNumber">serialNumber</label>
+              <input
+                id="serialNumber"
+                [(ngModel)]="editRobotData.serialNumber"
+                name="serialNumber"
+                required
+              />
+            </div>
+            <div class="flex">
+              <button type="submit">Save</button>
+              <button type="button" (click)="closeEditPopup()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div> -->
+
+
+    </div>
+  </div>

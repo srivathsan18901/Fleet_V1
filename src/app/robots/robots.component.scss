@@ -1,0 +1,748 @@
+/* Main Content Styling */
+.layout-container {
+  display: flex;
+  height: 100vh; /* Full-screen height */
+}
+
+.content-container {
+  flex-grow: 1; /* Allows the content to grow */
+  margin-left: 2rem; /* Equivalent to ml-64 (256px) */
+  padding: 3rem; /* Equivalent to p-8 */
+  height: 100vh;
+  overflow: hidden;
+}
+
+.mainContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  }
+
+  body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+    transition: background-color 0.3s ease, color 0.3s ease;
+  }
+
+
+.card {
+  background-color: var(--card-background);
+  color: var(--card-text-color);
+  border: 1px solid var(--border-color);
+}
+
+.card .popup-menu {
+  background-color: var(--menu-background);
+  color: var(--text-color);
+}
+
+body, .card, .popup-menu {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Add transitions for smooth mode switching */
+body, .card, .popup-menu {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+  /* Header section styles */
+  .header-section {
+    margin-bottom: 20px;
+  }
+
+  .header-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #DA2127;
+    margin: 0;
+  }
+
+  .subheader-container {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .subheader-text {
+    font-size: 16px;
+    color: #333;
+  }
+
+  .subheader-icon {
+    width: 13px;
+    height: 13px;
+  }
+
+  /* Search Bar and Date Filters */
+
+
+  .search-filter-container {
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Space between search bar and date filters */
+    width:500px;
+    gap: 5px;
+    padding: 10px;
+    background-color: #f7f7f7;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  .search-box {
+    display: flex;
+    align-items: center;
+    border: 0px solid #ccc;
+    border-radius: 25px;
+    overflow: hidden;
+    background-color: #ffffff;
+    width: 100%;
+    max-width: 500px; /* Adjust as needed */
+  }
+
+  .search-box input {
+    border: none;
+    padding: 10px 15px;
+    outline: none;
+    width: 100%; /* Take full width */
+    font-size: 14px;
+    border-radius: 25px 0 0 25px; /* Matching the radius of the search box */
+  }
+  .search-box input::placeholder {
+    color: #aaa;
+  }
+
+  .search-btn {
+    background-color: #ff5c5c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 25px 25px 0;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+  .search-btn img {
+    width: 50px; /* Adjust size as needed */
+    height: 24px; /* Adjust size as needed */
+  }
+  .search-btn:hover {
+    background-color: #e64e4e;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Action Buttons */
+  .action-buttons {
+    position: absolute;
+    top: 90px; /* Adjust the top spacing as needed */
+    right: 20px; /* Adjust the right spacing as needed */
+  }
+
+  .add-robots-button {
+    background-color: #ff0000; /* Red background color */
+    color: #ffffff; /* White text color */
+    padding: 10px 20px; /* Adjust padding as needed */
+    border-radius: 5px; /* Rounded corners */
+    border: none; /* Remove the default border */
+    cursor: pointer; /* Pointer cursor on hover */
+  }
+
+  .add-robots-button:hover {
+    background-color: #cc0000; /* Darker red on hover */
+  }
+
+
+  .edit-button, .delete-button {
+    /* padding: 0.75rem 1.5rem; */
+
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    background-color: #FF7373;
+    color: #fff;
+    transition: background-color 0.3s, box-shadow 0.3s;
+  }
+
+
+  .edit-button:hover, .delete-button:hover {
+    background-color: #ff4d4d;
+    box-shadow: 0 0 5px rgba(255, 77, 77, 0.5);
+  }
+
+
+    .card-container-wrapper {
+      display: flex;
+    gap: 4rem;
+    overflow-x: scroll;
+    padding: 4rem;
+    }
+
+    .card-container {
+      display: inline-flex; /* Align cards horizontally */
+      gap: 45px; /* Add space between cards */
+    }
+
+    .card {
+      display: inline-block;
+      /* Other styles remain the same */
+    }
+  /* Styles for the card */
+  .card {
+    width: 230px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #f44646, #ff7979);
+    padding: 5px;
+    overflow: hidden;
+    box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 20px 0px;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative; /* Important for positioning the icon */
+  }
+
+
+.card:hover {
+  transform: scale(1.05);
+}
+
+/* Top section styling */
+.card .top-section {
+  height: 180px;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg, rgb(249, 234, 234) 0%, rgb(234, 234, 234) 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.card .top-section .robot-image {
+  width: 80%;
+  height: 80%;
+  margin-top: 30px;
+  object-fit: contain; /* Adjust to make sure the image fits well */
+
+
+}
+
+.card .top-section .menu-icon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: rgb(255, 11, 11);
+}
+
+.card .top-section .popup-menu {
+  display: none;
+  position: absolute;
+  top: 30px;
+  right: 10px;
+  background-color: #000000;
+  /* padding: 10px; */
+  border-radius: 5px;
+  z-index: 100;
+}
+
+.card .top-section .popup-menu.show {
+  display: block;
+}
+
+.card .top-section .popup-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.card .top-section .popup-menu ul li {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+/* Bottom section styling */
+.card .bottom-section {
+  margin-top: 15px;
+  padding: 10px 5px;
+}
+
+.card .bottom-section .title {
+  font-size: 20px;
+  font-weight: bolder;
+  color: white;
+  text-align: center;
+  letter-spacing: 2px;
+  margin-bottom: 5px;
+}
+
+.card .bottom-section .card-id-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.721);
+}
+
+.card .bottom-section .card-id-status p {
+  margin: 3px 0;
+  color: rgba(255, 255, 255, 0.721);
+
+}
+
+.card .bottom-section .card-id-status .robot-status {
+  color: #4caf50; /* Green color for active status */
+}
+
+/* Center the "View Details" button */
+.details-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ff5c5c; /* Example button background color */
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-align: center;
+  margin: 0 auto; /* Center the button horizontally */
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.details-button:hover {
+  background-color: #e64e4e;
+  transform: scale(1.05); /* Add a hover effect */
+}
+
+   /* Popup Overlay */
+.popup-overlay {
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Popup Container */
+.popup {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1), 0 4px 6px rgba(0, 0, 0, 0.05);
+  max-width: 500px;
+  width: 100%;
+}
+
+/* Popup Title */
+.popup h2 {
+  margin-top: 0;
+  margin-bottom: 1.5rem; /* Add bottom margin for spacing */
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #ee1b1b;
+  text-align: center; /* Center the title */
+}
+
+/* Form Styling */
+.popup form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Add spacing between form elements */
+}
+
+/* Form Group Margin */
+.popup form .mb-4 {
+  margin-bottom: 1rem;
+}
+
+/* Label Styling */
+.popup form .mb-4 label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+  color: #272727; /* Darker label color */
+}
+
+/* Input Styling */
+.popup form .mb-4 input {
+  width: 100%;
+  padding: 0.75rem; /* Add padding for better UX */
+  border: 1px solid #ffffff;
+  border-radius: 0.375rem;
+  box-shadow: 0 0 0 2px rgba(120, 120, 120, 0.2); /* Add shadow on focus */
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+/* Input Focus State */
+.popup form .mb-4 input:focus {
+  border-color: #ee1b1b; /* Change border color on focus */
+  box-shadow: 0 0 5px rgba(238, 27, 27, 0.3); /* Slight shadow on focus */
+}
+
+/* Form Button Container */
+.popup form .flex {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem; /* Space between buttons */
+  margin-top: 1.5rem; /* Add margin-top for spacing */
+}
+
+/* Button Styling */
+.popup form button {
+  padding: 0.75rem 1.5rem;
+
+  border: none;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  background-color: #ee1b1b;
+  color: white;
+  font-weight: bold;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+
+/* Button Hover State */
+.popup form button:hover {
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  background-color: #ea1c1c; /* Lighten background color on hover */
+  transform: scale(1.05);
+}
+
+/* Button Active State */
+.popup form button:active {
+  transform: scale(1); /* Reset scale on click */
+}
+
+  /* menu */
+  .menu-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 20px;
+
+  }
+
+  /* CSS for the popup menu */
+  .popup-menu {
+    position: absolute;
+    top: 35px;
+    right: 10px;
+    background-color: #DA2127;
+    border: 1px solid #DA2127;
+    border-radius: 5px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: none; /* Initially hidden */
+  }
+
+  /* CSS to display the popup menu when visible */
+  .popup-menu.show {
+    display: block;
+  }
+
+  /* CSS for the menu options */
+  .popup-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .popup-menu ul li {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .popup-menu ul li:last-child {
+    border-bottom: none;
+  }
+
+  .popup-menu ul li:hover {
+    background-color: #ea0606;
+  }
+
+  .card-right {
+    position: absolute;
+    right: 10px;
+    top: 60%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .id-status {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+
+  }
+
+  .id-text {
+    font-size: 18px; /* Different pixel size for the ID number */
+    margin-right: 10px;
+  }
+
+  .status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    margin-top: 5px;
+  }
+
+  .status-indicator.active {
+    background-color: green;
+  }
+
+  .status-indicator.inactive {
+    background-color: red;
+  }
+
+  .status-indicator.error {
+    background-color: yellow;
+  }
+
+ 
+
+
+  .wifi-container {
+    background-color: white; /* White background */
+    padding: 20px; /* Add padding inside the container */
+    border-radius: 8px; /* Optional: Rounded corners */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: Box shadow for depth */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 200px; /* Adjust width as needed */
+    margin: 10px auto; /* Centering the container */
+  }
+
+  /* Style for the WiFi signal section */
+.wifi-signal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+  @mixin getWifi($size) {
+    $anim: 1.5s linear infinite;
+    $border-width: $size/2.35;
+    $line-color: #28a808;
+    $line-color-weak: rgba($line-color, 0.4);
+    $trans: 0.3s linear;
+    box-sizing: border-box;
+    background-color: transparent;
+    border: $size / 2 solid transparent;
+    border-top-color: $line-color;
+    border-radius: $size / 2;
+    height: $size;
+    left: 50%;
+    position: absolute;
+    top: 50%;
+    transition: border-top-color $trans;
+    width: $size;
+
+    &:before,
+    &:after {
+      content: '';
+      box-sizing: border-box;
+      background-color: transparent;
+      border: $border-width / 1.2 solid transparent;
+      border-top-color: $line-color;
+      position: absolute;
+      transition: border-top-color $trans;
+    }
+
+    &:before {
+      border-radius: $size;
+      height: $size * 2;
+      left: -$size;
+      top: -$size;
+      width: $size * 2;
+    }
+
+    &:after {
+      border-radius: $size * 3;
+      height: $size * 3;
+      left: -$size * 1.5;
+      top: -$size * 1.5;
+      width: $size * 3;
+    }
+
+    &.loading {
+      animation: blink-1 $anim;
+
+      &:before {
+        animation: blink-2 $anim;
+      }
+
+      &:after {
+        animation: blink-3 $anim;
+      }
+    }
+
+    &.none:not(.loading) {
+      border-top-color: $line-color-weak;
+
+      &:before,
+      &:after {
+        border-top-color: $line-color-weak;
+      }
+    }
+
+    &.weak:not(.loading) {
+      &:before,
+      &:after {
+        border-top-color: $line-color-weak;
+      }
+    }
+
+    &.medium:not(.loading) {
+      &:after {
+        border-top-color: $line-color-weak;
+      }
+    }
+
+    @at-root {
+      @keyframes blink-1 {
+        0% {
+          border-top-color: $line-color-weak;
+        }
+
+        50%,
+        100% {
+          border-top-color: $line-color;
+        }
+      }
+
+      @keyframes blink-2 {
+        0%,
+        100% {
+          border-top-color: $line-color;
+        }
+
+        50% {
+          border-top-color: $line-color-weak;
+        }
+      }
+
+      @keyframes blink-3 {
+        0%,
+        50% {
+          border-top-color: $line-color;
+        }
+
+        100% {
+          border-top-color: $line-color-weak;
+        }
+      }
+    }
+  }
+
+  .wifi {
+    @include getWifi(10px);  // Set size to 50px
+    transform: translate(-25%);
+  }
+
+
+
+  .wifi-style{
+    top: 10%;
+    position: absolute;
+    left: 65%;
+  }
+
+
+
+  
+.battery {
+
+  top: -3%;
+    position: absolute;
+    left: 80%;
+  width: 20px; /* Narrower width for vertical orientation */
+  height: 40px; /* Taller height */
+  border: 3px solid #777676; /* White border for outer frame */
+border-radius: 5px; /* Rounded corners like in the image */
+background-color: transparent; /* Transparent background */
+margin-bottom: 8px;
+overflow: hidden;
+
+  /* Rotate the battery 90 degrees */
+  transform: rotate(90deg);
+  transform-origin: center; /* Rotate from the center */
+}
+
+.battery::after {
+  content: '';
+  position: absolute;
+  top: -10px; /* Slightly above the container */
+  left: 25%;
+  width: 50%;
+  height: 10px;
+  background-color: #fff; /* White battery cap */
+  border-radius: 2px;
+}
+
+.battery-level {
+  width: 100%; /* Full width */
+height: 100%; /* Full height, starts from bottom */
+/* background-color: #76c7c0; */
+transition: height 0.3s ease-in-out;
+position: absolute;
+bottom: 0; /* Fill from bottom to top */
+border-radius: 2px; /* Rounded edges matching the container */
+}
+
+.battery-level.low {
+  background-color: #ef2121; /* Red for low battery */
+}
+
+.battery-level.medium {
+  background-color: #ef2121; 
+}
+
+.battery-level.high {
+  background-color: #1de213; /* Green for high battery */
+}
+
+/* Charging Icon */
+.charging-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: charging-animation 1s infinite;
+  width: 20px; /* Adjust the size */
+  height: 13px; /* Adjust the size */
+    /* Rotate the battery 90 degrees */
+    
+}
+
+.charging-image {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+    transform-origin: center; /* Rotate from the center */
+}
+
+@keyframes charging-animation {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.5;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
