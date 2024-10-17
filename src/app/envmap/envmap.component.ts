@@ -60,11 +60,13 @@ interface asset {
   desc: string;
 }
 interface Zone {
+  
   id: string;
   pos: any[];
   type: ZoneType | null;
 }
 interface Robo {
+
   roboDet: any;
   pos : {x : number, y : number, orientation : number}
 }
