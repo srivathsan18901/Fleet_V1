@@ -1,6 +1,7 @@
 <div class="layout-container">
-  <app-sidenavbar></app-sidenavbar>
-  <app-fullscreen-button></app-fullscreen-button>
+  <!-- <app-sidenavbar></app-sidenavbar> -->
+
+  <app-loader></app-loader>
   <div class="content-container">
     <div class="main-content">
       <!-- Header section -->
@@ -20,7 +21,7 @@
       <div class="search-filter-container">
         <!-- Search Bar -->
         <div class="search-box">
-          <input type="text" placeholder="Search For Something..." />
+          <input type="text" (input)="onSearch($event)" placeholder="Search For Logs..." />
           <button class="search-btn">
             <img
               src="../../assets/icons/download-removebg-preview.png"
@@ -130,13 +131,24 @@
             <th class="table-header-cell">Description</th>
           </tr>
         </thead>
+
+              <!-- Show No Data Row with image and message -->
+              <tr *ngIf="paginatedData.length === 0">
+                <td colspan="8" class="no-data">
+                  <div class="no-data-container">
+                    <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                    <p class="no-data-text">No data found</p>
+                  </div>
+                </td>
+              </tr>
+
         <tbody class="table-body">
-          <tr *ngIf="taskData.length === 0">
+          <!-- <tr *ngIf="paginatedData.length === 0">
             <td colspan="6" class="iconTable">No data found</td>
-          </tr>
-          <tr *ngFor="let item of taskData; index as i">
+          </tr> -->
+          <tr *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
             <td class="table-cell">{{ item.dateTime }}</td>
-            <td class="table-cell">{{ i + 1 }}</td>
+            <td class="table-cell">{{ item.taskId}}</td>
             <td class="table-cell">{{ item.taskName }}</td>
             <td class="table-cell">{{ item.errCode }}</td>
             <td class="table-cell">{{ item.criticality }}</td>
@@ -144,7 +156,23 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+</div>
+             <!-- Paginator -->
+      <div class="paginator-container" *ngIf="currentTable === 'task' && filteredTaskData.length > 0">
+        <mat-paginator
+          [length]="filteredTaskData.length"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 50]"
+          (page)="onPageChange($event)"
+          showFirstLastButtons>
+        </mat-paginator>
+      </div>
 
+<div class="table-container">
+  <div class="table-wrapper">
+    <div class="table-scrollable">
       <!-- Robot Table -->
       <table class="table" *ngIf="currentTable === 'robot'">
         <thead class="table-header">
@@ -157,11 +185,22 @@
             <th class="table-header-cell">Description</th>
           </tr>
         </thead>
+
+              <!-- Show No Data Row with image and message -->
+              <tr *ngIf="paginatedData1.length === 0">
+                <td colspan="8" class="no-data">
+                  <div class="no-data-container">
+                    <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                    <p class="no-data-text">No data found</p>
+                  </div>
+                </td>
+              </tr>
+
         <tbody class="table-body">
-          <tr *ngIf="robotData.length === 0">
+          <!-- <tr *ngIf="paginatedData1.length === 0">
             <td colspan="6" class="iconTable">No data found</td>
-          </tr>
-          <tr *ngFor="let item of robotData">
+          </tr> -->
+          <tr *ngFor="let item of paginatedData1; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
             <td class="table-cell">{{ item.dateTime }}</td>
             <td class="table-cell">{{ item.roboId }}</td>
             <td class="table-cell">{{ item.roboName }}</td>
@@ -171,7 +210,23 @@
           </tr>
         </tbody>
       </table>
-
+    </div>
+  </div>
+</div>
+             <!-- Paginator -->
+    <div class="paginator-container" *ngIf="currentTable === 'robot' && robotData.length > 0">
+      <mat-paginator
+        [length]="robotData.length"
+        [pageSize]="10"
+        [pageSizeOptions]="[5, 10]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </div>
+<div class="table-container">
+  <div class="table-wrapper">
+    <div class="table-scrollable">
       <!-- Fleet Table -->
       <table class="table" *ngIf="currentTable === 'fleet'">
         <thead class="table-header">
@@ -183,11 +238,23 @@
             <th class="table-header-cell">Description</th>
           </tr>
         </thead>
+
+              <!-- Show No Data Row with image and message -->
+              <tr *ngIf="paginatedData2.length === 0">
+                <td colspan="8" class="no-data">
+                  <div class="no-data-container">
+                    <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                    <p class="no-data-text">No data found</p>
+                  </div>
+                </td>
+              </tr>
+
+
         <tbody class="table-body">
-          <tr *ngIf="fleetData.length === 0">
+          <!-- <tr *ngIf="paginatedData2.length === 0">
             <td colspan="6" class="iconTable">No data found</td>
-          </tr>
-          <tr *ngFor="let item of fleetData">
+          </tr> -->
+          <tr *ngFor="let item of paginatedData2; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
             <td class="table-cell">{{ item.dateTime }}</td>
             <td class="table-cell">{{ item.moduleName }}</td>
             <td class="table-cell">{{ item.errCode }}</td>
@@ -196,16 +263,17 @@
           </tr>
         </tbody>
       </table>
+
     </div>
   </div>
 </div>
 
        <!-- Paginator -->
-    <div class="paginator-container">
+    <div class="paginator-container" *ngIf="currentTable === 'fleet' && fleetData.length > 0">
       <mat-paginator
-        [length]="filteredTaskData.length"
+        [length]="fleetData.length"
         [pageSize]="10"
-        [pageSizeOptions]="[5, 10, 15]"
+        [pageSizeOptions]="[5, 10]"
         (page)="onPageChange($event)"
         showFirstLastButtons
       >

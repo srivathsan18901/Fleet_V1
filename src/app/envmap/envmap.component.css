@@ -4,7 +4,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  margin: 30px 30px 30px 30px;
+  margin: 50px 30px 30px 30px;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
@@ -12,23 +12,62 @@
   justify-content: center;
   backdrop-filter: blur(5px);
   pointer-events: none;
+  z-index: 5;
+
 }
+
+::ng-deep .p-dropdown{
+  width: 14.5rem ;
+}
+.align-dropdown{
+  height:32px;
+  width:7rem !important;
+  font-size:12px;
+  display:flex;
+  align-items:center;
+  margin-right:19.5rem;
+}
+.warning-message {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+.Orientation_input{
+  padding: 10px;
+  border-radius: 5px;
+}
+.p-inputtext{
+  padding: 0 !important;
+  width: 240px;
+  height: 35px !important;
+  font-size: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important ;
+  align-content: center !important;
+  padding: 0rem 0.75rem !important;
+}
+
 .UDform{
   padding: 10px;
+  display: flex;
 }
+
 .popup-overlay1 {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  margin: 30px 30px 30px 30px;
+  margin: 50px 30px 30px 30px;
   background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: center;
   overflow: auto; /* Enables vertical scrolling */
   justify-content: center;
   backdrop-filter: blur(5px);
+  z-index: 10;
+  cursor: not-allowed;
 }
 .popup-content {
   background: white;
@@ -39,12 +78,13 @@
   flex-direction: column;
   align-items: center;
   overflow: auto; /* Enables scrolling within the content */
+  cursor: default;
 }
 .popup-content1 {
   background: white;
   border-radius: 20px;
   padding: 30px;
-  gap: 20px;
+  gap: 8px;
   width: auto;
   max-height: 500px;
   overflow: auto;
@@ -54,18 +94,31 @@
   align-items: center;
   overflow: auto; /* Enables scrolling within the content */
 }
+
+.flex-items{
+  display: flex !important;
+  column-gap: 1.5rem !important;
+}
+
+.form-row, .form-row1{
+  display: flex !important ;
+  flex-direction: row !important;
+  columns: 20px;
+  margin-bottom: 1rem;
+}
+
 .popup-content1 input{
   text-align: center;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   font-size: 10px;
-  border-bottom: 1px solid black;
+  /* border-bottom: 1px solid black; */
 }
 .popup-content1 select{
   text-align: center;
   border-radius: 5px;
   font-size: 15px;
   padding: 10px;
-  border-bottom: 1px solid black;
+  /* border-bottom: 1px solid black; */
 }
 
 .popup-content1 button{
@@ -77,11 +130,12 @@
   padding: 20px;
   max-width: 90%;
   max-height: 90%;
+
 }
 
 .popup-content.fixed-size {
-  width: 1440px;
-  height: 650px;
+  /* width: 1440px; */
+  height: 88%;
 }
 #Edgepopupcontent{
   max-width: 1000px;
@@ -94,7 +148,7 @@
   margin-right: 10px;
 }
 h2 {
-  font-size: 20px;
+  font-size: 18px;
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
 }
@@ -136,11 +190,12 @@ h2 {
   /* width: 120px;
   border: none;
   font-size: xx-small; */
-  border-bottom:1px solid #000000;
+  /* border-bottom:1px solid #000000; */
+  margin-right: 5px;
 }
 .OpenandLocate{
-  margin-left: 15px;
-
+  margin-left: 5px;
+  margin-top: 5px;
 }
 #X,#Y,#θ{
   width: 50px;
@@ -204,6 +259,7 @@ h2 {
   display: block;
   margin: 10px 0 5px;
   font-weight: bold;
+  font-size: 14px;
 }
 
 .form-container input {
@@ -211,7 +267,7 @@ h2 {
   padding: 8px;
   margin-bottom: 10px;
 
-  border-bottom:1px solid #000000;
+  /* border-bottom:1px solid #000000; */
   border-radius: 4px;
   text-align: center;
 }
@@ -220,6 +276,11 @@ h2 {
   background-color: #000000; /* Color of the vertical line */
   height: 160px; /* Full height of the parent container */
   margin: 20px 20px;
+}
+.node-separator{
+  width: 2px; /* Thickness of the vertical line */
+  background-color: #000000; /* Color of the vertical line */
+  margin: 0px 20px;
 }
 #or{
   font-size: 10px;
@@ -246,19 +307,20 @@ h2 {
 
 } */
 .image-container {
-  /* margin-top: 10px; */
+  margin: 0px;
   position: relative;
 }
 
-.closenode-btn,.savenode-btn,.Delnode-btn{
-  margin: 5px;
-}
+/* .closenode-btn,.savenode-btn,.Delnode-btn{
+  padding: 10px;
+} */
 
 
 canvas {
   border: 1px solid #ccc;
-  max-height: 95vh; /* Ensure content doesn't exceed viewport height */
+  max-height: 75vh; /* Ensure content doesn't exceed viewport height */
   max-width: 1420px;
+
   /* width: 1400px;
   height: 580px; */
 }
@@ -267,7 +329,7 @@ canvas {
   position: absolute;
   top: 0;
   left: 0;
-  max-height: 95vh; /* Ensure content doesn't exceed viewport height */
+  max-height: 75vh; /* Ensure content doesn't exceed viewport height */
   max-width: 1420px;
   /* width: 100px;
   height: 50px; */
@@ -280,19 +342,30 @@ canvas {
 .maplayer{
   z-index: 1;
 }
+.direction{
+  height: 40px;
+  color: #000000;
+}
 .close-btn {
   position: absolute;
-  top: -5px;
-  right: 2px;
-  border: 1px solid red;
+  top: -12px;
+  right: -15px;
   background-color: white;
-  color: #ff7373;
+  border: 2px solid red;
+  border-radius: 50%;
+  color: red;
   font-size: 20px;
   font-weight: bolder;
   padding: 5px;
-  border: none;
-  border-radius: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: none; */
+  /* border-radius: 5px; */
   cursor: pointer;
+  z-index: 10;
 }
 
 .intermediate-nodes-dialog {
@@ -341,10 +414,11 @@ canvas {
   opacity: 1; /* Slightly dim the image on hover */
 }
 .node_details{
-  margin: 0px 20px 0px 20px;
+  /* margin: 0px 20px 0px 20px; */
   padding: 15px;
   flex-direction: column;
   border-radius: 10px;
+  width: 35rem;
 }
 /* .node_details {
   display: flex;
@@ -359,7 +433,7 @@ canvas {
   display: flex;
   flex-direction: row;
   margin-bottom: 1rem;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-content: center;
   flex-wrap: wrap;
 }
@@ -367,7 +441,7 @@ canvas {
   display: flex;
   flex-direction: row;
   margin-bottom: 1rem;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-content: center;
   flex-wrap: wrap;
 }
@@ -399,9 +473,39 @@ canvas {
 
 .validation-error {
   color: red;
+  font-size: 13px;
+  margin-left: 7rem;
   /* margin-top: 0.5rem; */
+  animation: bounce 1s;
+}
+.newvalidation-message {
+  color: red;
+  font-size: 13px;
+  /* margin-left: 7rem; */
+  /* margin-top: 0.5rem; */
+  /* margin-bottom: 0.5rem; */
+  animation: bounce 1s;
+}
+.validation-message {
+  color: red;
+  font-size: 13px;
+  margin-left: 7rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  animation: bounce 1s;
 }
 
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
 
 .action-div{
   margin: 10px;
@@ -435,6 +539,13 @@ canvas {
   gap:10px;
 }
 
+.orientation{
+  display: flex;
+  align-content: center;
+  align-items: center;
+  margin-left: 1rem;
+}
+
 .node-details-popup p{
   font-family: Arial, Helvetica, sans-serif;
   font-weight: bold;
@@ -443,7 +554,7 @@ canvas {
 }
 .action-form{
   border-radius: 10px;
-  background-color: #ee4c4c60;
+  background-color: #f7c3c360;
   box-shadow: 0px 2px 10px rgb(0, 0, 0);
 }
 .node-details-popup input{
@@ -453,21 +564,21 @@ canvas {
   /* background-color: transparent; */
   border: 1px solid #ccc;
 }
-/* .sampleCSS {
+.sampleCSS {
   display: flex;
 
   font-size: 10px;
-  font-weight: bold;
-} */
-.sampleCSS {
-  display: flex;
-  flex-direction: row;
-  margin: 20px;
+  /* font-weight: bold; */
 }
+/* .sampleCSS {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin: 20px;
+} */
 
 .action-container select{
 
-  border-bottom:1px solid black ;
+  /* border-bottom:1px solid black ; */
   background-color: transparent;
   font-size: 15px;
   margin-left: 10px;
@@ -477,7 +588,7 @@ canvas {
   /* border-bottom:1px solid black ; */
   /* background-color: transparent; */
   font-size: 10px;
-  margin-left: 10px;
+  /* margin-left: 10px; */
   border: #ccc;
   border-radius: 5px;
 }
@@ -488,6 +599,7 @@ canvas {
   background-color: rgba(255, 0, 0, 0.493);
   font-size: 10px;
   color: #f8f8f8;
+  padding: 10px;
 }
 
 .distance-error-message{
@@ -523,12 +635,16 @@ canvas {
 .move-action-form{
   padding: 10px;
 }
+.Dock_btn button{
+  padding: 15px;
+  margin: 5px;
+}
 .Node-btn{
   padding: 20px 20px 0px 20px;
 }
 .calibration-layer {
   position: absolute;
-  bottom: 10px;
+  bottom: -45px;
   width: 100%;
   left: 50%;
   transform: translateX(-50%);
@@ -536,10 +652,21 @@ canvas {
   flex-direction: row;
   justify-content: center;
   background-color: #c0b3b372;
-  padding: 5px;
+  padding: 2px;
   gap: 10px;
   border-radius: 8px;
   z-index: 10;
+  pointer-events: none;
+}
+.calibration-layer button{
+  pointer-events: auto;
+
+}
+h2{
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 25px;
+  font-weight: bold;
+  color: #da2127;
 }
 
 .dropdown {
@@ -582,6 +709,18 @@ canvas {
 .dropdown:hover .dropdown-content {
   display: flex;
 }
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type='number'] {
+  /* Use standard 'appearance' property along with vendor-specific ones */
+  appearance: none;             /* Standard */
+  -moz-appearance: textfield;  /* Firefox */
+  -webkit-appearance: none;   /* Chrome, Safari */
+}
 
 .dropdown-content button {
   background-color:transparent;
@@ -601,12 +740,21 @@ canvas {
 } */
 
 button {
-  padding: 10px;
+  padding: 6px 26px;
   background-color: #ff3333;
   color: #fff;
   font-size: 15px;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.calibration-layer button {
+  padding: 10px !important;
+  background-color: #ff3333;
+  color: #fff;
+  font-size: 15px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 .image-popup-overlay{
@@ -623,17 +771,17 @@ button {
 .save-btn {
   right: 10px; /* Position it to the right */
 }
-
+/*
 .clear-btn {
-  right: 80px; /* Position it to the left of the Save button */
-}
+  right: 100px; Position it to the left of the Save button
+} */
 .OpenandLocate{
-  padding: 10px;
+  padding: 10.5px;
   background-color: #ff3333;
   color: #fff;
   font-size: 13px;
   border: none;
-  border-radius: 10px;
+  border-radius: 5px;
   cursor: pointer;
 }
 
@@ -719,6 +867,19 @@ button {
     fill: white; /* Change color on hover */
   }
 
+  .close-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
+  }
+
+  .close-btn:hover {
+    background-color: #da2127;
+  }
+
+  .close-btn:hover svg {
+    fill: white; /* Change color on hover */
+  }
   .input-groupg {
     display: flex;
     flex-wrap: nowrap;
@@ -743,6 +904,41 @@ button {
 .small-dropdown {
       height: 12px !important; /* Override default height */
       font-size: small; /* Adjust font size accordingly for readability */
+      width: 143px
 }
 
 
+
+.canvas {
+  position: relative;
+  width: 600px; /* Default width */
+  height: auto;
+  transition: all 0.3s ease-in-out;
+}
+
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1000;
+  background-color: white; /* Optional, adjust background */
+}
+
+.fullscreen .close-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.fullscreen-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1100;
+  background-color: transparent;
+  border: none;
+  color: black;
+  cursor: pointer;
+}

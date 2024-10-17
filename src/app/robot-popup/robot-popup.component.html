@@ -1,14 +1,15 @@
 <div class="popup-overlay1" *ngIf="isVisible">
+  <app-loader></app-loader>
   <div class="popup-content">
     <h4>Select Robots</h4>
 
-    <div *ngIf="availableRobots.length > 0; else noRobotsMessage">
+    <div *ngIf="listedRobo.length > 0; else noRobotsMessage">
       <table>
         <thead>
           <tr>
             <th>Select</th>
             <th>S.no</th>
-            <th>Manufacturer</th>
+            <!-- <th>Manufacturer</th> -->
             <th>Name</th>
             <th>IP Address</th>
             <!-- <th>MAC Address</th> -->
@@ -20,7 +21,7 @@
               <input type="checkbox" [(ngModel)]="robot.selected" />
             </td>
             <td>{{ i + 1 }}</td>
-            <td>{{robot.grossInfo.manufacturer}}</td>
+            <!-- <td>{{robot.grossInfo.manufacturer}}</td> -->
             <td>{{ robot.roboName }}</td>
             <td>{{ robot.ipAdd }}</td>
             <!-- <td>{{ robot.macAdd }}</td> -->
@@ -33,7 +34,7 @@
       </div>
 
       <div>
-        <button type="button" (click)="addSelectedRobots()">Place</button>
+        <button type="button" style="margin-right: 2rem; margin-top: 3rem;" (click)="addSelectedRobots()">Place</button>
         <button type="button" (click)="closePopup()">Close</button>
       </div>
     </div>

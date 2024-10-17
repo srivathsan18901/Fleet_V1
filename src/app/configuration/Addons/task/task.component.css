@@ -3,8 +3,16 @@
   border: 1px solid #000;
   border-radius: 15px;
   padding: 20px;
+  /* padding-top: 2%; */
   /* background-color: #f9f9f9; */
 }
+.centers{
+  margin-top: 2rem;
+  width: 30%;
+  display: flex;
+  justify-content: center;
+}
+
 
 /* Main content area */
 .content-fluid1 {
@@ -58,10 +66,13 @@ h4 {
   font-size: 1.2rem;
   margin-bottom: 10px;
 }
+h5{
+  font-style:normal;
+}
 
 /* Radio button section */
 .radio {
-  margin-top: 20px;
+  /* margin-top: 20px; */
 }
 
 /* Flex container for radio buttons */
@@ -103,6 +114,7 @@ h4 {
 .field-checkbox {
   display: flex;
   align-items: center;
+  margin-top: 1rem;
 }
 
 .category-label {

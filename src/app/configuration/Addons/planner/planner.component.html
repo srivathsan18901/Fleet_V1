@@ -6,66 +6,100 @@
             <div class="form-control">
               <div class="head1">
                 <div class="field">
-                  <label for="name">Fleet Planner Type :  </label>
-                  <!-- <input class="input" type=" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/> -->
-                  <p-dropdown appendTo="body" [options]="dtype" [(ngModel)]="selectedDb" optionLabel="name" placeholder="Select"></p-dropdown>
-                  <label for="name" style="margin-left: 8rem;">External Inteface Type : </label>
-                  <input type="text" placeholder="Enter IP"  pInputText/>
-                </div>
-              </div>
-              <div class="head2" style="width: -webkit-fill-available;">
-                <span><b>Agent Parameters : </b> </span>
-                <div class="field2">
-                  <label for="name" style="margin-right: 5.5rem;">MAX_LINEAR_VELOCITY :  </label>
-                  <input class="input" type="number" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/>
 
-                  <label for="name" style="margin-left: 65px;">MAX_ROBOTS_COUNT : </label>
-                  <input type="text" placeholder="Enter IP"  pInputText/>
-                </div>
-                <div class="form2">
-                  <label for="name" style="margin-right: 3.9rem;">SAFE_THRESHOLD :  </label>
-                  <input class="input" type="number" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/>
-
-                  <label for="name">LOOK_AHEAD :  </label>
-                  <input class="input" type="number" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/>
-                </div>
-                <div class="form2">
-                  <label for="name">MAX_POINTS_TO_RESERVE :  </label>
-                  <input class="input" type="number" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/>
-
-                  <label for="name">FIELD_OF_VIEW :  </label>
-                  <input class="input" type="number" minlength="7" maxlength="15" size="15"  placeholder="Enter" pInputText required/>
-                </div>
-              </div>
-              <!-- <div class="radio">
-                <h4><b>Robot Communications:</b></h4>
-                  <h4>Select an option:</h4>
-                  <div class="category-container">
-                    <div *ngFor="let category of categories" class="field-checkbox">
-                      <p-radioButton
-                        [inputId]="category.key"
-                        name="category"
-                        [value]="category"
-                        [(ngModel)]="selectedCategory">
-                      </p-radioButton>
-                      <label [for]="category.key" class="category-label">
-                        {{ category.name }}
-                      </label>
+                    <label for="name" style="margin-right: 1rem; display: flex; align-items: center;">Fleet Planner Type: </label>
+                    <div class="validate">
+                    <p-dropdown appendTo="body" [options]="plannerType" [(ngModel)]="selectedPlanner" optionLabel="name" placeholder="Select" #planner="ngModel" required></p-dropdown>
+                    <div *ngIf="planner.invalid && planner.touched" class="validation-error">
+                      <small> *Fleet Planner Type is required.</small>
                     </div>
                   </div>
 
-            </div> -->
+                    <label for="name" style="margin-right: 1rem; display: flex; align-items: center; margin-left: 8rem;">External Interface Type:</label>
+                    <div class="validate">
+                    <input type="text" placeholder="Enter IP" [(ngModel)]="formData.externalInterfaceType" pInputText #externalInterface="ngModel" required/>
+                    <div *ngIf="externalInterface.invalid && externalInterface.touched" class="validation-error">
+                      <small> *External Interface Type is required.</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="head2" style="width: -webkit-fill-available;">
+                <span><b>Agent Parameters: </b></span>
+
+                <div class="field2">
+
+                    <label for="name" style="margin-right: 5.2rem;">MAX_LINEAR_VELOCITY:</label>
+                    <div class="validate">
+                      <input class="input" type="number" placeholder="Enter" [(ngModel)]="formData.maxLinearVelocity" pInputText #maxLinearVelocity="ngModel" required/>
+                      <div *ngIf="maxLinearVelocity.invalid && maxLinearVelocity.touched" class="validation-error">
+                        <small> *MAX_LINEAR_VELOCITY is required.</small>
+                      </div>
+                    </div>
+
+                    <label for="name" style="margin-left: 65px;">MAX_ROBOTS_COUNT:</label>
+                    <div class="validate">
+                      <input class="input" type="number" placeholder="Enter" [(ngModel)]="formData.maxRobotsCount" pInputText #maxRobotsCount="ngModel" required/>
+                      <div *ngIf="maxRobotsCount.invalid && maxRobotsCount.touched" class="validation-error">
+                        <small> *MAX_ROBOTS_COUNT is required.</small>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="form2">
+
+                    <label for="name" style="margin-right: 3.9rem;">SAFE_THRESHOLD:</label>
+                    <div class="validate">
+                    <input class="input" type="number" placeholder="Enter" [(ngModel)]="formData.safeThreshhold" pInputText #safeThreshhold="ngModel" required/>
+                    <div *ngIf="safeThreshhold.invalid && safeThreshhold.touched" class="validation-error">
+                      <small> *SAFE_THRESHOLD is required.</small>
+                    </div>
+                  </div>
+
+                    <label for="name">LOOK_AHEAD:</label>
+                    <div class="validate">
+                    <input class="input" type="number" placeholder="Enter" [(ngModel)]="formData.lookAhead" pInputText #lookAhead="ngModel" required/>
+                    <div *ngIf="lookAhead.invalid && lookAhead.touched" class="validation-error">
+                      <small> *LOOK_AHEAD is required.</small>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form2">
+
+                    <label for="name">MAX_POINTS_TO_RESERVE:</label>
+                    <div class="validate">
+                    <input class="input" type="number" placeholder="Enter" [(ngModel)]="formData.maxPointstoRes" pInputText #maxPointstoRes="ngModel" required/>
+                    <div *ngIf="maxPointstoRes.invalid && maxPointstoRes.touched" class="validation-error">
+                      <small> *MAX_POINTS_TO_RESERVE is required.</small>
+                    </div>
+                  </div>
+
+                    <label for="name">FIELD_OF_VIEW:</label>
+                    <div class="validate">
+                    <input class="input" type="number" placeholder="Enter" [(ngModel)]="formData.FOV" pInputText #FOV="ngModel" required/>
+                    <div *ngIf="FOV.invalid && FOV.touched" class="validation-error">
+                      <small> *FIELD_OF_VIEW is required.</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
           </div>
-          <div class=" mt-1">
+          <div class="mt-1 centers">
             <p-button
               label="Submit"
               type="submit"
-              class="block mt-1 pt-2 "
+              class="block mt-1 pt-2"
               icon="pi pi-check-circle"
               styleClass="p-button-danger p-button1"
+              [disabled]="planner.invalid || externalInterface.invalid || maxLinearVelocity.invalid || maxRobotsCount.invalid || safeThreshhold.invalid || lookAhead.invalid || maxPointstoRes.invalid || FOV.invalid"
+              (onClick)="savePlanner()"
             ></p-button>
           </div>
-        <!-- </form> -->
-      </div>
+
     </div>
   </div>

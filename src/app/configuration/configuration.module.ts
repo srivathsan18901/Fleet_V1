@@ -20,7 +20,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
-
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -43,7 +43,8 @@ import { ToastModule } from 'primeng/toast';
     InputGroupAddonModule,
     DropdownModule,
     RadioButtonModule,
-    ToastModule
+    ToastModule,
+    ReactiveFormsModule
 
   ],
   exports: [

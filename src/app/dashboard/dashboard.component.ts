@@ -3,6 +3,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   ViewChild,
+  ElementRef,
 } from '@angular/core';
 import domtoimage from 'dom-to-image-more';
 import RecordRTC from 'recordrtc';
@@ -31,7 +32,6 @@ enum ZoneType {
   MAINTENANCE_ZONE = 'Maintenance Zone',
   PARKING_ZONE = 'Parking Zone',
 }
-
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
@@ -40,13 +40,16 @@ enum ZoneType {
 export class DashboardComponent implements AfterViewInit {
   @ViewChild(UptimeComponent) UptimeComponent!: UptimeComponent;
   @ViewChild(ThroughputComponent) throughputComponent!: ThroughputComponent;
-
+  @ViewChild('myCanvas', { static: false })
+  myCanvas!: ElementRef<HTMLCanvasElement>;
   eventSource!: EventSource;
+  posEventSource!: EventSource;
   ONBtn = false;
   showDashboard = false;
+  isDropdownOpen = false;
   selectedFloor = 'Floor 1';
   floors = ['Floor 1'];
-  zoomLevel = 0.9;
+  zoomLevel = 1.0;
   isPanning = false;
   lastX = 0;
   lastY = 0;
@@ -57,8 +60,10 @@ export class DashboardComponent implements AfterViewInit {
   edges: any[] = [];
   zones: any[] = [];
   assets: any[] = [];
+  simMode: any[] = [];
   robos: any[] = [];
   ratio: number = 1;
+  origin : {x : number, y : number, w : number} = { x : 0, y : 0, w : 0 };
   plottedPoints: { id: number; x: number; y: number }[] = [];
   zoneType: ZoneType | null = null; // Selected zone type
   startX = 0;
@@ -92,19 +97,62 @@ export class DashboardComponent implements AfterViewInit {
   private recorder: any;
   private stream: MediaStream | null = null; // Store the MediaStream here
   showModelCanvas: boolean = false; // Initially hide the modelCanvas
+  selectedMap: any | null = null;
+  mapImg: any | null = null;
+  mapImageWidth: number = 0; // To store the width of the map image
+  mapImageHeight: number = 0; // To store the height of the map image
+  mapImageX: number = 0; // To store the X position of the map image
+  mapImageY: number = 0; // To store the Y position of the map image
+  draggingRobo: any = null; // Holds the robot being dragged
+  selectedRobo: any = null;
+  placeOffset: number = 50;
+  robotToInitialize: any = null;
+  isEnableMode: boolean = false;
+  isMoveModeActive: boolean = false; // Track if move mode is enabled
+  isDragging: boolean = false;
+  isMapLoaded = false;
+  isImage: boolean = false;
+  updatedrobo: any;
 
   constructor(
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef
   ) {
     if (this.projectService.getIsMapSet()) return;
-    this.onInitMapImg(); // yet to remove..
+    // this.onInitMapImg(); // yet to remove..
+  }
+
+  async ngOnInit() {
+    this.selectedMap = this.projectService.getMapData();
+    if (!this.projectService.getMapData()) {
+      await this.onInitMapImg();
+      this.isMapLoaded = false;
+      return;
+    }
+    await this.getMapDetails();
+    this.loadCanvas();
+    await this.initSimRoboPos();
+    console.log(this.simMode);
+
+    // this.toggleModelCanvas();
+    // await this.fetchRoboPos();
   }
 
   ngAfterViewInit(): void {
-    this.robotImages = {
-      robotB: new Image()
+    console.log('myCanvas:', this.myCanvas);
+    if (this.myCanvas) {
+      const canvas = this.myCanvas.nativeElement;
+      this.addMouseMoveListener(canvas);
+      this.addMouseClickListener(canvas);
+      this.addMouseDownListener(canvas);
+      this.addMouseUpListener(canvas);
+      this.addRightClickListener(canvas);
+    } else {
+      console.error('myCanvas is undefined');
     }
+    this.robotImages = {
+      robotB: new Image(),
+    };
     this.assetImages = {
       docking: new Image(),
       charging: new Image(),
@@ -114,6 +162,579 @@ export class DashboardComponent implements AfterViewInit {
 
     this.robotImages['robotB'] = new Image();
     this.robotImages['robotB'].src = 'assets/CanvasRobo/robotB.svg';
+  }
+
+  // yet to update pos and save it in map..
+  async initSimRoboPos() {
+    
+    const imgWidth = this.mapImg.width * this.zoomLevel;
+    const imgHeight = this.mapImg.height * this.zoomLevel;
+
+    // Calculate the bottom-right corner position of the image
+    let roboX = imgWidth - this.placeOffset;
+    let roboY = imgHeight - 100;
+    let i = 1;
+
+    this.simMode = this.simMode.map((robo) => {
+      // if (!robo.pos.x && !robo.pos.y) {
+        roboX = imgWidth - this.placeOffset * i;
+        robo.pos = { x: roboX, y: roboY, orientation: 90 };
+        i++;
+      // }
+      return robo;
+    });
+  }
+
+  addRightClickListener(canvas: HTMLCanvasElement) {
+    canvas.addEventListener('contextmenu', (event) => {
+      event.preventDefault(); // Prevent the default context menu
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      const imgX = (mouseX - this.mapImageX - this.offsetX) / this.zoomLevel;
+      const imgY =
+        (canvas.height - mouseY - this.mapImageY - this.offsetY) /
+        this.zoomLevel;
+
+      for (let robo of this.simMode) {
+        const roboX = robo.pos.x;
+        const roboY = this.mapImageHeight - robo.pos.y;
+        const imageSize = 25; // Adjust size based on robot image dimensions
+        if (
+          imgX >= roboX - imageSize &&
+          imgX <= roboX + imageSize &&
+          imgY >= roboY - imageSize &&
+          imgY <= roboY + imageSize
+        ) {
+          // Show the popup at the clicked position
+          this.showPopup(event.clientX, event.clientY);
+          this.updatedrobo = robo;
+          // console.log(this.updatedrobo);
+          return;
+        }
+      }
+
+      /* for (let robo of this.robos) {
+        const roboX = robo.pos.x;
+        const roboY = this.mapImageHeight - robo.pos.y;
+        const imageSize = 25; // Adjust size based on robot image dimensions
+        if (
+          imgX >= roboX - imageSize &&
+          imgX <= roboX + imageSize &&
+          imgY >= roboY - imageSize &&
+          imgY <= roboY + imageSize
+        ) {
+          // Show the popup at the clicked position
+          this.showPopup(event.clientX, event.clientY);
+          this.updatedrobo = robo;
+          console.log(this.updatedrobo);
+          return;
+        }
+      } */
+    });
+  }
+
+  showPopup(x: number, y: number) {
+    const popup = document.getElementById('robo-popup') as HTMLDivElement;
+    if (popup) {
+      popup.style.display = 'block';
+      popup.style.left = `${x}px`;
+      popup.style.top = `${y}px`;
+    }
+  }
+
+  hidePopup() {
+    const popup = document.getElementById('robo-popup') as HTMLDivElement;
+    if (popup) {
+      popup.style.display = 'none';
+    }
+  }
+
+  async initializeRobo() {
+    // Toggle between initializing and releasing the robot
+    if (this.updatedrobo) {
+      // If the robot is already initialized, release it
+      if (this.updatedrobo.isInitialized) {
+        // await this.updateEditedMap();
+        this.updatedrobo.isInitialized = false;
+        console.log(`Robot ${this.updatedrobo.amrId} released`);
+        return;
+        // Otherwise, initialize the robot
+      } else {
+        this.updatedrobo.isInitialized = true;
+        console.log(`Robot ${this.updatedrobo.amrId} initialized`);
+      }
+    }
+
+    // await this.updateEditedMap();
+    // this.robotToInitialize = this.draggingRobo;
+    this.robotToInitialize = this.updatedrobo; // yet to use instead of above line..
+    this.hidePopup();
+
+    await this.initializeRobot();
+  }
+
+  async initializeRobot(): Promise<void> {
+    // console.log(this.robotToInitialize, this.ratio);
+
+    let ratio = this.ratio ? this.ratio : 1;
+    let quaternion = { x: 0, y: 0, z: 0, w: 1 };
+    const transformedY =
+      this.myCanvas.nativeElement.height - this.robotToInitialize.pos.y;
+    this.robotToInitialize.pos.x = this.robotToInitialize.pos.x * ratio;
+    this.robotToInitialize.pos.y = transformedY * ratio;
+
+    // quaternion = this.positionToQuaternion(this.robotToInitialize.pos);
+    let initializeRobo = {
+      id: this.robotToInitialize.amrId,
+      pose: {
+        position: {
+          x: this.robotToInitialize.pos.x,
+          y: this.robotToInitialize.pos.y,
+          z: this.robotToInitialize.pos.orientation,
+        },
+        orientation: quaternion,
+      },
+    };
+
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/initialize-robot`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapId: this.selectedMap.id,
+          initializeRobo: initializeRobo,
+        }),
+      }
+    );
+    let data = await response.json();
+    console.log(data);
+    // this.cancelDelete();
+    if (data.isInitialized) {
+      alert('robo Initialized!');
+      return;
+    }
+    if (data.msg) alert(data.msg);
+  }
+
+  cancelAction() {
+    this.hidePopup();
+  }
+
+  enableMove() {
+    this.hidePopup(); // Hide the popup after enabling move mode
+  }
+
+  async updateEditedMap() {
+    if (!this.selectedMap) return;
+
+    let editedMap = {
+      simMode: this.simMode,
+    };
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/update-map/${this.selectedMap.mapName}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editedMap),
+        }
+      );
+      let data = await response.json();
+      const { updatedData } = data;
+      this.simMode = updatedData.simMode;
+      // console.log('updated sim robos position : ', this.simMode);
+
+      // this.robos = Array.isArray(updatedData.robos) ? updatedData.robos : [];
+    } catch (error) {
+      console.error('Error updating map:', error);
+    }
+  }
+
+  async toggleModelCanvas() {
+    // this.fetchRoboPos ();
+    this.showModelCanvas = !this.showModelCanvas;
+    // if (!this.showModelCanvas) {      
+    //   this.nodes = [];
+    // } else {
+    //   await this.getMapDetails();
+    //   // await this.fetchRoboPos(); // Call fetchRoboPos when showing model canvas
+    // }
+    this.loadCanvas(); // Redraw the canvas based on the updated state
+    // this.fetchRoboPos();
+  }
+
+  redrawCanvas() {
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    if (ctx) {
+      // Load the background image
+      this.isImage = true;
+      const img = new Image();
+      img.src = `http://${this.projectService.getMapData().imgUrl}`;
+
+      img.onload = () => {
+        // Draw the image and other elements
+        this.draw(ctx, img);
+      };
+    }
+  }
+
+  loadCanvas() {
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+  
+    if (ctx) {
+      const img = new Image();
+      let imgName = this.projectService.getMapData();
+      img.src = `http://${imgName.imgUrl}`;
+  
+      img.onload = () => {
+        // Set canvas dimensions based on its container
+        canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+        canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+  
+        // Calculate the scaled image dimensions
+        this.mapImageWidth = img.width * this.zoomLevel;
+        this.mapImageHeight = img.height * this.zoomLevel;
+  
+        // Center the image on the canvas
+        this.mapImageX = (canvas.width - this.mapImageWidth) / 2 + this.offsetX;
+        this.mapImageY = (canvas.height - this.mapImageHeight) / 2 + this.offsetY;
+  
+        // Draw the image and other elements
+        this.draw(ctx, img);
+      };
+    }
+  }
+
+  draw(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
+    const imgWidth = img.width * this.zoomLevel;
+    const imgHeight = img.height * this.zoomLevel;
+  
+    // Calculate the position to center the image
+    const centerX = (canvas.width - imgWidth) / 2 + this.offsetX;
+    const centerY = (canvas.height - imgHeight) / 2 + this.offsetY;
+   
+    
+    // Apply transformation for panning and zooming
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.scale(this.zoomLevel, this.zoomLevel);
+    
+  
+    // Draw the image
+    ctx.drawImage(img, 0, 0);
+  
+    this.simMode.forEach((robo) => {
+      this.plotRobo(ctx, robo.pos.x, robo.pos.y, robo.pos.orientation);
+    });
+  
+    this.robos.forEach(
+      (robo) =>
+        this.plotRobo(ctx, robo.pos.x, robo.pos.y, robo.roboDet.selected)
+    );
+  
+    if (!this.showModelCanvas) {   
+      ctx.restore();
+      return;
+    }
+  
+    this.nodes.forEach((node) => {
+      const transformedY = img.height - node.nodePosition.y;
+      this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
+    });
+  
+    this.edges.forEach((edge) => {
+      const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
+      const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
+      if (startNode && endNode) {
+        const startPos = {
+          x: startNode.nodePosition.x,
+          y: startNode.nodePosition.y,
+        };
+        const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
+        const transformedStartY = img.height - startPos.y;
+        const transformedEndY = img.height - endPos.y;
+        this.drawEdge(
+          ctx,
+          { x: startPos.x, y: transformedStartY },
+          { x: endPos.x, y: transformedEndY },
+          edge.direction,
+          edge.startNodeId,
+          edge.endNodeId
+        );
+      }
+    });
+    this.zones.forEach((zone) => {
+      // Re-plot the points of the zone
+      // zone.pos.forEach((point, index) => {
+      //   // Plot the first point in violet and others in red
+      //   const isFirstPoint = index === 0;
+      //   this.plotZonePoint(point.x, point.y, isFirstPoint);
+      // });
+      this.plottedPoints = zone.pos;
+      this.zoneType = zone.type;
+      this.drawLayer(ctx);
+      this.plottedPoints = [];
+    });
+
+    this.assets.forEach((asset) =>
+      this.plotAsset(ctx, asset.x, asset.y, asset.type)
+    );
+    ctx.restore(); // Reset transformation after drawing
+  }
+
+  isRobotClicked(robo: any, x: number, y: number): boolean {
+    const imageSize = 25;
+    const roboX = robo.pos.x;
+    const roboY = this.mapImageHeight - robo.pos.y;
+
+    console.log(roboX, roboY);
+
+    // Check if the click is within the robot's bounds (circle radius check)
+    const distance = Math.sqrt((x - roboX) ** 2 + (y - roboY) ** 2);
+    // console.log(distance, imageSize*1.5);
+    return distance <= imageSize * 1.5; // Adjust this based on the robot's size
+  }
+
+  addMouseDownListener(canvas: HTMLCanvasElement) {
+    canvas.addEventListener('mousedown', (event) => {
+      // if (!this.showModelCanvas) return;
+      // if (event.button) return;
+
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      const transY = canvas.height - mouseY;
+      // console.log(this.zoomLevel);
+      
+      // Adjust for zoom and pan
+      const imgX = (mouseX - this.mapImageX - this.offsetX) / this.zoomLevel;
+      const imgY = (transY - this.mapImageY - this.offsetY) / this.zoomLevel;
+
+      for (let robo of this.simMode) {
+        // console.log(this.zoomLevel);
+        
+        const roboX = robo.pos.x ;
+        const roboY = this.mapImageHeight - robo.pos.y;
+        const imageSize = 25; // Adjust to the sie of the robot image
+        // console.log("robotXY"+roboX, roboY);
+        // console.log("imgXY"+imgX, imgY);
+        if (
+          imgX >= roboX - imageSize &&
+          imgX <= roboX + imageSize &&
+          imgY >= roboY - imageSize &&
+          imgY <= roboY + imageSize
+        ) {
+          // if (this.isRobotClicked(robo, imgX, imgY)) {
+          if (robo.isInitialized) {
+            console.log(`Robot ${robo.amrId} is initialized and cannot move.`);
+            return; // Do not allow dragging if the robot is initialized
+          }
+          // this.offsetX = imgX - roboX; // Store offset to maintain relative position during drag
+          // this.offsetY = imgY - roboY;
+          this.draggingRobo = robo; // Store the robot being dragged
+          this.isDragging = true;
+          this.hidePopup();
+          break;
+        }
+      }
+
+      /* for (let robo of this.robos) {
+        const roboX = robo.pos.x;
+        const roboY = this.mapImageHeight - robo.pos.y;
+        const imageSize = 25; // Adjust to the size of the robot image
+
+        if (
+          imgX >= roboX - imageSize &&
+          imgX <= roboX + imageSize &&
+          imgY >= roboY - imageSize &&
+          imgY <= roboY + imageSize
+        ) {
+          // if (this.isRobotClicked(robo, imgX, imgY)) {
+          if (robo.isInitialized) {
+            console.log(
+              `Robot ${robo.roboDet.id} is initialized and cannot move.`
+            );
+            return; // Do not allow dragging if the robot is initialized
+          }
+          this.hidePopup();
+          this.draggingRobo = robo; // Store the robot being dragged
+          // this.offsetX = imgX - roboX; // Store offset to maintain relative position during drag
+          // this.offsetY = imgY - roboY;
+          this.isDragging = true;
+          // console.log(this.isDragging,this.draggingRobo);
+          break;
+        }
+      } */
+    });
+  }
+
+  addMouseUpListener(canvas: HTMLCanvasElement) {
+    canvas.addEventListener('mouseup', async (event) => {
+      if (this.isDragging) {
+        this.isDragging = false;
+        this.draggingRobo = null;
+        this.redrawCanvas();
+      }
+    });
+  }
+
+  addMouseClickListener(canvas: HTMLCanvasElement) {
+    canvas.addEventListener('click', (event) => {
+      // if (!this.showModelCanvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      
+      const transY = canvas.height - mouseY;
+      // console.log(this.zoomLevel);
+      
+      // Adjust for zoom and pan
+      const imgX = (mouseX - this.mapImageX - this.offsetX) / this.zoomLevel;
+      const imgY = (transY - this.mapImageY - this.offsetY) / this.zoomLevel;
+
+      console.log(
+        'mouse is clicked in:',
+        Math.round(imgX) * this.ratio,
+        Math.round(imgY) * this.ratio
+      );
+
+      // Check if the click is within the bounds of the map image
+      const isInsideMap =
+        imgX >= 0 &&
+        imgX <= this.mapImageWidth / this.zoomLevel &&
+        imgY >= 0 &&
+        imgY <= this.mapImageHeight / this.zoomLevel;
+
+      if (!isInsideMap) {
+        // console.log("hey");
+        return; // Exit if the click is outside the map image
+      }
+
+      // Check if the click is on any robot within the map image
+      for (let robo of this.robos) {
+        const roboX = robo.pos.x;
+        const roboY = this.mapImageHeight - robo.pos.y;
+        console.log('robo pos:', roboX * this.ratio, roboY * this.ratio);
+
+        // Assuming the robot image is a square, check if the click is within the image bounds
+        const imageSize = 25; // Adjust this to the size of the robot image
+
+        if (
+          imgX >= roboX - imageSize &&
+          imgX <= roboX + imageSize &&
+          imgY >= roboY - imageSize &&
+          imgY <= roboY + imageSize
+        ) {
+          console.log(`Robot clicked: ${robo.roboDet.id}`);
+          break;
+        } else {
+          // console.log('not_clicked');
+        }
+      }
+    });
+  }
+
+  addMouseMoveListener(canvas: HTMLCanvasElement) {
+    const tooltip = document.getElementById('Pos_tooltip')!;
+
+    canvas.addEventListener('mousemove', (event) => {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = event.clientX - rect.left;
+      const mouseY = event.clientY - rect.top;
+      const transY = canvas.height - mouseY;
+      // Adjust for zoom and pan
+      const imgX = (mouseX - this.mapImageX - this.offsetX) / this.zoomLevel;
+      const imgY = (transY - this.mapImageY - this.offsetY) / this.zoomLevel;
+
+      if (this.draggingRobo && this.isDragging) {
+        let newX = (mouseX - this.mapImageX - this.offsetX) / this.zoomLevel;
+        let newY = (mouseY - this.mapImageY - this.offsetY) / this.zoomLevel;
+        // Update the position of the robot being dragged
+        newX = Math.max(0, Math.min(newX, this.mapImageWidth / this.zoomLevel));
+        newY = Math.max(
+          0,
+          Math.min(newY, this.mapImageHeight / this.zoomLevel)
+        );
+
+        // Update the robot's position
+        this.draggingRobo.pos.x = newX;
+        this.draggingRobo.pos.y = newY;
+
+        // Redraw the canvas with the updated robot position
+        this.redrawCanvas();
+      }
+      // Check if the mouse is within the bounds of the map image
+      const isInsideMap =
+        imgX >= 0 &&
+        imgX <= this.mapImageWidth / this.zoomLevel &&
+        imgY >= 0 &&
+        imgY <= this.mapImageHeight / this.zoomLevel;
+
+      if (isInsideMap) {
+        // Set tooltip content and position
+        tooltip.textContent = `X = ${Math.round(imgX) * this.ratio}, Y = ${
+          Math.round(imgY) * this.ratio
+        }`;
+        tooltip.style.display = 'block';
+        tooltip.style.left = `${event.clientX}`;
+        tooltip.style.top = `${event.clientY}`; // Adjust 10px below the cursor
+      } else {
+        tooltip.style.display = 'none'; // Hide tooltip if outside
+      }
+    });
+
+    canvas.addEventListener('mouseleave', () => {
+      tooltip.style.display = 'none'; // Hide tooltip when mouse leaves canvas
+    });
+  }
+
+  // List of robots
+  robots = [
+    { name: 'Robot 1', enabled: false },
+    { name: 'Robot 2', enabled: false },
+    { name: 'Robot 3', enabled: false },
+  ];
+
+  // Toggle the dropdown menu
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
+  }
+
+  async enable_robot(robot: any) {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/enable-robot`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapId: this.selectedMap.id,
+          roboToEnable: {
+            robotId: robot.amrId,
+            enable: true,
+          },
+        }),
+      }
+    );
+    return await response.json();
+  }
+
+  async activateRobot(robot: any) {
+    robot.enabled = true;
+    let data = await this.enable_robot(robot);
+    // console.log(data);
+    // console.log(`${robot.name} has been enabled.`);
   }
 
   async getMapDetails() {
@@ -126,48 +747,185 @@ export class DashboardComponent implements AfterViewInit {
     let data = await response.json();
     if (!data.map) return;
     mapData = data.map;
+    this.simMode = mapData.simMode;
     this.ratio = data.map.mpp;
-
+    this.origin = {x : mapData.origin.x, y : mapData.origin.y, w : mapData.origin.w};
     this.nodes = mapData.nodes.map((node: any) => {
       // yet to interface in this component..
-      node.nodePosition.x = node.nodePosition.x / (this.ratio || 1);
-      node.nodePosition.y = node.nodePosition.y / (this.ratio || 1);
+      node.nodePosition.x = (node.nodePosition.x - (this.origin.x || 0)) / (this.ratio || 1);
+      node.nodePosition.y = (node.nodePosition.y - (this.origin.y || 0)) / (this.ratio || 1);
       return node;
     });
 
     this.edges = mapData.edges;
 
     this.assets = mapData.stations.map((asset: any) => {
-      // yet to interface in this component..
-      asset.x = asset.x / (this.ratio || 1);
-      asset.y = asset.y / (this.ratio || 1);
+      asset.x = ((asset.x - (this.origin.x || 0)) / (this.ratio || 1));
+      asset.y = ((asset.y - (this.origin.y || 0)) / (this.ratio || 1));
       return asset;
     });
 
     this.zones = mapData.zones.map((zone: any) => {
-      // yet to interface in this component..
       zone.pos = zone.pos.map((pos: any) => {
-        pos.x = pos.x / (this.ratio || 1);
-        pos.y = pos.y / (this.ratio || 1);
+        pos.x = ((pos.x - (this.origin.x || 0)) / (this.ratio || 1));
+        pos.y = ((pos.y - (this.origin.x || 0)) / (this.ratio || 1));
         return pos;
       });
       return zone;
     });
 
-    this.robos = mapData.roboPos.map((robo:any)=>{
+    this.robos = mapData.roboPos.map((robo: any) => {
       robo.pos.x = robo.pos.x / (this.ratio || 1);
       robo.pos.y = robo.pos.y / (this.ratio || 1);
+      // console.log(
+      //   'initial robo pos:',
+      //   robo.pos.x * this.ratio,
+      //   (this.mapImageHeight- robo.pos.y) * this.ratio
+      // );
+
       return robo;
-    })
+    });
+
+    // yet to check..
+    this.simMode = mapData.simMode.map((robo: any) => {
+      robo.pos.x = robo.pos.x / (this.ratio || 1);
+      robo.pos.y = robo.pos.y / (this.ratio || 1);
+
+      return robo;
+    });
+
+    this.mapImg = new Image();
+    let imgName = this.projectService.getMapData();
+    this.mapImg.src = `http://${imgName.imgUrl}`;
   }
 
-  // guess no need..
-  async ngOnInit() {
-    if (!this.projectService.getMapData()) {
-      await this.onInitMapImg();
-      return;
+  drawElements(ctx: CanvasRenderingContext2D) {}
+
+  async fetchRoboPos(x: number, y: number, yaw: number) {
+    // console.log(amrPos);
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    const imageWidth = 35; // Set this to the actual width of the plotted image
+    const imageHeight = 25; // Set this to the actual height of the plotted image
+
+    // Clear only the previous image area
+    // const clearPreviousImage = (x: number, y: number) => {
+    //   ctx?.clearRect(
+    //     x - imageWidth / 2,
+    //     y - imageHeight / 2,
+    //     imageWidth,
+    //     imageHeight
+    //   );
+    // };
+    const mapImage = new Image();
+    let map = this.projectService.getMapData();
+    mapImage.src = `http://${map.imgUrl}`;
+    await mapImage.decode(); // Wait for the image to load
+
+    if (ctx) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Calculate the scaled image dimensions
+      const imgWidth = mapImage.width * this.zoomLevel;
+      const imgHeight = mapImage.height * this.zoomLevel;
+
+      // Center the image on the canvas
+      const centerX = (canvas.width - imgWidth) / 2;
+      const centerY = (canvas.height - imgHeight) / 2;
+      // Apply transformation for panning and zooming
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.scale(this.zoomLevel, this.zoomLevel);
+      ctx.restore(); // Reset transformation after drawing
+
+      if (this.showModelCanvas) {
+        this.redrawOtherElements(ctx, mapImage); // Pass the mapImage for transformations
+      }
+      // Draw the map image
+      ctx.drawImage(mapImage, 0, 0);
+
+      // if (i > 0) clearPreviousImage(amrPos[i - 1].x, amrPos[i - 1].y);
+      const transformedY = canvas.height - y;
+      // console.log(amrPos[i].x, amrPos[i].y);
+      this.plotRobo(ctx, x, transformedY, yaw);
     }
-    this.loadCanvas();
+  }
+
+  plotRobo(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    orientation: number
+  ) {
+    const image = this.robotImages['robotB'];
+    const imageSize = 25;
+
+    if (image && ctx) {
+      ctx.save(); // Save the current context before rotation
+      ctx.translate(x, y); // Move the rotation point to the robot's center
+      ctx.rotate((orientation * Math.PI) / 180); // Rotate by the given orientation angle (converted to radians)
+      ctx.drawImage(
+        image,
+        -imageSize / 2,
+        -imageSize / 2,
+        imageSize * 1.3,
+        imageSize
+      );
+      ctx.restore(); // Restore the context after rotation
+    }
+  }
+
+  redrawOtherElements(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+    // // Redraw nodes, edges, assets, and zones
+    this.nodes.forEach((node) => {
+      const transformedY = img.height - node.nodePosition.y;
+      this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
+    });
+
+    // Draw edges between nodes
+    this.edges.forEach((edge) => {
+      const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
+      const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
+      if (startNode && endNode) {
+        const startPos = {
+          x: startNode.nodePosition.x,
+          y: startNode.nodePosition.y,
+        };
+        const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
+        const transformedStartY = img.height - startPos.y;
+        const transformedEndY = img.height - endPos.y;
+        this.drawEdge(
+          ctx,
+          { x: startPos.x, y: transformedStartY },
+          { x: endPos.x, y: transformedEndY },
+          edge.direction,
+          edge.startNodeId,
+          edge.endNodeId
+        );
+      }
+    });
+
+    this.zones.forEach((zone) => {
+      // Re-plot the points of the zone
+      // zone.pos.forEach((point, index) => {
+      //   // Plot the first point in violet and others in red
+      //   const isFirstPoint = index === 0;
+      //   this.plotZonePoint(point.x, point.y, isFirstPoint);
+      // });
+      this.plottedPoints = zone.pos;
+      this.zoneType = zone.type;
+      this.drawLayer(ctx);
+      this.plottedPoints = [];
+    });
+
+    this.assets.forEach((asset) =>
+      this.plotAsset(ctx, asset.x, asset.y, asset.type)
+    );
+    this.robos.forEach(
+      (robo) =>
+        this.plotRobo(ctx, robo.pos.x, robo.pos.y, robo.roboDet.selected) // this.selectedRobo === robo - replace..
+    );
   }
 
   async onInitMapImg() {
@@ -220,30 +978,190 @@ export class DashboardComponent implements AfterViewInit {
     this.loadCanvas();
   }
 
+  quaternionToYaw(w: number, x: number, y: number, z: number): number {
+    // Calculate the yaw (rotation around the Z-axis)
+    const yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
+
+    // Convert yaw from radians to degrees, if necessary
+    const yawDegrees = yaw * (180 / Math.PI);
+
+    return yawDegrees;
+  }
+
+  async enableRobot() {
+    this.selectedMap = this.projectService.getMapData();
+    if (!this.selectedMap) {
+      console.log('no map selected');
+      return;
+    }
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+    // posEventSource
+    const URL = `http://${environment.API_URL}:${environment.PORT}/stream-data/live-AMR-pos/${this.selectedMap.id}`;
+    if (this.posEventSource) this.posEventSource.close();
+
+    this.posEventSource = new EventSource(URL);
+    this.posEventSource.onmessage = (event) => {
+      if (this.isEnableMode) this.isEnableMode = true;
+      const robotsData: any = {};
+
+      try {
+        const data = JSON.parse(event.data);
+        // console.log(data.robots); // here it is..
+
+        if (ctx && data.robots.length) {
+          // Loop through each robot to update their pose and position
+          data.robots.forEach(async (robot: any) => {
+            let complexVal = {
+              w: robot.pose.orientation.w,
+              x: robot.pose.orientation.x,
+              y: robot.pose.orientation.y,
+              z: robot.pose.orientation.z,
+            };
+
+            let posX = robot.pose.position.x / this.ratio; // 0.05
+            let posY = robot.pose.position.y / this.ratio; // 0.05
+
+            let yaw = this.quaternionToYaw(
+              complexVal.w,
+              complexVal.x,
+              complexVal.y,
+              complexVal.z
+            );
+
+            // Store each robot's position and orientation using the robot ID
+            robotsData[robot.id] = { posX, posY, yaw: yaw };
+            console.log(robot.id, robot.pose.position.x, robot.pose.position.y);
+
+            // yet to remove if cond..
+            if (robot.pose.position.x && robot.pose.position.y)
+              // Re-plot all robots
+              await this.plotAllRobots(robotsData);
+          });
+        }
+      } catch (error) {
+        console.error('Error parsing SSE data:', error);
+      }
+    };
+
+    this.posEventSource.onerror = (error) => {
+      this.isEnableMode = false;
+      console.error('SSE error:', error);
+      this.posEventSource.close();
+    };
+  }
+
+  async plotAllRobots(robotsData: any) {
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+
+    const mapImage = new Image();
+    let map = this.projectService.getMapData();
+    mapImage.src = `http://${map.imgUrl}`;
+    await mapImage.decode(); // Wait for the image to load
+
+    if (ctx) {
+      // Clear the whole canvas before redrawing the map and all robots
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Calculate the scaled image dimensions and center the image on the canvas
+      const imgWidth = mapImage.width * this.zoomLevel;
+      const imgHeight = mapImage.height * this.zoomLevel;
+      const centerX = (canvas.width - imgWidth) / 2;
+      const centerY = (canvas.height - imgHeight) / 2;
+
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.scale(this.zoomLevel, this.zoomLevel);
+      ctx.drawImage(mapImage, 0, 0);
+      ctx.restore(); // Reset transformation after drawing the map
+
+      // Plot each robot on the map
+      Object.keys(robotsData).forEach((robotId) => {
+        const { posX, posY, yaw } = robotsData[robotId];
+        const transformedY = canvas.height - posY;
+        // this.plotRobo(ctx, posX, transformedY, -yaw);
+
+        const robotPosX = centerX + (posX * this.zoomLevel); // implemented when developed, need to ensure with the above line.
+        const robotPosY = centerY + ((imgHeight - posY) * this.zoomLevel);
+        this.plotRobo(ctx, robotPosX, robotPosY, -yaw);
+        // const robotPosX = centerX + this.offsetX + (posX * this.zoomLevel);
+        // const robotPosY = centerY + this.offsetY + ((canvas.height - posY) * this.zoomLevel);
+      });
+
+      // if (this.showModelCanvas) {
+      //   this.drawNodesAndEdges(ctx, mapImage); // Draw nodes and edges if enabled
+      // }
+    }
+  }
+
+  drawNodesAndEdges(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
+    // Plot nodes
+    this.nodes.forEach((node) => {
+        const transformedY = img.height - node.nodePosition.y;
+        this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
+    });
+
+    // Plot edges
+    this.edges.forEach((edge) => {
+        const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
+        const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
+
+        if (startNode && endNode) {
+            const startPos = {
+                x: startNode.nodePosition.x,
+                y: startNode.nodePosition.y,
+            };
+            const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
+            const transformedStartY = img.height - startPos.y;
+            const transformedEndY = img.height - endPos.y;
+
+            this.drawEdge(
+                ctx,
+                { x: startPos.x, y: transformedStartY },
+                { x: endPos.x, y: transformedEndY },
+                edge.direction,
+                edge.startNodeId,
+                edge.endNodeId
+            );
+        }
+    });
+}
+
+  async showSpline() {
+    if (!this.selectedMap.id) return;
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/show-spline`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapId: this.selectedMap.id,
+        }),
+      }
+    );
+    let data = await response.json();
+    if (data.isShowSplined) this.enableRobot();
+  }
   // start-stop the operation!
   startStopOpt() {
+    // this.showSpline();
+    this.enableRobot();
     if (this.UptimeComponent) this.UptimeComponent.getUptimeIfOn(); // call the uptime comp function
     if (this.throughputComponent) this.throughputComponent.getThroughPutIfOn();
   }
 
   toggleONBtn() {
     this.ONBtn = !this.ONBtn;
-    if (this.ONBtn) this.getliveAmrPos();
-    if (!this.ONBtn) this.eventSource.close(); // try take of it..
+    // if (this.ONBtn) this.getliveAmrPos(); // yet to uncomment!
+    if (!this.ONBtn && this.eventSource) this.eventSource.close(); // try take of it..
   }
 
   getOnBtnImage(): string {
     return this.ONBtn
       ? '../../assets/icons/off.svg'
       : '../../assets/icons/on.svg';
-  }
-
-  async toggleModelCanvas() {
-    this.showModelCanvas = !this.showModelCanvas;
-    if (!this.showModelCanvas) {
-      this.nodes = [];
-    } else await this.getMapDetails();
-    this.loadCanvas(); // Redraw the canvas based on the updated state
   }
 
   getliveAmrPos() {
@@ -264,104 +1182,6 @@ export class DashboardComponent implements AfterViewInit {
       console.error('SSE error:', error);
       this.eventSource.close();
     };
-  }
-
-  draw(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
-    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    // Calculate the position to center the image
-    const imgWidth = img.width * this.zoomLevel;
-    const imgHeight = img.height * this.zoomLevel;
-
-    const centerX = (canvas.width - imgWidth) / 2 + this.offsetX;
-    const centerY = (canvas.height - imgHeight) / 2 + this.offsetY;
-    // Apply transformation for panning and zooming
-    ctx.save();
-    ctx.translate(centerX, centerY);
-    ctx.scale(this.zoomLevel, this.zoomLevel);
-
-    // Draw the image
-    ctx.drawImage(img, 0, 0);
-
-    if (!this.showModelCanvas) return;
-    // Draw nodes on the image
-    this.nodes.forEach((node) => {
-      const transformedY = img.height - node.nodePosition.y;
-      this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
-    });
-
-    // Draw edges between nodes
-    this.edges.forEach((edge) => {
-      const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
-      const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
-      if (startNode && endNode) {
-        const startPos = {
-          x: startNode.nodePosition.x,
-          y: startNode.nodePosition.y,
-        };
-        const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
-        const transformedStartY = img.height - startPos.y;
-        const transformedEndY = img.height - endPos.y;
-        this.drawEdge(
-          ctx,
-          { x: startPos.x, y: transformedStartY },
-          { x: endPos.x, y: transformedEndY },
-          edge.direction,
-          edge.startNodeId,
-          edge.endNodeId
-        );
-      }
-    });
-
-    this.zones.forEach((zone) => {
-      // Re-plot the points of the zone
-      // zone.pos.forEach((point, index) => {
-      //   // Plot the first point in violet and others in red
-      //   const isFirstPoint = index === 0;
-      //   this.plotZonePoint(point.x, point.y, isFirstPoint);
-      // });
-      this.plottedPoints = zone.pos;
-      this.zoneType = zone.type;
-      this.drawLayer(ctx);
-      this.plottedPoints = [];
-    });
-
-    this.assets.forEach((asset) =>
-      this.plotAsset(ctx, asset.x, asset.y, asset.type)
-    );
-
-    this.robos.forEach((robo) =>
-      this.plotRobo(ctx, robo.pos.x, robo.pos.y, robo.roboDet.selected) // this.selectedRobo === robo - replace..
-    );
-    // ctx.restore(); // Reset transformation after drawing
-  }
-
-  plotRobo(ctx: CanvasRenderingContext2D, x: number, y: number, isSelected: boolean = false): void {
-    const image = this.robotImages['robotB'];
-    // const canvas = this.overlayCanvas.nativeElement;
-    // const ctx = canvas.getContext('2d');
-
-    if (image && ctx) {
-      const imageSize = 20;
-
-      // Highlight the selected robot with a border or background
-      // if (isSelected) { yet to replaced..
-      //   ctx.beginPath();
-      //   ctx.arc(x, y, imageSize * 1, 0, 2 * Math.PI); // Draw a circle centered on the robot
-      //   ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'; // Semi-transparent red
-      //   ctx.fill();
-      //   ctx.closePath();
-      // }
-
-      // Draw the robot image
-      ctx.drawImage(
-        image,
-        x - imageSize / 2,
-        y - imageSize / 2,
-        imageSize * 1.3,
-        imageSize
-      );
-    }
   }
 
   private plotAsset(
@@ -420,6 +1240,7 @@ export class DashboardComponent implements AfterViewInit {
       console.error('Insufficient points or zone type not selected');
     }
   }
+
   private drawEdge(
     ctx: CanvasRenderingContext2D,
     startPos: { x: number; y: number },
@@ -465,6 +1286,7 @@ export class DashboardComponent implements AfterViewInit {
       );
     }
   }
+
   private drawArrowhead(
     ctx: CanvasRenderingContext2D,
     from: { x: number; y: number },
@@ -535,10 +1357,12 @@ export class DashboardComponent implements AfterViewInit {
     this.zoomLevel /= 1.2;
     this.loadCanvas();
   }
+
   onMouseLeave() {
     this.isPanning = false;
     document.body.style.cursor = 'default'; // Ensure the cursor resets when mouse leaves the canvas
   }
+
   panStart(event: MouseEvent) {
     if (this.isPanning) {
       this.lastX = event.clientX;
@@ -548,11 +1372,13 @@ export class DashboardComponent implements AfterViewInit {
       document.body.style.cursor = 'grabbing';
     }
   }
+
   // Rest of your existing component methods like panStart(), toggleONBtn(), etc.
   panStartModelCanvas(event: MouseEvent) {
     // Handle pan start for modelCanvas
     console.log('Panning on Model Canvas', event);
   }
+
   panMove = (event: MouseEvent) => {
     if (this.isPanning) {
       const deltaX = event.clientX - this.lastX;
@@ -576,6 +1402,7 @@ export class DashboardComponent implements AfterViewInit {
       document.body.style.cursor = 'default';
     }
   };
+
   handleZoom(event: WheelEvent) {
     event.preventDefault();
     const zoomIntensity = 0.1;
@@ -592,35 +1419,12 @@ export class DashboardComponent implements AfterViewInit {
 
     if (ctx) this.draw(ctx, new Image());
   }
+
   togglePan() {
     this.isPanning = !this.isPanning;
     document.body.style.cursor = this.isPanning ? 'grab' : 'default';
   }
 
-  loadCanvas() {
-    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    if (ctx) {
-      const img = new Image();
-      let imgName = this.projectService.getMapData();
-      img.src = `http://${imgName.imgUrl}`;
-
-      img.onload = () => {
-        canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-        canvas.height =
-          canvas.parentElement?.clientHeight || window.innerHeight;
-        this.draw(ctx, img);
-
-        // // Conditionally draw nodes based on showModelCanvas flag
-        // if (this.showModelCanvas) {
-        //   this.nodes.forEach((node) => {
-        //     this.drawNode(ctx, node.nodePosition.x, node.nodePosition.y, node.nodeId);
-        //   });
-        // }
-      };
-    }
-  }
   captureCanvas() {
     const element = document.getElementById('container');
     console.log('Container element:', element); // Log the container to check if it exists

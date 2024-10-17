@@ -5,21 +5,12 @@
 }
 
 #chart {
-  position: relative;
+  
   width: 100%; /* Adjust to fit the container */
-  max-width: 600px; /* Adjust as needed */
+  max-width: 500px; /* Adjust as needed */
 }
 
-#chart h1 {
-  font-size: 24px;
-  font-weight: bold;
-  margin: 0;
-  padding: 0;
-  color: #333;
-  position: absolute;
-  top: 0; /* Positioned at the top of the chart */
-  left: 0; /* Positioned at the left of the chart */
-}
+
 
 .chart-labels {
   display: flex;
@@ -44,25 +35,27 @@
 }
 
 .healthy-color {
-  background-color: #00e396; /* Healthy color */
+  background-color: #59ED9D; /* Healthy color */
 }
 
 .inactive-color {
-  background-color: #feb019; /* Inactive color */
+  background-color: #FECC6A; /* Inactive color */
 }
 
 .error-color {
-  background-color: #ff4560; /* Error color */
+  background-color: #FF6E6E; /* Error color */
 }
+
+
 
 .label-text {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: medium;
   margin-right: 10px; /* Space between text and value */
 }
 
 .label-value {
   font-size: 16px;
-  font-weight: bold;
+  font-weight: medium;
   color: #555; /* Adjust color as needed */
 }

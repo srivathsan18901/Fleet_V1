@@ -10,7 +10,7 @@
   box-sizing: border-box;
   background-color: white;
 }
- 
+
 .header {
   margin-top: 1%;
   padding: 0;
@@ -18,19 +18,19 @@
   z-index: 0;
   position: relative;
 }
- 
+
 /* Ensure the sidebar has a higher z-index */
 .sidebar {
   position: relative;
   z-index: 100;
 }
- 
+
 /* Container for the slider buttons */
 .slider-buttons-container {
   position: relative;
   z-index: 0;
 }
- 
+
 .slider-buttons {
   display: flex;
   margin-top: 3%;
@@ -44,7 +44,7 @@
   position: relative;
   z-index: 2;
 }
- 
+
 .slider-buttons button {
   flex: 1;
   padding: 2%;
@@ -55,11 +55,11 @@
   font-weight: bold;
   z-index: 3;
 }
- 
+
 .slider-buttons button.active {
   color: white;
 }
- 
+
 .slider {
   position: absolute;
   width: 50%;
@@ -68,15 +68,15 @@
   z-index: 2;
   transition: transform 0.3s ease;
 }
- 
+
 .slider.left {
   transform: translateX(0);
 }
- 
+
 .slider.right {
   transform: translateX(100%);
 }
- 
+
 
 /*
 .search-filter-container {
@@ -92,7 +92,7 @@
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
- 
+
 .search-box {
   display: flex;
   align-items: center;
@@ -101,7 +101,7 @@
   background-color: #ffffff;
   width: 100%;
 }
- 
+
 .search-box input {
   border: none;
   padding: 1%;
@@ -110,11 +110,11 @@
   font-size: 1vw;
   border-radius: 25px 0 0 25px;
 }
- 
+
 .search-box input::placeholder {
   color: #aaa;
 }
- 
+
 .search-btn {
   background-color: #ff5c5c;
   color: white;
@@ -128,20 +128,16 @@
   border-radius: 0 25px 25px 0;
   transition: background-color 0.3s, box-shadow 0.3s;
 }
- 
+
 .search-btn img {
   width: 60%;
   height: auto;
 }
- 
+
 .search-btn:hover {
   background-color: #e64e4e;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 } */
- 
-/* Table stylings */
-/* Table stylings */
-
 .dashboard-container {
   display: flex;
   justify-content: space-between;
@@ -152,24 +148,102 @@
   box-sizing: border-box;
 }
 
-/* Styling for the robot activity table */
-.robot-activity-container {
+/* Styling for the robot activity container */
+.operation-activity-container {
   flex: 0.5; /* Set to 50% of the width */
+  height: 25rem; /* Adjust height as needed */
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 0.5%; /* Minimal padding */
   overflow: hidden; /* Ensure the table doesn't overflow */
+  display: flex;
+  flex-direction: column; /* Allow table to fill container */
+}
+
+.operation-activity-table-container {
+  /* max-height: 300px; */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Hide horizontal scrolling if necessary */
+}
+
+/* Styling for the notifications container */
+.notifications-container {
+  flex: 0.5; /* Set to 50% of the width */
+  height: 25rem; /* Adjust height as needed */
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 0.5%; /* Minimal padding */
+  overflow: hidden; /* Ensure the table doesn't overflow */
+  display: flex;
+  flex-direction: column; /* Allow table to fill container */
+}
+
+/* Extend table to fill the container */
+.operation-activity-table,
+.notifications-table {
+  width: 100%;
+  height: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  max-height: 4rem; /* Adjust height as needed */
+  display: table; /* Ensure it behaves like a table */
+  table-layout: fixed;
+  overflow-y: auto; /* Scrollable when content exceeds height */
+}
+
+
+/* Styling for the robot activity table */
+.operation-activity-table thead {
+  background-color: #FFCDCD;
+  color: rgb(0, 0, 0);
+  text-align: left;
+}
+
+.operation-activity-table th,
+.operation-activity-table td {
+  padding: 12px 15px;
+  border-top-left-radius: 1px solid #b5b5b5;
+  font-size: 0.8rem;
+}
+
+.operation-activity-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.operation-activity-table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
 }
 
 /* Styling for the notifications table */
-.notifications-container {
-  flex: 0.5; /* Set to 50% of the width */
-  background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  padding: 0.5%; /* Minimal padding */
-  overflow: hidden; /* Ensure the table doesn't overflow */
+.notifications-table thead {
+  background-color: #FFCDCD;
+  color: rgb(0, 0, 0);
+  text-align: left;
+}
+
+.notifications-table th,
+.notifications-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+  font-size: 0.8rem;
+}
+
+.notifications-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+  
+}
+
+.notifications-table tbody tr:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+/* Align content in Notifications Table */
+.notifications-align {
+  text-align: center;
 }
 
 /* Styling for the section headers */
@@ -183,7 +257,6 @@
   padding: 0.3rem; /* Reduced padding */
 }
 
-/* Header text */
 .section-header h3 {
   margin: 0;
   font-size: 1vw;
@@ -219,140 +292,178 @@
 .view-all-btn {
   background-color: #7854f7;
   color: white;
-  padding: 0.2rem;
+  padding: 5px 10px;
   border-radius: 5px;
   border: none;
   cursor: pointer;
-  font-size: 0.8vw;
+  font-size: 0.9vw;
   margin-left: 1rem;
 }
 
 /* Table scrollable after 4 rows */
 .activity-table,
 .notifications-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 0;
-  max-height: 10rem; /* Adjust height as needed */
-  overflow-y: auto;
-  display: block;
+  max-height: 100%; /* Allow table to fill container */
+  overflow-y: auto; /* Scrollable when needed */
 }
 
-.activity-table tr,
-.notifications-table tr {
-  border-bottom: 1px solid #eee;
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-box,
+  .view-all-btn {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .operation-activity-table th,
+  .operation-activity-table td,
+  .notifications-table th,
+  .notifications-table td {
+    font-size: 0.5rem;
+    position: sticky;
+  }
 }
 
-.activity-table td,
-.notifications-table td {
-  font-size: 0.8vw;
-  color: #555;
-}
 
-.activity-table td:first-child,
-.notifications-table td:first-child {
-  font-weight: medium;
-  color: #222222;
-  padding-left: 1rem; /* Ensure the first cell has enough padding on the left */
-}
-
-.activity-table tr:nth-child(odd),
-.notifications-table tr:nth-child(odd) {
-  background-color: #f9f9f9;
-}
-
-.activity-table tr:hover,
-.notifications-table tr:hover {
-  background-color: #f1f1f1;
-}
-
-/* Align text in the first column */
-.activity-table td:first-child,
-.notifications-table td:first-child {
-  text-align: left;
-}
-
-/* Align text in the rest of the columns */
-.activity-table td:not(:first-child),
-.notifications-table td:not(:first-child) {
-  text-align: left;
-}
-
-/* Make sure the table header stays in place */
-.activity-table thead th,
-.notifications-table thead th {
-  position: sticky;
-  top: 0;
-  background: #fff;
-  z-index: 2;
-}
 
 /* Statistics container */
-/* Statistics container */
+
 .statistics-container {
   position: absolute;
-  top: 7%;
+  top: 6%;
   right: 1%;
   display: flex;
   justify-content: space-between;
   gap: 2%;
 }
- 
+
 .stat-card,.sale-card {
-  background-color: #ffffff;
+   background-color: #ffffff;
   padding: 1%;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-  width: 18vw; 
+  width: 18vw; /* Set a percentage width for responsiveness */
   height: auto;
   text-align: left;
   position: relative;
   margin-bottom: 1%;
+  flex: 1 1 18vw; /* Allow the items to resize with a flexible basis */
+  flex-grow: 1;
+    flex-basis: 0;
+    overflow: hidden;
 }
- 
 
- 
-.stat-value {
-  font-size: 1.3vw;
-  font-weight: 500;
-  margin-top: -1%;
+@media (min-width: 1200px) {
+  .statistics-container {
+    height: 70vh; /* Larger screens will have 70% of viewport height */
+  }
+
+  .stat-card {
+    height: 16vh; /* Fixed height for larger screens */
+  }
 }
- 
+
+@media (max-width: 768px) {
+  .statistics-container {
+    flex-direction: column; /* Stack cards vertically on small screens */
+    height: auto; /* Let height be content-based */
+  }
+
+  .stat-card {
+    width: 90vw; /* Full width for small screens */
+    height: auto; /* Flexible height */
+  }
+}
+ /* Ensure the .stat-value scales with card height and spacing */
+.stat-value {
+  font-size: 1.3vw; /* Dynamic scaling with viewport */
+  font-weight: 500;
+  margin-top: -2%;
+  line-height: 1.2; /* Adjust line-height for readability */
+  padding: 0.5vh 0; /* Adjust padding for vertical space */
+  height: auto; /* Flexible height */
+  width: 100%; /* Ensure it takes full width of the card */
+}
+
+/* Ensure the header (h2) scales with card size */
 h2 {
   margin: -0.1em 0;
-  font-size: 2.0em; /* Increased font size */
+  font-size: 2.0vw; /* Scale with viewport width */
+  line-height: 1.3; /* Ensure proper line spacing */
+  width: 100%; /* Full width */
+  padding: 0.5vh 0; /* Vertical padding for responsive spacing */
 }
- 
+
 /* Styling for positive stat change */
 .stat-change.positive {
   color: #4caf50;
   font-weight: medium;
-  font-size: 1vw;
+  font-size: 1vw; /* Dynamic scaling */
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Ensure spacing between elements */
+  padding: 0.5vh 0; /* Adjust vertical padding for responsiveness */
+  height: auto; /* Flexible height */
+  width: 100%; /* Full width of container */
 }
- 
+
 .stat-change.positive span {
   margin-left: 5%;
-  font-size: 1.2vw;
+  font-size: 1.2vw; /* Scale with viewport */
   color: #4caf50;
+  line-height: 1.2; /* Adjust line-height for readability */
+  padding: 0.5vh 0; /* Adjust vertical padding */
+  width: 100%; /* Ensure full width */
 }
- 
+
 /* Styling for negative stat change */
 .stat-change.negative {
   color: #f44336;
   font-weight: medium;
-  font-size: 1vw;
+  font-size: 1vw; /* Dynamic scaling */
   display: flex;
   align-items: center;
+  justify-content: space-between; /* Ensure spacing between elements */
+  padding: 0.5vh 0; /* Adjust vertical padding for responsiveness */
+  height: auto; /* Flexible height */
+  width: 100%; /* Full width of container */
 }
- 
+
 .stat-change.negative span {
   margin-left: 5%;
-  font-size: 1.2vw;
+  font-size: 1.2vw; /* Scale with viewport */
   color: #f44336;
+  line-height: 1.2; /* Adjust line-height for readability */
+  padding: 0.5vh 0; /* Adjust vertical padding */
+  width: 100%; /* Ensure full width */
 }
- 
+
+/* Media queries for smaller screens */
+@media (max-width: 768px) {
+  .stat-value, .stat-change.positive, .stat-change.negative {
+    font-size: 2.5vw; /* Increase font size for smaller screens */
+    line-height: 1.5; /* Adjust line-height for readability */
+    padding: 1vh 0; /* Increase vertical padding for spacing */
+  }
+
+  h2 {
+    font-size: 3vw; /* Adjust heading size for smaller screens */
+    line-height: 1.5; /* Adjust line-height for readability */
+    padding: 1vh 0; /* Vertical padding for responsive spacing */
+  }
+
+  .stat-change.positive span, .stat-change.negative span {
+    font-size: 2vw; /* Increase span size for smaller screens */
+    line-height: 1.5; /* Adjust line-height for readability */
+    padding: 1vh 0; /* Increase vertical padding */
+  }
+}
+
 /* General styling for stat-chart */
 .stat-chart {
   position: absolute;
@@ -362,48 +473,48 @@ h2 {
   width: 6vw; /* Adjust the width of the chart */
   height: 7vw; /* Keep height proportional to the width */
 }
- 
+
 .loading svg polyline {
   fill: none;
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
- 
+
 .stat-chart svg {
   width: 100%;
   height: auto;
 }
- 
+
 /* Specific styling for Stat Card 1 (red color) */
 .stat-card-1 .loading svg polyline#back {
   stroke: #ff4d5033;
 }
- 
+
 .stat-card-1 .loading svg polyline#front {
   stroke: #da2127;
   stroke-dasharray: 48, 144;
   stroke-dashoffset: 192;
   animation: dash_682 1.4s linear infinite;
 }
- 
+
 /* Specific styling for Stat Card 2 (yellow color) */
 .stat-card-2 .loading svg polyline#back {
   stroke: #ffc10733;
 }
- 
+
 .stat-card-2 .loading svg polyline#front {
   stroke: #ffc107;
   stroke-dasharray: 48, 144;
   stroke-dashoffset: 192;
   animation: dash_682 1.4s linear infinite;
 }
- 
+
 /* Specific styling for Stat Card 3 (green color) */
 .stat-card-3 .loading svg polyline#back {
   stroke: #4caf5033;
 }
- 
+
 .stat-card-3 .loading svg polyline#front {
   stroke: #4caf50;
   stroke-dasharray: 48, 144;
@@ -415,14 +526,14 @@ h2 {
 .stat-card-4 .loading svg polyline#back {
   stroke: #4c57af33;
 }
- 
+
 .stat-card-4 .loading svg polyline#front {
   stroke: #212dd3;
   stroke-dasharray: 48, 144;
   stroke-dashoffset: 192;
   animation: dash_682 1.4s linear infinite;
 }
- 
+
 /* Keyframes for dash animation */
 @keyframes dash_682 {
   72.5% {
@@ -441,9 +552,10 @@ h2 {
   gap: 2%; /* Space between the area chart and the donut chart */
 }
 
+
 /* Area chart container */
 .area-chart-container {
-  flex: 2 1 60%; /* Flex-grow 2, flex-shrink 1, takes 60% of available space */
+  flex: 2 1 55%; /* Flex-grow 2, flex-shrink 1, takes 60% of available space */
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
@@ -454,7 +566,7 @@ h2 {
 
 /* Donut chart container */
 .donut-chart-container {
-  flex: 2 1 38%; /* Flex-grow 1, flex-shrink 1, takes 35% of available space */
+  flex: 1 1 35%; /* Flex-grow 1, flex-shrink 1, takes 35% of available space */
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
@@ -463,7 +575,7 @@ h2 {
   min-height: 270px; /* Ensures a minimum height for smaller screens */
 }
 
- 
+
 /* Responsive adjustments */
 @media (max-width: 1200px) {
   .charts-container {
@@ -472,10 +584,10 @@ h2 {
   .area-chart-container,
   .donut-chart-container {
     width: 100%; /* Full width for both charts */
-    height: auto; /* Let the height adjust automatically on smaller screens */
+
   }
 }
- 
+
 /* Responsive adjustments for very small screens */
 @media (max-width: 768px) {
   .area-chart-container,
@@ -498,7 +610,7 @@ h2 {
   dominant-baseline: middle !important;
   pointer-events: none !important;
 }
- 
+
 .apexcharts-legend-series {
   display: flex;
   justify-content: center;
@@ -506,7 +618,7 @@ h2 {
 }
 
 
-/* 
+/*
 new slider button */
 /* Container for the slider buttons */
 /* .slider-buttons-container {
@@ -615,3 +727,39 @@ new slider button */
 } */
 
 
+::ng-deep .activity-table tr:nth-child(odd) {
+  background-color: #f9f9f9;
+  display: flex;
+  justify-content: space-between;
+
+}
+
+::ng-deep .activity-table tr {
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 1rem;
+  padding-left: 1rem;
+}
+
+/* no data for tables */
+
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px; /* Adjust height as needed */
+}
+
+.no-data-image {
+  width: 100px; /* Adjust image size */
+  height: auto;
+  margin-bottom: 0rem;
+}
+
+.no-data-text {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.7); /* Customize text color */
+  text-align: center;
+}

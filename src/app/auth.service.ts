@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
+import { ProjectService } from './services/project.service';
 
 @Injectable({
   providedIn: 'root',
@@ -7,7 +9,7 @@ import { CookieService } from 'ngx-cookie-service';
 export class AuthService {
   private user: { name: string; role: string } | null = null;
 
-  constructor(private cookieService: CookieService) {}
+  constructor(private cookieService: CookieService, private router: Router,private projectService: ProjectService) {}
 
   private isCookieEmpty(): boolean {
     return document.cookie === '';
@@ -22,13 +24,33 @@ export class AuthService {
   }
 
   // Simulating user logout
+  // logout() {
+  //   if (!this.isCookieEmpty()) {
+  //     this.cookieService.delete('_user', '/');
+  //     // document.cookie = '_user=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
+  //     this.user = null;
+  //   }
+  // }
   logout() {
-    if (!this.isCookieEmpty()) {
-      this.cookieService.delete('_user', '/');
-      // document.cookie = '_user=; expires=Thu, 01 Jan 1970 00:00:01 GMT; path=/';
-      this.user = null;
-    }
+    localStorage.removeItem('timerStartTime');
+    localStorage.removeItem('lastSession');
+    fetch('http://localhost:3000/auth/logout', {
+      credentials: 'include',
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.isCookieDeleted) {
+          this.projectService.clearProjectData();
+          this.projectService.clearMapData();
+          this.projectService.clearIsMapSet();
+          console.log('Logging out...');
+          this.router.navigate(['/']);
+        }
+      })
+      .catch((err) => console.log(err));
   }
+
+
 
   // Checking if the user is logged in
   isLoggedIn(): boolean {
@@ -46,4 +68,5 @@ export class AuthService {
     }
     return this.user;
   }
+
 }

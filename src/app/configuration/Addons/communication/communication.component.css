@@ -2,6 +2,7 @@
 .container1 {
   border: 1px solid #000;
   border-radius: 15px;
+  padding-top: 2%;
   padding: 20px;
   /* background-color: #f9f9f9; */
 }
@@ -71,6 +72,10 @@ h4 {
   gap: 10px;
 }
 
+.field, .field2{
+  display: flex;
+}
+
 .field-checkbox {
   display: flex;
   align-items: center;
@@ -89,7 +94,7 @@ h4 {
 ::ng-deep .p-button.p-button-danger {
   /* width: 70% !important; */
   height: 31px !important;
-  margin-top: 19rem;
+  margin-top: 2rem;
 }
 
 ::ng-deep .p-button {
@@ -127,4 +132,31 @@ p-radioButton {
 
 .category-container .field-checkbox input:focus-visible {
   outline: 2px solid #007bff; /* Highlight the radio button when focused */
+}
+
+.text-danger{
+  color: red;
+  font-size: 13px;
+  /* margin-left: 7rem; */
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  animation: bounce 1s;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.head-button{
+  width: 140%;
+  display: flex;
+  justify-content: center;
 }

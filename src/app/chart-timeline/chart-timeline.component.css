@@ -43,7 +43,8 @@
     border-radius: 10px;
     overflow: hidden;
     transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-    background: linear-gradient(45deg, #f1494e, #DA2127); /* Gradient background */
+    background-color: red;
+
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Button-like shadow */
     cursor: pointer;
     width: 200px; /* Fixed width for the dropdown button */
@@ -177,7 +178,9 @@
 }
 
 
-.button-container {
+.time-button-container {
+  z-index: 0; /* Ensure the button is above other elements */
+  position: relative; /* Ensure it stays in place */
   display: flex;
   justify-content: center;
   align-items: center;

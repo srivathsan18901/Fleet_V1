@@ -99,7 +99,7 @@ input[type="radio"]:checked::before {
 }
 .inputUScontainer input{
     margin: 10px 0px 10px 15px;    
-    padding: 5px 2px 15px 2px;
+    padding: 10px 2px 15px 2px;
 }
 .inputPScontainer input{
     width: calc(11 0% - 0px); /* Adjust width to accommodate the icon */
@@ -142,7 +142,7 @@ input[type="radio"]:checked::before {
     margin: 0px 0px 10px 15px;
 }
 .LoginBtn{
-    padding: 15px;
+    padding: 15px 30px ;
     background-color: #FF7373;
     border: none;
     border-radius: 5px;
@@ -173,9 +173,15 @@ input[type="radio"]:checked::before {
     right: 10px;
     width: 130px;
 }
+
+.roboisof-logo{
+
+    height: 190px;
+    border-radius: 10px;
+}
 .fms-box {
     background-color: white;
-    padding: 50px 30px;
+    /* padding: 10px 0px; */
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

@@ -15,6 +15,9 @@ import { TasksComponent } from './tasks/tasks.component';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { SupportComponent } from './support/support.component';
 import { FaqComponent } from './faq/faq.component';
+import { AuthService } from './auth.service';
+import { LoaderComponent } from './loader/loader.component';
+import { AdminGuard } from './admin.guard';
 
 const routes: Routes = [
   {
@@ -51,9 +54,9 @@ const routes: Routes = [
   {
     path: 'configuration',
     component: ConfigurationComponent,
-    canActivate: [AuthGuard, ProjectGuard],
+    canActivate: [AuthGuard, ProjectGuard, AdminGuard],
   },
- 
+
   {
     path: 'dashboard',
     component: DashboardComponent,
@@ -62,7 +65,7 @@ const routes: Routes = [
   {
     path: 'usermanagement',
     component: UserManagementComponent,
-    canActivate: [AuthGuard, ProjectGuard], // Ensure both guards are here
+    canActivate: [AdminGuard, AuthGuard, ProjectGuard], // Ensure both guards are here
   },
   {
     path: 'support',
@@ -70,20 +73,31 @@ const routes: Routes = [
     canActivate: [AuthGuard, ProjectGuard], // Ensure both guards are here
   },
 
-  // { path: 'statistics/operation', component: StatisticsComponent },
-  // { path: 'statistics/robot', component: RobotDashboardComponent },
-  // { path: '', redirectTo: '/statistics/operation', pathMatch: 'full' },
+
   { path: 'statistics/operation', component: StatisticsComponent },
   { path: 'statistics/robot', component: RobotDashboardComponent },
   { path: '', redirectTo: '/statistics/operation', pathMatch: 'full' },
+
   { path: 'faq', component: FaqComponent },
   { path: 'support', component: SupportComponent },
 
-  
+  // view all for  operation
+    { path: 'statistics', component: StatisticsComponent },
+    { path: 'tasks', component: TasksComponent }, // Define the tasks route
+    { path: '', redirectTo: '/statistics', pathMatch: 'full' } ,// Default route
+
+    // view all for robot
+    { path: 'robot-dashboard', component: RobotDashboardComponent },
+    { path: 'tasks', component: TasksComponent }, // Define the tasks route
+    { path: '', redirectTo: '/robot-dashboard', pathMatch: 'full' }, // Default route
+
+    { path: 'loader', component: LoaderComponent, canActivate: [AuthGuard] },
+
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
+  providers:[AuthService,AuthGuard]
 })
 export class AppRoutingModule {}

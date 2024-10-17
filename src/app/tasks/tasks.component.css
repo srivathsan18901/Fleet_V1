@@ -6,7 +6,7 @@
 
 .content-container {
   flex-grow: 1; /* Allows the content to grow */
-  margin-left: 3rem; /* Equivalent to ml-64 (256px) */
+  margin-left: 2rem; /* Equivalent to ml-64 (256px) */
   padding: 3rem; /* Equivalent to p-8 */
   height: 100vh;
   overflow: hidden;
@@ -19,6 +19,8 @@
   align-items: center;
   height: 100%;
   }
+
+
 
   /* Header section styles */
   .header-section {
@@ -50,10 +52,10 @@
 
   /* Table Container Styling */
   .table-container {
-    width: 103%;
+    width: 102%;
     border-radius: 10px;
     margin-top: 20px;
-    max-height: 30rem;
+    max-height: 29rem;
     overflow-y: auto;
   }
 
@@ -65,7 +67,7 @@
     width: 100%;
     border-radius: 10px;
     border-spacing: 0;
-    border: 1px solid #ccc;
+    border: 1px solid #fff;
   }
   thead {
     position: sticky;
@@ -79,12 +81,14 @@
 
 
   th, td {
-    border: 1px solid #ffffff;
+    border: 0px solid #ffffff;
+   
     padding: 5px;
     height: 30px;
-    text-align: center;
+    text-align: left;
   }
 
+ 
   th {
     background-color: #FFCDCD;
     padding: 10px 20px;
@@ -96,6 +100,8 @@
 
   td {
     font-size: 13px;
+    text-align: left;
+    padding-left: 20px;
   }
 
   tr:hover {
@@ -106,38 +112,28 @@
     background-color: #FFF1F1;
   }
 
-  /* Button Container Styling */
-  .button-container {
-    margin-top: 10px;
-  }
 
-  .button {
-    background-color: #FFFFFF;
-    color: #000000;
-    width: 185px;
-    height: 50px;
-    border-radius: 0.5rem;
-    border: 1px solid #ccc;
-    padding: 10px 20px;
-    font-size: 17px;
-    cursor: pointer;
-    margin-right: 20px;
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-  }
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px; /* Adjust height as needed */
+}
 
-  .button:last-child {
-    margin-right: 0;
-  }
+.no-data-image {
+  width: 100px; /* Adjust image size */
+  height: auto;
+  margin-bottom: 0rem;
+}
 
-  .active-button {
-    background-color: #ff3333;
-    color: #FFFFFF;
-    transform: scale(1.05);
-  }
+.no-data-text {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.7); /* Customize text color */
+  text-align: center;
+}
 
-  .transition-active {
-    transition: background-color 0.3s ease, color 0.3s ease, transform 0.3s ease;
-  }
+ 
  /* Export Button Container */
 /* Export Button Container */
 .export-button-container {
@@ -173,7 +169,7 @@
     position: relative; /* Important for positioning the close button */
     font-size: 36px; /* Ensures that the font size stays large */
     font-family: 'Arial', sans-serif; /* Explicitly set the font family */
-    font-weight: bold;
+    font-weight: 600;
     color: #DA2127;
     padding: 60px;
     background: #fff;
@@ -192,7 +188,7 @@
     border: none;
     border-radius: 5px;
     background-color: #dedede;
-    font-size: 18px;
+    font-size: 16px;
     color: #212121;
     cursor: pointer;
     width: 200px; /* Set a fixed width for all buttons */
@@ -208,8 +204,8 @@
   /* Close Button Styles */
   .close-button {
     position: absolute;
-    top: -15px;
-    right: -15px;
+    top: 15px;
+    right: 15px;
     background-color: white;
     border: 2px solid red;
     border-radius: 50%;
@@ -277,15 +273,7 @@
     color: #aaa;
   }
 
-  th, td {
-    border: 1px solid #ffffff;
-    padding:10px 5px 10px 10px;
-    height: 30px;
-  }
-  td{
-    text-align: center;
-    padding-left: 20px;
-  }
+  
 
   .search-btn {
     background-color: #ff5c5c;
@@ -496,7 +484,7 @@ new button */
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
+  font-size: 13px;
   font-family: sans-serif;
 }
 

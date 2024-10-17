@@ -47,7 +47,7 @@
   </div>
 </div>
 <!-- filter container -->
-  <div class="button-container">
+  <div class="time-button-container">
     <div class="tabs">
       <input
         type="radio"
@@ -55,6 +55,7 @@
         name="filter"
         value="Today"
         class="input"
+        (change)="applyFilter($event)"
         checked
       />
       <label for="today" class="label">Today</label>
@@ -65,6 +66,7 @@
         name="filter"
         value="Week"
         class="input"
+        (change)="applyFilter($event)"
       />
       <label for="week" class="label">Week</label>
 
@@ -74,6 +76,7 @@
         name="filter"
         value="Month"
         class="input"
+        (change)="applyFilter($event)"
       />
       <label for="month" class="label">Month</label>
     </div>

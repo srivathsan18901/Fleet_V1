@@ -25,7 +25,6 @@ import { NgxCaptureModule } from 'ngx-capture';
 import { RobotsComponent } from './robots/robots.component';
 import { OperationPieComponent } from './operation-pie/operation-pie.component';
 import { Chart1Component } from './chart1/chart1.component';
-import { LineChartComponent } from './line-chart/line-chart.component';
 import { AreaChartComponent } from './area-chart/area-chart.component';
 import { rootCertificates } from 'tls';
 import { RobotPopupComponent } from './robot-popup/robot-popup.component';
@@ -53,6 +52,22 @@ import { AppServerModule } from './app.module.server';
 import { SupportComponent } from './support/support.component';
 import { FaqComponent } from './faq/faq.component';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ContactusComponent } from './support/Addons/contactus/contactus.component';
+import { DialogModule } from 'primeng/dialog';
+import { LoaderComponent } from './loader/loader.component';
+import { TimerComponent } from './timer/timer.component';
+// import { ReactiveFormsModule } from '@angular/forms';
+// import { TableModule } from 'primeng/table';
+import { PaginatorModule } from 'primeng/paginator';
+import { TableModule } from 'primeng/table';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { InputMaskModule } from 'primeng/inputmask';
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+// import { BrowserModule } from '@angular/platform-browser';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
 
 
 
@@ -77,7 +92,6 @@ import { CheckboxModule } from 'primeng/checkbox';
     ThroughputComponent,
     OperationPieComponent,
     Chart1Component,
-    LineChartComponent,
     AreaChartComponent,
     RobotPopupComponent,
     EnvmapComponent,
@@ -92,7 +106,10 @@ import { CheckboxModule } from 'primeng/checkbox';
     FullscreenButtonComponent,
     RadialChartComponent,
     SupportComponent,
-    FaqComponent
+    FaqComponent,
+    ContactusComponent,
+    LoaderComponent,
+    TimerComponent
   ],
   imports: [
     NgApexchartsModule,
@@ -113,6 +130,16 @@ import { CheckboxModule } from 'primeng/checkbox';
     ToastModule,
     AppServerModule,
     CheckboxModule,
+    DialogModule,
+    InputGroupModule,
+    InputSwitchModule,
+    InputTextareaModule,
+    InputMaskModule,
+    InputGroupAddonModule,
+    TableModule,
+
+    PaginatorModule,
+    // TableModule
   ],
   providers: [
     // provideClientHydration()

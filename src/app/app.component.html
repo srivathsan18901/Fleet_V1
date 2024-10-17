@@ -1,4 +1,15 @@
 <div [@fadeAnimation]="getRouteAnimationData(outlet)" [@.disabled]="!outlet.isActivated">
+
   <p-toast></p-toast>
+  <div *ngIf="getRouter().url !== '/' && getRouter().url !== '/project_setup'">
+    <app-sidenavbar></app-sidenavbar>
+  </div>
+
+  <!-- <div *ngIf="getRouter().url !== 'project_setup' ">
+    <app-projectsetup></app-projectsetup>
+  </div> -->
+  
   <router-outlet #outlet="outlet"></router-outlet>
+  <router-outlet></router-outlet>
+
 </div>

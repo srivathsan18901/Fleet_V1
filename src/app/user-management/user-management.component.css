@@ -61,7 +61,7 @@
   top: 50px;
   left: 70px;
   width: calc(100% - 70px);
-  padding: 16px;
+  padding: 5px 10px;
   overflow: hidden;
   box-sizing: border-box;
   background-color: white;
@@ -69,7 +69,7 @@
 
   /* Header section styles */
   .header-section {
-    margin-bottom: 10px;
+    margin-bottom: 0px;
   }
 
   p {
@@ -97,6 +97,26 @@
   .subheader-icon {
     width: 23px;
     height: 13px;
+  }
+
+  .no-data-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 150px; /* Adjust height as needed */
+  }
+  
+  .no-data-image {
+    width: 100px;
+    height: auto;
+    margin-bottom: 0rem;
+  }
+  
+  .no-data-text {
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.7);
+    text-align: center;
   }
 
 .bg-blur
@@ -138,8 +158,8 @@ border-radius: 20px;
 }
 
 .edit-button {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background-color: rgb(20, 20, 20);
   border: none;
@@ -196,8 +216,8 @@ border-radius: 20px;
 
  /* Delete */
  .delete-button {
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
   background-color: rgb(20, 20, 20);
   border: none;
@@ -251,6 +271,36 @@ border-radius: 20px;
   transition-duration: 0.3s;
  }
 
+ .close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  border: 2px solid red;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* Ensure it appears above other elements */
+}
+
+.close-button svg {
+  width: 20px;
+  height: 20px;
+  fill: red; /* Color for the close icon */
+}
+
+.close-button:hover {
+  background-color: #da2127;
+}
+
+.close-button:hover svg {
+  fill: white; /* Change color on hover */
+}
 
 
  .table-row {
@@ -276,7 +326,7 @@ border-radius: 20px;
 .popup {
 padding: 35px;
 background: #F5F5F5;
-box-shadow: 0px 0px 31.8px 28px rgba(0, 0, 0, 0.25);
+box-shadow: 0px 0px 35px 10px rgba(0, 0, 0, 0.25);
 border-radius: 20px;
 }
 
@@ -303,4 +353,14 @@ border-radius: 20px;
 
 .twoColors:nth-child(odd) {
   background-color: white;
+}
+
+.create-user{
+
+  padding: 10px 20px;
+    background-color: #ff3333;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }

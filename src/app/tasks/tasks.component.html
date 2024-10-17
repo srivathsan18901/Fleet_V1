@@ -1,8 +1,12 @@
 <div class="layout-container">
-  <app-sidenavbar></app-sidenavbar>
+  <!-- <app-sidenavbar></app-sidenavbar> -->
   <app-fullscreen-button></app-fullscreen-button>
+  <app-loader></app-loader>
   <div class="content-container">
     <div class="main-content">
+
+
+
       <!-- Header section -->
       <div class="header-section">
         <h1 class="header-title">Tasks</h1>
@@ -20,7 +24,7 @@
       <div class="search-filter-container">
         <!-- Search Bar -->
         <div class="search-box">
-          <input type="text" (input)="onSearch($event)" placeholder="Search For Something..." />
+          <input type="text" (input)="onSearch($event)" placeholder="Search For Tasks..." />
           <button class="search-btn">
             <img
               src="../../assets/icons/download-removebg-preview.png"
@@ -83,24 +87,37 @@
                 <tr>
                   <th>S.no</th>
                   <th>Task ID</th>
-                  <th>Task Name</th>
+                  <th>Task Type</th>
                   <th>Status</th>
                   <th>Robot Name</th>
-                  <th>Source and Destination</th>
+                  <th>Source</th>
+                  <th>Destination</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                <tr *ngIf="paginatedData.length === 0">
-                  <td colspan="6" class="iconTable">No data found</td>
+
+                <!-- Show No Data Row with image and message -->
+              <tr *ngIf="filteredTaskData.length === 0">
+                <td colspan="8" class="no-data">
+                  <div class="no-data-container">
+                    <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                    <p class="no-data-text">No data found</p>
+                  </div>
+                </td>
+              </tr>
+               <!-- Display table rows when data exists -->
+                <tr *ngIf="filteredTaskData.length === 0">
+                  <!-- <td colspan="6" class="iconTable">No data found</td> -->
                 </tr>
-                <tr *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
+                <tr *ngFor="let item of filteredTaskData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
                   <td>{{ i + 1 + (paginator?.pageIndex ?? 0) * (paginator?.pageSize ?? 10) }}</td>
                   <td>{{ item.taskId }}</td>
-                  <td>{{ item.taskName }}</td>
+                  <td>{{ item.taskType }}</td>
                   <td>{{ item.status }}</td>
                   <td>{{ item.roboName }}</td>
-                  <td>{{ item.sourceDestination }}</td>
+                  <td>{{ item.destinationLocation }}</td>
+                  <td>{{ item.sourceLocation }}</td>
                   <td>
                     <!-- Switch Container -->
                     <div class="switch-container">
@@ -133,7 +150,7 @@
 
 
         <!-- Paginator -->
-    <div class="paginator-container">
+    <div  class="paginator-container" *ngIf="filteredTaskData.length > 0" >
       <mat-paginator
         [length]="filteredTaskData.length"
         [pageSize]="10"
@@ -154,6 +171,8 @@
         <button class="export-button" (click)="showPopup()">Export</button>
         <div *ngIf="isPopupVisible" class="export-popup">
           <div class="popup-content">
+
+            
             <button class="close-button" (click)="onClose()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"

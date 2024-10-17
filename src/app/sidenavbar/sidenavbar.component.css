@@ -1,5 +1,11 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
 /* sidenavbar.css */
+
+/* styles.css or styles.scss */
+
+
 .sidebar {
+    position: fixed; /* or relative based on your layout */
     height: 100%;
     width: 65px;
     background-color: #FF7373;
@@ -10,51 +16,127 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    z-index: 1; /* Ensure it's above the canvas */
+    z-index: 10000;
   }
 /* CSS for the active tab */
   .active {
     background-color: #e0d6d672; /* Optional: Add background color if needed */
     border-radius: 20px;
+
     color: white; /* Change the text color to white */
   }
 
   /* Style the label inside the active tab */
   .active .label {
     color: white;
-  }
+    padding: 0px 15px 0px 18px; /* Keep your desired padding */
+    display: block;
+    width: 130%; /* Increase the width as needed */
+    margin-left: -10%; /* Center it by shifting left if necessary */
+    box-sizing: border-box;
+}
 
 
   .sidebar:hover {
     width: 220px;
   }
-  
   .notification-popup {
     position: absolute;
-    top: 52px; /* Adjust according to your layout */
-    right: 190px; /* Adjust according to your layout */
+    top: 52px;
+    right: 190px;
     background-color: white;
     border: 1px solid #ffffff;
-    box-shadow: 0px 0.25px 6px #FF7373;
-    padding: 10px 10px 0 10px;
+    box-shadow: 0px 0.25px 6px #7b7b7b;
+    padding: 5px;
     border-radius: 10px;
     font-family: Arial, Helvetica, sans-serif;
-    z-index: 1000; /* Ensure it is on top */
+    z-index: 1000;
+    width: 300px;
+    height: auto;
+    overflow-y: auto;
+    display: none; /* Hidden by default */
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
   }
-  
-  .Profile-popup {
+
+  .notification-popup.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0); /* Slide in from above */
+  }
+
+  .notification-popup h3 {
+    font-size: 24px;
+
+    color: #f10909;
+  }
+
+  .notification-popup ul {
+    list-style-type: none;
+    padding: 0;
+  }
+
+  .notification-popup li {
+    padding: 10px;
+    margin-bottom: 10px;
+    background-color: #f8f8f8;
+    border-left: 5px solid #5bc0de; /* Light blue border */
+    border-radius: 5px;
+    animation: fadeIn 0.5s ease-in-out; /* Animate list items */
+  }
+
+  .notification-popup li:last-child {
+    margin-bottom: 0;
+  }
+
+  /* Close Button */
+  .notification-popup .close-btn {
     position: absolute;
-    top: 52px; /* Adjust according to your layout */
-    right: 30px; /* Adjust according to your layout */
-    background-color: white;
-    border: 1px solid #ffffff;
-    box-shadow: 0px 0.25px 6px #FF7373;
-    padding: 10px 10px 0 10px;
-    border-radius: 10px;
-    font-family: Arial, Helvetica, sans-serif;
-    z-index: 1000; /* Ensure it is on top */
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 18px;
+    color: #666;
+    transition: color 0.2s;
   }
-  
+
+  .notification-popup .close-btn:hover {
+    color: #ff5252; /* Red hover effect */
+  }
+
+  /* Fade-in animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* No notifications styling */
+  .no-notifications {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .no-notifications svg {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+  }
+
+  .no-notifications span {
+    font-size: 14px;
+    color: #888;
+  }
   .topbar {
     width: 100%;
     height: 50px;
@@ -77,51 +159,90 @@
     display: flex;
     align-items: center;
   }
-  
+
   .username {
     font-family: Arial, Helvetica, sans-serif;
     font-weight: bold;
   }
-  
+
   .topbar img {
     margin: 0 10px;
     /* filter: drop-shadow(20px 5px 5px 5px 5px rgba(52, 49, 49, 0.308)); */
   }
-  
+
   .Profile {
     display: flex;
     align-items: center;
     padding-right: 40px;
   }
-  
+
   .Profile img {
     margin-right: 2px;
   }
-  
+
   .profile-info {
     display: flex;
     flex-direction: column;
   }
-  
-  .profile-info p {
+
+  /* .profile-info p {
     margin: 0;
-    font-size: 0.75rem;
-    font-family: Arial, Helvetica, sans-serif;
-  }
-  
+    font-size: 1.0rem;
+    
+  } */
+
+  /* Styling for the username */
+.profile-info .username {
+  font-size: 1.0rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 0rem;
+  text-transform: capitalize; /* Ensures the first letter is capitalized */
+}
+
+/* Styling for the userrole */
+.profile-info .userrole {
+  font-size: 0.8rem;
+  font-weight: normal;
+  color: #666;
+}
+
   .Logo {
     height: 45px;
     width: 45px;
-    margin: 15px 0 0 10px;
-    border-radius: 15px;
-  }
+    /* margin: 15px 0 0 10px; */
   
+  }
+
+  .logo2{
+    height: 45px;
+    border-radius: 15px !important;
+  }
+
+  .logo2{
+    opacity: 0;
+  }
+
+  .logo-container{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+  }
+
+  .sidebar:hover .logo2{
+    opacity: 1;
+  }
+  .sidebar:hover .Logo{
+    opacity: 0;
+    display: none;
+  }
+
   .icons {
     margin: 25px 0 0 10px;
-    width: 180px;
+    width: 190px;
     /* filter: drop-shadow(10px 10px 5px rgba(52, 49, 49, 0.308)); */
   }
-  
+
   .icon1, .icon2, .icon3, .icon4, .icon5, .icon6,.icon7,.icon8{
     display: flex;
     align-items: center;
@@ -130,14 +251,14 @@
     transition: margin-left 0.3s ease;
     cursor: pointer;
   }
-  app-fullscreen-button{
+app-fullscreen-button{
     margin-right: 20px;
   }
   .icon1:hover, .icon2:hover, .icon3:hover, .icon4:hover, .icon5:hover, .icon6:hover, .icon7:hover, .icon8:hover {
     border-bottom: 1px solid white;
     border-radius: 10px;
   }
-  
+
   .icon1 img, .icon2 img, .icon3 img, .icon4 img, .icon5 img,.icon6 img, .icon7 img, .icon8 img {
     margin-right: 10px;
     margin-left: 10px;
@@ -152,7 +273,7 @@
     transition: opacity 0.3s ease;
     opacity: 0;
   }
-  
+
   .sidebar:hover .icons .label {
     display: block;
     opacity: 1;
@@ -161,15 +282,15 @@
     font-family: Arial, Helvetica, sans-serif;
     color: #ffffff;
   }
-  
+
   .Outlogo {
     margin: 0;
   }
-  
+
   .Nlogo {
     margin: 10px 5px 5px 1200px; /* Adjust margin as needed */
   }
-  
+
   .logout-icon {
     margin: auto 0 20px 10px; /* Center vertically and add bottom margin */
     display: flex;
@@ -178,9 +299,196 @@
     cursor: pointer;
     transition: margin 0.5s ease;
   }
-  
+
   .logout-icon:hover {
     background-color: #9115154e;
-    border-radius: 30px;    
+    border-radius: 30px;
   }
-  
+  .follow {
+      border-radius: 15px;
+      padding: 0 20px; /* Simplified padding */
+      height: 35px;
+  }
+
+  .stats span {
+      font-size: 29px;
+  }
+
+  .timer{
+    margin-right:2rem;
+    margin-top: 0.8rem;
+  }
+
+/* profile */
+.Profile {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.PPicon {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  border-radius: 50%;
+}
+
+.profile-info {
+  margin-left: 10px;
+}
+
+.username {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.userrole {
+  font-size: 14px;
+  color: #555;
+  margin: 0;
+}
+
+/* Profile Popup Styling */
+.profile-popup {
+  position: absolute;
+  top: 60px;
+  right: 0;
+  width: 200px;
+  background-color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  padding: 10px;
+  z-index: 10;
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+
+.popup-profile-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.popup-info {
+  margin-left: 10px;
+}
+
+.popup-username {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.popup-userrole {
+  font-size: 14px;
+  color: #777;
+}
+
+.popup-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0;
+}
+
+.profile-btn,
+.logout-btn {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.profile-btn {
+  background-color: #007bff;
+  color: white;
+}
+
+.logout-btn {
+  background-color: #dc3545;
+  color: white;
+}
+
+.profile-btn:hover,
+.logout-btn:hover {
+  opacity: 0.9;
+}
+
+.language-selector {
+  position: relative;
+}
+
+.language-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.5rem; /* Equivalent to px-2 py-0 */
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+  gap: 20px;
+}
+
+/* .language-toggle:hover {
+  box-shadow: 0 35px 35px rgba(0, 0, 0, 0.25); 
+} */
+
+.language-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Equivalent to gap-10 */
+}
+
+.flag-icon {
+  border-radius: 2px; /* Rounded corners */
+}
+
+.flag-name {
+  font-weight: 600; /* Bold text */
+  margin-top: 0.8rem; /* Adjust margin for centering */
+}
+
+.arrow-icon {
+  transition: transform 0.3s; /* Smooth rotation */
+}
+
+.rotate {
+  transform: rotate(180deg); /* Rotate the arrow */
+}
+
+.language-dropdown {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* Space between dropdown options */
+  padding: 0.75rem; /* Equivalent to p-3 */
+  background-color: #f9f9f9; /* Background color */
+  position: absolute;
+  top: 44px; /* Adjust positioning */
+  left: 0;
+  border: 2px solid #ccc; /* Border for dropdown */
+  border-radius: 8px; /* Rounded corners */
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.language-option {
+  padding: 0.5rem; /* Padding for option */
+  border-radius: 5px; /* Rounded corners for options */
+  transition: background-color 0.2s; /* Smooth background color change */
+}
+
+.language-option:hover {
+  background-color: #f0f0f0; /* Hover effect */
+}
+
+.option-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem; /* Space between flag and name */
+}

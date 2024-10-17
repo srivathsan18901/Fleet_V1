@@ -1,78 +1,122 @@
 
 <div id="container">
-  
+
   <!-- Sidebar -->
-  <app-sidenavbar></app-sidenavbar>
-  
+  <!-- <app-sidenavbar></app-sidenavbar> -->
+  <app-loader></app-loader>
+
   <!-- Main Content -->
   <div class="mainContent">
-    
-    <!-- Canvases -->
+
+    <div *ngIf="!isImage" class="no-map-container">
+      <!-- Image -->
+      <!-- <img src="assets/maps/dashboard.jpg" alt="No Map Available" class="no-map-image">  -->
+      <span class="flex size-[550px] -mt-20">
+        <img src="../../assets/noMapImg.svg" alt="">
+      </span>
+
+
+      <!-- Text -->
+      <p class="py-4 font-bold text-[24px] text-[#00000050] -mt-20"> - No Maps Found -</p>
+    </div>
+    <div id="Pos_tooltip" style="position: absolute; bottom: 5px; right:5px; display: none; background: transparent; border: 0px solid #ccc; border-radius: 4px; padding: 5px; z-index: 2;font-size: 10px;"></div>    <!-- Canvases -->
     <!-- <canvas *ngIf="showModelCanvas" id="modelCanvas" (mousedown)="panStartModelCanvas($event)"></canvas> -->
-    <canvas id="myCanvas" (mousedown)="panStart($event)"  (mouseleave)="onMouseLeave()"></canvas>
-    
+
+
+    <canvas #myCanvas id="myCanvas" (mousedown)="panStart($event)"  (mouseleave)="onMouseLeave()"></canvas>
+
+    <div class="dropdown">
+      <!-- Dropdown Button with Arrow -->
+      <button class="dropdown-button" (click)="toggleDropdown()">
+        Enable Robot
+        <svg [ngClass]="{'rotate': isDropdownOpen}" class="duration-300" width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7.00007 12.3125L0 5.42194L2.33335 3.125L7.00007 7.71879L11.6667 3.125L14 5.42194L7.00007 12.3125Z" fill="white"/>
+          </svg>
+      </button>
+      
+      <!-- Dropdown content -->
+      <div class="dropdown-content" *ngIf="isDropdownOpen">
+        <div *ngFor="let robot of simMode" class="dropdown-item">
+          <span>{{ robot.amrId }}</span><span>{{ robot.roboName }}</span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="robot.isActive" (change)="activateRobot(robot)">
+            <div class="slider"></div>
+            <div class="slider-card">
+              <div class="slider-card-face slider-card-front"></div>
+              <div class="slider-card-face slider-card-back"></div>
+            </div>
+          </label>
+          
+        </div>
+      </div>
+    </div>
+
     <!-- ON Button -->
     <div class="ONBtn" (click)="startStopOpt()">
       <img [src]="getOnBtnImage()" (click)="toggleONBtn()" />
     </div>
-    
+
     <!-- Floor Selector -->
     <div class="FloorSelector" *ngIf="ONBtn"></div>
-    
+
     <!-- Canvas Options (Zoom, Pan, Capture, etc.) -->
     <div class="CanvasOptions">
       <span class="empty"></span>
-      
+
       <!-- Zoom In -->
       <div class="tooltip">
         <img src="../../assets/CanvasOptions/Zoom.svg" class="Zoom" (click)="zoomIn()" />
         <span class="tooltiptext">Zoom In</span>
       </div>
-      
+
       <!-- Zoom Out -->
       <div class="tooltip">
         <img src="../../assets/CanvasOptions/ZoomOut.svg" class="ZoomOut" (click)="zoomOut()" />
         <span class="tooltiptext">Zoom Out</span>
       </div>
-      
+
       <!-- Pan -->
       <div class="tooltip">
         <img src="../../assets/CanvasOptions/Pan.svg" class="Expand" (click)="togglePan()" />
         <span class="tooltiptext">Pan</span>
       </div>
-      
+
       <!-- Capture -->
       <div class="tooltip">
         <img src="../../assets/CanvasOptions/Capture.svg" class="Capture" (click)="captureCanvas()" />
         <span class="tooltiptext">Capture</span>
       </div>
-      
+
       <!-- Record -->
       <div class="tooltip">
-        <img 
-          [src]="recording ? '../../assets/CanvasOptions/StopRecord.svg' : '../../assets/CanvasOptions/Record.svg'" 
-          class="Save" 
-          (click)="toggleRecording()" 
+        <img
+          [src]="recording ? '../../assets/CanvasOptions/StopRecord.svg' : '../../assets/CanvasOptions/Record.svg'"
+          class="Save"
+          (click)="toggleRecording()"
         />
         <span class="tooltiptext">{{ recording ? "Stop Recording" : "Start Recording" }}</span>
       </div>
-      
+
       <!-- Dashboard -->
       <div class="tooltip">
         <img src="../../assets/CanvasOptions/Dashboard.svg" class="Pointer" (click)="toggleDashboard()" />
         <span class="tooltiptext">Dashboard</span>
       </div>
-      
+
       <!-- Model Canvas -->
       <div class="tooltip">
         <img src="../../assets/CanvasOptions/Model.svg" class="ModelCanvas" (click)="toggleModelCanvas()" />
         <span class="tooltiptext">Map Option</span>
       </div>
+      <!-- <div class="tooltip">
+        <img src="../../assets/CanvasOptions/live.svg" class="ModelCanvas" (click)="fetchlive()" />
+        <span class="tooltiptext">Go Live</span>
+      </div> -->
     </div>
 
     <!-- Dashboard Charts and Graphs -->
     <div class="GraphAndCharts" *ngIf="showDashboard">
-      
+
       <!-- Uptime and Robot Charts -->
       <div class="Chart2_Chart3">
         <div class="Chart2-container">
@@ -99,9 +143,16 @@
           <app-throughput [ONBtn]="this.ONBtn"></app-throughput>
         </div>
       </div>
-      
+
     </div>
 
   </div>
 
 </div>
+
+<div id="robo-popup" style="position: absolute; display: none;  padding: 10px;">
+  <!-- <button *ngIf="!moveEnabled" (click)="enableMove()">Move</button> -->
+  <button (click)="initializeRobo()"> {{ updatedrobo?.isInitialized ? 'Release Robot' : 'Initialize Robot' }} </button>
+  <button (click)="cancelAction()">Cancel</button>
+</div>
+

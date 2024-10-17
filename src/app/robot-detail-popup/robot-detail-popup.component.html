@@ -3,7 +3,19 @@
     <div class="popup-header">
       <h2>{{data.name}}</h2>
 
-
+      <button class="close-button" (click)="onClose()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg>
+      </button>
       
       <!-- emergency stop -->
       <div class="switch demo3">
@@ -14,7 +26,7 @@
 
     
     <!-- wifi module -->
-    <div class="wifi-signal absolute z-50 top-[0px]  w-[80vw] h-[30vh]">
+    <div class="wifi-signal ">
       <div class="wifi-style flex z-50">
         <div class="wifi" [ngClass]="currentSignalClass"></div> 
       </div>
@@ -36,14 +48,13 @@
 
     
 
-    <div class="robot-detail-container relative">
+    <div class="robot-detail-container relative ">
       <svg
       width="590" 
       height="832"
       viewBox="0 0 590 832" 
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
+      xmlns="http://www.w3.org/2000/svg">
       <rect width="590" height="580" rx="15" fill="white" /> 
     </svg>
  
@@ -148,7 +159,7 @@
           </div>
           <div class="current-map">
             <span class="current-map-label">Current map:</span>
-            <span class="current-map-value">MATE Unit-1</span>
+            <span class="current-map-value">{{selectedMap.mapName}}</span>
           </div>
         </div>
       </div>
@@ -156,7 +167,7 @@
     
 
    <!-- Total pick and drop -->
-<div class="pick-drop-container">
+ <div class="pick-drop-container">
   <div class="pick-drop-info">
     <div class="fork-lift-icon">
       <svg
@@ -283,9 +294,9 @@
         </svg>
         </div>
       </div>
-      <span class="robottemperature-label">Robot Temperature</span>
+      <span class="robottemperature-label">CPU Temperature</span>
     </div>
-    <span class="robottemperature-value">{{ data.temperature }}</span>
+    <span class="robottemperature-value">{{ data.temperature }} °C</span>
   </div>
 </div>
 
@@ -328,7 +339,7 @@
       </div>
       <span class="robot-utilization-label">Robot Utilization</span>
     </div>
-    <span class="robot-utilization-value">{{ data.robotutilization }}</span> 
+    <span class="robot-utilization-value">{{ data.robotutilization }} %</span> 
   </div>
 </div>
 
@@ -376,7 +387,7 @@
           </div>
           <span class="memory-text">Memory</span>
     </div>
-    <span class="memory-value">{{ data.memory }}</span>
+    <span class="memory-value">{{ data.memory }} %</span>
       </div>
     </div>
 
@@ -424,7 +435,7 @@
       </div>
       <span class="cpu-utilization-text">CPU Utilization</span>
     </div>
-    <span class="cpu-utilization-value">{{ data.cpuutilization }}</span>
+    <span class="cpu-utilization-value">{{ data.cpuutilization }} %</span>
   </div>
 </div>
 
@@ -475,11 +486,9 @@
         </div>
         <span class="error-value">{{ data.error }}</span>
       </div>
-      <!-- <div class="button-container">
-        <button mat-button color="warn" (click)="onClose()">
-          <span class="button-text">Close</span>
-        </button>
-      </div> -->
+      <div class="button-container">
+        
+      </div>
     </div>
   </div>
     
@@ -488,6 +497,7 @@
       <strong>ID:</strong> {{data.id}}
     </div>
   
+</div>
 </div>
 
   

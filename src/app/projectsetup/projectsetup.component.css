@@ -42,9 +42,14 @@
   right: 10px;
   width: 130px;
 }
+.roboisof-logo{
+
+  height: 190px;
+  border-radius: 10px;
+}
 .fms-box {
   background-color: white;
-  padding: 50px 30px;
+  /* padding: 10px 0px; */
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }

@@ -7,12 +7,13 @@ import {
 } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth.service';
+import { LoaderService } from './loader.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router) {}
+  constructor(private authService: AuthService, private router: Router, private loaderService: LoaderService) {}
 
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -20,6 +21,15 @@ export class AuthGuard implements CanActivate {
   ): Observable<boolean> | Promise<boolean> | boolean {
     const url: string = state.url;
     return this.checkLogin(url);
+
+    this.loaderService.show();
+    
+    // Simulate a delay for demonstration
+    setTimeout(() => {
+      this.loaderService.hide();
+    }, 2000); // Replace with actual logic
+
+    return true; // or false based on your authentication logic
   }
 
   checkLogin(url: string): boolean {
@@ -38,4 +48,6 @@ export class AuthGuard implements CanActivate {
 
     return true;
   }
+
+
 }

@@ -1,9 +1,10 @@
 import { environment } from '../../environments/environment.development';
 import { ExportService } from '../export.service';
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ProjectService } from '../services/project.service';
 import { timeStamp } from 'console';
-import { PageEvent } from '@angular/material/paginator';
+// import { PageEvent } from '@angular/material/paginator';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-userlogs',
@@ -11,6 +12,7 @@ import { PageEvent } from '@angular/material/paginator';
   styleUrl: './userlogs.component.css',
 })
 export class Userlogscomponent {
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   mapData: any | null = null;
   activeFilter: any;
   ONBtn: any;
@@ -22,12 +24,11 @@ export class Userlogscomponent {
   currentTable = 'task';
   currentTab: any;
   filteredTaskData: any[] = [];
-  onPageChange(event: PageEvent) {
-    this.setPaginatedData();
-  }
-  setPaginatedData() {
-    throw new Error('Method not implemented.');
-  }
+  filteredTaskData1: any[] = [];
+  filteredTaskData2: any[] = [];
+  paginatedData: any[] = [];
+  paginatedData1: any[] = [];
+  paginatedData2: any[] = [];
 
   // Your task data
   taskData: any[] = [];
@@ -51,6 +52,7 @@ export class Userlogscomponent {
       console.log('Seems no map has been selected');
       return;
     }
+    // data rendering
     this.getTaskLogs();
     this.getRoboLogs();
     this.getFleetLogs();
@@ -78,7 +80,7 @@ export class Userlogscomponent {
         this.taskData = taskLogs.notifications.map((taskErr: any) => {
           return {
             dateTime: new Date().toDateString(),
-            taskId: 'task_001',
+            taskId: taskErr.taskId,
             taskName: 'Pick Packs',
             errCode: taskErr.name,
             criticality: taskErr.criticality,
@@ -86,6 +88,7 @@ export class Userlogscomponent {
           };
         });
         this.filteredTaskData = this.taskData;
+        this.setPaginatedData();
         // console.log(taskLogs);
       })
       .catch((err) => {
@@ -123,6 +126,8 @@ export class Userlogscomponent {
             desc: roboErr.DESCRIPTION,
           };
         });
+        this.filteredTaskData1 = this.robotData;
+        this.setPaginatedData();
       })
       .catch((err) => {
         console.log(err);
@@ -158,10 +163,84 @@ export class Userlogscomponent {
             desc: fleetErr.desc,
           };
         });
+        this.filteredTaskData2 = this.fleetData;
+        this.setPaginatedData();
       })
       .catch((err) => {
         console.log(err);
       });
+  }
+
+  setPaginatedData() {
+    if (this.paginator) {
+      const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
+      this.paginatedData = this.filteredTaskData.slice(
+        startIndex,
+        startIndex + this.paginator.pageSize
+      );
+      this.paginatedData1 = this.filteredTaskData1.slice(
+        startIndex,
+        startIndex + this.paginator.pageSize
+      );
+      this.paginatedData2 = this.filteredTaskData2.slice(
+        startIndex,
+        startIndex + this.paginator.pageSize
+      );
+    }
+  }
+
+  onPageChange(event: PageEvent) {
+    this.setPaginatedData();
+  }
+
+
+  onSearch(event: Event): void {
+    const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
+
+    if (!inputValue) {
+      this.filteredTaskData = this.taskData;
+      this.filteredTaskData1 = this.robotData;
+      this.filteredTaskData2 = this.fleetData;
+    } else {
+      this.filteredTaskData = this.taskData.filter((item) =>
+        Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(inputValue)
+        )
+      );
+      this.filteredTaskData1 = this.robotData.filter((item) =>
+        Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(inputValue)
+        )
+      );
+      this.filteredTaskData2 = this.fleetData.filter((item) =>
+        Object.values(item).some((val) =>
+          String(val).toLowerCase().includes(inputValue)
+        )
+      );
+    }
+
+    // Reset the paginator after filtering
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+
+    this.setPaginatedData(); // Update paginated data after filtering
+  }
+
+  trackByTaskId(index: number, item: any): number {
+    return item.taskId; // or any unique identifier like taskId
+  }
+
+  onCancel(item: any) {
+    // Find the index of the item in the tasks array and remove it
+    const index = this.taskData.indexOf(item);
+    if (index > -1) {
+      this.taskData.splice(index, 1); // Remove the task from the tasks array
+    }
+
+    // Update the filteredTaskData and reapply pagination
+    this.filteredTaskData = [...this.taskData]; // Ensure it's updated
+    this.setPaginatedData(); // Recalculate the displayed paginated data
   }
 
   togglePopup() {
@@ -260,11 +339,11 @@ export class Userlogscomponent {
     this.activeFilter = filter;
   }
 
-  onSearch(event: Event): void {
-    const inputElement = event.target as HTMLInputElement;
-    const query = inputElement.value;
-    // Implement your search logic here
-  }
+  // onSearch(event: Event): void {
+  //   const inputElement = event.target as HTMLInputElement;
+  //   const query = inputElement.value;
+  //   // Implement your search logic here
+  // }
 
   onDateFilterChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;

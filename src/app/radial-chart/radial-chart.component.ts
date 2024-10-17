@@ -3,7 +3,8 @@ import {
   ApexNonAxisChartSeries,
   ApexChart,
   ApexPlotOptions,
-  
+  ApexFill, // Import ApexFill for colors
+  ApexStroke // Import ApexStroke for stroke customization
 } from 'ng-apexcharts';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
@@ -13,6 +14,8 @@ export type ChartOptions = {
   chart: ApexChart;
   plotOptions: ApexPlotOptions;
   labels: string[];
+  fill: ApexFill; // Add fill property for colors
+  stroke: ApexStroke; // Optional: Add stroke for better clarity
 };
 
 @Component({
@@ -25,71 +28,69 @@ export class RadialChartComponent implements OnInit {
   roboStatePie: number[] = [0, 0, 0];
   selectedMap: any | null = null;
   currentFilter: string = 'today'; // To track the selected filter
+  totCount: string = '0';
 
   constructor(private projectService: ProjectService) {
     this.chartOptions = {
       series: this.roboStatePie,
       chart: {
-        height: 370,
+        height: 345,
         type: 'radialBar',
       },
       plotOptions: {
         radialBar: {
           dataLabels: {
             name: {
-              fontSize: '40px',
+              fontSize: '30px',
             },
             value: {
-              fontSize: '30px',
+              fontSize: '26px',
+              fontWeight: 600,
             },
             total: {
               show: true,
               label: 'Total',
-              formatter: this.getTotalRoboCounts,
+              formatter: () => this.totCount, // Dynamic total count
             },
-            
+          },
+          track: {
+            background: '#e0e0e0', // Track background color (grayish)
           },
         },
       },
-      labels: ['Healthy', 'Inactive', 'Error'],
+      fill: {
+        colors: ['#59ED9D', '#FECC6A', '#FF6E6E'], // Green, Yellow, Red
+      },
+      stroke: {
+        lineCap: 'round', // Rounded end of bars for better visual
+      },
+      labels: ['Healthy', 'Inactive', 'Error'], // Label names
     };
   }
-
-  getColor(index: number): string {
-    const colors = ['#FF0000', '#00FF00', '#0000FF']; // Example colors, adjust based on your chart segments
-    return colors[index % colors.length]; // Cycle through colors if you have more labels than colors
-  }
-  
 
   async ngOnInit() {
     if (this.selectedMap) return;
     this.selectedMap = this.projectService.getMapData();
     this.roboStatePie = await this.getRobosStates();
-    this.chartOptions.series = this.roboStatePie;
+    this.chartOptions.series = [...this.roboStatePie]; // Update series with data
     setInterval(async () => {
       this.roboStatePie = await this.getRobosStates();
-      this.chartOptions.series = this.roboStatePie;
-    }, 1000 * 3);
+      this.chartOptions.series = [...this.roboStatePie];
+    }, 1000 * 3); // Update every 3 seconds
   }
 
-  // Apply filter function when a filter is selected
   applyFilter(filter: string) {
-    this.currentFilter = filter; // Update the current filter
-    this.updateChartWithFilter(); // Re-fetch data with the new filter
+    this.currentFilter = filter;
+    this.updateChartWithFilter();
   }
 
   async updateChartWithFilter() {
-    // Fetch filtered robot states
     this.roboStatePie = await this.getRobosStates();
-    this.chartOptions.series = this.roboStatePie;
-  }
-
-  getTotalRoboCounts() {
-    return '32'; // Example value
+    this.chartOptions.series = [...this.roboStatePie];
   }
 
   async getRobosStates(): Promise<number[]> {
-    let filterParam = this.currentFilter; // Pass filter to backend
+    let filterParam = this.currentFilter;
 
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-robos-state/${this.selectedMap.id}`,
@@ -99,17 +100,24 @@ export class RadialChartComponent implements OnInit {
         body: JSON.stringify({}),
       }
     );
-    
+
     let data = await response.json();
     if (data.error) {
-      console.log('Err occurred while getting tasks status:', data.error);
+      console.log('Error while getting robot states:', data.error);
       return [0, 0, 0];
     }
     if (!data.map) {
       alert(data.msg);
       return [0, 0, 0];
     }
-    if (data.roboStates) return data.roboStates;
+    if (data.roboStates) {
+      let count = 0;
+      data.roboStates.forEach((stateCount: number) => {
+        count += stateCount;
+      });
+      this.totCount = count.toString();
+      return data.roboStates;
+    }
     return [0, 0, 0];
   }
 }

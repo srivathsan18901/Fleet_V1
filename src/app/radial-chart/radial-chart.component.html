@@ -1,11 +1,12 @@
-<div class="radial-chart-container">
+<div class="radial-chart-container relative">
+  <p class="absolute text-[20px] font-semibold">Robots</p>
   <div id="chart">
-    <h1>Robots</h1>
     <apx-chart
       [series]="chartOptions.series ?? []"
       [chart]="chartOptions.chart ?? { type: 'radialBar', height: 300 }"
       [plotOptions]="chartOptions.plotOptions ?? {}"
       [labels]="chartOptions.labels ?? []"
+      [fill]="chartOptions.fill ?? {}"
     ></apx-chart>
   </div>
 

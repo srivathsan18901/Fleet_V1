@@ -44,28 +44,29 @@
 }
 
 .subheader-icon {
-  width: 13px;
+  width: 23px;
   height: 13px;
 }
+
 
 /* Table Container Styling */
 .table-container {
   width: 103%;
   border-radius: 10px;
-  margin-top: 10px;
-  max-height: 23.5rem;
+  
+  max-height: 25rem;
   overflow-y: auto;
 }
 
 /* Table Styling */
 table {
   border-collapse: collapse;
-  width: 100%;
+  width: 99%;
   max-height: 500px;
   border-radius: 10px;
   border-spacing: 0;
   overflow: auto;
-  border: 1px solid #ccc;
+  border: 1px solid #fff;
 }
 thead {
   position: sticky;
@@ -79,10 +80,10 @@ tbody {
 
 
 th, td {
-  border: 1px solid #ffffff;
+  border: 0px solid #ffffff;
   padding: 5px;
   height: 30px;
-  text-align: center;
+  text-align: left;
 }
 
 th {
@@ -95,7 +96,8 @@ th {
 }
 
 td {
-  text-align: center;
+  padding: 5px 20px;
+  text-align: left;
   font-size: 13px;
 }
 
@@ -105,6 +107,27 @@ tr:hover {
 
 tr:nth-child(even) {
   background-color: #FFF1F1;
+}
+
+
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px; /* Adjust height as needed */
+}
+
+.no-data-image {
+  width: 100px; /* Adjust image size */
+  height: auto;
+  margin-bottom: 0rem;
+}
+
+.no-data-text {
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.7); /* Customize text color */
+  text-align: center;
 }
 
 /* Button Container Styling */
@@ -190,7 +213,7 @@ tr:nth-child(even) {
   display: block;
   margin: 20px auto;
   padding: 10px 20px;
-  font-size: 18px;
+  font-size: 16px;
   border: none;
   border-radius: 4px;
   background-color: #dedede;
@@ -209,8 +232,8 @@ tr:nth-child(even) {
 /* Close Button Styles */
 .close-button {
   position: absolute;
-  top: -15px;
-  right: -15px;
+  top: 15px;
+  right: 15px;
   background-color: white;
   border: 2px solid red;
   border-radius: 50%;
@@ -405,9 +428,12 @@ tr:nth-child(even) {
 
 /* Container for paginator */
 .paginator-container {
+  margin-left: 32rem;
   display: flex;
   justify-content: center;
-  margin-top: 5px;
+  margin-top: 10px;
+  top: 39rem;
+  position: absolute;
 }
 
 /* Paginator wrapper */

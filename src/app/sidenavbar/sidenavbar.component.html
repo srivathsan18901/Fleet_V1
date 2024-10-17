@@ -1,20 +1,45 @@
-<div class="topbar">
+<div class="topbar" >
   <div class="TopbarContents">
+    <div class="timer">
+      <app-timer></app-timer>
+    </div>
     <app-fullscreen-button></app-fullscreen-button>
-    <img
+    <img alt=""
       src="../../assets/icons/Notification_icon.svg"
       routerLink="/notification"
-      (click)="toggleNotificationPopup()"
+      (click)="showNotification()"
+
+
       class="Nlogo"
     />
-    <img
-      src="../../assets/icons/Lan_icon.svg"
-      routerLink="/language"
-      class="Llogo"
-    />
+
+
+    <div class="language-selector">
+      <div class="language-toggle" (click)="languageChange()">
+        <span class="language-info">
+          <div [(innerHTML)]="flagSvg" class="flag-icon"></div>
+          <p class="flag-name">{{flagName}}</p>
+        </span>
+        <svg [ngClass]="{'rotate': languageArrowState}" class="arrow-icon" width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5.75505 8.33739L0 2.58245L1.91834 0.664062L5.75505 4.50076L9.59169 0.664062L11.51 2.58245L5.75505 8.33739Z" fill="black"/>
+        </svg>
+      </div>
+      <div *ngIf="languageArrowState" class="language-dropdown">
+        <div *ngFor="let flag of flags; trackBy: trackFlag" class="language-option" (click)="changeFlag(flag.order)">
+          <span class="option-info">
+            <div [(innerHTML)]="flag.flagComp" class="flag-icon"></div>
+            <p class="flag-name">{{flag.nameTag}}</p>
+          </span>
+        </div>
+      </div>
+    </div>
+
+
+
+
     <div class="Profile">
       <img
-        src="../../assets/icons/Profile_icon.svg"
+        src="../../assets/icons/profile.png"
         alt="profile pic"
         routerLink="/profile"
         class="PPicon"
@@ -24,45 +49,78 @@
         <p class="username">{{ username }}</p>
         <p class="userrole">{{ userrole }}</p>
       </div>
+
+      <!-- Profile Popup -->
+      <div class="profile-popup" *ngIf="showProfilePopup">
+        <div class="profile-header">
+          <img src="../../assets/icons/profile.png" alt="profile pic" class="popup-profile-pic" />
+          <div class="popup-info">
+            <p class="popup-username">{{ username }}</p>
+            <p class="popup-userrole">{{ userrole }}</p>
+          </div>
+        </div>
+        <hr />
+        <div class="popup-actions">
+          <!-- <button routerLink="/profile" class="profile-btn">View Profile</button> -->
+          <button (click)="logout()" class="logout-btn">Logout</button>
+        </div>
+      </div>
     </div>
+
+
+
   </div>
 </div>
 
 <div class="sidebar">
   <div class="sidebar">
-    <img src="../../assets/Motherson_logo.svg" class="Logo" />
-
+    <div class="logo-container">
+      <img src="../../assets/Motherson_full_logo.jpeg" alt="" class="Logo" />
+      <img src="../../assets/shared image.jpeg" alt="" class="logo2">
+    </div>
+    
     <div class="icons">
       <div class="icon1" routerLink="/dashboard" routerLinkActive="active">
-        <img src="../../assets/icons/dashboard_icon copy.svg" class="Dlogo" />
+        <img src="../../assets/icons/dashboard_icon copy.svg" alt="" class="Dlogo" />
         <span class="label">Dashboard</span>
       </div>
+
       <div class="icon2" routerLink="/statistics" routerLinkActive="active">
-        <img src="../../assets/icons/Statistics.svg" class="Slogo" />
+        <img src="../../assets/icons/Statistics.svg" alt="" class="Slogo" />
         <span class="label">Statistics</span>
       </div>
+
       <div class="icon3" routerLink="/robots" routerLinkActive="active">
-        <img src="../../assets/icons/Statistics_icon.svg" class="Slogo" />
+        <img src="../../assets/icons/Statistics_icon.svg" alt="" class="Slogo" />
         <span class="label">Robots</span>
       </div>
-      <div class="icon4" routerLink="/configuration" routerLinkActive="active">
-        <img src="../../assets/icons/Configuration_icons.svg" class="Clogo" />
-        <span class="label">Configuration</span>
+
+      <div *ngIf="cookieValue.role === 'Administrator' || cookieValue.role === 'Maintainer'" 
+       class="icon4" 
+       routerLink="/configuration" 
+       routerLinkActive="active">
+       <img src="../../assets/icons/Configuration_icons.svg" alt="" class="Clogo" />
+       <span class="label">Configuration</span>
       </div>
+      
       <div class="icon5" routerLink="/Reports" routerLinkActive="active">
-        <img src="../../assets/icons/Logs_icons.svg" class="Llogo" />
+        <img src="../../assets/icons/Logs_icons.svg" alt="" class="Llogo" />
         <span class="label">Error logs</span>
       </div>
       <div class="icon6" routerLink="/tasks" routerLinkActive="active">
-        <img src="../../assets/icons/Tasks_icons.svg" class="Llogo" />
+        <img src="../../assets/icons/Tasks_icons.svg" alt="" class="Llogo" />
         <span class="label">Tasks</span>
       </div>
-      <div class="icon7" routerLink="/usermanagement" routerLinkActive="active">
-        <img src="../../assets/icons/Usermanagement_icons.svg" class="Llogo" />
-        <span class="label">User Management</span>
-      </div>
+
+      @if (cookieValue.role === "Administrator") {
+        <div class="icon7" routerLink="/usermanagement" routerLinkActive="active">
+          <img src="../../assets/icons/Usermanagement_icons.svg" alt="" class="Llogo" />
+          <span class="label">User Management</span>
+        </div>
+      }
+
       <div class="icon8" routerLink="/support" routerLinkActive="active">
-        <img src="../../assets/icons/support.svg" class="Llogo" />
+        <img src="../../assets/icons/support.svg" alt=""  class="Llogo" />
         <span class="label">Support</span>
       </div>
     </div>
@@ -75,16 +133,92 @@
       <span class="label">User Management</span>
     </div> -->
     <div class="icons logout-icon" (click)="logout()">
-      <img src="../../assets/icons/Logout_icon.svg" class="Outlogo" />
+      <img src="../../assets/icons/Logout_icon.svg " alt="" class="Outlogo" />
       <span class="label">Logout</span>
+
     </div>
   </div>
 </div>
-<div class="notification-popup" *ngIf="showNotificationPopup">
-  <!-- Your notification content here -->
-  <p>No new notifications</p>
+
+<!-- notification popup -->
+
+<div class="notification-popup" [ngClass]="{ 'show': isNotificationVisible }" (mouseenter)="cancelAutoClose()" (mouseleave)="startAutoClose()">
+  <div class="close-btn" (click)="closeNotification()">✖</div>
+
+  <h3>Notifications</h3>
+
+  <ng-container *ngIf="notifications && notifications.length > 0; else noNotifications">
+    <ul>
+      <li *ngFor="let notification of notifications">{{ notification }}</li>
+    </ul>
+  </ng-container>
+
+  <ng-template #noNotifications>
+    <div class="no-notifications">
+      <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 2200 2200" style="enable-background:new 0 0 2200 2200;" xml:space="preserve">
+<g id="background">
+	<rect style="fill:#FFFFFF;" width="2200" height="2200"/>
+</g>
+<g id="Objects">
+	<g>
+		<g>
+			<g>
+				<radialGradient id="SVGID_1_" cx="1098.499" cy="1538.9681" r="291.2872" gradientUnits="userSpaceOnUse">
+					<stop  offset="0" style="stop-color:#F18512"/>
+					<stop  offset="1" style="stop-color:#E8730E"/>
+				</radialGradient>
+				<path style="fill:url(#SVGID_1_);" d="M1310.674,1442.907v125.835c0,116.345-94.305,210.677-210.677,210.677
+					c-116.345,0-210.677-94.331-210.677-210.677v-125.835H1310.674z"/>
+
+					<radialGradient id="SVGID_00000103985192749233864590000000496444474175235514_" cx="1094.9939" cy="595.0933" r="1089.514" gradientUnits="userSpaceOnUse">
+					<stop  offset="0" style="stop-color:#FFBD17"/>
+					<stop  offset="1" style="stop-color:#FF9A17"/>
+				</radialGradient>
+				<path style="fill:url(#SVGID_00000103985192749233864590000000496444474175235514_);" d="M453.852,1379.866
+					c86.118-36.86,141.967-121.513,141.967-215.188v-332.26c0-237.514,164.234-436.663,385.338-490.086
+					c-0.119-0.986-0.226-1.974-0.319-2.966c-6.118-64.971,40.495-122.77,105.348-130.031
+					c72.279-8.093,133.491,48.256,133.491,118.901c0,4.77-0.273,9.469-0.833,14.096c91.5,22.099,173.257,69.156,237.672,133.571
+					c91.241,91.241,147.667,217.283,147.667,356.515v332.26c0,93.675,55.849,178.328,141.967,215.188l0,0
+					c35.034,14.995,57.754,49.433,57.754,87.542v0c0,52.59-42.633,95.223-95.223,95.223H491.321
+					c-52.59,0-95.223-42.633-95.223-95.223v0C396.097,1429.299,418.818,1394.861,453.852,1379.866L453.852,1379.866z"/>
+
+					<linearGradient id="SVGID_00000133504361538417037980000001317295013981798551_" gradientUnits="userSpaceOnUse" x1="723.9965" y1="561.4635" x2="952.6129" y2="763.9523">
+					<stop  offset="0" style="stop-color:#FFFFFF"/>
+					<stop  offset="1" style="stop-color:#FFFFFF;stop-opacity:0"/>
+				</linearGradient>
+				<path style="opacity:0.3;fill:url(#SVGID_00000133504361538417037980000001317295013981798551_);" d="M1296.577,400.373
+					C979.725,538.369,801.186,750.17,740.952,1142.489H625.536c0,0,0-274.78,0-310.174c0-262.037,212.426-474.464,474.464-474.464
+					C1170.117,357.851,1236.683,373.061,1296.577,400.373z"/>
+			</g>
+
+				<radialGradient id="SVGID_00000138549779600912202170000009709639822495606663_" cx="1117.7086" cy="1888.0402" r="730.9432" gradientTransform="matrix(1 0 0 0.087 0 1755.9756)" gradientUnits="userSpaceOnUse">
+				<stop  offset="0" style="stop-color:#000000;stop-opacity:0.6"/>
+				<stop  offset="1" style="stop-color:#000000;stop-opacity:0"/>
+			</radialGradient>
+
+				<ellipse style="opacity:0.27;fill:url(#SVGID_00000138549779600912202170000009709639822495606663_);" cx="1100" cy="1920.158" rx="746.894" ry="71.282"/>
+		</g>
+
+			<radialGradient id="SVGID_00000111896522751029818240000011259075925855003539_" cx="1039.7898" cy="330.9651" r="55.6574" gradientUnits="userSpaceOnUse">
+			<stop  offset="0" style="stop-color:#F18512"/>
+			<stop  offset="1" style="stop-color:#E8730E"/>
+		</radialGradient>
+		<path style="opacity:0.28;fill:url(#SVGID_00000111896522751029818240000011259075925855003539_);" d="M1100,328.62
+			c-71.35,0-118.84,13.71-118.84,13.71c-0.12-0.98-0.23-1.97-0.32-2.96c-0.19-2.04-0.33-4.08-0.41-6.1
+			C1047.71,321.35,1100,328.62,1100,328.62z"/>
+	</g>
+</g>
+</svg>
+
+      <span>No notifications to show</span>
+    </div>
+  </ng-template>
 </div>
-<div class="Profile-popup" *ngIf="showProfilePopup">
-  <!-- Your notification content here -->
-  <p>Hi,{{ username }}</p>
-</div>
+
+
+
+<!-- <div class="Profile-popup" *ngIf="showProfilePopup"> -->
+
+  <!-- <p>Hi,{{ username }}</p> -->
+<!-- </div> -->

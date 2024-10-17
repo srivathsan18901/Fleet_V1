@@ -21,7 +21,6 @@ import { CookieService } from 'ngx-cookie-service';
 import { MapService } from '../map.service';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
-
 interface Node {
   nodeId: string;
   sequenceId: number;
@@ -101,9 +100,10 @@ export class EnvmapComponent implements AfterViewInit {
   @Input() currEditMapDet: any | null = null;
   @Output() currEditMapChange = new EventEmitter<any>();
   @Input() addEnvToEnvData!: (data: any) => void;
-
+  @Output() refreshTable = new EventEmitter<void>();  // Add this
   @Output() closePopup = new EventEmitter<void>();
   @Output() newEnvEvent = new EventEmitter<any>();
+  @Output() save = new EventEmitter<void>();//emit the save function
   @ViewChild('imageCanvas', { static: false })
   imageCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('overlayCanvas', { static: false })
@@ -115,7 +115,7 @@ export class EnvmapComponent implements AfterViewInit {
   @ViewChild('yInput') yInput!: ElementRef<HTMLInputElement>;
   @ViewChild('nodeDetailsPopup', { static: false })
   nodeDetailsPopup!: ElementRef<HTMLDivElement>;
-  
+
 
   projData: any;
   form: FormData | null = null;
@@ -136,6 +136,9 @@ export class EnvmapComponent implements AfterViewInit {
   robos: Robo[] = []; // Org_robos
   selectedAction: string| null = null;
   validationError: string | null = null;
+  savedEdge: Edge | null = null; // This will hold the saved edge details
+  rightClickEnabled: boolean = false; // Control right-click functionality
+
   Nodes: {
     id: number;
     x: number;
@@ -143,7 +146,7 @@ export class EnvmapComponent implements AfterViewInit {
     orientationAngle?: number;
     type: string;
   }[] = [];
-  private isDeleteModeEnabled: boolean = false;
+  isDeleteModeEnabled: boolean = false;
   NodeDetails: {
     nodeID: string;
     sequenceId: number;
@@ -160,6 +163,7 @@ export class EnvmapComponent implements AfterViewInit {
 
   isNodeDetailsPopupVisible = false; // Control popup visibility
   public ratio: number | null = null; // Store the resolution ratio (meters per pixel)
+  origin : {x : number, y : number, w : number} = { x : 0, y : 0, w : 0 };
   plottingMode: 'single' | 'multi' | null = null;
   isPlottingEnabled: boolean = false;
   isDrawing: boolean = false;
@@ -168,7 +172,7 @@ export class EnvmapComponent implements AfterViewInit {
   isOptionsMenuVisible = false;
   isCalibrationLayerVisible = false;
   showIntermediateNodesDialog: boolean = false;
-  numberOfIntermediateNodes: number = 0;
+  numberOfIntermediateNodes: any ;
   firstNode: Node | null = null;
   secondNode: Node | null = null;
   robotImages: { [key: string]: HTMLImageElement } = {};
@@ -263,7 +267,7 @@ export class EnvmapComponent implements AfterViewInit {
     edgeId: '',
     sequenceId: 0,
     edgeDescription: '',
-    released: true,
+    released: false,
     startNodeId: '',
     endNodeId: '',
     maxSpeed: 0,
@@ -272,11 +276,12 @@ export class EnvmapComponent implements AfterViewInit {
     orientation: 0,
     orientationType: '',
     direction: 'UN_DIRECTIONAL',
-    rotationAllowed: true,
+    rotationAllowed: false,
     maxRotationSpeed: 0,
     length: 0,
     action: [],
-  };
+  };  
+  selectedMap : any | null = null;
   showPopup = false;
   zoneTypeList = Object.values(ZoneType); // Converts the enum to an array
   DockPopup: boolean = false; // To control the popup visibility
@@ -286,11 +291,28 @@ export class EnvmapComponent implements AfterViewInit {
   selectedAssetId: string | null = null; // Store the selected asset ID
   // private draggedNode: Node | null = null;
   private selectionStart: { x: number; y: number } | null = null;
+  private selectionTransformStart : {x :number ; y : number} | null = null;
   private selectionEnd: { x: number; y: number } | null = null;
   private nodesToDelete: Node[] = [];
   isOpen: boolean = false;
-
+  descriptionWarning: boolean = false;
   currMulNode : Node[] = [];
+  newOrientationAngle: number = 0;
+  inputOrientationAngle: number = 0; // The value entered by the user
+  // selectedNodeId: string; // Variable to store the selected node
+  public selectedNodeId: string | null = null;
+
+  isFullScreen: boolean = false;
+
+  toggleFullScreen() {
+    this.isFullScreen = !this.isFullScreen;
+  }
+
+  close1() {
+    this.showImage = false;
+    this.isFullScreen = false; // Reset fullscreen when closing
+  }
+
 
   setDirection(direction: 'uni' | 'bi'): void {
     this.toggleOptionsMenu();
@@ -299,9 +321,13 @@ export class EnvmapComponent implements AfterViewInit {
     this.firstNode = null;
     this.secondNode = null;
   }
+  isPlottingAsset: boolean = false;
   selectAssetType(assetType: string) {
     this.toggleOptionsMenu();
     this.selectedAssetType = assetType;
+    this.isPlottingAsset = true;
+    // console.log("hey");
+    
   }
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -313,27 +339,30 @@ export class EnvmapComponent implements AfterViewInit {
     if (this.currEditMap) this.showImage = true;
   }
   ngOnInit() {
+    this.selectedMap = this.projectService.getMapData();
+    if(!this.selectedMap) return;
     if (this.currEditMap) {
       this.showImage = true;
       this.mapName = this.currEditMapDet.mapName;
       this.siteName = this.currEditMapDet.siteName;
       this.ratio = this.currEditMapDet.ratio;
       this.imageSrc = this.currEditMapDet.imgUrl;
+      this.origin = {x : this.currEditMapDet.origin.x, y : this.currEditMapDet.origin.y, w : this.currEditMapDet.origin.w};
       this.nodes = this.currEditMapDet.nodes.map((node : Node)=>{
-        node.nodePosition.x = node.nodePosition.x / (this.ratio || 1);
-        node.nodePosition.y = node.nodePosition.y / (this.ratio || 1);
+        node.nodePosition.x = ((node.nodePosition.x - (this.origin.x || 0)) / (this.ratio || 1));
+        node.nodePosition.y = ((node.nodePosition.y - (this.origin.y || 0)) / (this.ratio || 1));
         return node;
       });
       this.edges = this.currEditMapDet.edges;
       this.assets = this.currEditMapDet.assets.map((asset : asset)=>{
-        asset.x = asset.x / (this.ratio || 1);
-        asset.y = asset.y / (this.ratio || 1);
+        asset.x = ((asset.x - (this.origin.x || 0)) / (this.ratio || 1));
+        asset.y = ((asset.y - (this.origin.y || 0)) / (this.ratio || 1));
         return asset;
       });
       this.zones = this.currEditMapDet.zones.map((zone : Zone)=>{
         zone.pos = zone.pos.map((pos)=>{
-          pos.x = pos.x / (this.ratio || 1);
-          pos.y = pos.y / (this.ratio || 1);
+          pos.x = ((pos.x - (this.origin.x || 0)) / (this.ratio || 1));
+          pos.y = ((pos.y - (this.origin.y || 0)) / (this.ratio || 1));
           return pos;
         })
         return zone;
@@ -343,7 +372,7 @@ export class EnvmapComponent implements AfterViewInit {
         robo.pos.y = robo.pos.y / (this.ratio || 1);
         return robo;
       })
-      
+
       this.nodeCounter =
         parseInt(this.nodes[this.nodes.length - 1]?.nodeId) + 1
           ? parseInt(this.nodes[this.nodes.length - 1].nodeId) + 1
@@ -362,6 +391,14 @@ export class EnvmapComponent implements AfterViewInit {
           ? parseInt(this.zones[this.zones.length - 1].id) + 1
           : this.zoneCounter;
       this.open();
+    }
+  }
+  checkDescriptionLength() {
+    // Check if the description exceeds 255 characters
+    if (this.description && this.description.length > 255) {
+      this.descriptionWarning = true;
+    } else {
+      this.descriptionWarning = false;
     }
   }
   ngAfterViewInit(): void {
@@ -468,16 +505,41 @@ export class EnvmapComponent implements AfterViewInit {
     //   );
     // }
   }
+  isConfirmingDelete: boolean = false;
   isConfirmationVisible: boolean = false;
-
+  isRoboConfirmationVisible: boolean = false;
+  showDeleteConfirmation(): void {
+    this.isConfirmingDelete = true;
+  }
   deleteSelectedNode(): void {
     if (this.selectedNode) {
       // Show confirmation dialog
       this.isConfirmationVisible = true;
     } else {
       console.log('No node selected to delete.');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No node selected to delete.',
+        life: 4000,
+      });
     }
     this.isNodeDetailsPopupVisible = false;
+  }
+  confirmRoboDelete():void{
+    if (this.selectedRobo) {
+      this.robos = this.robos.filter(
+        (robo) => robo.roboDet.id !== this.selectedRobo?.roboDet.id
+      );
+      this.redrawCanvas();
+    }
+    if (this.robotToDelete) {
+      // Remove the robot from the robos array
+      this.robos = this.robos.filter(r => r.roboDet.id !== this.robotToDelete.roboDet.id);
+      // Redraw the canvas after deleting the robot
+      this.redrawCanvas();
+    }
+    this.isRoboConfirmationVisible=false;
   }
   confirmDelete(): void {
     if (this.nodesToDelete.length > 0) {
@@ -485,21 +547,31 @@ export class EnvmapComponent implements AfterViewInit {
       this.nodes = this.nodes.filter(
         (node) => !this.nodesToDelete.includes(node)
       );
-
       // Remove edges related to deleted nodes
       this.edges = this.edges.filter((edge) => {
         return !this.nodesToDelete.some(
           (node) => edge.startNodeId === node.nodeId || edge.endNodeId === node.nodeId
         );
       });
-
       // Clear the selected nodes
       this.nodesToDelete = [];
+
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Deleted',
+        detail: 'Nodes Deleted Successfully',
+        life: 4000,
+      });
 
       // Redraw the canvas
       this.redrawCanvas();
     } else {
       console.log('No nodes selected for deletion.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'No items selected for deletion.'
+      });
     }
 
     if (this.selectedAsset) {
@@ -508,6 +580,7 @@ export class EnvmapComponent implements AfterViewInit {
       );
       this.redrawCanvas();
     }
+
     if (this.selectedRobo) {
       this.robos = this.robos.filter(
         (robo) => robo.roboDet.id !== this.selectedRobo?.roboDet.id
@@ -521,7 +594,6 @@ export class EnvmapComponent implements AfterViewInit {
       this.nodes = this.nodes.filter(
         (node) => node.nodeId !== this.selectedNode?.nodeId
       );
-
       // Remove from nodes array
       this.nodes = this.nodes.filter((node) => {
         return (
@@ -537,21 +609,20 @@ export class EnvmapComponent implements AfterViewInit {
           edge.endNodeId !== this.selectedNode?.nodeId
         );
       });
-
+     
       // Clear the selected node
       this.selectedNode = null;
       // Redraw the canvas
       this.redrawCanvas();
     } else {
       console.log('No node selected to delete.');
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Warning',
-        detail: 'No items selected for deletion.'
-      });
-
     }
-
+    // if (this.robotToDelete) {
+    //   // Remove the robot from the robos array
+    //   this.robos = this.robos.filter(r => r.roboDet.id !== this.robotToDelete.roboDet.id);
+    //   // Redraw the canvas after deleting the robot
+    //   this.redrawCanvas();
+    // }
     // Disable delete mode after confirmation
     this.isDeleteModeEnabled = false;
 
@@ -660,79 +731,89 @@ export class EnvmapComponent implements AfterViewInit {
   // }
 
   cancelDelete(): void {
+    this.isConfirmingDelete
+    this.isConfirmationVisible=false;
+    this.isRoboConfirmationVisible = false;
     // Hide confirmation dialog without deleting
     // this.isDeleteModeEnabled = false;
-    this.isConfirmationVisible = false;
   }
   closeImagePopup(): void {
     this.showImagePopup = false;
-    this.distanceBetweenPoints=null;
+      this.points = [];
+      this.showDistanceDialog = false;
+      this.distanceBetweenPoints = null; // Reset distance if applicable
+      this.isDistanceConfirmed=false;
+      if (this.resolutionInput) {
+        this.resolutionInput.nativeElement.value = ''; // Reset the input field
+      }
+      this.validationError=null;
   }
   moveParameters = {
-    maxLinearVelocity: '',
-    maxAngularVelocity: '',
-    maxToleranceAtGoalX: '',
-    maxToleranceAtGoalY: '',
-    maxToleranceAtGoalOrientation: '',
+    maxLinearVelocity: 0,
+    maxAngularVelocity: 0,
+    maxToleranceAtGoalX: 0,
+    maxToleranceAtGoalY: 0,
+    maxToleranceAtGoalOrientation: 0,
     endPointOrientation: false,
     autoRobotMode: 'mode1', // Default mode
   };
   dockParameters = {
-    maxLinearVelocity: '',
-    maxAngularVelocity: '',
-    maxToleranceAtGoalX: '',
-    maxToleranceAtGoalY: '',
-    maxToleranceAtGoalOrientation: '',
-    goalOffsetX: '',
-    goalOffsetY: '',
+    maxLinearVelocity: 0,
+    maxAngularVelocity: 0,
+    maxToleranceAtGoalX: 0,
+    maxToleranceAtGoalY: 0,
+    maxToleranceAtGoalOrientation: 0,
+    goalOffsetX: 0,
+    goalOffsetY: 0,
     goalOffsetOrientation: '',
     endPointOrientation: false,
     dockingType: 'mode1',
   };
   undockParameters = {
-    maxLinearVelocity: '',
-    maxAngularVelocity: '',
-    maxToleranceAtGoalX: '',
-    maxToleranceAtGoalY: '',
-    maxToleranceAtGoalOrientation: '',
+    maxLinearVelocity: 0,
+    maxAngularVelocity: 0,
+    maxToleranceAtGoalX: 0,
+    maxToleranceAtGoalY: 0,
+    maxToleranceAtGoalOrientation: 0,
     endPointOrientation: false,
-    undockingDistance: '',
+    undockingDistance: 0,
   };
   onActionChange(): void {
+
     this.resetParameters();
     this.showActionForm();
     this.validateForm();
   }
   resetParameters(): void {
     this.moveParameters = {
-      maxLinearVelocity: '',
-      maxAngularVelocity: '',
-      maxToleranceAtGoalX: '',
-      maxToleranceAtGoalY: '',
-      maxToleranceAtGoalOrientation: '',
+      maxLinearVelocity: 0,
+      maxAngularVelocity: 0,
+      maxToleranceAtGoalX: 0,
+      maxToleranceAtGoalY: 0,
+      maxToleranceAtGoalOrientation: 0,
       endPointOrientation: false,
       autoRobotMode: 'mode1',
     };
     this.dockParameters = {
-      maxLinearVelocity: '',
-      maxAngularVelocity: '',
-      maxToleranceAtGoalX: '',
-      maxToleranceAtGoalY: '',
-      maxToleranceAtGoalOrientation: '',
-      goalOffsetX: '',
-      goalOffsetY: '',
+      maxLinearVelocity: 0,
+      maxAngularVelocity: 0,
+      maxToleranceAtGoalX: 0,
+      maxToleranceAtGoalY: 0,
+      maxToleranceAtGoalOrientation: 0,
+      goalOffsetX: 0,
+      goalOffsetY: 0,
       goalOffsetOrientation: '',
       endPointOrientation: false,
       dockingType: 'mode1',
     };
     this.undockParameters = {
-      maxLinearVelocity: '',
-      maxAngularVelocity: '',
-      maxToleranceAtGoalX: '',
-      maxToleranceAtGoalY: '',
-      maxToleranceAtGoalOrientation: '',
+      maxLinearVelocity: 0,
+      maxAngularVelocity: 0,
+      maxToleranceAtGoalX: 0,
+      maxToleranceAtGoalY: 0,
+      maxToleranceAtGoalOrientation: 0,
       endPointOrientation: false,
-      undockingDistance: '',
+      undockingDistance: 0,
     };
   }
   showActionForm(): void {
@@ -767,10 +848,21 @@ export class EnvmapComponent implements AfterViewInit {
     this.actions.splice(index, 1); // Remove the action from the list
   }
   addAction(): void {
-    if (this.selectedAction) {
+    if (this.selectedAction && this.selectedNode) {
       let action: any;
-
+  
       if (this.selectedAction === 'Move') {
+        // Validate Move parameters
+        if (
+          this.moveParameters.maxLinearVelocity === undefined &&
+          this.moveParameters.maxAngularVelocity === undefined &&
+          this.moveParameters.maxToleranceAtGoalX === undefined &&
+          this.moveParameters.maxToleranceAtGoalY === undefined &&
+          this.moveParameters.maxToleranceAtGoalOrientation === undefined
+        ) {
+          this.validationError = 'Move parameters are required, else set to 0 as default.';
+          return;
+        }
         action = {
           actionType: this.selectedAction,
           actionId: `action_${this.actionCounter}`,
@@ -778,7 +870,21 @@ export class EnvmapComponent implements AfterViewInit {
           parameters: { ...this.moveParameters },
         };
         this.actionCounter++;
+  
       } else if (this.selectedAction === 'Dock') {
+        // Validate Dock parameters
+        if (
+          this.dockParameters.maxLinearVelocity === undefined &&
+          this.dockParameters.maxAngularVelocity === undefined &&
+          this.dockParameters.maxToleranceAtGoalX === undefined &&
+          this.dockParameters.maxToleranceAtGoalY === undefined &&
+          this.dockParameters.goalOffsetX === undefined &&
+          this.dockParameters.goalOffsetY === undefined &&
+          this.dockParameters.goalOffsetOrientation === undefined
+        ) {
+          this.validationError = 'Dock parameters are required, else set to 0 as default.';
+          return;
+        }
         action = {
           actionType: this.selectedAction,
           actionId: `action_${this.actionCounter}`,
@@ -786,28 +892,46 @@ export class EnvmapComponent implements AfterViewInit {
           parameters: { ...this.dockParameters },
         };
         this.actionCounter++;
+  
       } else if (this.selectedAction === 'Undock') {
+        // Validate Undock parameters
+        if (
+          this.undockParameters.maxLinearVelocity === undefined &&
+          this.undockParameters.maxAngularVelocity === undefined &&
+          this.undockParameters.maxToleranceAtGoalX === undefined &&
+          this.undockParameters.maxToleranceAtGoalY === undefined &&
+          this.undockParameters.maxToleranceAtGoalOrientation === undefined
+        ) {
+          this.validationError = 'Undock parameters are required, else set to 0 as default.';
+          return;
+        }
         action = {
           actionType: this.selectedAction,
           actionId: `action_${this.actionCounter}`,
-          actionDescription: 'undock from the charging station',
+          actionDescription: 'Undock from the charging station',
           parameters: { ...this.undockParameters },
         };
         this.actionCounter++;
       }
-
-      // this.actions.push(action);
+  
+      // Remove selected action from the dropdown options
+      this.actionOptions = this.actionOptions.filter(option => option.value !== this.selectedAction);
+  
+      // Map actions to selected node
       this.nodes = this.nodes.map((node) => {
-        console.log(this.selectedNode?.nodeId, node?.nodeId);
-        if (this.selectedNode?.nodeId === node?.nodeId) node.actions.push(action);
+        if (this.selectedNode?.nodeId === node.nodeId) {
+          node.actions.push(action);
+        }
         return node;
       });
+  
       this.cdRef.detectChanges();
-
+  
       // Hide the form after adding
       this.hideActionForms();
     }
   }
+  
   openMoveActionForm(): void {
     this.isMoveActionFormVisible = true;
     this.isDockActionFormVisible = true;
@@ -816,10 +940,26 @@ export class EnvmapComponent implements AfterViewInit {
   closeNodeDetailsPopup(): void {
     this.isNodeDetailsPopupVisible = false;
   }
+  allActions = [
+    { label: 'Move', value: 'Move' },
+    { label: 'Dock', value: 'Dock' },
+    { label: 'Undock', value: 'Undock' }
+  ];
+
   removeAction(index: number): void {
-    this.actions.splice(index, 1);
-    this.hideActionForms();
+    const removedAction = this.actions[index];
+    this.actions.splice(index, 1); // Remove action from the list
+
+    // Add the removed action back to the dropdown options
+    const actionToAddBack = this.allActions.find(option => option.value === removedAction.actionType);
+    if (actionToAddBack) {
+      this.actionOptions.push(actionToAddBack);
+    }
+
+    // Sort the dropdown options again to maintain the original order
+    this.actionOptions.sort((a, b) => this.allActions.findIndex(opt => opt.value === a.value) - this.allActions.findIndex(opt => opt.value === b.value));
   }
+
   isOptionDisabled(option: string): boolean {
     return this.actions.some((action) => action.actionType === option);
   }
@@ -879,7 +1019,12 @@ export class EnvmapComponent implements AfterViewInit {
         ctx!.drawImage(img, 0, 0, canvas.width, canvas.height);
       };
     } else {
-      alert('No image uploaded.');
+      // alert('No image uploaded.');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Warning',
+        detail: 'No image uploaded.!',
+      });
     }
   }
   private calculateDistance(
@@ -892,28 +1037,34 @@ export class EnvmapComponent implements AfterViewInit {
   }
   updateEditedMap() {
     this.nodes = this.nodes.map((node)=>{
-      node.nodePosition.x = node.nodePosition.x * (this.ratio || 1);
-      node.nodePosition.y = node.nodePosition.y * (this.ratio || 1);
+      // node.nodePosition.x = ((node.nodePosition.x * (this.ratio || 1)));
+      // node.nodePosition.y = ((node.nodePosition.y * (this.ratio || 1)));
+      node.nodePosition.x = ((node.nodePosition.x * (this.ratio || 1)) + (this.origin.x || 0));
+      node.nodePosition.y = ((node.nodePosition.y * (this.ratio || 1)) + (this.origin.y || 0));
       return node;
-    }); // convert pix to meter..
-    this.assets = this.assets.map((asset)=>{
-      asset.x = asset.x * (this.ratio || 1);
-      asset.y = asset.y * (this.ratio || 1);
+    })
+
+    this.assets = this.assets.map((asset) => {
+      asset.x = ((asset.x * (this.ratio || 1)) + (this.origin.x || 0));
+      asset.y = ((asset.y * (this.ratio || 1)) + (this.origin.y || 0));
       return asset;
-    }); // convert pix to meter..
-    this.zones = this.zones.map((zone)=>{
-      zone.pos = zone.pos.map((pos)=>{
-        pos.x = pos.x * (this.ratio || 1);
-        pos.y = pos.y * (this.ratio || 1);
+    });
+
+    this.zones = this.zones.map((zone) => {
+      zone.pos = zone.pos.map((pos) => {
+        pos.x = ((pos.x * (this.ratio || 1)) + (this.origin.x || 0));
+        pos.y = ((pos.y * (this.ratio || 1)) + (this.origin.y || 0));
         return pos;
-      })
+      });
       return zone;
-    })
-    this.robos = this.robos.map((robo)=>{
-      robo.pos.x = robo.pos.x * (this.ratio || 1);
-      robo.pos.y = robo.pos.y * (this.ratio || 1);
+    });
+
+    this.robos = this.robos.map((robo) => {
+      robo.pos.x = ((robo.pos.x * (this.ratio || 1)));
+      robo.pos.y = ((robo.pos.y * (this.ratio || 1)));
       return robo;
-    })
+    });
+
     let editedMap = {
       mapName: null,
       siteName: null,
@@ -925,7 +1076,7 @@ export class EnvmapComponent implements AfterViewInit {
       stations: this.assets,
       roboPos: this.robos
     };
-    
+
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/update-map/${this.mapName}`,
       {
@@ -935,9 +1086,7 @@ export class EnvmapComponent implements AfterViewInit {
         body: JSON.stringify(editedMap),
       }
     )
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
         const { updatedData } = data;
         this.nodes = updatedData.nodes;
@@ -945,84 +1094,164 @@ export class EnvmapComponent implements AfterViewInit {
         this.assets = updatedData.stations;
         this.zones = updatedData.zones;
         this.robos = Array.isArray(updatedData.robos) ? updatedData.robos : [];
-        alert("Updated Successfully")
 
-        this.closePopup.emit();
+        // Success Toast
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Map updated successfully!',
         });
+
+        this.closePopup.emit(); // Close the popup after update
+      })
+      .catch((error) => {
+        console.error('Error updating map:', error);
+
+        // Error Toast
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to update the map. Please try again later.',
+        });
+      });
   }
+  ToQuaternion_(roll : number, pitch : number, yaw : number){
+    const cy = Math.cos(yaw * 0.5);
+    const sy = Math.sin(yaw * 0.5);
+    const cp = Math.cos(pitch * 0.5);
+    const sp = Math.sin(pitch * 0.5);
+    const cr = Math.cos(roll * 0.5);
+    const sr = Math.sin(roll * 0.5);
+
+    const q = {
+      x: sr * cp * cy - cr * sp * sy,
+      y: cr * sp * cy + sr * cp * sy,
+      z: cr * cp * sy - sr * sp * cy,
+      w: cr * cp * cy + sr * sp * sy,
+    };
+
+    return q;
+  };
   saveOpt() {
+    if (!this.nodes || this.nodes.length === 0) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No Nodes are plotted',
+        life: 4000,
+      });
+      return;
+    }
+      // Check for nodes not connected as startNodeId or endNodeId of any edges
+    const connectedNodeIds = new Set(this.edges.flatMap(edge => [edge.startNodeId, edge.endNodeId]));
+    const unconnectedNodes = this.nodes.filter(node => !connectedNodeIds.has(node.nodeId));
+
+    if (unconnectedNodes.length > 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Some nodes are not connected to any edges. Please connect all nodes before saving.',
+        life: 4000,
+      });
+      return;
+    }
     if (this.currEditMap) {
       this.updateEditedMap();
       return;
     }
 
     if (!this.selectedImage) {
-      alert('file missing!');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'File missing!',
+        life: 4000,
+      });
       return;
     }
-    this.nodes = this.nodes.map((node)=>{
-      node.nodePosition.x = node.nodePosition.x * (this.ratio || 1);
-      node.nodePosition.y = node.nodePosition.y * (this.ratio || 1);
+
+    this.nodes = this.nodes.map((node) => {
+      node.nodePosition.x = ((node.nodePosition.x * (this.ratio || 1)) + (this.origin.x || 0));
+      node.nodePosition.y = ((node.nodePosition.y * (this.ratio || 1)) + (this.origin.y || 0));
       return node;
-    }); // convert pix to meter..
-    this.assets = this.assets.map((asset)=>{
-      asset.x = asset.x * (this.ratio || 1);
-      asset.y = asset.y * (this.ratio || 1);
+    });
+
+    this.assets = this.assets.map((asset) => {
+      asset.x = ((asset.x * (this.ratio || 1))+ (this.origin.x || 0));
+      asset.y = ((asset.y * (this.ratio || 1))+ (this.origin.y || 0));
       return asset;
-    }); // convert pix to meter..
-    this.zones = this.zones.map((zone)=>{
-      zone.pos = zone.pos.map((pos)=>{
-        pos.x = pos.x * (this.ratio || 1);
-        pos.y = pos.y * (this.ratio || 1);
+    });
+
+    this.zones = this.zones.map((zone) => {
+      zone.pos = zone.pos.map((pos) => {
+        pos.x = ((pos.x * (this.ratio || 1))+ (this.origin.x || 0));
+        pos.y = ((pos.y * (this.ratio || 1))+ (this.origin.y || 0));
         return pos;
-      })
+      });
       return zone;
-    })
-    this.robos = this.robos.map((robo)=>{
-      robo.pos.x = robo.pos.x * (this.ratio || 1);
-      robo.pos.y = robo.pos.y * (this.ratio || 1);
+    });
+
+    this.robos = this.robos.map((robo) => {
+      robo.pos.x = ((robo.pos.x * (this.ratio || 1))+ (this.origin.x || 0));
+      robo.pos.y = ((robo.pos.y * (this.ratio || 1))+ (this.origin.y || 0));
       return robo;
-    })
+    });
+
+    let orientation = {x :0, y : 0, z : 0, w : 0};
+    if(this.nodes.length)
+    orientation = this.ToQuaternion_(0,0,this.nodes[0].nodePosition.orientation);
+
+    let roboInit  = {
+      id: 0,
+      pose: {
+        position: {
+            x: this.nodes[0].nodePosition.x,
+            y: this.nodes[0].nodePosition.y,
+            z: this.nodes[0].nodePosition.orientation
+        },
+        orientation: orientation
+      }
+    }
+
     this.form = new FormData();
-    let mapData = {
+    const mapData = {
       projectName: this.projData.projectName,
       siteName: this.siteName,
       mapName: this.mapName,
       mpp: this.ratio,
+      origin: this.origin,
       imgUrl: '',
       zones: this.zones,
       edges: this.edges,
       nodes: this.nodes,
       stations: this.assets,
-      roboPos: this.robos
+      roboPos: this.robos,
+      roboInitialise : roboInit
     };
+
     this.form?.append('mapImg', this.selectedImage);
-    this.form?.append('mapData', JSON.stringify(mapData)); // Insert the map related data here..
+    this.form?.append('mapData', JSON.stringify(mapData));
+
     fetch(`http://${environment.API_URL}:${environment.PORT}/dashboard/maps`, {
       method: 'POST',
       credentials: 'include',
       body: this.form,
     })
-      .then((response) => {
-        // if (!response.ok)
-        //   throw new Error(
-        //     `Error occured with status code of ${response.status}`
-        //   );
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        console.log(data);
-        if (data.exits === true) {
-          alert(data.msg);
+        if (data.exists === true || data.isFileExist === false) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Warning',
+            detail: data.msg,
+            life: 4000,
+          });
           return;
         }
-        if (data.isFileExist === false) {
-          alert(data.msg);
-          return;
-        }
+
         if (data.map) {
-          let mapCreatedAt = new Date(data.map.createdAt);
-          let createdAt = mapCreatedAt.toLocaleString('en-IN', {
+          const mapCreatedAt = new Date(data.map.createdAt);
+          const createdAt = mapCreatedAt.toLocaleString('en-IN', {
             month: 'short',
             year: 'numeric',
             day: 'numeric',
@@ -1030,6 +1259,29 @@ export class EnvmapComponent implements AfterViewInit {
             minute: 'numeric',
             second: 'numeric',
           });
+          
+
+          if(!this.EnvData.length){
+            this.projectService.setMapData({
+              id: data.map._id,
+              mapName: data.map.mapName,
+              siteName: this.siteName,
+              date: createdAt,
+              createdAt: data.map.createdAt,
+              imgUrl: data.map.imgUrl,
+            });
+            this.projectService.setIsMapSet(true);
+            this.selectedMap = {
+              id: data.map._id,
+              mapName: data.map.mapName,
+              siteName: this.siteName,
+              date: createdAt,
+              createdAt: data.map.createdAt,
+              imgUrl: data.map.imgUrl,
+            };
+            // return;
+          }
+
           this.EnvData.push({
             id: data.map._id,
             mapName: data.map.mapName,
@@ -1037,19 +1289,36 @@ export class EnvmapComponent implements AfterViewInit {
             date: createdAt,
             createdAt: data.map.createdAt,
           });
+
           this.EnvData.sort(
             (a: any, b: any) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
+
           this.cdRef.detectChanges();
+          this.refreshTable.emit(); // Emit the event to refresh the table
         }
 
-        console.log(this.EnvData);
-        alert("Saved Successfully")
+        // Success toast notification
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Map saved successfully',
+          life: 4000,
+        });
+
         this.closePopup.emit();
       })
       .catch((error) => {
-        console.error('Error occ : ', error);
+        console.error('Error occurred:', error);
+
+        // Error toast notification
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Failed to save map. Please try again.',
+          life: 4000,
+        });
       });
 
     this.form = null;
@@ -1096,6 +1365,7 @@ export class EnvmapComponent implements AfterViewInit {
     link.click();
     this.showImagePopup = false;
     this.isDistanceConfirmed = false; // Reset the state for future use
+    this.save.emit;
   }
   clearCanvas(): void {
     const canvas = this.imagePopupCanvas.nativeElement;
@@ -1108,6 +1378,7 @@ export class EnvmapComponent implements AfterViewInit {
       this.points = [];
       this.showDistanceDialog = false;
       this.distanceBetweenPoints = null; // Reset distance if applicable
+      this.isDistanceConfirmed=false;
 
       // Redraw the image if necessary without resetting canvas size
       const img = new Image();
@@ -1121,11 +1392,19 @@ export class EnvmapComponent implements AfterViewInit {
   @HostListener('click', ['$event'])
   onImagePopupCanvasClick(event: MouseEvent): void {
     if (!this.showImagePopup || !this.imagePopupCanvas) return;
+
     const targetElement = event.target as HTMLElement;
-    // Check if the click was on the "Clear" button, and if so, return early
+
+    // Ignore clicks on the "close" button
+    if (targetElement.classList.contains('close-btn')) {
+      return;
+    }
+
+    // Ignore clicks on the "clear" button
     if (targetElement.classList.contains('clear-btn')) {
       return;
     }
+
     const canvas = this.imagePopupCanvas.nativeElement;
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
@@ -1173,6 +1452,8 @@ export class EnvmapComponent implements AfterViewInit {
     const input = event.target as HTMLInputElement;
     this.ratio = Number(input.value);
   }
+  // originX:number | null = null;
+  // originY:number | null = null;
   open(): void {
     this.validationError = null;
 
@@ -1185,21 +1466,6 @@ export class EnvmapComponent implements AfterViewInit {
           }
         }
       }
-
-    if (this.resolutionInput && this.resolutionInput.nativeElement) {
-      const resolutionInputValue = this.resolutionInput.nativeElement.value;
-
-      if (!this.ratio) {
-        this.ratio = Number(resolutionInputValue);
-        if (!this.ratio || isNaN(this.ratio)) {
-          this.validationError = 'Please provide a valid resolution or click Locate.';
-          return;
-        }
-      }
-    } else {
-      console.error('Resolution input element not found via ViewChild.');
-    }
-  
     if (this.mapName && this.siteName && this.imageSrc ) {
       this.fileName = null;
       this.showImage = true;
@@ -1228,9 +1494,22 @@ export class EnvmapComponent implements AfterViewInit {
       if (this.imageBase64) {
         this.mapService.setOnCreateMapImg(this.imageBase64);  // Save the Base64 image in the cookie
       }
-    } 
+    }
     else{
       this.validationError="Please enter Map name and Site name"
+    }
+        if (this.resolutionInput && this.resolutionInput.nativeElement) {
+      const resolutionInputValue = this.resolutionInput.nativeElement.value;
+
+      if (!this.ratio) {
+        this.ratio = Number(resolutionInputValue);
+        if (!this.ratio || isNaN(this.ratio)) {
+          this.validationError = 'Please provide a valid resolution or click Locate.';
+          return;
+        }
+      }
+    } else {
+      console.error('Resolution input element not found via ViewChild.');
     }
   }
   close(): void {
@@ -1259,32 +1538,68 @@ export class EnvmapComponent implements AfterViewInit {
     const distance = Math.sqrt((x - firstPoint.x) ** 2 + (y - firstPoint.y) ** 2);
     return distance < threshold;
   }
+  public showZoneText: boolean = false;
+  robotToDelete: any; // Store the robot to be deleted
+
   @HostListener('document:contextmenu', ['$event'])
   onRightClick(event: MouseEvent): void {
+    if (this.isMultiNodePlotting) {
+      event.preventDefault(); // Block right-click interaction
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Action Restricted',
+        detail: 'Right-click is disabled while plotting multiple nodes.',
+      });
+      return;
+    }
     event.preventDefault();
-    const rect = this.overlayCanvas.nativeElement.getBoundingClientRect();
-    const x =
-      (event.clientX - rect.left) *
-      (this.overlayCanvas.nativeElement.width / rect.width);
-    const y =
-      (event.clientY - rect.top) *
-      (this.overlayCanvas.nativeElement.height / rect.height);
+    // if (!this.rightClickEnabled) {
+    //   event.preventDefault(); // Block right-click interaction
 
-    for (const zone of this.zones) {
-      const firstPoint = zone.pos[0]; // The first point of the zone
-      if (this.isPointNearFirstZonePoint(x, y, firstPoint)) {
-        this.selectedZone = zone; // Store the selected zone
-        this.zoneType = zone.type;
-        this.showZoneTypePopup();
+    //   this.messageService.add({
+    //     severity: 'info',
+    //     summary: 'Action Restricted',
+    //     detail: 'Please plot both nodes before interacting.'
+    //   });
+    //   return;
+    // }
+    const rect = this.overlayCanvas.nativeElement.getBoundingClientRect();
+    const x = (event.clientX - rect.left) * (this.overlayCanvas.nativeElement.width / rect.width);
+    const y = (event.clientY - rect.top) * (this.overlayCanvas.nativeElement.height / rect.height);
+
+  for (const zone of this.zones) {
+
+    const firstPoint = zone.pos[0]; // The first point of the zone
+    if (this.isPointNearFirstZonePoint(x, y, firstPoint)) {
+      this.zoneType = zone.type; // Prepopulate the selected zone type
+      this.selectedZone = zone; // Store the selected zone
+      this.isPopupVisible = true;
+      this.isDeleteVisible=true;
+      // this.showZoneTypePopup(); // Display the popup
+      return;
+    }
+  }
+    for (const robo of this.robos) {
+      if (this.isRobotClicked(robo, x, y)) {
+        this.robotToDelete = robo;  // Store the robot that was right-clicked
+        this.isRoboConfirmationVisible = true;
+        // const confirmDelete = confirm('Do you want to delete this robot?');
+        // if (confirmDelete) {
+        //   // Remove the robot from the robos array
+        //   this.robos = this.robos.filter(r => r.roboDet.id !== robo.roboDet.id);
+        //   // Redraw the canvas after deleting the robot
+        //   this.redrawCanvas();
+        // }
         return;
       }
     }
     // Check if a node is clicked
     for (const node of this.nodes) {
-      if (this.isNodeClicked(node, x, y) && this.selectedNode) {
+      
+      if (this.isNodeClicked(node, x, y) ) {
+        this.selectedNode=node;
         this.nodeDetails.description = this.selectedNode.nodeDescription;
-        this.nodeDetails.intermediate_node =
-          this.selectedNode.intermediate_node;
+        this.nodeDetails.intermediate_node = this.selectedNode.intermediate_node;
         this.nodeDetails.waiting_node = this.selectedNode.Waiting_node;
         this.actions = this.selectedNode.actions;
         for (let action of this.actions) {
@@ -1302,7 +1617,15 @@ export class EnvmapComponent implements AfterViewInit {
             continue;
           }
         }
+
         // this.cdRef.detectChanges();
+        // Remove selected action from the dropdown options
+        let actionOpt = this.selectedNode.actions.map(action => action.actionType);
+        this.actionOptions = []
+        if(!actionOpt.includes('Move')) this.actionOptions.push({label: 'Move', value: 'Move'})
+        if(!actionOpt.includes('Dock')) this.actionOptions.push({label: 'Dock', value: 'Dock'})
+        if(!actionOpt.includes('Undock')) this.actionOptions.push({label: 'Undock', value: 'Undock'})
+
         this.showNodeDetailsPopup();
         return;
       }
@@ -1329,12 +1652,13 @@ export class EnvmapComponent implements AfterViewInit {
     if (clickedEdge) {
       this.currentEdge = clickedEdge; // Set the current edge details
       this.showPopup = true; // Show the popup
+      return
     }
   }
   onDeleteZone(): void {
     if (this.selectedZone) {
       // Remove the selected zone from the zones array
-      this.zones = this.zones.filter((zone) => zone !== this.selectedZone);
+      this.zones = this.zones.filter((zone) => zone.id !== this.selectedZone?.id);
       this.selectedZone = null;
 
       // Hide the popup and redraw the canvas to reflect the deletion
@@ -1346,10 +1670,9 @@ export class EnvmapComponent implements AfterViewInit {
 
   savePopupData(): void {
     this.validationMessage = null;
-    // Convert undockingDistance to number for validation
     const undockingDistanceNumber = Number(this.undockingDistance);
 
-    // Validate if undockingDistance is within range and both fields are filled
+    // Validate undockingDistance
     if (
       !undockingDistanceNumber ||
       undockingDistanceNumber < 1 ||
@@ -1359,17 +1682,23 @@ export class EnvmapComponent implements AfterViewInit {
       return;
     }
 
+    // Validate description
     if (!this.description || this.description.trim() === '') {
       this.validationMessage = 'Please enter a description.';
       return;
     }
 
+    // Check for description length
+    if (this.description.length > 255) {
+      this.validationMessage = 'Description cannot exceed 255 characters.';
+      return;
+    }
+
     if (this.selectedAsset) {
-      // Find the asset and update its properties
       this.assets = this.assets.map((asset) => {
-        if (asset) {
+        if (this.selectedAsset?.id === asset.id) {
           asset.undockingDistance = parseInt(this.undockingDistance);
-          asset.desc = this.description; //this.selectedAsset?.desc ? this.selectedAsset?.desc : ''
+          asset.desc = this.description;
         }
         return asset;
       });
@@ -1382,6 +1711,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.DockPopup = false;
     this.undockingDistance = '';
     this.description = '';
+    this.validationMessage=""
     this.selectedAssetId = null;
   }
   showNodeDetailsPopup(): void {
@@ -1495,34 +1825,144 @@ export class EnvmapComponent implements AfterViewInit {
       ctx.stroke();
     }
   }
-  plotRobo(x: number, y: number, isSelected: boolean = false): void {
-    const image = this.robotImages['robotB'];
-    const canvas = this.overlayCanvas.nativeElement;
-    const ctx = canvas.getContext('2d');
+  selectedRobots: any[] = [ /* Selected robot(s) */ ]; // Predefined robot(s) to initialize
 
-    if (image && ctx) {
-      const imageSize = 20;
+  positionToQuaternion(position : any) {
+    const angle = position.orientation;  // z contains the rotation angle (in radians)
 
-      // Highlight the selected robot with a border or background
-      // yet tp replace..
-      // if (isSelected) {
-      //   ctx.beginPath();
-      //   ctx.arc(x, y, imageSize * 1, 0, 2 * Math.PI); // Draw a circle centered on the robot
-      //   ctx.fillStyle = 'rgba(255, 0, 0, 0.3)'; // Semi-transparent red
-      //   ctx.fill();
-      //   ctx.closePath();
-      // }
+    // Calculate quaternion for rotation around z-axis
+    const quaternion = {
+        x: 0,  // No rotation around x-axis
+        y: 0,  // No rotation around y-axis
+        z: Math.sin(angle / 2),  // Rotation around z-axis
+        w: Math.cos(angle / 2)   // Scalar part of the quaternion
+    };
 
-      // Draw the robot image
-      ctx.drawImage(
-        image,
-        x - imageSize / 2,
-        y - imageSize / 2,
-        imageSize * 1.3,
-        imageSize
-      );
+    return quaternion;
+}
+generateRobotId(): string {
+  return 'robot_' + (this.robos.length + 1);
+}
+// Method to initialize the selected robot and log its details
+async initializeRobot(): Promise<void> {
+  let ratio = this.ratio ? this.ratio : 1;
+  let quaternion = { x:0, y:0, z:0, w:1 };
+  const transformedY = this.overlayCanvas.nativeElement.height - this.robotToDelete.pos.y;
+  this.robotToDelete.pos.x = this.robotToDelete.pos.x * ratio;
+  this.robotToDelete.pos.y = transformedY * ratio;
+
+  // quaternion = this.positionToQuaternion(this.robotToDelete.pos);
+  let initializeRobo = {
+    id : this.robotToDelete.roboDet.id,
+    pose:{
+      position: {
+        x: this.robotToDelete.pos.x,
+        y: this.robotToDelete.pos.y,
+        z: this.robotToDelete.pos.orientation
+        },
+      orientation: quaternion
     }
   }
+
+  let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/stream-data/initialize-robot`,{
+    method: 'POST',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      mapId : this.selectedMap.id,
+      initializeRobo : initializeRobo
+    }),
+  })
+  let data = await response.json();
+  console.log(data);
+  // this.cancelDelete();
+  if(data.isInitialized){
+    alert('robo Initialized!');
+    return;
+  }
+  if(data.msg) alert(data.msg)
+}
+
+placeRobots(selectedRobots: any[]): void {
+  if (!this.overlayCanvas) return;
+  const canvas = this.overlayCanvas.nativeElement;
+
+  selectedRobots.forEach((robot) => {
+    let x = 0 + this.roboInitOffset;
+    let y = canvas.height - 100;
+    const orientation = 90; // Initial orientation
+
+    // Check if the robot is already in the map
+    if (this.robos.some((robo) => robo.roboDet.id === robot.id)) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Robot already in map!'
+      });
+      return;
+    }
+
+    // Check if the initial position is occupied
+    if (this.isPositionOccupied(x, y, 'robot')) {
+      // Find a nearby available position
+      const spacing = 50; // Spacing distance to move the robot if position is occupied
+      let attempts = 0;
+
+      while (this.isPositionOccupied(x, y, 'robot') && attempts < 10) {
+        // Try moving the robot to the right by a certain spacing distance
+        x += spacing;
+        // If x exceeds canvas width, reset x and move y upwards
+        if (x > canvas.width) {
+          x = 0 + this.roboInitOffset;
+          y -= spacing; // Move upwards
+        }
+        attempts++;
+      }
+    }
+
+    // Create and store robot details with the new orientation
+    const robo: Robo = {
+      roboDet: robot, // Add orientation to roboDet
+      pos: { x: x, y: y, orientation } // Store orientation in pos as well
+    };
+    this.robos.push(robo);
+
+    this.roboInitOffset += 60; // Update offset for next robot placement
+    this.plotRobo(x, y, false, orientation); // Pass the orientation to plotRobo
+  });
+}
+
+plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number = 0): void {
+  const image = this.robotImages['robotB'];
+  const canvas = this.overlayCanvas.nativeElement;
+  const ctx = canvas.getContext('2d');
+
+  if (image && ctx) {
+    const imageSize = 20;
+    ctx.save(); // Save the current state of the canvas before applying transformations
+    // Translate to the robot's position and rotate by the orientation
+    ctx.translate(x, y);
+    ctx.rotate(orientation); // Rotate by the specified orientation (90 degrees)
+
+    if (!isSelected) {
+      ctx.beginPath();
+      ctx.arc(0, 0, imageSize * 1, 0, 2 * Math.PI); // Draw a circle centered on the robot
+      ctx.fillStyle = 'rgba(255, 0, 0, 0.4)'; // Semi-transparent red
+      ctx.fill();
+      ctx.closePath();
+    }
+    // Draw the robot image, which is now rotated
+    ctx.drawImage(
+      image,
+      -imageSize / 2, // Adjust for rotation
+      -imageSize / 2,
+      imageSize * 1.3,
+      imageSize
+    );
+    ctx.restore(); // Restore the original canvas state
+  }
+}
+
   drawText(
     ctx: CanvasRenderingContext2D,
     text: string,
@@ -1535,38 +1975,48 @@ export class EnvmapComponent implements AfterViewInit {
     ctx.textBaseline = 'top'; // Align text from the top
     ctx.fillText(text, x, y); // Draw text at (x, y)
   }
-  private isPositionOccupied(x: number, y: number, type : string ): boolean {
+  private isPositionOccupied(x: number, y: number, type: string): boolean {
     let nodeOccupied = false;
     let assetOccupied = false;
+  
+    // Single node or asset placement logic
+    if (type !== 'node') {
+      nodeOccupied = this.nodes.some((node) => {
+        const distance = Math.sqrt(Math.pow(node.nodePosition.x - x, 2) + Math.pow(node.nodePosition.y - y, 2));
+        return distance < 25; // Threshold for proximity
+      });
+    }
+  
+    if (type !== 'asset') {
+      assetOccupied = this.assets.some((asset) => {
+        const distance = Math.sqrt(Math.pow(asset.x - x, 2) + Math.pow(asset.y - y, 2));
+        return distance < 20; // Threshold for proximity
+      });
+    }
+  
+    // Check if any robot is already occupying the position
+    const roboOccupied = this.robos.some((robo) => {
+      const distance = Math.sqrt(Math.pow(robo.pos.x - x, 2) + Math.pow(robo.pos.y - y, 2));
+      return distance < 30; // Threshold for robots proximity
+    });
+  
+    return nodeOccupied || assetOccupied || roboOccupied;
+  }
+  
 
-        // Single node or asset placement logic
-        if (type !== 'node') {
-            nodeOccupied = this.nodes.some(node => {
-                const distance = Math.sqrt(Math.pow(node.nodePosition.x - x, 2) + Math.pow(node.nodePosition.y - y, 2));
-                return distance < 25; // Threshold for proximity
-            });
-        }
-
-        if (type !== 'asset') {
-            assetOccupied = this.assets.some(asset => {
-                const distance = Math.sqrt(Math.pow(asset.x - x, 2) + Math.pow(asset.y - y, 2));
-                return distance < 20; // Threshold for proximity
-            });
-        }
-    
-
-    return nodeOccupied || assetOccupied;
-  }  
   plotSingleNode(x: number, y: number): void {
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = canvas.getContext('2d')!;
     const transformedY = canvas.height - y; // Flip the Y-axis
     if (this.isPositionOccupied(x, y, 'node')) {
-      alert('This position is already occupied by a node or asset. Please choose a different location.');
+      // alert('This position is already occupied by a node or asset. Please choose a different location.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Please choose different Location',
+        detail: 'This position is already occupies by a node or asset.'
+      });
       return;
     }
-
-
     const color = 'blue'; // Color for single nodes
     this.drawNode(
       {
@@ -1623,11 +2073,14 @@ export class EnvmapComponent implements AfterViewInit {
       'mouseup',
       this.onMouseUp.bind(this)
     );
+
   }
+
   setPlottingMode(mode: 'single' | 'multi'): void {
     this.plottingMode = mode;
     this.isPlottingEnabled = true;
-    this.toggleOptionsMenu();
+    this.isMultiNodePlotting = mode === 'multi';
+    // this.toggleOptionsMenu();
 
     if (mode === 'multi') {
       // this.nodes = [];
@@ -1635,12 +2088,20 @@ export class EnvmapComponent implements AfterViewInit {
       this.secondNode = null;
     }
   }
+  private isMultiNodePlotting: boolean = false;
+  isDirectionSelected: boolean = true; // To track if direction is selected
+
   plotMultiNode(x: number, y: number): void {
     const canvas = this.overlayCanvas.nativeElement;
     const transformedY = canvas.height - y; // Flip the Y-axis
 
     if (this.isPositionOccupied(x, y, 'node')) {
-        alert('This position is already occupied by a node or asset. Please choose a different location.');
+        // alert('This position is already occupied by a node or asset. Please choose a different location.');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Please choose different Location',
+          detail: 'This position is already occupies by a node or asset.'
+        });
         return;
     }
 
@@ -1706,7 +2167,8 @@ export class EnvmapComponent implements AfterViewInit {
         );
 
         this.isPlottingEnabled = false; // Disable further plotting after two nodes
-    } 
+        this.isMultiNodePlotting = false;
+    }
     //yet to uncomment..
     // else {
     //     // Plotting additional nodes
@@ -1726,18 +2188,22 @@ export class EnvmapComponent implements AfterViewInit {
     //     };
     //     this.nodes.push(node);
     // }
-
+    
     this.Nodes.push({ ...this.nodeDetails, type: 'multi' });
     this.nodeCounter++; // Increment the node counter
-}
-
-
+  }
   onInputChanged(): void {
     this.isEnterButtonVisible =
       this.numberOfIntermediateNodes !== null &&
       this.numberOfIntermediateNodes >0;
   }
   plotIntermediateNodes(): void {
+    if (!this.direction) {
+      this.isDirectionSelected = false; // Show validation message
+      return; // Do not proceed if direction is not selected
+    } else {
+        this.isDirectionSelected = true; // Reset validation flag
+    }
     if (this.numberOfIntermediateNodes && this.numberOfIntermediateNodes > 0) {
       if (this.firstNode && this.secondNode && this.numberOfIntermediateNodes > 0) {
         const dx = (this.secondNode.nodePosition.x - this.firstNode.nodePosition.x) / (this.numberOfIntermediateNodes + 1);
@@ -1749,17 +2215,27 @@ export class EnvmapComponent implements AfterViewInit {
           const transformedY = this.overlayCanvas.nativeElement.height - y; // Flip the Y-axis
 
           if(this.isPositionOccupied(x, transformedY, 'node')){
-            alert('stop bro');
-            this.nodes = this.nodes.filter(node => 
+            // alert('Nodes cannot plotted as there are nodes or assets are between them');
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Warning',
+              detail: 'Nodes Cannot plotted as there are nodes or assets are between them'
+            });
+            this.nodes = this.nodes.filter(node =>
               !this.currMulNode.some(mulNode => mulNode.nodeId === node.nodeId)
             );
-            this.closeIntermediateNodesDialog()
+            this.closeIntermediateNodesDialog();
             this.redrawCanvas();
             return;
           }
           if(this.isOverLappingWithOtherNodesInPlotting(x, y)){
-            alert('stop bro');
-            this.nodes = this.nodes.filter(node => 
+            // alert('Nodes cannot plotted as there are nodes or assets are between them');
+            this.messageService.add({
+              severity: 'warn',
+              summary: 'Warning',
+              detail: 'Nodes cannot plotted as there are nodes or assets are between them.'
+            });
+            this.nodes = this.nodes.filter(node =>
               !this.currMulNode.some(mulNode => mulNode.nodeId === node.nodeId)
             );
             this.closeIntermediateNodesDialog()
@@ -1795,17 +2271,51 @@ export class EnvmapComponent implements AfterViewInit {
           this.nodeCounter++; // Increment the node counter
         }
       }
+      this.plotMulNodesEdges()// call here..
       this.closeIntermediateNodesDialog();
     }
   }
-    // Define the available actions for the dropdown
-  actionOptions = [
-    { label: 'Move', value: 'Move' },
-    { label: 'Dock', value: 'Dock' },
-    { label: 'Undock', value: 'Undock' }
-  ];
 
-   // Validation logic
+  plotMulNodesEdges(){
+    if (this.currMulNode.length >= 2) {
+      let secondValue = this.currMulNode[1];
+      this.currMulNode.splice(1, 1);
+      this.currMulNode.push(secondValue);
+    }
+    let arr = this.currMulNode;
+    for(let i = 0; i < arr.length-1; i++){
+      let edge : Edge;
+
+      // console.log(this.currMulNode);
+      edge = {
+        edgeId: this.edgeCounter.toString(),
+        sequenceId: this.edgeCounter,
+        edgeDescription: '',
+        released: false,
+        startNodeId: arr[i].nodeId,
+        endNodeId: arr[i+1].nodeId,
+        maxSpeed: 0,
+        maxHeight: 0,
+        minHeight: 0,
+        orientation: 0,
+        orientationType: '',
+        direction: this.direction == 'bi' ? 'BI_DIRECTIONAL' : 'UN_DIRECTIONAL',
+        rotationAllowed: false,
+        maxRotationSpeed: 0,
+        length: 0,
+        action: [],
+      };
+      this.edges.push(edge);
+      this.edgeCounter++;
+      // this.drawEdge( arr[i].nodePosition, arr[i+1].nodePosition, this.direction!, arr[i].nodeId, arr[i+1].nodeId );
+    }
+    this.resetSelection();
+    this.direction = null; // yet to take..
+    this.redrawCanvas();
+  }
+  // Define the available actions for the dropdown
+  actionOptions = [...this.allActions];
+  // Validation logic
   validateForm() {
     if (!this.nodeDetails.description) {
       this.validationError = 'Node Description is required.';
@@ -1841,21 +2351,21 @@ export class EnvmapComponent implements AfterViewInit {
         !this.moveParameters.maxLinearVelocity ||
         !this.moveParameters.maxAngularVelocity
       ) {
-        this.validationError = 'All Move Action fields are required.';
+        // this.validationError = 'All Move Action fields are required.'; // yet to uncomment..
       }
     } else if (this.selectedAction === 'Dock') {
       if (
         !this.dockParameters.maxAngularVelocity ||
         !this.dockParameters.goalOffsetX
       ) {
-        this.validationError = 'All Dock Action fields are required.';
+        // this.validationError = 'All Dock Action fields are required.';
       }
     } else if (this.selectedAction === 'Undock') {
       if (
         !this.undockParameters.maxLinearVelocity ||
         !this.undockParameters.maxToleranceAtGoalX
       ) {
-        this.validationError = 'All Undock Action fields are required.';
+        // this.validationError = 'All Undock Action fields are required.';
       }
     }
 
@@ -1882,33 +2392,10 @@ export class EnvmapComponent implements AfterViewInit {
         this.nodes[nodeIndex].Waiting_node = this.nodeDetails.waiting_node;
       }
     }
-    // Transform Nodes array to NodeDetails format
-    this.NodeDetails = this.nodes.map((node, index) => ({
-      nodeID: `node_${String(node.nodeId).padStart(3, '0')}`, // Format nodeID as a string
-      sequenceId: index + 1, // SequenceId is based on the order of nodes
-      nodeDescription: this.nodeDetails.description || '', // Use node description
-      intermediate_node: this.nodeDetails.intermediate_node, // Bind checkbox value
-      waiting_node: this.nodeDetails.waiting_node, // Bind checkbox value
-      released: true,
-      nodePosition: {
-        x: node.nodePosition.x,
-        y: node.nodePosition.y,
-        orientation: node.nodePosition.orientation, // Use the latest orientation angle here
-      },
-      actions: this.actions, // Include actions here
-    }));
 
-    // Log the JSON object to the console
-    console.log(this.nodes);
-    console.log(this.edges);
-    console.log(this.assets);
-    console.log(this.zones);
-
-    // // Save the JSON object to a file
-    // const blob = new Blob([JSON.stringify(updatedNodeDetails, null, 2)], {
-    //   type: 'application/json',
-    // });
-    // saveAs(blob, 'node-details.json');
+    if(this.selectedNode){
+      console.log(this.moveParameters, this.dockParameters, this.undockParameters);
+    }
 
     // Clear all the details for the previous node
     this.Nodes = []; // Clear the Nodes array
@@ -1960,7 +2447,7 @@ export class EnvmapComponent implements AfterViewInit {
               edgeId: this.edgeCounter.toString(),
               sequenceId: this.edgeCounter,
               edgeDescription: '',
-              released: true,
+              released: false,
               startNodeId: this.firstNode.nodeId,
               endNodeId: this.secondNode.nodeId,
               maxSpeed: 0,
@@ -1969,7 +2456,7 @@ export class EnvmapComponent implements AfterViewInit {
               orientation: 0,
               orientationType: '',
               direction: 'UN_DIRECTIONAL',
-              rotationAllowed: true,
+              rotationAllowed: false,
               maxRotationSpeed: 0,
               length: 0,
               action: [],
@@ -1988,7 +2475,7 @@ export class EnvmapComponent implements AfterViewInit {
               edgeId: this.edgeCounter.toString(),
               sequenceId: this.edgeCounter,
               edgeDescription: '',
-              released: true,
+              released: false,
               startNodeId: this.firstNode.nodeId,
               endNodeId: this.secondNode.nodeId,
               maxSpeed: 0,
@@ -1997,7 +2484,7 @@ export class EnvmapComponent implements AfterViewInit {
               orientation: 0,
               orientationType: '',
               direction: 'BI_DIRECTIONAL',
-              rotationAllowed: true,
+              rotationAllowed: false,
               maxRotationSpeed: 0,
               length: 0,
               action: [],
@@ -2151,33 +2638,12 @@ export class EnvmapComponent implements AfterViewInit {
     ctx.fill();
   }
   showEdgeError = false;
-  updateEdge() {
-    if (!this.currentEdge.edgeId || !this.currentEdge.sequenceId || !this.currentEdge.minHeight || !this.currentEdge.orientation || !this.currentEdge.orientationType || !this.currentEdge.maxRotationSpeed) {
-      this.showEdgeError = true; // Show error message
-      return; // Stop saving if validation fails
-    }
 
-    // If validation passes, hide the error message
-    this.showEdgeError = false;
-
-    if (this.currentEdge) {
-      this.edges = this.edges.map((edge) => {
-        if (this.currentEdge.edgeId === edge.edgeId) {
-          // Preserve color and direction
-          edge = this.currentEdge;
-          // return { ...edge, ...this.currentEdge };
-        }
-        return edge;
-      });
-      this.redrawCanvas();
-    }
-    console.log(this.edges);
-    this.showPopup = false;
-  }
   resetSelection(): void {
     this.firstNode = null;
     this.secondNode = null;
     this.direction = null;
+    this.selectedNodeId = '';  // Reset the selected node ID
   }
   private deselectNode(): void {
     if (this.selectedNode) {
@@ -2196,10 +2662,11 @@ export class EnvmapComponent implements AfterViewInit {
     return dx * dx + dy * dy <= radius * radius;
   }
   private plotAsset(x: number, y: number, assetType: string): void {
+
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = this.overlayCanvas.nativeElement.getContext('2d');
     const image = this.assetImages[assetType];
-    const transformedY = canvas.height - y; // Flip the Y-axis  
+    const transformedY = canvas.height - y; // Flip the Y-axis
     if (image && ctx) {
       const imageSize = 50; // Set image size
       ctx.drawImage(
@@ -2210,14 +2677,13 @@ export class EnvmapComponent implements AfterViewInit {
         imageSize
       );
     }
-  
+
     // Update assets list and asset details
     this.assets = this.assets.map((asset) => {
       if (this.selectedAsset?.id === asset.id)
         asset.orientation = this.orientationAngle;
       return asset;
     });
-  
     this.overlayCanvas.nativeElement.addEventListener(
       'mousemove',
       this.onMouseMove.bind(this)
@@ -2226,13 +2692,15 @@ export class EnvmapComponent implements AfterViewInit {
       'mouseup',
       this.onMouseUp.bind(this)
     );
+    this.isPlottingAsset = false;
   }
-  
+  isDeleteVisible = true;
   startZonePlotting(): void {
     this.toggleOptionsMenu();
     this.isZonePlottingEnabled = true;
     this.plottedPoints = []; // Reset previously plotted points
     this.zonePointCount = 0; // Reset the point count for each new zone plotting session
+    this.isDeleteVisible = false;
   }
   plotZonePoint(x: number, y: number, isFirstPoint: boolean): void {
     const canvas = this.overlayCanvas.nativeElement;
@@ -2332,7 +2800,7 @@ export class EnvmapComponent implements AfterViewInit {
   }
   private projectPolygon(polygon: any[], axis: { x: number; y: number }): { min: number; max: number } {
     if (!polygon || polygon.length === 0) {
-      console.error("Invalid polygon data");
+      // console.error("Invalid polygon data");
       return { min: 0, max: 0 };
     }
 
@@ -2372,10 +2840,16 @@ export class EnvmapComponent implements AfterViewInit {
     return [minX, minY, maxX, maxY];
   }
   onZoneTypeSelected(zoneType: ZoneType): void {
+
     this.zoneType = zoneType;
 
     if (this.isZoneOverlapping(this.plottedPoints)) {
-      alert('Zone overlaps with an existing zone!');
+      // alert('Zone overlaps with an existing zone!');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Zone overlaps with an existing zone!.'
+      });
       return; // Do not allow drawing
     }
 
@@ -2399,12 +2873,12 @@ export class EnvmapComponent implements AfterViewInit {
   }
   isRobotClicked(robo: Robo, x: number, y: number): boolean {
     const imageSize = 30;
-    return (
-      x >= robo.pos.x - imageSize / 2 &&
-      x <= robo.pos.x + imageSize / 2 &&
-      y >= robo.pos.y - imageSize / 2 &&
-      y <= robo.pos.y + imageSize / 2
-    );
+    const roboX = robo.pos.x;
+    const roboY = robo.pos.y;
+
+    // Check if the click is within the robot's bounds (circle radius check)
+    const distance = Math.sqrt((x - roboX) ** 2 + (y - roboY) ** 2);
+    return distance <= imageSize * 1.5; // Adjust this based on the robot's size
   }
   onCancel(): void {
     // Clear the plotted points and reset the zone plotting state
@@ -2413,48 +2887,38 @@ export class EnvmapComponent implements AfterViewInit {
     this.isPopupVisible = false;
     this.firstPlottedPoint = null;
 
+
     // Redraw the canvas to remove the temporary zone points
     this.redrawCanvas();
   }
   openRobotPopup(): void {
     this.isRobotPopupVisible = true;
   }
-  removeRobots(): void {
+  // removeRobots(): void {
+  //   // Check if there are any robots to remove
+  //   if (this.robos.length === 0) {
+  //     console.log("No robots to remove.");
+  //     return; // Exit the function if no robots are present
+  //   }
 
-    this.isConfirmationVisible = true;
+  //   // If robots are present, show the confirmation
+  //   this.isConfirmationVisible = true;
 
-    // Remove selected robots
-    // this.robos = this.robos.filter(
-    //   (robo) => robo.roboDet.id !== this.selectedRobo?.roboDet.id
-    // );
-    // this.redrawCanvas();
-  }
+  //   // If confirmed, proceed with removing the selected robots
+  //   // Uncomment and modify based on your confirmation logic
+  //   // this.robos = this.robos.filter(
+  //   //   (robo) => robo.roboDet.id !== this.selectedRobo?.roboDet.id
+  //   // );
+
+  //   // Redraw the canvas after removing robots
+  //   // this.redrawCanvas();
+  // }
   showZoneTypePopup(): void {
     this.zoneType = null;
     this.isPopupVisible = true;
   }
-
   closeRobotPopup(): void {
     this.isRobotPopupVisible = false;
-  }
-  placeRobots(selectedRobots: any[]): void {
-    if (!this.overlayCanvas) return;
-
-    selectedRobots.forEach((robot) => {
-      const x = 0 + this.roboInitOffset;
-      const y = 100;
-
-      if (this.robos.some((robo) => robo.roboDet.id === robot.id)) {
-        alert('Robot already in map!');
-        return;
-      }
-
-      const robo: Robo = { roboDet: robot, pos :{x: x, y: y, orientation : 0} }; // yet to add orientation..
-      this.robos.push(robo);
-
-      this.roboInitOffset += 60;
-      this.plotRobo(x, y);
-    });
   }
   private originalZonePointPosition: { x: number; y: number } | null = null;
   // Helper function to check if a node overlaps with another node or asset
@@ -2529,26 +2993,36 @@ export class EnvmapComponent implements AfterViewInit {
   originalNodePosition: { x : number; y: number } | null = null;
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
+    if (event.button !== 0) {
+      return; // Do nothing if it's not a left mouse button click
+    }
     if (this.overlayCanvas && this.overlayCanvas.nativeElement) {
       const rect = this.overlayCanvas.nativeElement.getBoundingClientRect();
       const x = (event.clientX - rect.left) * (this.overlayCanvas.nativeElement.width / rect.width);
       const y = (event.clientY - rect.top) * (this.overlayCanvas.nativeElement.height / rect.height);
+      const transformedY = this.overlayCanvas.nativeElement.height - y;
       if (this.isDeleteModeEnabled) {
         // Start drawing the selection box
         this.selectionStart = { x, y };
+        this.selectionTransformStart = {x , y :transformedY}
         this.selectionEnd = null;
       }
 
       if (this.isZonePlottingEnabled) {
         // Plot the point
         if (this.firstPlottedPoint) {
-          let radius = 6;
+          let radius = 9;
           if (
             Math.abs(x - this.firstPlottedPoint.x) <= radius &&
             Math.abs(y - this.firstPlottedPoint.y) <= radius
           ) {
             if (this.plottedPoints.length < 3) {
-              alert('should at least minimum 3 zone points to plot!');
+              // alert('should at least minimum 3 zone points to plot!');
+              this.messageService.add({
+                severity: 'warn',
+                summary: 'Warning',
+                detail: 'Should atleast minimum 3 zone points to plot!.'
+              });
               return;
             }
             this.isZonePlottingEnabled = false;
@@ -2607,10 +3081,7 @@ export class EnvmapComponent implements AfterViewInit {
       for (const zone of this.zones) {
         for (const point of zone.pos) {
           const radius = 6; // Same as the point's radius
-          if (
-            Math.abs(x - point.x) <= radius &&
-            Math.abs(y - point.y) <= radius
-          ) {
+          if ( Math.abs(x - point.x) <= radius && Math.abs(y - point.y) <= radius ) {
             this.selectedZone = zone;
             this.selectedZonePoint = point;
             this.originalZonePointPosition = { x: point.x, y: point.y };
@@ -2619,15 +3090,27 @@ export class EnvmapComponent implements AfterViewInit {
           }
         }
       }
+      let robotClicked = false; // Track if the robot was clicked
+      // Check if a robot is clicked
       for (const robo of this.robos) {
         if (this.isRobotClicked(robo, x, y)) {
           this.selectedRobo = robo;
           this.draggingRobo = true;
           this.originalRoboPosition = { x: robo.pos.x, y: robo.pos.y };
-          this.redrawCanvas();
-          return;
+          this.redrawCanvas(); // Redraw the canvas after selecting the robot
+          robotClicked = true;
+          break;
         }
       }
+
+      if (!robotClicked) {
+        // Deselect the robot if clicked elsewhere on the canvas
+        this.selectedRobo = null;
+        // this.redrawCanvas()x; // Redraw the canvas after deselecting the robot
+      }
+
+      // Handle other types of clicks like zone plotting, asset dragging, etc.
+
       let nodeClicked = false;
       for (const node of this.nodes) {
         if (this.isNodeClicked(node, x, y)) {
@@ -2664,9 +3147,9 @@ export class EnvmapComponent implements AfterViewInit {
     if (this.isDeleteModeEnabled && this.selectionStart) {
       this.selectionEnd = { x, y };
 
-      // Redraw canvas with selection box
       this.redrawCanvas();
       this.drawSelectionBox(this.selectionStart, this.selectionEnd);
+      // Redraw canvas with selection box
     }
     if (this.draggingAsset && this.selectedAsset) {
       // Update the position of the selected asset
@@ -2681,6 +3164,11 @@ export class EnvmapComponent implements AfterViewInit {
       if (this.isPointTooClose(x, y, this.plottedPoints)) {
         // Optionally show an alert or message
         console.warn('The point is too close to an existing zone point');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'The point is too close to an existing zone point.'
+        });
         return;
       }
 
@@ -2746,18 +3234,22 @@ export class EnvmapComponent implements AfterViewInit {
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
     const transformedY = canvas.height - y;
 
-    if (this.isDeleteModeEnabled && this.selectionStart && this.selectionEnd) {
+    if (this.isDeleteModeEnabled && this.selectionStart && this.selectionEnd && this.selectionTransformStart) {
+
       // Calculate selection box bounds
       const minX = Math.min(this.selectionStart.x, this.selectionEnd.x);
       const maxX = Math.max(this.selectionStart.x, this.selectionEnd.x);
-      const minY = Math.min(this.selectionStart.y, this.selectionEnd.y);
-      const maxY = Math.max(this.selectionStart.y, this.selectionEnd.y);
+      const minY = Math.min(this.selectionTransformStart.y, transformedY);
+      const maxY = Math.max(this.selectionTransformStart.y, transformedY);
 
       // Find nodes inside the selection box
       this.nodesToDelete = this.nodes.filter((node) => {
         const nodeX = node.nodePosition.x;
         const nodeY = node.nodePosition.y;
-        return nodeX >= minX && nodeX <= maxX && nodeY >= minY && nodeY <= maxY;
+        const radius = 10;  // Assuming nodes may have a radius
+
+        return (nodeX + radius >= minX && nodeX - radius <= maxX) &&
+               (nodeY + radius >= minY && nodeY - radius <= maxY);
       });
 
       console.log('Nodes selected for deletion:', this.nodesToDelete);
@@ -2784,7 +3276,12 @@ export class EnvmapComponent implements AfterViewInit {
         this.selectedZonePoint.y = this.originalZonePointPosition?.y
           ? this.originalZonePointPosition?.y
           : y;
-        alert('Zone point overlaps with another zone!');
+        // alert('Zone point overlaps with another zone!');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Warning',
+          detail: 'Zone point overlaps with another zone!',life:4000
+        });
         // this.selectedZonePoint = null;
         this.redrawCanvas();
         return;
@@ -2854,13 +3351,23 @@ export class EnvmapComponent implements AfterViewInit {
       if(this.isPositionOccupied(x,transformedY,'asset')){
         this.selectedAsset.x = this.originalAssetPosition!.x;
         this.selectedAsset.y = this.originalAssetPosition!.y;
-        alert('Overlapping detected! Asset has been reset to its original position.');
+        // alert('Overlapping detected! Asset has been reset to its original position.');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Warning',
+          detail: 'Overlapping detected! Asset has been reset to its original position.'
+        });
         this.redrawCanvas();
       }
       if(this.isOverlappingwithOtherAssets(this.selectedAsset)){
         this.selectedAsset.x = this.originalAssetPosition!.x;
         this.selectedAsset.y = this.originalAssetPosition!.y;
-        alert('Overlapping detected! Asset has been reset to its original position.');
+        // alert('Overlapping detected! Asset has been reset to its original position.');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'Overlapping detected! Asset has been reset to its original position.'
+        });
         this.redrawCanvas();
       }
 
@@ -2875,10 +3382,20 @@ export class EnvmapComponent implements AfterViewInit {
       // Check if the robot is overlapping with another one
       if (this.isOverlappingWithOtherRobos(this.selectedRobo)) {
         // Reset the robot to its original position if overlapping
+        this.draggingRobo = false;
+
         this.selectedRobo.pos.x = this.originalRoboPosition!.x;
         this.selectedRobo.pos.y = this.originalRoboPosition!.y;
-        alert('Overlapping detected! Robot has been reset to its original position.');
+        // alert('Overlapping detected! Robot has been reset to its original position.');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'Overlapping detected! Asset has been reset to its original position.'
+        });
+        this.redrawCanvas();
+        return
       }
+
       this.draggingRobo = false;
       if(this.selectedRobo){
         this.robos = this.robos.map((robo) => {
@@ -2900,13 +3417,23 @@ export class EnvmapComponent implements AfterViewInit {
       if(this.isPositionOccupied(x, y,'node')){
         this.selectedNode.nodePosition.x = this.originalNodePosition!.x;
         this.selectedNode.nodePosition.y = this.originalNodePosition!.y;
-        alert('node lapping with other assets');
+        // alert('node lapping with other assets');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'Node lapping with other assets'
+        });
       }
 
       if(this.isOverLappingWithOtherNodes(this.selectedNode)){
         this.selectedNode.nodePosition.x = this.originalNodePosition!.x;
         this.selectedNode.nodePosition.y = this.originalNodePosition!.y;
-        alert('Overlapping detected! node has been reset to its original position.');
+        // alert('Overlapping detected! node has been reset to its original position.');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'Overlapping detected! Asset has been reset to its original position.'
+        });
       }
       this.redrawCanvas();
       this.nodes = this.nodes.map((node) => {
@@ -2929,12 +3456,11 @@ export class EnvmapComponent implements AfterViewInit {
     mouseX: number,
     mouseY: number
   ): boolean {
-    const radius = 25; // Adjust radius to match asset size
+    const radius = 10; // Adjust radius to match asset size
     const dx = mouseX - asset.x;
     const dy = mouseY - asset.y;
     return dx * dx + dy * dy <= radius * radius;
   }
-
   private updateAssetPosition(id: number, x: number, y: number): void {
     // Implement logic to update asset position in your data structure
     // Example: Find and update asset in this.assets
@@ -2967,7 +3493,9 @@ export class EnvmapComponent implements AfterViewInit {
     if (ctx) {
       this.cdRef.detectChanges;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+      this.assets.forEach((asset) =>
+        this.plotAsset(asset.x, asset.y, asset.type)
+      );
       // Draw nodes
       this.nodes.forEach((node) => this.drawNode(node, 'blue', false));
 
@@ -3003,14 +3531,11 @@ export class EnvmapComponent implements AfterViewInit {
         this.plottedPoints = [];
       });
 
-      this.robos.forEach((robo) =>
-        this.plotRobo(robo.pos.x, robo.pos.y, robo.roboDet.selected) // this.selectedRobo === robo - replace..
-      );
+      for (const robo of this.robos) {
+        const isSelected = this.selectedRobo && this.selectedRobo.roboDet.id === robo.roboDet.id;
+        this.plotRobo(robo.pos.x, robo.pos.y, !isSelected);
 
-      // Draw assets, zones, and robots
-      this.assets.forEach((asset) =>
-        this.plotAsset(asset.x, asset.y, asset.type)
-      );
+      }
     }
   }
   drawConnections(): void {
@@ -3052,6 +3577,11 @@ export class EnvmapComponent implements AfterViewInit {
   }
   toggleOptionsMenu(): void {
     this.isOptionsMenuVisible = !this.isOptionsMenuVisible;
+
+  }
+  toggleCalibrationLayer(): void {
+    this.isCalibrationLayerVisible = !this.isCalibrationLayerVisible;
+    this.isOptionsMenuVisible = false; // Hide options menu when calibration layer is visible
   }
   hideCalibrationLayer(): void {
     this.isOptionsMenuVisible = false;
@@ -3070,20 +3600,29 @@ export class EnvmapComponent implements AfterViewInit {
     const startPos = { x: startNode.nodePosition.x, y: canvas.height - startNode.nodePosition.y };
     const endPos = { x: endNode.nodePosition.x, y: canvas.height - endNode.nodePosition.y };
 
-    // Calculate distance from point (x, y) to the line segment
+    // Calculate the length of the line
     const lineLength = Math.sqrt(
       Math.pow(endPos.x - startPos.x, 2) + Math.pow(endPos.y - startPos.y, 2)
     );
+
+    // Calculate the projection of the point onto the line
     const projection =
       ((x - startPos.x) * (endPos.x - startPos.x) +
         (y - startPos.y) * (endPos.y - startPos.y)) /
       Math.pow(lineLength, 2);
 
+    // Constrain projection to be between 0 and 1 (within the line segment)
+    if (projection < 0 || projection > 1) {
+      return false; // Point is outside the segment
+    }
+
+    // Calculate the closest point on the line segment
     const closestPoint = {
       x: startPos.x + projection * (endPos.x - startPos.x),
       y: startPos.y + projection * (endPos.y - startPos.y),
     };
 
+    // Calculate the distance from the point (x, y) to the closest point on the line
     const distance = Math.sqrt(
       Math.pow(x - closestPoint.x, 2) + Math.pow(y - closestPoint.y, 2)
     );
@@ -3093,13 +3632,63 @@ export class EnvmapComponent implements AfterViewInit {
 
     return distance < threshold;
   }
+
   submitEdgeDetails(): void {
     // Handle form submission, e.g., save edge details
     this.showPopup = false;
   }
-  hidePopup(): void {
+  cancelEdge(): void {
     this.showPopup = false;
+    this.showEdgeError = false;
+    if(!this.savedEdge){ 
+      // this.currentEdge.edgeId = '';
+      // this.currentEdge.sequenceId= 0;
+      this.currentEdge.edgeDescription= '';
+      this.currentEdge.released= false;
+      // this.currentEdge.startNodeId= '';
+      // this.currentEdge.endNodeId= '';
+      this.currentEdge.maxSpeed= 0;
+      this.currentEdge.maxHeight= 0;
+      this.currentEdge.minHeight= 0;
+      this.currentEdge.orientation= 0;
+      this.currentEdge.orientationType= '';
+      // this.currentEdge.direction= 'UN_DIRECTIONAL';
+      this.currentEdge.rotationAllowed= false;
+      this.currentEdge.maxRotationSpeed= 0;
+      this.currentEdge.length= 0;
+      this.currentEdge.action= [];
+    }else {
+      // Prepopulate with saved edge details
+      this.currentEdge = { ...this.savedEdge };
+    }
   }
+  updateEdge() {
+    if (!this.currentEdge.edgeId || !this.currentEdge.sequenceId || !this.currentEdge.minHeight || !this.currentEdge.orientation || !this.currentEdge.orientationType || !this.currentEdge.maxRotationSpeed) {
+        this.showEdgeError = true; // Show error message
+        return; // Stop saving if validation fails
+    }
+
+    // If validation passes, hide the error message
+    this.showEdgeError = false;
+
+    if (this.currentEdge) {
+        // Update or save the edge
+        this.edges = this.edges.map((edge) => {
+            if (this.currentEdge.edgeId === edge.edgeId) {
+                // Preserve color and direction
+                edge = { ...this.currentEdge }; // Update with new values
+            }
+            return edge;
+        });
+        
+        // Save the current edge details
+        this.savedEdge = { ...this.currentEdge };
+        this.redrawCanvas();
+    }
+    console.log(this.edges);
+    this.showPopup = false;
+}
+
   // Method to delete the edge
   deleteEdge(): void {
     if (this.currentEdge) {
@@ -3112,7 +3701,7 @@ export class EnvmapComponent implements AfterViewInit {
       this.redrawCanvas();
 
       // Hide the popup
-      this.hidePopup();
+      this.cancelEdge();
     }
   }
 }

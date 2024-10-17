@@ -1,110 +1,108 @@
 <div class="header">
-
-
-
-<div class="dropdown-container">
-  <div class="menu">
-    <div class="item">
-      <a href="javascript:void(0);" class="link" id="selectedMetric">
-        <span>{{ selectedMetric }}</span>
-        <!-- Angular data binding to update the displayed text -->
-        <svg viewBox="0 0 360 360" xml:space="preserve">
-          <g id="SVGRepo_iconCarrier">
-            <path
-              id="XMLID_225_"
-              d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 
+  <div class="dropdown-container">
+    <div class="menu">
+      <div class="item">
+        <a href="javascript:void(0);" class="link" id="selectedMetric">
+          <span>{{ selectedMetric }}</span>
+          <!-- Angular data binding to update the displayed text -->
+          <svg viewBox="0 0 360 360" xml:space="preserve">
+            <g id="SVGRepo_iconCarrier">
+              <path
+                id="XMLID_225_"
+                d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 
                 c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 
                 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
-            ></path>
-          </g>
-        </svg>
-      </a>
+              ></path>
+            </g>
+          </svg>
+        </a>
 
-      <!-- Submenu Options -->
-      <div class="submenu">
-        <div class="submenu-item">
-          <a
-            href="javascript:void(0);"
-            class="submenu-link"
-            (click)="updateChart('data1', 'Throughput')"
-            >Throughput</a
-          >
-        </div>
-        <div class="submenu-item">
-          <a
-            href="javascript:void(0);"
-            class="submenu-link"
-            (click)="updateChart('data2', 'Starvation rate')"
-            >Starvation rate</a
-          >
-        </div>
-        <div class="submenu-item">
-          <a
-            href="javascript:void(0);"
-            class="submenu-link"
-            (click)="updateChart('data3', 'Task allocation')"
-            >Task allocation</a
-          >
-        </div>
-        <div class="submenu-item">
-          <a
-            href="javascript:void(0);"
-            class="submenu-link"
-            (click)="updateChart('data4', 'Pick accuracy')"
-            >Pick accuracy</a
-          >
-        </div>
-        <div class="submenu-item">
-          <a
-            href="javascript:void(0);"
-            class="submenu-link"
-            (click)="updateChart('data5', 'Error rate')"
-            >Error rate</a
-          >
+        <!-- Submenu Options -->
+        <div class="submenu">
+          <div class="submenu-item">
+            <a
+              href="javascript:void(0);"
+              class="submenu-link"
+              (click)="updateChart('data1', 'Throughput')"
+              >Throughput</a
+            >
+          </div>
+          <div class="submenu-item">
+            <a
+              href="javascript:void(0);"
+              class="submenu-link"
+              (click)="updateChart('data2', 'Starvation rate')"
+              >Starvation rate</a
+            >
+          </div>
+          <div class="submenu-item">
+            <!-- <a
+              href="javascript:void(0);"
+              class="submenu-link"
+              (click)="updateChart('data3', 'Task allocation')"
+              >Task allocation</a
+            > -->
+          </div>
+          <div class="submenu-item">
+            <a
+              href="javascript:void(0);"
+              class="submenu-link"
+              (click)="updateChart('data3', 'Pick accuracy')"
+              >Pick accuracy</a
+            >
+          </div>
+          <div class="submenu-item">
+            <a
+              href="javascript:void(0);"
+              class="submenu-link"
+              (click)="updateChart('data4', 'Error rate')"
+              >Error rate</a
+            >
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
 
+  <!-- <button (click)="toggleDataLabels()">
+    {{ dataLabelsEnabled ? 'Disable' : 'Enable' }} Data Labels
+  </button>  -->
 
-<div class="button-container">
-  <div class="tabs">
-    <input
-      type="radio"
-      id="today"
-      name="filter"
-      value="Today"
-      class="input"
-      checked
-    />
-    <label for="today" class="label">Today</label>
+  <div class="time-button-container">
+    <div class="tabs">
+      <input
+        type="radio"
+        id="today"
+        name="filter"
+        value="Today"
+        class="input"
+        (change)="applyFilter($event)"
+        checked
+      />
+      <label for="today" class="label">Today</label>
 
-    <input
-      type="radio"
-      id="week"
-      name="filter"
-      value="Week"
-      class="input"
-    />
-    <label for="week" class="label">Week</label>
+      <input
+        type="radio"
+        id="week"
+        name="filter"
+        value="Week"
+        class="input"
+        (change)="applyFilter($event)"
+      />
+      <label for="week" class="label">Week</label>
 
-    <input
-      type="radio"
-      id="month"
-      name="filter"
-      value="Month"
-      class="input"
-    />
-    <label for="month" class="label">Month</label>
+      <input
+        type="radio"
+        id="month"
+        name="filter"
+        value="Month"
+        class="input"
+        (change)="applyFilter($event)"
+      />
+      <label for="month" class="label">Month</label>
+    </div>
   </div>
 </div>
-
-
-</div>
-
-
-
 
 <apx-chart
   #chart

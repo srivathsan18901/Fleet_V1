@@ -13,6 +13,8 @@
   flex-grow: 1;
 }
 
+
+
 /* Specific chart adjustments if needed */
 .area-chart-container .apexcharts-canvas {
   padding-top: 0; /* Remove or reduce padding at the top */
@@ -70,7 +72,8 @@
   border-radius: 10px;
   overflow: hidden;
   transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  background: linear-gradient(45deg, #f1494e, #DA2127); /* Gradient background */
+  background-color: red;
+   /* Gradient background */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* Button-like shadow */
   cursor: pointer;
   width: 200px; /* Fixed width for the dropdown button */
@@ -84,7 +87,8 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #DA2127; /* Violet color */
+  background-color: red;
+
   z-index: -1;
   transform: scaleX(0);
   transform-origin: left;
@@ -197,7 +201,9 @@
 }
 
 
-.button-container {
+.time-button-container {
+  z-index: 0; /* Ensure the button is above other elements */
+  position: relative; /* Ensure it stays in place */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -236,3 +242,7 @@
 .input:checked + .label {
   background-color: red;
 }
+
+
+
+

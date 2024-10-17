@@ -1,4 +1,4 @@
-import { Component, ViewChild, Input } from '@angular/core';
+import { Component, ViewChild, Input, ChangeDetectorRef } from '@angular/core';
 import { ProjectService } from '../services/project.service';
 import {
   ApexNonAxisChartSeries,
@@ -7,6 +7,7 @@ import {
   ApexFill,
   ApexStroke,
 } from 'ng-apexcharts';
+import { environment } from '../../environments/environment.development';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -27,12 +28,12 @@ export class ChartComponent {
   public chartOptions: Partial<ChartOptions>;
   @Input() ONBtn!: boolean;
 
-  activeRobots: number = 1;
+  selectedProj :any | null = null;
+  activeRobots: number = 2;
   totalRobots: number = 0;
 
-  constructor(private projectService: ProjectService) {
-    const { robots } = this.projectService.getSelectedProject();
-    this.totalRobots = robots.length;
+  constructor(private projectService: ProjectService,private cdRef:ChangeDetectorRef) {
+    
     this.chartOptions = {
       series: [(this.activeRobots / this.totalRobots) * 100], // normalized value..
       chart: {
@@ -110,9 +111,23 @@ export class ChartComponent {
     };
   }
 
-  ngOnInit() {
-    const { robots } = this.projectService.getSelectedProject();
+  async ngOnInit() {
+    this.selectedProj = this.projectService.getSelectedProject();
+    await this.fetchTotRobos();
+  }
+
+  async fetchTotRobos(){
+    if(!this.selectedProj) return
+    let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/fleet-project/${this.selectedProj._id}`,{
+      method : 'GET',
+      credentials :'include'
+    })
+    let data = await response.json();
+    const { robots } = data.project;
+    console.log(robots);
+    
     this.totalRobots = robots.length;
+    this.cdRef.detectChanges();
   }
 
   currentActiveRobots(): string {

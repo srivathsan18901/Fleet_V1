@@ -127,7 +127,7 @@ export class GradientDonutComponent implements OnInit {
         formatter: this.legendFormatter,
         itemMargin: {
           horizontal: 10,
-          vertical: 13,
+          vertical: 15,
         },
         labels: {
           colors: ['#000000'], // Adjust color as needed

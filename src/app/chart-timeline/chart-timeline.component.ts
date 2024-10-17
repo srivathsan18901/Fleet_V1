@@ -39,15 +39,13 @@ export type ChartOptions = {
   styleUrls: ['./chart-timeline.component.css'],
 })
 export class ChartTimelineComponent implements OnInit {
-applyFilter(arg0: string) {
-throw new Error('Method not implemented.');
-}
   // @ViewChild('chart') chart: ChartComponent | undefined;
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptions: ChartOptions;
 
   selectedMetric: string = 'CPU Utilization';
   selectedMap: any | null = null;
+  currentFilter: any | null = null;
 
   // Updated data sets..
   cpuUtilArr: number[] = [0];
@@ -169,6 +167,10 @@ throw new Error('Method not implemented.');
   }
 
   updateChart(dataKey: string, metricName: string): void {
+    if (!this.selectedMap) {
+      console.log('no map has been selected!');
+      return;
+    }
     this.selectedMetric = metricName; // Update the displayed metric name
 
     switch (dataKey) {
@@ -196,210 +198,291 @@ throw new Error('Method not implemented.');
     }
   }
 
-  async fetchSeriesData(apiKey: string): Promise<any> {
-    try {
-      const response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/graph/${apiKey}/${this.selectedMap.id}`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          body: JSON.stringify({
-            timeStamp1: '',
-            timeStamp2: '',
-          }),
-        }
-      );
-      const data = await response.json();
-      if (data.error || !data.map) {
-        console.log(data);
-        return;
+  applyFilter(event: any) {
+    this.currentFilter = event.target.value.toLowerCase();
+
+    // this.intervals.forEach((interval) => {
+    //   if (this[interval]) {
+    if (this.selectedMetric === 'CPU Utilization')
+      this.updateChart('data1', this.selectedMetric);
+    else if (this.selectedMetric === 'Robot Utilization')
+      this.updateChart('data2', this.selectedMetric);
+    else if (this.selectedMetric === 'Battery')
+      this.updateChart('data3', this.selectedMetric);
+    else if (this.selectedMetric === 'Memory')
+      this.updateChart('data4', this.selectedMetric);
+    else if (this.selectedMetric === 'Network')
+      this.updateChart('data5', this.selectedMetric);
+    else if (this.selectedMetric === 'Idle Time')
+      this.updateChart('data6', this.selectedMetric);
+    else this.updateChart('data7', this.selectedMetric);
+    // return;
+    // }
+    // });
+  }
+
+  plotChart(seriesName: string, data: any[], time: any[], limit: number = 12) {
+    const limitedData = data.length > limit ? data.slice(-limit) : data;
+    const limitedTime = time.length > limit ? time.slice(-limit) : time;
+
+    // this.chartOptions.series = [{ name: seriesName, data: limitedData }];
+    this.chart.updateOptions(
+      {
+        series: [{ name: seriesName, data: limitedData }],
+        xaxis: { categories: limitedTime },
+      },
+      false, // Don't replot the entire chart
+      true // Smooth transitions
+    );
+  }
+
+  async fetchChartData( endpoint: string, timeSpan: string, startTime: string, endTime: string ) {
+    // alter to date..
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timeSpan: timeSpan, // e.g. 'Daily' or 'Weekly'
+          startTime: startTime,
+          endTime: endTime,
+        }),
       }
-      return data;
-    } catch (err) {
-      console.log('Err occured :', err);
-      return;
-    }
+    );
+    return await response.json();
   }
 
   async updateCpuUtil() {
-    let temp = [];
-    let tempTime = [];
-    let data;
-    if (!this.selectedMap || this.cpuUtilTimeInterval) return;
+    // this.chartOptions.xaxis.range = 12; // get use of it..
     this.clearAllIntervals(this.cpuUtilTimeInterval);
-    this.cpuUtilTimeInterval = setInterval(async () => {
-      data = await this.fetchSeriesData('cpu-utilization'); // data.cpuUtil..
-      this.cpuUtilArr.push(data.cpuUtil);
-      tempTime.push(new Date().toLocaleTimeString()); // yet to take..
-      if (this.cpuUtilArr.length > 12) temp = this.cpuUtilArr.slice(-12);
-      else temp = [...this.cpuUtilArr];
+    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
+      clearInterval(this.cpuUtilTimeInterval);
+      this.cpuUtilTimeInterval = 0;
+      const data = await this.fetchChartData( 'cpu-utilization', this.currentFilter, '', '' );
+      if (data.cpuUtil) {
+        this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
+        this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries, 30 );
+      return;
+    }
 
-      this.chartOptions.series = [{ data: temp }];
-      this.chart.updateOptions(
-        {
-          xaxis: {
-            categories: tempTime.length > 12 ? tempTime.slice(-12) : tempTime,
-          },
-        },
-        false,
-        true
-      );
+    if (this.cpuUtilTimeInterval) return;
+
+    const data = await this.fetchChartData( 'cpu-utilization', this.currentFilter, '', '' );
+    if (data.cpuUtil) {
+      this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
+      this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
+    }
+    this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries );
+
+    this.cpuUtilTimeInterval = setInterval(async () => {
+      const data = await this.fetchChartData( 'cpu-utilization', this.currentFilter, '', '' );
+      if (data.cpuUtil) {
+        this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
+        this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries );
     }, 1000 * 2);
   }
 
   async updateRoboUtil() {
-    let temp = [];
-    let tempTime = [];
-    let data;
-    if (!this.selectedMap || this.roboUtilTimeInterval) return;
+    // this.chartOptions.xaxis.range = 12; // get use of it..
     this.clearAllIntervals(this.roboUtilTimeInterval);
-    this.roboUtilTimeInterval = setInterval(async () => {
-      data = await this.fetchSeriesData('robo-utilization'); // data.cpuUtil..
-      this.roboUtilArr.push(data.roboUtil);
-      tempTime.push(new Date().toLocaleTimeString()); // yet to take..
-      if (this.roboUtilArr.length > 12) temp = this.roboUtilArr.slice(-12);
-      else temp = [...this.roboUtilArr];
+    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
+      clearInterval(this.roboUtilTimeInterval);
+      this.roboUtilTimeInterval = 0;
+      const data = await this.fetchChartData( 'robo-utilization', this.currentFilter, '', '' );
+      if (data.roboUtil) {
+        this.roboUtilArr = data.roboUtil.map((stat: any) => stat.rate);
+        this.roboXaxisSeries = data.roboUtil.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Robot Utilization', this.roboUtilArr, this.roboXaxisSeries, 30 );
+      return;
+    }
 
-      this.chartOptions.series = [{ data: temp }];
-      this.chart.updateOptions(
-        {
-          xaxis: {
-            categories: tempTime.length > 12 ? tempTime.slice(-12) : tempTime,
-          },
-        },
-        false,
-        true
-      );
+    if (this.roboUtilTimeInterval) return;
+
+    const data = await this.fetchChartData( 'robo-utilization', this.currentFilter, '', '' );
+    if (data.roboUtil) {
+      this.roboUtilArr = data.roboUtil.map((stat: any) => stat.rate);
+      this.roboXaxisSeries = data.roboUtil.map( (stat: any) => stat.time );
+    }
+    this.plotChart( 'Robot Utilization', this.roboUtilArr, this.roboXaxisSeries );
+
+    this.roboUtilTimeInterval = setInterval(async () => {
+      const data = await this.fetchChartData( 'robo-utilization', this.currentFilter, '', '' );
+      if (data.roboUtil) {
+        this.roboUtilArr = data.roboUtil.map((stat: any) => stat.rate);
+        this.roboXaxisSeries = data.roboUtil.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Robot Utilization', this.roboUtilArr, this.roboXaxisSeries );
     }, 1000 * 2);
   }
 
   async updateBattery() {
-    let temp = [];
-    let tempTime = [];
-    let data;
-    if (!this.selectedMap || this.batteryTimeInterval) return;
     this.clearAllIntervals(this.batteryTimeInterval);
-    this.batteryTimeInterval = setInterval(async () => {
-      data = await this.fetchSeriesData('battery'); // data.cpuUtil..
-      this.batteryArr.push(data.batteryStat);
-      tempTime.push(new Date().toLocaleTimeString()); // yet to take..
-      if (this.batteryArr.length > 12) temp = this.batteryArr.slice(-12);
-      else temp = [...this.batteryArr];
+    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
+      clearInterval(this.batteryTimeInterval);
+      this.batteryTimeInterval = 0;
+      const data = await this.fetchChartData( 'battery', this.currentFilter, '', '' );
+      if (data.batteryStat) {
+        this.batteryArr = data.batteryStat.map((stat: any) => stat.rate);
+        this.batteryXaxisSeries = data.batteryStat.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Battery', this.batteryArr, this.batteryXaxisSeries, 30 );
+      return;
+    }
 
-      this.chartOptions.series = [{ data: temp }];
-      this.chart.updateOptions(
-        {
-          xaxis: {
-            categories: tempTime.length > 12 ? tempTime.slice(-12) : tempTime,
-          },
-        },
-        false,
-        true
-      );
+    if (this.batteryTimeInterval) return;
+
+    const data = await this.fetchChartData( 'battery', this.currentFilter, '', '' );
+    if (data.batteryStat) {
+      this.batteryArr = data.batteryStat.map((stat: any) => stat.rate);
+      this.batteryXaxisSeries = data.batteryStat.map( (stat: any) => stat.time );
+    }
+    this.plotChart( 'Battery', this.batteryArr, this.batteryXaxisSeries );
+
+    this.batteryTimeInterval = setInterval(async () => {
+    const data = await this.fetchChartData( 'battery', this.currentFilter, '', '' );
+    if (data.batteryStat) {
+      this.batteryArr = data.batteryStat.map((stat: any) => stat.rate);
+      this.batteryXaxisSeries = data.batteryStat.map( (stat: any) => stat.time );
+    }
+    this.plotChart( 'Battery', this.batteryArr, this.batteryXaxisSeries );
     }, 1000 * 2);
   }
 
   async updateMemory() {
-    let temp = [];
-    let tempTime = [];
-    let data;
-    if (!this.selectedMap || this.memoryTimeInterval) return;
     this.clearAllIntervals(this.memoryTimeInterval);
-    this.memoryTimeInterval = setInterval(async () => {
-      data = await this.fetchSeriesData('memory'); // data.cpuUtil..
-      this.memoryArr.push(data.memoryStat);
-      tempTime.push(new Date().toLocaleTimeString()); // yet to take..
-      if (this.memoryArr.length > 12) temp = this.memoryArr.slice(-12);
-      else temp = [...this.memoryArr];
+    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
+      clearInterval(this.memoryTimeInterval);
+      this.memoryTimeInterval = 0;
+      const data = await this.fetchChartData( 'memory', this.currentFilter, '', '' );
+      if (data.memoryStat) {
+        this.memoryArr = data.memoryStat.map((stat: any) => stat.rate);
+        this.memoryXaxisSeries = data.memoryStat.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Memory', this.memoryArr, this.memoryXaxisSeries, 30 );
+      return;
+    }
 
-      this.chartOptions.series = [{ data: temp }];
-      this.chart.updateOptions(
-        {
-          xaxis: {
-            categories: tempTime.length > 12 ? tempTime.slice(-12) : tempTime,
-          },
-        },
-        false,
-        true
-      );
+    if (this.memoryTimeInterval) return;
+
+    const data = await this.fetchChartData( 'memory', this.currentFilter, '', '' );
+      if (data.memoryStat) {
+        this.memoryArr = data.memoryStat.map((stat: any) => stat.rate);
+        this.memoryXaxisSeries = data.memoryStat.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Memory', this.memoryArr, this.memoryXaxisSeries );
+
+    this.memoryTimeInterval = setInterval(async () => {
+      const data = await this.fetchChartData( 'memory', this.currentFilter, '', '' );
+      if (data.memoryStat) {
+        this.memoryArr = data.memoryStat.map((stat: any) => stat.rate);
+        this.memoryXaxisSeries = data.memoryStat.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Memory', this.memoryArr, this.memoryXaxisSeries);
     }, 1000 * 2);
   }
 
   async updateNetwork() {
-    let temp = [];
-    let tempTime = [];
-    let data;
-    if (!this.selectedMap || this.networkTimeInterval) return;
     this.clearAllIntervals(this.networkTimeInterval);
-    this.networkTimeInterval = setInterval(async () => {
-      data = await this.fetchSeriesData('network'); // data.cpuUtil..
-      this.networkArr.push(data.networkStat);
-      tempTime.push(new Date().toLocaleTimeString()); // yet to take..
-      if (this.networkArr.length > 12) temp = this.networkArr.slice(-12);
-      else temp = [...this.networkArr];
+    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
+      clearInterval(this.networkTimeInterval);
+      this.networkTimeInterval = 0;
+      const data = await this.fetchChartData( 'network', this.currentFilter, '', '' );
+      if (data.networkStat) {
+        this.networkArr = data.networkStat.map((stat: any) => stat.rate);
+        this.networkXaxisSeries = data.networkStat.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Network', this.networkArr, this.networkXaxisSeries, 30 );
+      return;
+    }
 
-      this.chartOptions.series = [{ data: temp }];
-      this.chart.updateOptions(
-        {
-          xaxis: {
-            categories: tempTime.length > 12 ? tempTime.slice(-12) : tempTime,
-          },
-        },
-        false,
-        true
-      );
+    if (this.networkTimeInterval) return;
+
+    const data = await this.fetchChartData( 'network', this.currentFilter, '', '' );
+      if (data.networkStat) {
+        this.networkArr = data.networkStat.map((stat: any) => stat.rate);
+        this.networkXaxisSeries = data.networkStat.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Network', this.networkArr, this.networkXaxisSeries );
+    this.networkTimeInterval = setInterval(async () => {
+      const data = await this.fetchChartData( 'network', this.currentFilter, '', '' );
+      if (data.networkStat) {
+        this.networkArr = data.networkStat.map((stat: any) => stat.rate);
+        this.networkXaxisSeries = data.networkStat.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Network', this.networkArr, this.networkXaxisSeries );
     }, 1000 * 2);
   }
 
   async updateIdleTime() {
-    let temp = [];
-    let tempTime = [];
-    let data;
-    if (!this.selectedMap || this.idleTimeInterval) return;
     this.clearAllIntervals(this.idleTimeInterval);
-    this.idleTimeInterval = setInterval(async () => {
-      data = await this.fetchSeriesData('idle-time'); // data.cpuUtil..
-      this.idleTimeArr.push(data.idleTime);
-      tempTime.push(new Date().toLocaleTimeString()); // yet to take..
-      if (this.idleTimeArr.length > 12) temp = this.idleTimeArr.slice(-12);
-      else temp = [...this.idleTimeArr];
+    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
+      clearInterval(this.idleTimeInterval);
+      this.idleTimeInterval = 0;
+      const data = await this.fetchChartData( 'idle-time', this.currentFilter, '', '' );
+      if (data.idleTime) {
+        this.idleTimeArr = data.idleTime.map((stat: any) => stat.rate);
+        this.idleTimeXaxisSeries = data.idleTime.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Idle Time', this.idleTimeArr, this.idleTimeXaxisSeries, 30 );
+      return;
+    }
 
-      this.chartOptions.series = [{ data: temp }];
-      this.chart.updateOptions(
-        {
-          xaxis: {
-            categories: tempTime.length > 12 ? tempTime.slice(-12) : tempTime,
-          },
-        },
-        false,
-        true
-      );
+    if (this.idleTimeInterval) return;
+
+    const data = await this.fetchChartData( 'idle-time', this.currentFilter, '', '' );
+      if (data.idleTime) {
+        this.idleTimeArr = data.idleTime.map((stat: any) => stat.rate);
+        this.idleTimeXaxisSeries = data.idleTime.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Idle Time', this.idleTimeArr, this.idleTimeXaxisSeries );
+
+    this.idleTimeInterval = setInterval(async () => {
+      const data = await this.fetchChartData( 'idle-time', this.currentFilter, '', '' );
+      if (data.idleTime) {
+        this.idleTimeArr = data.idleTime.map((stat: any) => stat.rate);
+        this.idleTimeXaxisSeries = data.idleTime.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Idle Time', this.idleTimeArr, this.idleTimeXaxisSeries );
     }, 1000 * 2);
   }
 
   async updateErr() {
-    let temp = [];
-    let tempTime = [];
-    let data;
-    if (!this.selectedMap || this.errTimeInterval) return;
     this.clearAllIntervals(this.errTimeInterval);
-    this.errTimeInterval = setInterval(async () => {
-      data = await this.fetchSeriesData('robo-err'); // data.cpuUtil..
-      this.errorArr.push(data.roboErr);
-      tempTime.push(new Date().toLocaleTimeString()); // yet to take..
-      if (this.errorArr.length > 12) temp = this.errorArr.slice(-12);
-      else temp = [...this.errorArr];
+    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
+      clearInterval(this.errTimeInterval);
+      this.errTimeInterval = 0;
+      const data = await this.fetchChartData( 'robo-err', this.currentFilter, '', '' );
+      if (data.roboErr) {
+        this.errorArr = data.roboErr.map((stat: any) => stat.rate);
+        this.errRateXaxisSeries = data.roboErr.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Error', this.errorArr, this.errRateXaxisSeries, 30 );
+      return;
+    }
 
-      this.chartOptions.series = [{ data: temp }];
-      this.chart.updateOptions(
-        {
-          xaxis: {
-            categories: tempTime.length > 12 ? tempTime.slice(-12) : tempTime,
-          },
-        },
-        false,
-        true
-      );
+    if (this.errTimeInterval) return;
+
+    const data = await this.fetchChartData( 'robo-err', this.currentFilter, '', '' );
+      if (data.roboErr) {
+        this.errorArr = data.roboErr.map((stat: any) => stat.rate);
+        this.errRateXaxisSeries = data.roboErr.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Error', this.errorArr, this.errRateXaxisSeries );
+
+    this.errTimeInterval = setInterval(async () => {
+      const data = await this.fetchChartData( 'robo-err', this.currentFilter, '', '' );
+      if (data.roboErr) {
+        this.errorArr = data.roboErr.map((stat: any) => stat.rate);
+        this.errRateXaxisSeries = data.roboErr.map( (stat: any) => stat.time );
+      }
+      this.plotChart( 'Error', this.errorArr, this.errRateXaxisSeries );
     }, 1000 * 2);
   }
 

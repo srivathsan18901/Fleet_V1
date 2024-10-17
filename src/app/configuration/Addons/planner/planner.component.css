@@ -5,13 +5,32 @@
   margin-right: 20px;
 }
 
+::ng-deep .p-dropdown{
+  width: 13rem;
+}
+
+::ng-deep .p-inputtext{
+  padding: 6px;
+}
 .container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   margin: 2%;
-  margin-top: 3%;
+  padding-top: 2%;
+  margin-top: 1%;
   /* margin-bottom: 0px; */
+}
+
+.centers{
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.validate{
+  display: flex;
+  flex-direction: column;
 }
 
 /* Button styling */
@@ -27,7 +46,7 @@
 ::ng-deep .p-button.p-button-danger {
   /* width: 70% !important; */
   height: 31px !important;
-  /* margin-top: 19rem; */
+  margin-top: 1rem;
 }
 
 ::ng-deep .p-button {
@@ -36,12 +55,13 @@
 }
 
 .field {
+  display: flex;
   margin-bottom: 25px;
 }
 
 label {
   /* font-weight: bold; */
-  margin-right: 10px;
+  /* margin-right: 10px; */
 }
 
 .form2, .field2{
@@ -50,6 +70,7 @@ label {
   width: auto;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
   margin-top: 1rem;
 
 }

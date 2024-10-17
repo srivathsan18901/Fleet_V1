@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { RobotDetailPopupComponent } from '../robot-detail-popup/robot-detail-popup.component';
 import { environment } from '../../environments/environment.development';
@@ -46,144 +46,28 @@ export class RobotsComponent implements OnInit {
   ];
   currentSignalClass: string = 'none'; // Default class
   robots: Robot[] = [];
-
-  /* robots: Robot[] = [
-    {
-    id: 1,
-    serialNumber: '50000',
-    name: 'Forklift AGV',
-    imageUrl: '../../assets/robots/agv1.png',
-    status: 'Active',
-    battery: '40%',
-    temperature: '59 C',
-    networkstrength: '90 dBi',
-    robotutilization: ' 43 %',
-    cpuutilization: '90 %',
-    memory: '10 %',
-    error: '10',
-    batteryPercentage: 77,
-    isCharging: true, // This will control whether the icon is shown
-    totalPicks: '31',
-    totalDrops: '28',
-    SignalStrength: 'Weak',
-    averagedischarge:20,
-    averageChargingTime:'1.30',
-    currentspeed: '1.5',
-    averagespeed: '0.9',
-    maximumspeed: '2.0',
-    averagetransfertime: '2.03',
-    averagedockingtime: '1.40',
-  },
-    {
-      id: 2,
-      serialNumber: '101589',
-      name: 'Forklift AGV',
-      imageUrl: '../../assets/robots/agv1.png',
-      status: 'Active',
-      battery: '40%',
-      temperature: '57 C',
-      networkstrength: '80 dBi',
-      robotutilization: ' 85 %',
-      cpuutilization: '80 %',
-      memory: '20 %',
-      error: '20',
-      batteryPercentage: 7,
-      isCharging: true, // This will control whether the icon is shown
-      totalPicks: '31',
-      totalDrops: '28',
-      SignalStrength: 'Searching',
-    },
-    {
-      id: 3,
-      serialNumber: '101589',
-      name: 'Forklift AGV',
-      imageUrl: '../../assets/robots/agv1.png',
-      status: 'Active',
-      battery: '40%',
-      temperature: '01 C',
-      networkstrength: '70 dBi',
-      robotutilization: ' 90 %',
-      cpuutilization: '70 %',
-      memory: '30 %',
-      error: '30',
-      batteryPercentage: 10,
-      isCharging: true, // This will control whether the icon is shown
-      totalPicks: '31',
-      totalDrops: '28',
-      SignalStrength: 'Weak',
-    },
-    {
-      id: 4,
-      serialNumber: '101589',
-      name: 'Forklift AGV',
-      imageUrl: '../../assets/robots/agv1.png',
-      status: 'Active',
-      battery: '40%',
-      temperature: '100 C',
-      networkstrength: '60 dBi',
-      robotutilization: ' 60 %',
-      cpuutilization: '60 %',
-      memory: '40 %',
-      error: '40',
-      batteryPercentage: 40,
-      isCharging: true, // This will control whether the icon is shown
-      totalPicks: '31',
-      totalDrops: '28',
-      SignalStrength: 'Full',
-    },
-    {
-      id: 5,
-      serialNumber: '101589',
-      name: 'Forklift AGV',
-      imageUrl: '../../assets/robots/agv1.png',
-      status: 'Active',
-      battery: '40%',
-      temperature: '55 C',
-      networkstrength: '50 dBi',
-      robotutilization: ' 40 %',
-      cpuutilization: '50 %',
-      memory: '50 %',
-      error: '50',
-      batteryPercentage: 41,
-      isCharging: true, // This will control whether the icon is shown
-      totalPicks: '31',
-      totalDrops: '28',
-      SignalStrength: 'Full',
-    },
-    {
-      id: 6,
-      serialNumber: '101589',
-      name: 'Forklift AGV',
-      imageUrl: '../../assets/robots/agv1.png',
-      status: 'Active',
-      battery: '40%',
-      temperature: '55 C',
-      networkstrength: '90 dBi',
-      robotutilization: ' 23 %',
-      cpuutilization: '40 %',
-      memory: '60 %',
-      error: '60',
-      batteryPercentage: 90,
-      isCharging: false, // This will control whether the icon is shown
-      totalPicks: '31',
-      totalDrops: '28',
-      SignalStrength: 'Full',
-    },
-    // Add more robots...
-  ]; */
+  searchQuery: string = ''; // To hold the search input
+  filteredRobots: Robot[] = []; // To store filtered robots
 
   mapDetails: any | null = null;
   showPopup = false;
-  isEditPopupOpen = false;
+  
   menuOpenIndex: number | null = null;
+  editIndex: number | null = null;
+  centerIndex: any;
+
+  
+
 
   constructor(
     public dialog: MatDialog,
     private projectService: ProjectService
+    
   ) {
     // this.mapDetails = this.projectService.getMapData();
   }
 
+  
   async ngOnInit() {
     // this.setSignalStrength('Weak'); // Change this value to test different signals
     this.mapDetails = this.projectService.getMapData();
@@ -191,13 +75,28 @@ export class RobotsComponent implements OnInit {
     let grossFactSheet = await this.fetchAllRobos();
     this.robots = grossFactSheet.map((robo) => {
       robo.imageUrl = '../../assets/robots/agv1.png';
+      // robo.networkstrength = `${robo.networkstrength}`;
       if (robo.networkstrength < 20) robo.SignalStrength = 'Weak';
       else if (robo.networkstrength < 40) robo.SignalStrength = 'Medium';
       else if (robo.networkstrength < 80) robo.SignalStrength = 'Full';
       robo.networkstrength = robo.networkstrength.toString() + ' dBm';
       return robo;
     });
+    this.filteredRobots = this.robots;
     // this.robots = grossFactSheet;
+  }
+  filterRobots(): void {
+    const query = this.searchQuery.toLowerCase();
+
+    this.filteredRobots = this.robots.filter((robot) => {
+      const idMatch = robot.id.toString().includes(query);
+      const serialNumberMatch = robot.serialNumber
+        .toLowerCase()
+        .includes(query);
+      const nameMatch = robot.name.toLowerCase().includes(query);
+
+      return idMatch || serialNumberMatch || nameMatch;
+    });
   }
 
   async fetchAllRobos(): Promise<any[]> {
@@ -224,12 +123,12 @@ export class RobotsComponent implements OnInit {
     return `../../assets/robots/${imageName}`;
   }
 
-  editIndex: number | null = null;
-  centerIndex: any;
+ 
 
   togglePopup() {
     this.showPopup = !this.showPopup;
   }
+  
 
   toggleMenu(index: number) {
     console.log('Toggling menu for index:', index); // Debugging log
@@ -244,6 +143,33 @@ export class RobotsComponent implements OnInit {
     this.menuOpenIndex = null;
   }
 
+
+  @ViewChild('cardContainer') cardContainer!: ElementRef;  // Assure TypeScript this will be assigned.
+
+  ngAfterViewInit() {
+    const cardContainers = document.querySelectorAll('.card-container');  // Update to 'card-container' class
+    const nextBtns = document.querySelectorAll('.nxt-btn');
+    const prevBtns = document.querySelectorAll('.pre-btn');
+    console.log("clicked");
+
+    cardContainers.forEach((cardContainer, i) => {
+      const containerWidth = cardContainer.getBoundingClientRect().width;
+
+      // Add event listener for next button if it exists
+      if (nextBtns[i]) {
+        nextBtns[i].addEventListener('click', () => {
+          cardContainer.scrollLeft += containerWidth;
+        });
+      }
+
+      // Add event listener for previous button if it exists
+      if (prevBtns[i]) {
+        prevBtns[i].addEventListener('click', () => {
+          cardContainer.scrollLeft -= containerWidth;
+        });
+      }
+    });
+  }
   // addRobot() {
   //   if (this.newRobot.name && this.newRobot.imageUrl && this.newRobot.serialNumber && this.newRobot.status && this.newRobot.battery) {
   //     this.newRobot.id = this.robots.length > 0 ? this.robots[this.robots.length - 1].id + 1 : 1;
@@ -311,7 +237,7 @@ export class RobotsComponent implements OnInit {
 
   openRobotDetail(robot: Robot): void {
     this.dialog.open(RobotDetailPopupComponent, {
-      width: '70%',
+      width: '50%',
       data: robot,
     });
   }
@@ -346,7 +272,7 @@ export class RobotsComponent implements OnInit {
   }
 
   getBatteryColor(batteryPercentage: number): string {
-    if (batteryPercentage >= 75) {
+    if (batteryPercentage >= 20) {
       return 'high'; // Green for high battery
     } else if (batteryPercentage >= 40) {
       return 'medium';
@@ -354,4 +280,6 @@ export class RobotsComponent implements OnInit {
       return 'low'; // Red for low battery
     }
   }
+
+  
 }
