@@ -3,7 +3,7 @@ name: Deploy Angular App to Docker
 on:
   push:
     branches:
-      - FleetUI_FE_Development  
+      - FleetUI_FE_Development  #branch
 
 jobs:
   build-and-deploy:
