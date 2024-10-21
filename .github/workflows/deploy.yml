@@ -28,6 +28,10 @@ jobs:
       run: |
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
+        
+        # Debugging output
+        echo "Private Key Length: ${#PRIVATE_KEY}"
+        
         scp -o StrictHostKeyChecking=no -i private_key.pem fleet_fe $USER@$HOST:~/fleet_fe
         ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
           docker load -i ~/fleet_fe
