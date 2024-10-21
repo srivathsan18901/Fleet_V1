@@ -19,6 +19,12 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -t fleet_fe .
+    - name: List Docker images
+      run: docker images
+
+    - name: Save Docker image
+      run: |
+        docker save fleet_fe -o fleet_fe.tar
 
     - name: Deploy to EC2
       env:
@@ -38,9 +44,9 @@ jobs:
         # Debugging output
         echo "Private Key Length: ${#PRIVATE_KEY}"
         
-        scp -o StrictHostKeyChecking=no -i private_key.pem fleet_fe "$USER@$HOST:~/fleet_fe"
+        scp -o StrictHostKeyChecking=no -i private_key.pem fleet_fe.tar "$USER@$HOST:~/fleet_fe.tar"
 
         ssh -o StrictHostKeyChecking=no -i private_key.pem "$USER@$HOST" << EOF
-        docker load -i ~/fleet_fe
+        docker load -i ~/fleet_fe.tar
         docker run -d -p 80:80 --name fleet_container fleet_fe
         EOF
