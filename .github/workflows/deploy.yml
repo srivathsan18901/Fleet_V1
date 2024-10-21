@@ -26,14 +26,21 @@ jobs:
         HOST: 3.110.233.62
         USER: ubuntu
       run: |
+        # Debugging output
+        echo "Private Key Length: ${#PRIVATE_KEY}"
+        if [ ${#PRIVATE_KEY} -eq 0 ]; then
+        echo "Error: PRIVATE_KEY is empty"
+        exit 1
+        fi
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         
         # Debugging output
         echo "Private Key Length: ${#PRIVATE_KEY}"
         
-        scp -o StrictHostKeyChecking=no -i private_key.pem fleet_fe $USER@$HOST:~/fleet_fe
-        ssh -o StrictHostKeyChecking=no -i private_key.pem $USER@$HOST << 'EOF'
-          docker load -i ~/fleet_fe
-          docker run -d -p 80:80 --name fleet_container fleet_fe
+        scp -o StrictHostKeyChecking=no -i private_key.pem fleet_fe "$USER@$HOST:~/fleet_fe"
+
+        ssh -o StrictHostKeyChecking=no -i private_key.pem "$USER@$HOST" << EOF
+        docker load -i ~/fleet_fe
+        docker run -d -p 80:80 --name fleet_container fleet_fe
         EOF
