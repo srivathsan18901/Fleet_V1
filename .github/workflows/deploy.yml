@@ -23,8 +23,8 @@ jobs:
     - name: Deploy to EC2
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-        HOST: 3.110.233.62
-        USER: ubuntu
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ${{ secrets.EC2_USER }}
       run: |
         # Debugging output
         echo "Private Key Length: ${#PRIVATE_KEY}"
