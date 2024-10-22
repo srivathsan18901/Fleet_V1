@@ -3,7 +3,7 @@ name: Deploy Angular App to Docker
 on:
   push:
     branches:
-      - FleetUI_FE_Development  #branch
+      - FleetUI_FE_Development  # branch
 
 jobs:
   build-and-deploy:
@@ -19,8 +19,25 @@ jobs:
     - name: Build Docker image
       run: |
         docker build -t fleet_fe .
+
     - name: List Docker images
       run: docker images
+
+    - name: Log in to Amazon ECR
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ap-south-1  # Change to your desired region
+      run: |
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com
+
+    - name: Tag Docker image
+      run: |
+        docker tag fleet_fe:latest 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/fleet_fe:latest
+
+    - name: Push Docker image to ECR
+      run: |
+        docker push 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/fleet_fe:latest
 
     - name: Save Docker image
       run: |
@@ -35,8 +52,8 @@ jobs:
         # Debugging output
         echo "Private Key Length: ${#PRIVATE_KEY}"
         if [ ${#PRIVATE_KEY} -eq 0 ]; then
-        echo "Error: PRIVATE_KEY is empty"
-        exit 1
+          echo "Error: PRIVATE_KEY is empty"
+          exit 1
         fi
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
