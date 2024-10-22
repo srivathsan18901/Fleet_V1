@@ -29,6 +29,7 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         AWS_REGION: ap-south-1  #region
       run: |
+        echo "Logging in to ECR in region: $AWS_REGION"
         aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com
 
     - name: Tag Docker image
