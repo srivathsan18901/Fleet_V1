@@ -34,11 +34,11 @@ jobs:
 
     - name: Tag Docker image
       run: |
-        docker tag fleet_fe:latest 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/fleet_fe:latest
+        docker tag my-fleetfeapp-repo:latest 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest
 
     - name: Push Docker image to ECR
       run: |
-        docker push 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/fleet_fe:latest
+        docker push 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest
 
     - name: Save Docker image
       run: |
