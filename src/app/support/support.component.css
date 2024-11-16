@@ -5,39 +5,47 @@
 
 /* under development */
 
-.under-development-overlay {
-  position: fixed; /* Fixed positioning to cover the entire viewport */
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: white; /* Full-screen white background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999; /* Ensure it appears above other content */
-}
-
-.overlay-content {
-  text-align: center; /* Center the content */
-}
-
-.overlay-content p {
-  margin-top: -30px; /* Space between SVG and text */
-  font-size: 40px; /* Adjust font size as needed */
-  color: rgb(86, 85, 85); /* Text color */
-  font-weight: 700;
-}
 
 
-.support-page-container{
+/* .support-page-container{
 
     margin-top: 4%;
    margin-left: 5%;
+} */
+
+
+.mainContent {
+  position: absolute;         /* Positioning relative to the nearest positioned ancestor */
+  top: 50px;                 /* Distance from the top of the containing block */
+  left: 70px;                /* Distance from the left of the containing block */
+  right: 0;                  /* Stretch to the right edge of the containing block */
+  bottom: 0;                 /* Stretch to the bottom edge of the containing block */
+  padding: 5px 10px;        /* Inner padding */
+  overflow: hidden;          /* Hide overflow content */
+  box-sizing: border-box;    /* Include padding and border in width/height */
+  background-color: white;   /* Background color */
 }
 
-.header-title {
+
+.content-container {
+  display: flex; /* Align items in a row */
+  justify-content: space-between; /* Space between the sections */
+  margin-top: 20px; /* Optional spacing */
+}
+
+  /* Header section styles */
+  .header-section {
+    position: relative; /* Allows the button to be positioned absolutely inside it */
+    padding-right: 100px; /* Add padding to prevent overlap with the button */
+  }
+
+  p {
+    margin: 0px;
+  }
+
+  .header-title {
     font-size: 36px;
+    font-family: "graphik", Arial,  sans-serif;
     font-weight: bold;
     color: #DA2127;
     margin: 0;
@@ -51,6 +59,7 @@
 
   .subheader-text {
     font-size: 16px;
+    font-family: "graphik", Arial,  sans-serif;
     color: #333;
   }
 
@@ -58,52 +67,119 @@
     width: 23px;
     height: 13px;
   }
-  /* Support Sections */
-  .support-sections {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    margin-bottom: 40px;
-  }
 
-  .support-section {
-    text-align: center;
-    flex: 1 1 300px;
-    padding: 20px;
-    margin: 10px;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    /* transition: transform 0.2s ease-in-out; */
-  }
+ 
+.export-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #ff3333; /* Green background */
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  font-size: 16px;
+  font-family: "graphik", Arial,  sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
-  /* .support-section:hover {
-    transform: scale(1.05);
-  } */
+.export-button i {
+  margin-right: 8px; /* Space between icon and text */
+}
 
-  .support-section img {
-    width: 50px;
-    margin-bottom: 10px;
-  }
+.export-button:hover {
+  background-color: #ff3333;
+  transform: scale(1.05);
+}
+  
 
-  .support-section h3 {
-    font-size: 1.5rem;
-    margin-bottom: 5px;
-  }
+/* Support Sections */
+.support-sections {
+  display: flex;
+  flex-direction: column; /* Stack sections vertically */
+  align-items: flex-end; /* Align sections to the right */
+  flex-wrap: wrap; /* Wrap content for smaller screens */
+  margin-bottom: 30px;
+  gap: 7px;
+}
 
-  .support-section p {
-    font-size: 1rem;
-    color: #666;
-  }
+/* Support Section */
+.support-section {
+  text-align: center;
+  margin-top: 15px; /* Reduced margin */
+  padding: 10px; /* Reduced padding */
+  margin: 5px; /* Keep margin smaller */
+  border: 1px solid #ccc;
+  border-radius: 6px; /* Smaller border radius */
+  background-color: #fff;
+  width: 380px; /* Further reduced width */
+  height: auto; /* Allow height to adjust */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Header and Image Alignment */
+.header-image-container {
+  display: flex; /* Align header and image in a row */
+  align-items: center; /* Vertically center align */
+  justify-content: center; /* Horizontally center align */
+  margin-bottom: 8px; /* Reduced space between header and content */
+  gap: 20px; /* Reduced gap */
+}
+
+.header-image-container img {
+  width: 30px; /* Reduced image size */
+  margin-left: 20px; /* Optional: Space between header and image */
+}
+
+/* Image inside support section */
+.support-section img {
+  width: 30px; /* Smaller image */
+  margin-bottom: 6px; /* Reduced bottom margin */
+}
+
+/* Heading inside support section */
+.support-section h3 {
+  font-size: 1.3rem; /* Reduced font size */
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 4px; /* Reduced margin */
+}
+
+/* Paragraph inside support section */
+.support-section p {
+  font-size: 0.85rem; /* Smaller text */
+  font-family: "graphik", Arial,  sans-serif;
+  color: #666;
+}
+
+/* Add hover effect if needed */
+.support-section:hover {
+  transform: scale(1.02); /* Slightly reduced hover effect */
+}
+
+
+
 
   /* Social Media Section */
   .social-media-container {
-    text-align: center;
-    margin-top: 30px;
+    position: fixed;
+    bottom: 10px; /* Distance from the bottom of the screen */
+    left: 50%; /* Center horizontally */
+    transform: translateX(-50%); /* Adjust the centering */
+    text-align: center; /* Center-align the text */
+    
+    padding: 10px; /* Add some padding */
+    border-radius: 10px; /* Optional: Add rounded corners */
+  
   }
-
+  
   .social-media-container h3 {
     font-size: 1.8rem;
-    margin-bottom: 20px;
+    font-family: "graphik", Arial,  sans-serif;
+    margin-bottom: 10px;
   }
 
   .social-media-icons a {
@@ -132,18 +208,22 @@
   @media screen and (max-width: 480px) {
     .support-header h1 {
       font-size: 1.5rem;
+      font-family: "graphik", Arial,  sans-serif;
     }
 
     .support-header p {
       font-size: 1rem;
+      font-family: "graphik", Arial,  sans-serif;
     }
 
     .support-section h3 {
       font-size: 1.2rem;
+      font-family: "graphik", Arial,  sans-serif;
     }
 
     .support-section p {
       font-size: 0.9rem;
+      font-family: "graphik", Arial,  sans-serif;
     }
 
     .social-media-icons img {
@@ -186,6 +266,7 @@
     top: 10px;
     right: 10px;
     font-size: 24px;
+    font-family: "graphik", Arial,  sans-serif;
     cursor: pointer;
   }
 
@@ -196,13 +277,14 @@
 
   .form-row label {
     display: block;
-    margin-bottom: 5px;
+   
   }
 
   .form-row input, .form-row select {
     width: 100%;
     padding: 10px;
-    font-size: 16px;
+    font-size: 14px;
+    font-family: "graphik", Arial,  sans-serif;
     border: 1px solid #ccc;
     border-radius: 5px;
   }
@@ -221,125 +303,522 @@
   }
 
 
+
   /* download button */
-  /* From Uiverse.io by satyamchaudharydev */
-.button {
-    position: absolute;
-  bottom: 10px; /* Distance from the bottom of the container */
-  left: 10px; /* Distance from the left of the container */
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-    --width: 100px;
-    --height: 35px;
-    --tooltip-height: 35px;
-    --tooltip-width: 90px;
-    --gap-between-tooltip-to-button: 18px;
-    --button-color: #1163ff;
-    --tooltip-color: #fff;
-    width: var(--width);
-    height: var(--height);
-    background: var(--button-color);
-    position: relative;
-    text-align: center;
-    border-radius: 0.45em;
-    font-family: "Arial";
-    /* transition: background 0.3s; */
-  }
-
-  .button::before {
-    position: absolute;
-    content: attr(data-tooltip);
-    width: var(--tooltip-width);
-    height: var(--tooltip-height);
-    background-color: var(--tooltip-color);
-    font-size: 0.9rem;
-    color: #111;
-    border-radius: .25em;
-    line-height: var(--tooltip-height);
-    bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) + 10px);
-    left: calc(50% - var(--tooltip-width) / 2);
-  }
-
-  .button::after {
-    position: absolute;
-    content: '';
-    width: 0;
-    height: 0;
-    border: 10px solid transparent;
-    border-top-color: var(--tooltip-color);
-    left: calc(50% - 10px);
-    bottom: calc(100% + var(--gap-between-tooltip-to-button) - 10px);
-  }
-
-  .button::after,.button::before {
-    opacity: 0;
-    visibility: hidden;
-    /* transition: all 0.5s; */
-  }
-
-  .button[data-tooltip] {
-    position: relative;
-  }
-
-
-  .text {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .button-wrapper,.text,.icon {
+  .download-btn {
+    height: 35px; /* Reduced height */
+    width: 100px; /* Reduced width */
+    cursor: pointer;
+    background: #ff3333; /* Retained background color */
+    border: none;
+    border-radius: 8px; /* Slightly reduced border radius */
     overflow: hidden;
-    position: absolute;
+    margin-top: 15px; /* Reduced top margin */
+  }
+  
+  .button-content {
+    transform: translateY(-35px); /* Adjusted for new height */
+    transition: all 250ms ease-in-out;
+  }
+  
+  .svg-container,
+  .text-container {
+    height: 35px; /* Reduced height */
     width: 100%;
-    height: 100%;
-    left: 0;
-    color: #fff;
-  }
-
-  .text {
-    top: 0
-  }
-
-  /* .text,.icon {
-    transition: top 0.5s;
-  } */
-
-  .icon {
-    color: #fff;
-    top: 100%;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
   }
-
-  .icon svg {
-    width: 24px;
-    height: 24px;
-  }
-
-  /* .button:hover {
-    background: #6c18ff;
-  }
-
-  .button:hover .text {
-    top: -100%;
-  }
-
-  .button:hover .icon {
-    top: 0;
-  } */
-
-  /* .button:hover:before,.button:hover:after {
+  
+  .text-container .text {
+    font-size: 12px; /* Reduced font size */
+    font-family: "graphik", Arial,  sans-serif;
+    color: #fff;
+    font-weight: 500;
     opacity: 1;
-    visibility: visible;
+    transition: opacity ease-in-out 250ms;
+  }
+  
+  .download-icon {
+    height: 20px; /* Reduced icon height */
+    width: 20px; /* Reduced icon width */
+    fill: #fff;
+    opacity: 0;
+    transition: opacity ease-in-out 250ms;
+  }
+  
+  /* Hover state for the button */
+  .download-btn:hover .button-content {
+    transform: translateY(0px);
+  }
+  
+  .download-btn:hover .text {
+    opacity: 0;
+  }
+  
+  .download-btn:hover .download-icon {
+    opacity: 1;
+  }
+  
+  .download-btn:focus .download-icon {
+    -webkit-animation: heartbeat 1.5s ease-in-out infinite both;
+    animation: heartbeat 1.5s ease-in-out infinite both;
+  }
+  
+
+@-webkit-keyframes heartbeat {
+  from {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+  10% {
+    -webkit-transform: scale(0.91);
+    transform: scale(0.91);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+  17% {
+    -webkit-transform: scale(0.98);
+    transform: scale(0.98);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+  33% {
+    -webkit-transform: scale(0.87);
+    transform: scale(0.87);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+  45% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+}
+@keyframes heartbeat {
+  from {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+  10% {
+    -webkit-transform: scale(0.91);
+    transform: scale(0.91);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+  17% {
+    -webkit-transform: scale(0.98);
+    transform: scale(0.98);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+  33% {
+    -webkit-transform: scale(0.87);
+    transform: scale(0.87);
+    -webkit-animation-timing-function: ease-in;
+    animation-timing-function: ease-in;
+  }
+  45% {
+    -webkit-transform: scale(1);
+    transform: scale(1);
+    -webkit-animation-timing-function: ease-out;
+    animation-timing-function: ease-out;
+  }
+}
+
+/* hover state for the button */
+
+/* From Uiverse.io by cssbuttons-io */ 
+button {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+  outline: none;
+  border: 0;
+  vertical-align: middle;
+  text-decoration: none;
+  background: transparent;
+  padding: 0;
+  font-size: inherit; /* Inherits the font size from its parent */
+  font-family: "graphik", Arial,  sans-serif;
+  margin-top: 15px; 
+}
+
+button.custom-learn-more {
+  width: 10rem; /* Reduced width */
+  height: auto; /* Auto height */
+  font-size: 12px; /* Reduced font size */
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: 500; /* Maintained font weight */
+}
+
+button.custom-learn-more .custom-circle {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: relative;
+  display: block;
+  margin: 0;
+  width: 2.5rem; /* Reduced circle width */
+  height: 2.5rem; /* Reduced circle height */
+  background: #ff3333; /* Circle background color */
+  border-radius: 1.25rem; /* Adjusted border radius */
+}
+
+button.custom-learn-more .custom-circle .custom-icon {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  background: #fff; /* Icon background color */
+}
+
+button.custom-learn-more .custom-circle .custom-arrow {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  left: 0.5rem; /* Adjusted position */
+  width: 1rem; /* Reduced arrow width */
+  height: 0.1rem; /* Reduced arrow height */
+  background: none; /* No background for arrow */
+}
+
+button.custom-learn-more .custom-circle .custom-arrow::before {
+  position: absolute;
+  content: "";
+  top: -0.25rem; /* Adjusted position */
+  right: 0.05rem; /* Adjusted position */
+  width: 0.5rem; /* Reduced arrow head width */
+  height: 0.5rem; /* Reduced arrow head height */
+  border-top: 0.1rem solid #fff; /* Adjusted arrow border */
+  border-right: 0.1rem solid #fff; /* Adjusted arrow border */
+  transform: rotate(45deg); /* Rotate arrow */
+}
+
+button.custom-learn-more .custom-button-text {
+  transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.7rem 0; /* Reduced padding */
+  margin: 0 0 0 1.25rem; /* Adjusted margin */
+  color: #282936; /* Text color */
+  font-weight: 700; /* Maintained font weight */
+  font-family: "graphik", Arial,  sans-serif;
+  line-height: 1.4; /* Adjusted line height */
+  text-align: center; /* Center text */
+  text-transform: uppercase; /* Uppercase text */
+}
+
+button:hover .custom-circle {
+  width: 100%; /* Expands to full width on hover */
+}
+
+button:hover .custom-circle .custom-arrow {
+  background: #fff; /* Changes arrow background color on hover */
+  transform: translate(1rem, 0); /* Translates arrow on hover */
+}
+
+button:hover .custom-button-text {
+  color: #fff; /* Changes text color on hover */
+}
+
+
+/* Contact Us Container */
+.contact-container {
+  background-color: #fff; /* Background color for contrast */
+  border: 1px solid #ccc; /* Border for definition */
+  border-radius: 8px; /* Rounded corners */
+  padding: 15px; /* Adjusted inner spacing for tighter fit */
+  width: 72%; /* Width for the container */
+  height: 495px;
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: flex-start; /* Align items to the start */
+  position: relative; /* Positioning context for children */
+  box-sizing: border-box; /* Include padding and border in width/height */
+  margin-top: 4px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Contact Us Header */
+.contact-container h3 {
+  font-size: 2.5rem; /* Header font size */
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: 500;
+  margin: 0 0 5px 0; /* Removed bottom margin for header */
+}
+
+/* Input fields */
+.contact-container input,
+.contact-container textarea {
+  width: 100%; /* Full width */
+  margin-bottom: 8px; /* Reduced space below each field */
+  padding: 8px; 
+  border: 1px solid #ccc; /* Border for input fields */
+  border-radius: 4px; /* Rounded corners */
+  box-sizing: border-box; /* Include padding and border in width/height */
+}
+
+/* Submit Button */
+.submit-btn {
+  background-color: #ff3333; /* Button color */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 5px; /* Rounded corners */
+  padding: 10px 15px; /* Inner spacing */
+  cursor: pointer; /* Pointer on hover */
+  transition: background-color 0.3s; /* Smooth transition */
+}
+
+/* Hover effect for submit button */
+.submit-btn:hover {
+  background-color: #ff0000; /* Darker shade on hover */
+}
+
+/* form container */
+.header {
+  display: flex; /* Create a flex container for header and form */
+  justify-content: space-between; /* Space out items */
+  align-items: flex-start; /* Align items to the top */
+  width: 100%; /* Full width */
+}
+
+.form-container {
+  display: flex; /* Enable flex for the form container */
+  justify-content: flex-end; /* Align items to the end */
+  align-items: flex-start; /* Align items to the top */
+}
+
+
+/* Form Container */
+.container {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  width: 60vw; /* Reduced width for Contact Us section */
+  max-width: 600px; /* Maximum width to ensure it doesn’t stretch too much */
+  height: auto; /* Allow dynamic height */
+  align-items: flex-start; /* Align items to the start (left) */
+  border-radius: 1rem;
+  padding: 3%; /* Padding for a spacious feel */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  background: white;
+  overflow: hidden; /* Prevent overflow */
+}
+/* Aligning styles */
+.aligning {
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  width: 100%; /* Full width for aligning */
+  margin-bottom: 5px; /* Further reduced space below each aligning block */
+}
+
+.form-row {
+  display: flex; /* Flex for alignment */
+  justify-content: flex-start; /* Align items to the start */
+  align-items: center; /* Center items vertically */
+  width: 100%; /* Full width of the container */
+  margin-bottom: 5px; /* Reduced space between form rows */
+}
+
+label {
+  font-weight: 500; /* Bold labels for better visibility */
+  font-family: "graphik", Arial,  sans-serif;
+  margin-right: 3px; /* Further reduced space between label and input */
+  flex: 0 0 30%; /* Allow label to take 30% of space */
+  font-size: 1.0rem; /* Smaller font size */
+}
+
+/* Horizontal alignment for checkbox and label */
+.horizontal-row {
+  display: flex;
+  align-items: center; /* Align vertically center */
+  margin-bottom: 10px; /* Space below the row */
+}
+
+input[type="checkbox"] {
+  margin-right: 8px; /* Space between checkbox and label */
+  transform: scale(1); /* Optional: Adjust size of checkbox */
+}
+
+label {
+  font-size: 0.875rem; /* Adjust font size */
+  font-family: "graphik", Arial,  sans-serif;
+  color: #333; /* Text color */
+  line-height: 1.2; /* Ensures label and checkbox are aligned */
+}
+
+a {
+  color: #007BFF; /* Link color */
+  text-decoration: none; /* No underline for links */
+}
+
+a:hover {
+  text-decoration: underline; /* Underline on hover */
+}
+
+select,
+input[type="text"],
+input[type="email"],
+input[type="tel"] {
+  flex: 1; /* Allow inputs to take remaining space */
+  padding: 6px; /* Reduced inner padding for inputs */
+  border: 1px solid #ccc; /* Border style */
+  border-radius: 4px; /* Slightly smaller rounded corners */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Inner shadow */
+  width: 100%; /* Full width */
+  margin-top: 3px; /* Space above input */
+  font-size: 0.8rem; /* Smaller font size */
+  font-family: "graphik", Arial,  sans-serif;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px; /* Space between checkbox and label */
+}
+
+/* Submit Button */
+.submit-button {
+  background-color: #ff3333; /* Button color */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 4px; /* Slightly smaller rounded corners */
+  padding: 6px 10px; /* Reduced inner spacing */
+  cursor: pointer; /* Pointer on hover */
+  transition: background-color 0.3s; /* Smooth transition */
+  width: 100%; /* Full width for button */
+  font-size: 0.8rem; /* Smaller font size */
+  font-family: "graphik", Arial,  sans-serif;
+}
+
+/* Hover effect for submit button */
+.submit-button:hover {
+  background-color: #ff0000; /* Darker shade on hover */
+}
+
+
+
+/* General popup styling */
+.faq-popup {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+.faq-popup-content {
+  background-color: white;
+  border-radius: 10px; /* Reduced */
+  padding: 20px; /* Reduced */
+  width: 900px; /* Reduced */
+  width: 80%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* Reduced shadow */
+}
+
+/* FAQ Header */
+.faq-header {
+  font-size: 30px; /* Reduced */
+  font-family: "graphik", Arial,  sans-serif;
+  color: black;
+}
+.faq-header span {
+  color: red;
+}
+
+/* FAQ Item */
+.faq-item h4 {
+  cursor: pointer;
+  font-size: 15px;
+  font-family: "graphik", Arial,  sans-serif;
+  display: flex;
+  justify-content: space-between;
+  background-color: #f3f4f6;
+  padding: 15px; /* Reduced */
+  border-radius: 8px; /* Reduced */
+  transition: background-color 0.3s ease;
+}
+
+.faq-item h4:hover {
+  background-color: #e5e7eb;
+}
+
+/* Dropdown rotation */
+.dropdown-icon {
+  transition: transform 0.3s ease;
+}
+
+.dropdown-icon.rotate {
+  transform: rotate(180deg);
+}
+
+/* FAQ answer */
+.faq-answer {
+  padding-left: 10px; /* Reduced */
+  margin-top: 5px; /* Reduced */
+  color: gray;
+  font-size: 14px; /* Reduced */
+  font-family: "graphik", Arial,  sans-serif;
+}
+/* Contact section */
+.contact-section {
+  margin-top: 30px; /* Reduced */
+  text-align: center;
+}
+
+/* Close button */
+.close-popup {
+  display: inline-block;
+  margin-top: 15px; /* Reduced */
+  color: red;
+  font-weight: bold;
+  font-size: 14px; /* Reduced */
+  font-family: "graphik", Arial,  sans-serif;
+}
+
+
+
+.faq-header-container {
+  display: flex;
+  justify-content: space-between; /* Ensures header text and button are on opposite ends */
+  align-items: center; /* Vertically centers the close button */
+ 
+}
+
+/* Close Button Styles */
+.close-button {
+  background-color: white;
+  border: 2px solid red;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-top: -40px;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+  .close-button svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
   }
 
-  .button:hover:after {
-    bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) - 20px);
+  .close-button:hover {
+    background-color: #da2127;
   }
 
-  .button:hover:before {
-    bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
-  } */
+  .close-button:hover svg {
+    fill: white; /* Change color on hover */
+  }

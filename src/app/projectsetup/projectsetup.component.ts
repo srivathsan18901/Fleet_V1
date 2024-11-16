@@ -162,8 +162,8 @@ export class ProjectsetupComponent {
       .then((data) => {
         console.log(data.isCookieDeleted);
         if (data.isCookieDeleted) {
-          this.authService.logout();
           this.projectService.clearProjectData();
+          this.authService.logout();
           this.router.navigate(['/']);
         }
       })
@@ -184,16 +184,33 @@ export class ProjectsetupComponent {
       //   throw new Error(`err with status code of ${response.status}`);
       let data = await response.json();
       console.log(data);
-      if (data.conflicts) alert(data.msg);
+      if (data.conflicts) {
+        this.messageService.add({
+          severity: 'error',
+          summary: data.msg,
+          life: 4000, // Duration the toast will be visible
+        });
+      };
       if (data.dupKeyErr || data.isZipValidate === false) {
-        alert(data.msg);
+        this.messageService.add({
+          severity: 'error',
+          summary: data.msg,
+          life: 3000, // Duration the toast will be visible
+        });
         return;
       } else if (data.error) {
-        alert('Try submitting file again');
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Try Submitting again',
+          life: 3000, // Duration the toast will be visible
+        });
         return;
       } else if (data.idExist) {
-        alert('Sry, project (with this id) already exist');
-        this.projectService.clearProjectData();
+        this.messageService.add({
+          severity: 'Project with has same id or contents already exists',
+          summary: data.msg,
+          life: 3000, // Duration the toast will be visible
+        });        this.projectService.clearProjectData();
       } else if (!data.idExist && data.nameExist) {
         return true;
       } else if (!data.err && !data.conflicts && data.user) {
@@ -212,7 +229,11 @@ export class ProjectsetupComponent {
 
   async importFile() {
     if (!this.selectedFile) {
-      alert('No file selected');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'No file Selected to Import',
+        life: 3000, // Duration the toast will be visible
+      });
       return;
     }
     const projRename = {
@@ -239,8 +260,12 @@ export class ProjectsetupComponent {
     if (
       file.type !== 'application/zip' &&
       file.type !== 'application/x-zip-compressed'
-    ) {
-      alert('file type not valid');
+    ) {      this.messageService.add({
+      severity: 'error',
+      summary: 'Selection Error',
+      detail: 'File type not valid',
+      life: 3000, // Duration the toast will be visible
+    });
       return;
     }
     if (file) {

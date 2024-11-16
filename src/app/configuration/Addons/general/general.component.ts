@@ -3,6 +3,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ProjectService } from '../../../services/project.service';
 import { environment } from '../../../../environments/environment.development';
 import { FormBuilder } from '@angular/forms';
+import { MessageService } from 'primeng/api';
 
 interface DB {
   name: string;
@@ -56,6 +57,7 @@ export class GeneralComponent {
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
     private fb: FormBuilder,
+    private messageService:MessageService,
   ) {
     this.formData = {
       selectedDb: '',
@@ -159,12 +161,22 @@ export class GeneralComponent {
       let data = await response.json();
 
       if (data.isSet) {
-        alert('Fleet configured!');
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Fleet Configured',
+          detail: 'General information are Configured with fleet',
+          life: 4000,
+        });
         // Manually reset the formData object
         // this.reset();
         return;
       }
-      alert('Fleet not configured!');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'General information are not Configured with fleet',
+        life: 4000,
+      });
     } catch (error) {
       console.log('Error occurred:', error);
     }

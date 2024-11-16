@@ -54,7 +54,7 @@ const routes: Routes = [
   {
     path: 'configuration',
     component: ConfigurationComponent,
-    canActivate: [AuthGuard, ProjectGuard, AdminGuard],
+    canActivate: [AdminGuard, AuthGuard, ProjectGuard],
   },
 
   {

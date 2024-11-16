@@ -24,16 +24,20 @@ export type ChartOptions = {
 })
 export class Chart1Component {
   @ViewChild("chart") chart!: ChartComponent;
+  
   public chartOptions: Partial<ChartOptions>;
+  public activeRobots: number = 2; // Example active robots count
+  public totalRobots: number = 2; // Example total robots count
 
   constructor() {
-    const percentage = 74; // Define the percentage to display
+    const activeToTotal = `${this.activeRobots} / ${this.totalRobots}`;
+    const percentage = (this.activeRobots / this.totalRobots) * 100;
 
     this.chartOptions = {
-      series: [percentage],
+      series: [percentage], // Pass the percentage value
       chart: {
-        width: 270,
-        height: 270,
+        width: 240,
+        height: 250,
         type: "radialBar",
         toolbar: {
           show: false
@@ -49,7 +53,7 @@ export class Chart1Component {
             background: "#fff",
             dropShadow: {
               enabled: true,
-              top: 2,
+              top: 3,
               left: 0,
               blur: 4,
               opacity: 0.24
@@ -58,23 +62,22 @@ export class Chart1Component {
           track: {
             background: "#FFE5E5",
             strokeWidth: "100%",
-            margin: 0
+            margin: 10
           },
           dataLabels: {
             show: true,
             name: {
-              offsetY: 85,
-              show: false,  // Hide the name label
+              offsetY: 80,
+              show: false
             },
             value: {
-              formatter: function(val) {
-                return `${val}%`;  // Display the percentage
+              formatter: function () {
+                return activeToTotal; // Display the active/total format
               },
-              offsetY: 12,
-                // Center the text vertically
-              color: "#000000",
-              fontSize: "35px",
-              fontWeight: "bold",  // Make the text bold
+              offsetY: 10,
+              color: "#F71717",
+              fontSize: "20px",
+              fontWeight: "semibold",
               show: true
             }
           }
@@ -90,7 +93,7 @@ export class Chart1Component {
           inverseColors: true,
           opacityFrom: 1,
           opacityTo: 1,
-          stops: [0, 100],
+          stops: [0, 2],
           colorStops: [
             {
               offset: 0,
@@ -108,7 +111,7 @@ export class Chart1Component {
       stroke: {
         lineCap: "round"
       },
-      labels: [""]
+      labels: ["Active Robots"]
     };
   }
 }

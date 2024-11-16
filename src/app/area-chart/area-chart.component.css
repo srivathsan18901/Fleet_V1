@@ -2,13 +2,13 @@
   position: sticky;
   display: flex;
   flex-direction: column;
-  margin-top: 0.5%; /* Reduced top margin */
+
   margin-bottom: 0.5%; /* Add or reduce bottom margin as needed */
   max-width: 63%;
   background-color: #fff;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
-  padding: 0.5% 0.8%; /* Reduced padding on top and bottom, keeping left and right */
+  padding: 0.5% 0.5%; /* Reduced padding on top and bottom, keeping left and right */
   width: 100%;
   flex-grow: 1;
 }
@@ -26,6 +26,10 @@
 .area-chart-container .apexcharts-inner {
   margin-top: 0; /* Ensure no extra margin */
   margin-bottom: 0; /* Ensure no extra margin */
+}
+
+::ng-deep .apexcharts-toolbar {
+  z-index: 0;
 }
 
 
@@ -47,6 +51,7 @@
 
 .menu {
   font-size: 14px;
+  font-family: "graphik", Arial,  sans-serif;
   line-height: 1.6;
   color: #ffffff; /* Default font color changed to violet */
   width: fit-content;
@@ -57,7 +62,7 @@
 .menu a {
   text-decoration: none;
   color: inherit;
-  font-family: inherit;
+  font-family: "graphik", Arial,  sans-serif;
   font-size: inherit;
   line-height: inherit;
 }

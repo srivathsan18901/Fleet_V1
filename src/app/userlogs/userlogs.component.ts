@@ -17,6 +17,7 @@ export class Userlogscomponent {
   activeFilter: any;
   ONBtn: any;
   searchQuery: string = '';
+  searchInput: string = ''; // Add this property to your component class
   isPopupVisible: boolean | undefined;
   isTransitioning: boolean = false;
   activeButton: string = 'task'; // Default active button
@@ -78,8 +79,18 @@ export class Userlogscomponent {
       .then((data) => {
         const { taskLogs } = data;
         this.taskData = taskLogs.notifications.map((taskErr: any) => {
+          const date = new Date();
+          const formattedDateTime = `${date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })}, ${date.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          })}`;
           return {
-            dateTime: new Date().toDateString(),
+            dateTime: formattedDateTime,
             taskId: taskErr.taskId,
             taskName: 'Pick Packs',
             errCode: taskErr.name,
@@ -89,7 +100,6 @@ export class Userlogscomponent {
         });
         this.filteredTaskData = this.taskData;
         this.setPaginatedData();
-        // console.log(taskLogs);
       })
       .catch((err) => {
         console.log(err);
@@ -115,10 +125,19 @@ export class Userlogscomponent {
       })
       .then((data) => {
         const { roboLogs } = data;
-
         this.robotData = roboLogs.table[0].values.map((roboErr: any) => {
+          const date = new Date();
+          const formattedDateTime = `${date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })}, ${date.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          })}`;
           return {
-            dateTime: new Date().toDateString(),
+            dateTime: formattedDateTime,
             roboId: roboErr.ROBOT_ID,
             roboName: roboErr.ROBOT_NAME,
             errCode: '100',
@@ -153,10 +172,19 @@ export class Userlogscomponent {
       })
       .then((data) => {
         const { fleetLogs } = data;
-
         this.fleetData = fleetLogs.map((fleetErr: any) => {
+          const date = new Date();
+          const formattedDateTime = `${date.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          })}, ${date.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          })}`;
           return {
-            dateTime: new Date().toDateString(),
+            dateTime: formattedDateTime,
             moduleName: fleetErr.moduleName,
             errCode: fleetErr.errCode,
             criticality: fleetErr.criticality,
@@ -189,19 +217,17 @@ export class Userlogscomponent {
     }
   }
 
-  onPageChange(event: PageEvent) {
-    this.setPaginatedData();
-  }
+
 
 
   onSearch(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
-
+    this.searchInput = inputValue; // Store the search input value
+    
     if (!inputValue) {
-      this.filteredTaskData = this.taskData;
-      this.filteredTaskData1 = this.robotData;
-      this.filteredTaskData2 = this.fleetData;
+      this.resetSearch(); // Reset data if input is cleared
     } else {
+      // Filter the taskData, robotData, and fleetData based on the search input
       this.filteredTaskData = this.taskData.filter((item) =>
         Object.values(item).some((val) =>
           String(val).toLowerCase().includes(inputValue)
@@ -218,14 +244,30 @@ export class Userlogscomponent {
         )
       );
     }
-
+  
     // Reset the paginator after filtering
     if (this.paginator) {
       this.paginator.firstPage();
     }
-
+  
     this.setPaginatedData(); // Update paginated data after filtering
   }
+  
+  // Function to reset the search input and data
+  resetSearch(): void {
+    this.filteredTaskData = this.taskData;
+    this.filteredTaskData1 = this.robotData;
+    this.filteredTaskData2 = this.fleetData;
+  }
+  
+  // Function to clear the search input when the page changes
+  onPageChange(): void {
+    this.searchInput = ''; // Clear the search input
+    this.resetSearch();    // Reset the data
+    this.setPaginatedData(); // Update paginated data
+  }
+  
+
 
   trackByTaskId(index: number, item: any): number {
     return item.taskId; // or any unique identifier like taskId

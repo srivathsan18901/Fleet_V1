@@ -1,80 +1,130 @@
 import { Component } from '@angular/core';
-
 import { Router } from '@angular/router'; // Import Router
+import { environment } from '../../environments/environment.development';
+import { ProjectService } from '../services/project.service';
 
 @Component({
   selector: 'app-support',
   templateUrl: './support.component.html',
-  styleUrl: './support.component.css'
+  styleUrl: './support.component.css',
 })
 export class SupportComponent {
-  constructor(private router: Router) { } // Inject the router
-  faqs = [
+  showPopup = false;
+
+  // Sample questions and answers
+  questions = [
     {
-      iconUrl: 'assets/icons/free-trial.svg',
       question: 'Is there a free trial available?',
-      answer: 'Yes, you can try us for free for 30 days. If you want, we’ll provide you with a free 30-minute onboarding call to get you up and running.'
+      answer:
+        'Yes, you can try us for free for 30 days. If you want, we’ll provide you with a free 30-minute onboarding call to get you up and running.',
+      showAnswer: false,
     },
     {
-      iconUrl: 'assets/icons/cancellation-policy.svg',
       question: 'What is your cancellation policy?',
-      answer: 'We understand that things change. You can cancel your plan at any time and we’ll refund you the difference already paid.'
+      answer:
+        'We understand that things change. You can cancel your plan at any time and we’ll refund you the difference already paid.',
+      showAnswer: false,
     },
     {
-      iconUrl: 'assets/icons/billing.svg',
       question: 'How does billing work?',
-      answer: 'Plans are per workspace, not per account. You can upgrade one workspace, and still have any number of free workspaces.'
+      answer:
+        'Plans are per workspace, not per account. You can upgrade one workspace, and still have any number of free workspaces.',
+      showAnswer: false,
     },
     {
-      iconUrl: 'assets/icons/support.svg',
       question: 'How does support work?',
-      answer: 'If you’re having trouble, we’re here to help via email. We’re a small team but will get back to you soon.'
+      answer:
+        'If you’re having trouble, we’re here to help via email. We’re a small team but will get back to you soon.',
+      showAnswer: false,
     },
     {
-      iconUrl: 'assets/icons/plan-change.svg',
       question: 'Can I change my plan later?',
-      answer: 'Of course you can! Our pricing scales with your company. Chat with our friendly team to find a solution that works for you as you grow.'
+      answer:
+        'Of course you can! Our pricing scales with your company. Chat with our friendly team to find a solution that works for you as you grow.',
+      showAnswer: false,
     },
     {
-      iconUrl: 'assets/icons/invoice.svg',
       question: 'Can other info be added to an invoice?',
-      answer: 'At the moment, the only way to add additional information to invoices is to add it to the workspace’s name manually.'
+      answer:
+        'At the moment, the only way to add additional information to invoices is to add it to the workspace’s name manually.',
+      showAnswer: false,
     },
     {
-      iconUrl: 'assets/icons/email-change.svg',
       question: 'How do I change my account email?',
-      answer: 'You can change the email address associated with your account by going to your account settings on a laptop or desktop.'
+      answer:
+        'You can change the email address associated with your account by going to your account settings on a laptop or desktop.',
+      showAnswer: false,
     },
     {
-      iconUrl: 'assets/icons/tutorials.svg',
       question: 'Do you provide tutorials?',
-      answer: 'Not yet, but we’re working on it! We’ve done our best to make it intuitive and are building out the documentation.'
-    }
+      answer:
+        'Not yet, but we’re working on it! We’ve done our best to make it intuitive and are building out the documentation.',
+      showAnswer: false,
+    },
   ];
 
-  visibleFaqs = 4;
+  selectedProject: any | null = null;
+  leftQuestions = this.questions.slice(0, 4);
+  rightQuestions = this.questions.slice(4);
 
- 
+  constructor(private projectService: ProjectService) {}
 
-  ngOnInit(): void { }
+  ngOnInit() {
+    this.selectedProject = this.projectService.getSelectedProject();
+  }
 
-  loadMore(): void {
-    this.visibleFaqs += 4;
+  toggleAnswer(selectedQuestion: any) {
+    // Close all questions first
+    this.leftQuestions.forEach((question) => {
+      if (question !== selectedQuestion) {
+        question.showAnswer = false;
+      }
+    });
+    this.rightQuestions.forEach((question) => {
+      if (question !== selectedQuestion) {
+        question.showAnswer = false;
+      }
+    });
+
+    // Toggle the selected question
+    selectedQuestion.showAnswer = !selectedQuestion.showAnswer;
+  }
+
+  goToFaq() {
+    this.showPopup = true; // Show the popup
+  }
+
+  closePopup() {
+    this.showPopup = false; // Hide the popup
+  }
+
+  async exportProject() {
+    if (!this.selectedProject) return;
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project-file/download-project/${this.selectedProject.projectName}`,
+      {
+        credentials: 'include',
+      }
+    );
+    if (!response.ok) alert('try once again');
+    else {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${this.selectedProject.projectName}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
   }
 
   goToDocumentation(): void {
     window.open('/documentation', '_blank');
   }
 
-  isPopupOpen = false;
-
-  openPopup() {
-    this.isPopupOpen = true;
-  }
-
-  closePopup() {
-    this.isPopupOpen = false;
-  }
   // Document for resource
   downloadDocument() {
     const link = document.createElement('a');
@@ -83,9 +133,5 @@ export class SupportComponent {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
-
-  goToFaq(): void {
-    this.router.navigate(['/faq']);
   }
 }

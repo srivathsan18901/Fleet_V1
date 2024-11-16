@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ProjectService } from '../../../services/project.service';
 import { environment } from '../../../../environments/environment.development';
+import { MessageService } from 'primeng/api';
 
 interface DB {
   name: string;
@@ -22,7 +23,7 @@ export class BatteryComponent {
     minimumVoltage: 0,
   };
 
-  constructor(private fb: FormBuilder, private projectService: ProjectService) {
+  constructor(private fb: FormBuilder,private messageService:MessageService, private projectService: ProjectService) {
     /* this.batteryForm = this.fb.group({
       battery: [
         50,
@@ -54,7 +55,16 @@ export class BatteryComponent {
       minimumVoltage: Battery.minimumVoltage,
     };
   }
-
+  clearForm() {
+    this.batteryForm = {
+      minBattery: null,
+      maxBattery: null,
+      warningBattery: null,
+      warningVoltage: null,
+      minimumVoltage: null
+    };
+  }
+  
   async saveBatteryParams() {
     // console.log(this.batteryForm); // handle here..
     try {
@@ -77,10 +87,20 @@ export class BatteryComponent {
       let data = await response.json();
       // console.log(data);
       if (data.isSet) {
-        alert('Fleet configured!');
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Fleet Configured',
+          detail: 'Battery details are Configured with fleet',
+          life: 4000,
+        });
         return;
       }
-      alert('Fleet not configured!');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Battery details are not Configured with fleet',
+        life: 4000,
+      });
     } catch (error) {
       console.log('Err occured :', error);
     }

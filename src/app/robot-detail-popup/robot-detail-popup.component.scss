@@ -1,17 +1,32 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;  /* Full width */
+  height: 100vh; /* Full height */
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
+  backdrop-filter: blur(4.1px); /* Blur effect */
+  z-index: 999; /* Below the popup */
+}
+
+
 .popup-content {
   display: flex;
-  width: 1300px; /* 80% of the viewport width */
-  height: 620px; /* 80% of the viewport height */
+  flex-direction: column; /* Ensures content stacks vertically */
+  width: 90vw; /* 90% of the viewport width */
+  max-width: 1300px; /* Maximum width */
+  height: 625px; /* Auto height to accommodate content */
+
   position: fixed;
-  top: 5vh; /* Centered vertically */
-  left: 10vw; /* Centered horizontally */
-  right:5vw;
+  top: 50%; /* Centers vertically */
+  left: 50%; /* Centers horizontally */
+  transform: translate(-50%, -50%); /* Adjusts for element's own width and height */
   background-color: rgb(232, 230, 230); 
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 15px; /* Optional: adds rounded corners */
   z-index: 1000; /* Ensure it's above other content */
-  /* overflow-y: auto; */
   padding: 10px;
+  box-sizing: border-box; /* Ensures padding is included in width/height calculations */
 }
 
 .button-container{
@@ -30,7 +45,7 @@
   justify-content: flex-start;
   color: #000000;
   font-size: 32px;
-  font-family: 'Inter', sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   letter-spacing: 0;
   white-space: nowrap;
@@ -42,7 +57,7 @@
 .popup-header h2 {
   margin: 20px;
   font-size: 38px; /* Adjust font size as needed */
-  font-family: Inter, sans-serif; /* Use a clean, modern font */
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 700; /* Slightly bolder text */
   color: #DA2127; /* Dark color for readability */
 }
@@ -58,12 +73,12 @@
 .robot-image-container {
   top: 28px;
   left: 950px;
-  
   position: absolute;
   display: flex;
   box-sizing: border-box;
   width: 300px;
   height: 300px;
+  filter: drop-shadow(7px 7px 4px rgba(0, 0, 0, 0.7));
 }
 
 /* Emergency stop */
@@ -162,10 +177,11 @@
   content: "stop";
   text-transform: uppercase;
   font-style: normal;
+
   font-weight: medium;
   color: white; /* Changed to white */
   text-shadow: 0 1px 0 #bcb8ae, 0 -1px 0 #97958e;
-  font-family: Helvetica, Arial, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-size: 14px;
   position: absolute;
   top: 50%;
@@ -200,6 +216,7 @@
   padding: 5px 20px; 
   border-radius: 10px; /* Rounded corners */
   font-size: 14px; /* Adjust font size */
+  font-family: "graphik", Arial,  sans-serif;
   opacity: 0; /* Start hidden */
   visibility: hidden; /* Initially invisible */
   white-space: nowrap; /* Prevent line wrapping */
@@ -243,7 +260,8 @@
   display: flex;
   color: #000000;
   font-size: 24px;
-  font-family: Inter;
+  font-family: "graphik", Arial,  sans-serif;
+  
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 600;
@@ -307,7 +325,7 @@
 .text-40-km_1864-1777 {
   color: #000000;
   font-size: 24px;
-  font-family: Inter;
+  font-family: "graphik", Arial,  sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -319,7 +337,7 @@
 .text-left_1864-1775 {
   color: #6e6e6e;
   font-size: 14px;
-  font-family: Inter;
+  font-family: "graphik", Arial,  sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -345,7 +363,7 @@
 .text-126_1864-1778 {
   color: #000000;
   font-size: 24px;
-  font-family: Inter;
+  font-family: "graphik", Arial,  sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -357,7 +375,7 @@
 .text-average-charging-time_1864-1779 {
   color: #6e6e6e;
   font-size: 14px;
-  font-family: Inter;
+  font-family: "graphik", Arial,  sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -502,7 +520,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .details-title {
   color: #ffffff;
   font-size: 20px; /* Slightly larger font */
-  font-family: 'Inter', sans-serif; 
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 600; /* Bold for emphasis */
   text-align: left;
   width: 100%;
@@ -532,7 +550,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .current-map-label {
   color: #ffffff;
   font-size: 14px; /* Slightly larger */
-  font-family: 'Inter', sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   text-align: left;
 }
@@ -541,7 +559,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .current-map-value {
   color: #ffffff;
   font-size: 14px;
-  font-family: 'Inter', sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   text-align: right;
 }
@@ -590,7 +608,7 @@ border-radius: 15px; /* Rounded edges matching the container */
   display: flex;
   color: #000000;
   font-size: 14px;
-  font-family: Inter, sans-serif; 
+  font-family: "graphik", Arial,  sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -622,7 +640,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .text-37--_1864-1826 {
   color: #000000;
   font-size: 48px;
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   width: 100%;
   text-align: left;
@@ -630,7 +648,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .error-value{
   color: #000000;
   font-size: 40px;
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   width: 80%;
   text-align: left;
@@ -683,13 +701,14 @@ border-radius: 15px; /* Rounded edges matching the container */
 .networkstrength-label {
   color: #000000;
   font-size: 14px;
-  font-family: Inter, sans-serif; 
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
 }
 
 .networkstrength-value {
   font-size: 40px;
   font-weight: medium;
+  font-family: "graphik", Arial,  sans-serif;
   color: #000;
   margin-top: 10px;
   text-align: center;
@@ -748,12 +767,13 @@ border-radius: 15px; /* Rounded edges matching the container */
 .robottemperature-label {
   color: #000000;
   font-size: 14px;
-  font-family: Inter, sans-serif; 
+  font-family: "graphik", Arial,  sans-serif; 
   font-weight: 500;
 }
 
 .robottemperature-value {
   font-size: 40px;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: medium;
   color: #000;
   margin-top: 20px;
@@ -808,12 +828,13 @@ border-radius: 15px; /* Rounded edges matching the container */
 .robot-utilization-label {
   color: #000000;
   font-size: 14px;
-  font-family: Inter, sans-serif; 
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
 }
 
 .robot-utilization-value {
   font-size: 40px;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: medium;
   color: #000;
   margin-top: 20px;
@@ -862,14 +883,14 @@ border-radius: 15px; /* Rounded edges matching the container */
 .memory-text {
   color: #000000;
   font-size: 14px;
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
 }
 
 .memory-value {
   color: #000000;
   font-size: 40px;
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   width: 100%;
   text-align: center;
@@ -921,21 +942,21 @@ border-radius: 15px; /* Rounded edges matching the container */
 
 .cpu-utilization-text {
   font-size: 14px;
-  font-family: Inter, sans-serif; 
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   color: #000000;
 }
 
 .cpu-utilization-percentage {
   font-size: 40px;
-  font-family: Inter;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   color: #000000;
 }
 .cpu-utilization-value{
   color: #000000;
   font-size: 40px;
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   width: 100%;
   text-align: center;
@@ -1028,6 +1049,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .distance, .charging-time {
   color: #000;
   font-size: 24px;
+  font-family: "graphik", Arial,  sans-serif;
  
   font-weight: 600;
   text-align: left;
@@ -1037,6 +1059,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .discharge-label, .charging-label {
   color: #6e6e6e;
   font-size: 14px;
+  font-family: "graphik", Arial,  sans-serif;
  
   font-weight: 500;
   text-align: left;
@@ -1053,6 +1076,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .battery-percentage {
   color: #000000;
   font-size: 24px;
+  font-family: "graphik", Arial,  sans-serif;
   
   font-weight: 500;
   text-align: center;
@@ -1061,6 +1085,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .battery-label {
   color: #6e6e6e;
   font-size: 15px;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   text-align: left;
   width: 100%;
@@ -1100,7 +1125,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 
 .pick-drop-label {
   font-size: 16px;
-  font-family: Inter, sans-serif; 
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   color: #000000;
 }
@@ -1108,6 +1133,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .pick-drop-values {
   color: #000000;
   font-size: 54px;
+  font-family: "graphik", Arial,  sans-serif;
  
   margin-top: 40px;
   text-align: center;
@@ -1167,7 +1193,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .label {
   color: #6e6e6e;
   font-size: 14px; /* Reduced font size */
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 600;
   text-align: center;
   width: -webkit-fill-available;
@@ -1189,7 +1215,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .time-value {
   color: #000000;
   font-size: 16px; /* Adjust size as needed */
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 600;
   text-align: right; /* Align text to the right */
 }
@@ -1198,7 +1224,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .unit {
   color: #000000;
   font-size: 16px; /* Adjust size as needed */
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   text-align: left; /* Align text to the left */
   margin-left: 4px; /* Add margin between value and unit */
@@ -1231,7 +1257,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .label {
   color: #6e6e6e;
   font-size: 15px; /* Adjust font size as needed */
-  
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   text-align: center;
   width: auto; /* Auto width for dynamic adjustment */
@@ -1242,7 +1268,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .time-value {
   color: #000000;
   font-size: 20px; /* Adjust as needed */
-  font-family: Inter, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 600;
   text-align: right;
 }
@@ -1274,7 +1300,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .discharge-distance, .charging-time {
   color: #000000;
   font-size: 24px;
-  // font-family: Inter;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   text-align: left;
   width: 100%;
@@ -1283,7 +1309,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .discharge-label, .charging-time-label {
   color: #6e6e6e;
   font-size: 15px;
-
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 500;
   
   text-align: left;
@@ -1435,11 +1461,11 @@ border-radius: 15px; /* Rounded edges matching the container */
   //  connect
   .status-button {
     position: absolute;
-   
     left: 730px;
     top: 80px;
     padding: 10px 20px;
     font-size: 18px;
+    font-family: "graphik", Arial,  sans-serif;
     font-weight: bold;
     border: 2px solid rgb(0, 255, 0); /* Initial green stroke */
     color: rgb(4, 190, 4); /* Initial green color */
@@ -1487,6 +1513,7 @@ border-radius: 15px; /* Rounded edges matching the container */
   
   .status-text {
     font-size: 18px;
+    font-family: "graphik", Arial,  sans-serif;
     font-weight: bold;
     color: #333;
   }

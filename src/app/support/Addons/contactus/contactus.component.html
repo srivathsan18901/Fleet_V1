@@ -4,7 +4,7 @@
   <p>Get in touch with our support team.</p>
 
               <!-- Button to trigger the popup -->
-      <button (click)="openPopup()">Contact Us</button>
+      <!-- <button (click)="openPopup()">Contact Us</button> -->
 
       <!-- Popup modal -->
       <div id="popup" class="popup-overlay" *ngIf="isPopupOpen">
@@ -32,47 +32,50 @@
               <div class="container">
                 <div class="aligning">
                   <div class="form-row">
-                      <label for="enquiryReason">Enquiry Reason*</label>
-                      <select id="enquiryReason" required>
+                    <label for="enquiryReason">Enquiry Reason*</label>
+                    <select id="enquiryReason" required>
                       <option value="" disabled selected>Select a reason</option>
                       <option value="General Inquiry">General Inquiry</option>
                       <option value="Product Info">Product Info</option>
-                      </select>
+                    </select>
                   </div>
                 </div>
                 <div class="aligning">
                   <div class="form-row">
-                      <label for="fullName">Full Name*</label>
-                      <input type="text" id="fullName" required>
+                    <label for="fullName">Full Name*</label>
+                    <input type="text" id="fullName" required>
                   </div>
                   <div class="form-row">
-                      <label for="emailId">Email Id*</label>
-                      <input type="email" id="emailId" required>
-                  </div>
-                </div>
-                <div class="aligning">
-                  <div class="form-row">
-                      <label for="mobile">Mobile with Country Code*</label>
-                      <input type="tel" id="mobile" required>
-                  </div>
-                  <div class="form-row">
-                      <label for="jobTitle">Job Title*</label>
-                      <input type="text" id="jobTitle" required>
+                    <label for="emailId">Email Id*</label>
+                    <input type="email" id="emailId" required>
                   </div>
                 </div>
                 <div class="aligning">
                   <div class="form-row">
-                      <label for="organization">Organization*</label>
-                      <input type="text" id="organization" required>
+                    <label for="mobile">Mobile with Country Code*</label>
+                    <input type="tel" id="mobile" required>
                   </div>
                   <div class="form-row">
-                      <input type="checkbox" id="privacyPolicy" style="width: 2vh;" required>
-                      <label for="privacyPolicy" style="margin-right:11%">I agree to the Privacy Policy and Terms of Use</label>
+                    <label for="jobTitle">Job Title*</label>
+                    <input type="text" id="jobTitle" required>
+                  </div>
+                </div>
+                <div class="aligning">
+                  <div class="form-row">
+                    <label for="organization">Organization*</label>
+                    <input type="text" id="organization" required>
+                  </div>
+                  <div class="form-row">
+                    <input type="checkbox" id="privacyPolicy" required>
+                    <label for="privacyPolicy">I agree to the Privacy Policy and Terms of Use</label>
                   </div>
                 </div>
                 <div class="form-row">
-                    <button type="submit">Submit</button>
+                  <button type="submit" class="submit-button">Submit</button>
                 </div>
+                
+                
+                
               </div>
             </form>
         </div>

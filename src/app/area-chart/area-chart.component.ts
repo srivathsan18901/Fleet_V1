@@ -30,6 +30,7 @@ export type ChartOptions = {
   selector: 'app-area-chart',
   templateUrl: './area-chart.component.html',
   styleUrls: ['./area-chart.component.css'],
+  
 })
 export class AreaChartComponent implements OnInit {
   currentFilter: string = 'today'; // To track the selected filter

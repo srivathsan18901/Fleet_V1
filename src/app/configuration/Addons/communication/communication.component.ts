@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { ProjectService } from '../../../services/project.service';
 import { environment } from '../../../../environments/environment.development';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-communication',
@@ -28,7 +29,7 @@ export class CommunicationComponent {
     selectedCategory: '',
   };
 
-  constructor(private projectService: ProjectService ) {
+  constructor(private projectService: ProjectService,    private messageService:MessageService, ) {
 
   }
 
@@ -58,7 +59,15 @@ export class CommunicationComponent {
       selectedCategory: Communication.selectedCategory,
     };
   }
-
+  resetForm() {
+    this.formData = {
+      externalInterfaceIp: '',
+      externalInterfaceType: '',
+      roboInterfaceIp: '',
+      roboInterfaceType: ''
+    };
+    this.selectedCategory = null;
+  }
   async saveCommParams() {
     if (!this.selectedCategory) {
       console.log('select type');
@@ -85,11 +94,20 @@ export class CommunicationComponent {
 
       let data = await response.json();
       // console.log(data);
-      if (data.isSet) {
-        alert('Fleet configured!');
+      if (data.isSet) {        this.messageService.add({
+        severity: 'info',
+        summary: 'Fleet Configured',
+        detail: 'Communication information are Configured with fleet',
+        life: 4000,
+      });
         return;
       }
-      alert('Fleet not configured!');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Communication information are not Configured with fleet',
+        life: 4000,
+      });
     } catch (error) {
       console.log('Err occured :', error);
     }

@@ -26,42 +26,40 @@ export class UptimeComponent {
   @Input() ONBtn!: boolean;
   public chartOptions: Partial<ChartOptions>;
 
-  uptimePercentage: number = 0;
+  uptimePercentage: number = 96;
   eventSource!: EventSource;
 
   constructor(private cdr: ChangeDetectorRef) {
     this.chartOptions = {
       series: [this.uptimePercentage],
       chart: {
-        width: 280, // Increased width
-        height: 320, // Increased height
+        width: 300,
+        height: 320,
         type: 'radialBar',
       },
       plotOptions: {
         radialBar: {
-          offsetY: -15,
+          offsetY: -10,
           offsetX: -20,
           startAngle: -90,
           endAngle: 90,
           hollow: {
-            size: '70%', // Adjust the hollow size to reduce the bar width
+            size: '60%', // Adjusted for better visual balance
           },
           track: {
-            background: '#e7e7e7',
-            strokeWidth: '70%',
-            margin: 1, // margin is in pixels
+            background: '#e5e5e5', // Light gray for a soft background
+            strokeWidth: '100%',
+            margin: 1,
           },
           dataLabels: {
             name: {
-              show: true,
-              offsetY: 45, // Adjusted to fit the larger chart size
-              fontSize: '16px', // Increased font size
-              color: '#FF3333',
+              show: false,
             },
             value: {
-              offsetY: 0, // Adjusted to fit the larger chart size
-              fontSize: '40px', // Increased font size
-              color: '#FF3333',
+              offsetY: 0,
+              fontSize: '28px', // Slightly smaller for a sleeker look
+              fontWeight: 'bold',
+              color: '#004080', // Dark blue for percentage text
             },
           },
         },
@@ -69,28 +67,28 @@ export class UptimeComponent {
       fill: {
         type: 'gradient',
         gradient: {
-          shade: 'light',
-          shadeIntensity: 0.4,
-          gradientToColors: ['#FFB3B3'],
-          inverseColors: false,
+          shade: 'dark',
+          gradientToColors: ['#00CFFF'], // End in bright cyan
+          shadeIntensity: 0.5,
+          type: 'vertical',
           opacityFrom: 1,
           opacityTo: 1,
           stops: [0, 100],
           colorStops: [
             {
               offset: 0,
-              color: '#FFB3B3',
+              color: '#0073E6', // Start with a vibrant blue
               opacity: 1,
             },
             {
               offset: 100,
-              color: '#FF3333',
+              color: '#00CFFF', // End with bright cyan
               opacity: 1,
             },
           ],
         },
       },
-      labels: ['Average Time'],
+      labels: [''], // Empty label to remove additional text
     };
   }
 
@@ -101,7 +99,6 @@ export class UptimeComponent {
 
   getUptimeIfOn() {
     if (this.ONBtn) {
-      // alter the logic, cz of toggling function in button..
       if (this.eventSource) this.eventSource.close();
       this.chartOptions.series = [0];
       return;
@@ -117,9 +114,8 @@ export class UptimeComponent {
       this.eventSource.onmessage = (event) => {
         const uptime = JSON.parse(event.data);
         this.uptimePercentage = uptime.percentage;
-        this.chartOptions.series = [this.uptimePercentage]; // this.uptimePercentage
-        this.cdr.detectChanges(); // it's impt
-        // console.log(this.uptimePercentage);
+        this.chartOptions.series = [this.uptimePercentage];
+        this.cdr.detectChanges();
       };
     } catch (error) {}
     this.eventSource.onerror = (error) => {

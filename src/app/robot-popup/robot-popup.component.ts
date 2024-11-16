@@ -62,6 +62,7 @@ export class RobotPopupComponent {
       { method: 'GET', credentials: 'include' }
     );
     let data = await response.json();
+    // console.log(data,"data from the json")
 
     // this.listedRobo = data.populatedRobos;
     let avlRobo = this.robos.map((robo) => robo.roboDet);
@@ -78,6 +79,8 @@ export class RobotPopupComponent {
         roboName: robo.roboName,
         ipAdd: robo.ipAdd,
         selected: false,
+        uuid:robo.uuid,
+        amrid:robo.amrId
       };
     });
 

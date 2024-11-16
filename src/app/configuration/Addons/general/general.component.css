@@ -14,7 +14,9 @@
   padding-top: 2%;
   margin-bottom: 0px;
 }
-
+.clearbtn{
+  margin-left: 5px;
+}
 .text-danger{
     margin-left: 9rem;
     bottom: .5rem;
@@ -40,6 +42,7 @@
   padding: 0.5rem 1rem;
   margin-top: 20rem;
   font-size: 0.8rem;
+  font-family: "graphik", Arial,  sans-serif;
 }
 
 /* Button class specific to p-button-danger */
@@ -51,7 +54,8 @@
 
 ::ng-deep .p-button {
   padding: 0.5rem 1rem !important;
-  font-size: 0.8rem !important;
+  font-size: 0.7rem !important;
+  font-family: "graphik", Arial,  sans-serif;
 }
 
 label {
@@ -93,6 +97,7 @@ br {
   .p-button{
     padding: 0.5rem .1rem !important;
     font-size: .8rem !important;
+    font-family: "graphik", Arial,  sans-serif;
   }
 }
 
@@ -100,5 +105,7 @@ br {
   width: 70%;
   height: 31px;
   padding: 0.5rem .1rem;
-  font-size: .8rem
+  font-size: .8rem;
+  font-family: "graphik", Arial,  sans-serif;
+
 }

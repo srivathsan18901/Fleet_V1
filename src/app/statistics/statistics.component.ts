@@ -26,18 +26,63 @@ export class StatisticsComponent {
     {
       message: 'Low Battery',
       taskId: 'AMR-001',
-      timestamp: '2024-08-16 14:32',
+      timestamp: '15 Nov 2024, 10:54 pm',
     },
     {
       message: 'Task Assigned ',
       taskId: ' AMR-002',
-      timestamp: '2024-08-16 14:32',
+      timestamp: '17 Nov 2024, 1:54 pm',
     },
     {
       message: 'Obstacle Detected ',
       taskId: ' AMR-003',
-      timestamp: '2024-08-16',
+      timestamp: '21 Dec 2024, 10:27 am',
     },
+    {
+      message: 'Low Battery',
+      taskId: 'AMR-001',
+      timestamp: '21 Dec 2024, 10:50 am',
+    },
+    {
+      message: 'Task Assigned ',
+      taskId: ' AMR-002',
+      timestamp: '23 Dec 2024, 1:02 pm',
+    },
+    {
+      message: 'Obstacle Detected ',
+      taskId: ' AMR-003',
+      timestamp: '23 Dec 2024, 6:02 pm',
+    },
+    {
+      message: 'Low Battery',
+      taskId: 'AMR-001',
+      timestamp: '5 Jan 2024, 4:02 pm',
+    }
+    // {
+    //   message: 'Task Assigned ',
+    //   taskId: ' AMR-002',
+    //   timestamp: '2024-08-16 14:32',
+    // },
+    // {
+    //   message: 'Obstacle Detected ',
+    //   taskId: ' AMR-003',
+    //   timestamp: '2024-08-16',
+    // },
+    // {
+    //   message: 'Low Battery',
+    //   taskId: 'AMR-001',
+    //   timestamp: '2024-08-16 14:32',
+    // },
+    // {
+    //   message: 'Task Assigned ',
+    //   taskId: ' AMR-002',
+    //   timestamp: '2024-08-16 14:32',
+    // },
+    // {
+    //   message: 'Obstacle Detected ',
+    //   taskId: ' AMR-003',
+    //   timestamp: '2024-08-16',
+    // },
     // { message: 'Obstacle Detected - AMR-003', timestamp: '2024-08-16' },
   ];
 
@@ -140,12 +185,47 @@ export class StatisticsComponent {
     let responsiveness = await this.fetchFleetStatus('system-responsiveness', {
       mapId: mapId,
     });
-    if (responsiveness.systemResponsiveness)
-      this.statisticsData.responsiveness = responsiveness.systemResponsiveness;
+    // if (responsiveness.systemResponsiveness)
+    //   this.statisticsData.responsiveness = responsiveness.systemResponsiveness;
   }
 
+
+  //  new code to fecth fleet server
+
+
+  // async getGrossStatus() {
+  //   const mapId = this.selectedMap.id;
+  
+  //   // Execute all fetches in parallel
+  //   const [throughputData, uptime, successRate, responsiveness] = await Promise.all([
+  //     this.fetchFleetStatus('system-throughput', { mapId }),
+  //     this.fetchFleetStatus('system-uptime', { mapId }),
+  //     this.fetchFleetStatus('success-rate', { mapId }),
+  //     this.fetchFleetStatus('system-responsiveness', { mapId }),
+  //   ]);
+  
+  //   // Update statisticsData if the data exists
+  //   if (throughputData.systemThroughput) {
+  //     this.statisticsData.systemThroughput = throughputData.systemThroughput;
+  //   }
+    
+  //   if (uptime.systemUptime) {
+  //     this.statisticsData.systemUptime = uptime.systemUptime;
+  //   }
+  
+  //   if (successRate.successRate) {
+  //     this.statisticsData.successRate = successRate.successRate;
+  //   }
+  
+  //   if (responsiveness.systemResponsiveness) {
+  //     this.statisticsData.responsiveness = responsiveness.systemResponsiveness;
+  //   }
+  // }
+  
+
   async fetchCurrTasksStatus(): Promise<any[]> {
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    let establishedTime = new Date(this.selectedMap.createdAt);
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
     let response = await fetch(
@@ -192,7 +272,8 @@ export class StatisticsComponent {
   }
 
   async fetchTasksStatus(): Promise<number[]> {
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(); // yet to take, in seri..
+    let establishedTime = new Date(this.selectedMap.createdAt);
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime); // yet to take, in seri..
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
 
@@ -232,7 +313,7 @@ export class StatisticsComponent {
           tasksStatus[0] += 1;
         else if (
           task === 'INPROGRESS' ||
-          task === 'ONHOLD' ||
+          task === 'COMPLETED' ||
           task === 'ACCEPTED'
         )
           tasksStatus[1] += 1;
@@ -275,17 +356,17 @@ export class StatisticsComponent {
     );
   }
 
-  getTimeStampsOfDay() {
+  getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
-    let startTimeOfDay = this.getStartOfDay();
+    let startTimeOfDay = this.getStartOfDay(establishedTime);
     return {
       timeStamp1: startTimeOfDay,
       timeStamp2: currentTime,
     };
   }
 
-  getStartOfDay() {
-    return Math.floor(new Date().setHours(0, 0, 0) / 1000);
+  getStartOfDay(establishedTime: Date) {
+    return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
 
   updateSysThroughput(data: any) {

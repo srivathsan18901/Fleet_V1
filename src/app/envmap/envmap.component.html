@@ -4,6 +4,7 @@
     [ngClass]="{ 'fixed-size': showImage, 'dynamic-size': !showImage }"
     [ngStyle]="{ 'pointer-events': showImage ? 'none' : 'auto' }"
   >
+
     <h3 *ngIf="!showImage">Select and insert Map file</h3>
     <!-- Image for file upload -->
     <label for="fileInput" class="upload-image" *ngIf="!showImage">
@@ -64,8 +65,13 @@
           class="origin-coor"
           style="display: flex; align-items: center; gap: 10px"
         >
-        <input pInputText type="number" id="X" placeholder="X" min="0" #originX [(ngModel)]="origin.x" (keyup.enter)="open()" />
-        <input pInputText type="number" id="Y" placeholder="Y" min="0" #originY [(ngModel)]="origin.y" (keyup.enter)="open()" />
+        <input pInputText type="number" id="X" placeholder="X" #originX [(ngModel)]="origin.x" (keyup.enter)="open()" />
+        <input pInputText type="number" id="Y" placeholder="Y" #originY [(ngModel)]="origin.y" (keyup.enter)="open()" />
+        <input pInputText type="number" id="θ" placeholder="θ" #originθ [(ngModel)]="origin.w" (keyup.enter)="open()" />
+        <p id="or">or</p>
+            <button class="OpenandLocate" (click)="openOriginPopup()">
+              Locate
+            </button>
           <!-- <input
         type="number"
         id="θ"
@@ -75,6 +81,8 @@
         </div>
       </div>
     </div>
+    <div id="pix_tooltip" #pixTooltip style="position: absolute; top: 1px; left:30px;  color: black;  border: 0px solid #ccc; border-radius: 4px;  z-index: 2;font-size: 10px;"></div>
+
     <!-- <label for="height">Enter Height (m)</label>
       <input
         type="number"
@@ -137,6 +145,51 @@
         </div>
       </div>
     </div>
+    <div *ngIf="showOriginPopup && this.ratio" class="image-popup-overlay">
+      <div class="image-popup-content">
+        <div class="tooltip" #tooltip>(x: 0, y: 0)</div>
+        <canvas class="OriginPopupCanvas" #OriginPopupCanvas></canvas>
+        <button class="close-btn" (click)="closeImagePopup()"> <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg></button>
+        <!-- <button
+          *ngIf="isDistanceConfirmed"
+          class="save-btn"
+          (click)="saveCanvas()"
+        >
+          Save
+        </button>
+        <button class="clear-btn" (click)="clearCanvas()" style="margin-right: 2.5rem;">Clear</button> -->
+
+        <!-- Distance Input Dialog -->
+        <!-- <div *ngIf="showDistanceDialog" class="distance-dialog-overlay">
+          <div class="distance-dialog">
+            <h3>Enter Distance Between Points</h3>
+            <input pInputText
+              type="number"
+                min="0"
+
+              [(ngModel)]="distanceBetweenPoints"
+              placeholder="Distance in meters"
+            />
+            <br>
+            <!-- Display error message conditionally -->
+            <!-- <div *ngIf="showError" class="distance-error-message">
+              Please enter distance between two points in meters.
+            </div>
+            <button (click)="confirmDistance()">Enter</button>
+          </div>
+        </div> --> 
+      </div>
+    </div>
     <div
       class="image-container"
       *ngIf="showImage"
@@ -149,7 +202,7 @@
       <button
         class="close-btn"
         (click)="close()"
-        *ngIf="!isPlottingEnabled && !isZonePlottingEnabled"
+
       >
           <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -178,20 +231,55 @@
       <div class="sampleCSS">
         <div class="node_details">
           <h2>Node Details</h2>
+          <h3>Nodeid:  {{ selectedNode?.nodeId }}</h3>
+          <div class="Nodevalues">
+          <div class="XY-coor">
+          <div >
+            <label for="X_Co">X</label>
+            <input 
+                pInputText 
+                id="X_Co"
+                #xInput
+                [value]="nodePositionX"
+                aria-describedby="X-Coordinate" 
+                />
+          </div>
+          <div >
+            <label for="Y_Co">Y</label>
+            <input 
+                pInputText 
+                id="Y_Co"
+                #yInput
+                [value]="nodePositionY"
+                aria-describedby="Y-Coordinate" 
+                />
+          </div>  
+          <div>
+            <label for="Orientation">Orientation</label>
+            <input 
+                pInputText
+                id="Orientation" 
+                [value]="orientation"
+                #orientationInput
+                aria-describedby="Orientation" 
+                />
+          </div>     
+        </div> 
 
+        </div>
           <div class="action-container">
             <div class="action" class="display:flex; text-wrap:nowrap; align-items:center ">
-              <label for="nodeAction" class="label" style="margin-right: 8rem;">Add Action:</label>
-              <p-dropdown appendTo="body"
-                id="nodeAction"
-                [options]="actionOptions"
-                [(ngModel)]="selectedAction"
-                (onChange)="onActionChange()"
-                placeholder="Select Action"
-                [autoDisplayFirst]="false"
-                styleClass="small-dropdown"
-                [style]="{'width':'143px !important'}"
-              ></p-dropdown>
+              <label for="nodeAction" class="label" >Add Action:</label>
+              <p-dropdown 
+              appendTo="body"
+              [options]="actionOptions"
+              [(ngModel)]="selectedAction"  
+              (onChange)="onActionChange($event.value)"
+              placeholder="Select Action" 
+              [autoDisplayFirst]="false"
+              styleClass="small-dropdown"
+              [style]="{'width':'143px !important'}"
+          ></p-dropdown>            
             </div>
             <!-- <div *ngIf="validationError" class="validation-error">{{ validationError }}</div> -->
           </div>
@@ -200,49 +288,75 @@
             <p style="font-size: 15px;">Actions:</p>
             <div class="action-buttons">
               <div *ngFor="let action of actions; let i = index" class="action-item">
-                <button class="action-button" (click)="editAction(i)">
+                <button class="action-button" (click)="openActionForm(action)" >
                   {{ action.actionType }}
-                  <span class="delete-icon" (click)="removeAction(i)">X</span>
                 </button>
+                <span class="delete-icon" (click)="deleteActionFromNode(action)">X</span>
               </div>
             </div>
           </div>
 
           <div class="input-group1">
-            <label for="nodeDescription" class="label" style="margin-right: 5.2rem;">Node Description:</label>
+            <label for="nodeDescription" class="label" >Node Description:</label>
             <input pInputText
               type="text"
               id="nodeDescription"
+              placeholder="Enter Node Description"
               [(ngModel)]="nodeDetails.description"
               [style]="{'height':'30px','width':'14.5rem'}"
             /><br />
           </div>
             <div class="input-group">
-              <div class="node1">
-                <label for="Intermediate_Stn" class="label">Intermediate Node: </label>
-                <p-checkbox
-                  id="Intermediate_Stn"
-                  [binary]="true"
-                  inputId="binary"
-                  [(ngModel)]="nodeDetails.intermediate_node"
-                /><br />
+              <div class="node-action">
+                <div class="node-row">
+                  <div class="node1">
+                    <label for="Intermediate_Stn" class="label">Intermediate Node:</label>
+                    <p-checkbox
+                      id="Intermediate_Stn"
+                      [binary]="true"
+                      inputId="binary"
+                      [(ngModel)]="nodeDetails.intermediate_node"
+                    ></p-checkbox>
+                  </div>
+                  <div class="node1">
+                    <label for="Waiting_Stn" class="label">Waiting Node:</label>
+                    <p-checkbox
+                      id="Waiting_Stn"
+                      [binary]="true"
+                      inputId="binary"
+                      [(ngModel)]="nodeDetails.waiting_node"
+                    ></p-checkbox>
+                  </div>
+                </div>
+              
+                <div class="node-row">
+                  <div class="node1">
+                    <label for="Charge_Stn" class="label">Charge Node:</label>
+                    <p-checkbox
+                      id="Charge_Stn"
+                      [binary]="true"
+                      inputId="binary"
+                      [(ngModel)]="nodeDetails.charge_node"
+                    ></p-checkbox>
+                  </div>
+                  <div class="node1">
+                    <label for="Dock_Stn" class="label">Dock Node:</label>
+                    <p-checkbox
+                      id="Dock_Stn"
+                      [binary]="true"
+                      inputId="binary"
+                      [(ngModel)]="nodeDetails.dock_node"
+                    ></p-checkbox>
+                  </div>
+                </div>
               </div>
-              <div style="margin-right: 2.5rem;">
-                <label for="Waiting_Stn" class="label" style="margin-left:10rem">Waiting Node: </label>
-                <p-checkbox
-                  id="Waiting_Stn"
-                  [binary]="true"
-                  inputId="binary"
-                  [(ngModel)]="nodeDetails.waiting_node"
-                />
-            </div>
-
-          <div class="Node-btn">
-            <div *ngIf="validationError" class="validation-error">*{{ validationError }}</div>
+              
+          <div class="Node-btn1">
+            <div *ngIf="validationError" class="node-validation-error">*{{ validationError }}</div>
           </div>
           <div class="Node-btn">
             <button class="Delnode-btn" (click)="deleteSelectedNode()">Delete Node</button>
-            <button class="savenode-btn" (click)="saveNodeDetails()">Save</button>
+            <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, orientationInput.value)">Save</button>
             <button class="closenode-btn" (click)="closeNodeDetailsPopup()">Close</button>
           </div>
         </div>
@@ -278,8 +392,8 @@
                 <option value="mode2">Mode 2</option>
               </select><br/>
             </div>
-              <button (click)="addAction()">Add</button>
-
+              <button class="actionBTN" (click)="addAction()">Add</button>
+              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
           </div>
 
 
@@ -332,8 +446,8 @@
                 <option value="mode2">Mode 2</option>
               </select><br/>
             </div>
-              <button (click)="addAction()">Add</button>
-
+              <button class="actionBTN" (click)="addAction()">Add</button>
+              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
           </div>
 
           <div *ngIf="selectedAction === 'Undock' && isUndockActionFormVisible" class="move-action-form">
@@ -363,13 +477,15 @@
               <label>Undocking Distance:</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.undockingDistance" style="margin-right: 20rem;"/><br />
             </div>
-              <button (click)="addAction()">Add</button>
+              <button class="actionBTN" (click)="addAction()">Add</button>
+              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
           </div>
 
         </div>
 
 
       </div>
+
       </div>
     </div>
       <!-- Transparent canvas/ for plotting points -->
@@ -383,7 +499,7 @@
           <img src="../../assets/icons/options-icon.svg" alt="Options" />
         </button>
       </div> -->
-      <div class="calibration-layer" *ngIf="!isPlottingEnabled && !isZonePlottingEnabled && !isDeleteModeEnabled && !isPlottingAsset">
+      <div class="calibration-layer" *ngIf="!isEdgeDrawingInProgress && !isPlottingEnabled && !isZonePlottingEnabled && !isDeleteModeEnabled && !isPlottingAsset">
         <div class="dropdown">
           <button class="c-button">Add Node</button>
           <div class="dropdown-content">
@@ -454,14 +570,15 @@
   (addRobot)="placeRobots($event)"
 ></app-robot-popup>
 
-<div *ngIf="isPopupVisible" class="popup-overlay1">
-  <div class="popup-content1">
+<div *ngIf="isPopupVisible" class="zonepopup-overlay1">
+  <div class="zonepopup-content1">
     <h4>Select Zone Type</h4>
-    <select [(ngModel)]="zoneType">
-      <option *ngFor="let zone of zoneTypeList" [value]="zone">
-        {{ zone }}
-      </option>
-    </select>
+    <p-dropdown 
+      [options]="zoneTypeList" 
+      class="zoneTypeList"
+      [(ngModel)]="zoneType" 
+      placeholder="Select Zone Type">
+    </p-dropdown>
     <div>
       <button (click)="zoneType !== null ? onZoneTypeSelected(zoneType) : null">Confirm</button>
       <button *ngIf="isDeleteVisible" (click)="onDeleteZone()">Delete</button>
@@ -600,12 +717,16 @@
         <div class="second">
           <div class="form-row1">
             <label for="orientationType" style="padding-right: 5rem;">Orientation Type:</label>
-            <input pInputText
-              id="orientationType"
-              [(ngModel)]="currentEdge.orientationType"
-              name="orientationType"
-            />
+            
+            <!-- PrimeNG Dropdown -->
+            <p-dropdown 
+              [options]="orientationTypes" 
+              [(ngModel)]="currentEdge.orientationType" 
+              name="orientationType" 
+              placeholder="Select Orientation Type">
+            </p-dropdown>
           </div>
+          
 
           <div class="form-row1">
             <label for="direction" style="padding-right: 8.5rem;">Direction:</label>
@@ -640,6 +761,7 @@
               max="100"
               [(ngModel)]="currentEdge.length"
               name="length"
+              readonly
             />
           </div>
 
@@ -726,16 +848,19 @@
       placeholder="Number of nodes"
       min="0"
       (ngModelChange)="onInputChanged()"
+      class="InNode"
     />
   </div>
   <div class="node-separator"></div>
   <div>
     <p>Select Direction</p>
     <select class="direction" [(ngModel)]="direction">
+      <option value="" disabled selected>Select a Direction</option>
       <option value="uni">Uni-Direction</option>
       <option value="bi">Bi-Direction</option>
     </select>
   </div>
+  
   </div>
   <div *ngIf="!isDirectionSelected" class="newvalidation-message">
     <p style="color: red;">Please select a direction.</p>

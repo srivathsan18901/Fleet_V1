@@ -197,7 +197,7 @@
               </td>
             </tr>
 
-              <tr *ngFor="let activity of filteredOperationActivities">
+              <tr *ngFor="let activity of filteredOperationActivities | slice:0:10">
                 <td>{{ activity.taskId }}</td>
                 <td>{{ activity.taskName }}</td>
                 <td>{{ activity.robotName }}</td>
@@ -235,18 +235,18 @@
 
               <!-- Show No Data Row with image and message -->
               <tr *ngIf="filteredNotifications.length === 0">
-                <td colspan="4" class="no-data">
+                <td colspan="3" class="no-data">
                   <div class="no-data-container">
                     <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
                     <p class="no-data-text">No data found</p>
                   </div>
                 </td>
               </tr>
-
-              <tr *ngFor="let notification of filteredNotifications">
+            
+              <tr *ngFor="let notification of filteredNotifications | slice:0:10">
                 <td>{{ notification.message }}</td>
                 <td>{{ notification.taskId }}</td>
-                <td class="notifications-align">{{ notification.timestamp }}</td>
+                <td>{{ notification.timestamp }}</td>
               </tr>
             </tbody>
           </table>

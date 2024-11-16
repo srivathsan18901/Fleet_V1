@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -7,6 +8,10 @@ import { CookieService } from 'ngx-cookie-service';
 export class ProjectService {
   private projectCreatedKey = 'is-project-setted';
   private selectedProjectKey = 'project-data';
+  private inLive: BehaviorSubject<boolean> = new BehaviorSubject<boolean>( false );
+  private isFleetUp: BehaviorSubject<boolean> = new BehaviorSubject<boolean>( false );
+  inLive$ = this.inLive.asObservable();
+  isFleetUp$ = this.isFleetUp.asObservable();
 
   constructor(private cookieService: CookieService) {}
 
@@ -38,6 +43,11 @@ export class ProjectService {
     this.cookieService.delete('is-project-setted', '/');
   }
 
+  clearAllUserState() {
+    this.cookieService.delete('_user', '/');
+    this.cookieService.deleteAll();
+  }
+
   setMapData(mapData: any) {
     this.cookieService.set('map-data', JSON.stringify(mapData), {
       path: '/',
@@ -67,7 +77,19 @@ export class ProjectService {
     this.cookieService.delete('_isMapSet', '/');
   }
 
-  // setNode() {
-  //   this.cookieService.set('nodes', JSON.stringify([{ id: 1, name: 'node1' }]));
-  // }
+  setInLive(value: boolean): void {
+    this.inLive.next(value);
+  }
+
+  getInLive(): boolean {
+    return this.inLive.getValue();
+  }
+
+  getIsFleetUp(): boolean {
+    return this.isFleetUp.getValue();
+  }
+
+  setIsFleetUp(value: boolean): void {
+    this.isFleetUp.next(value);
+  }
 }

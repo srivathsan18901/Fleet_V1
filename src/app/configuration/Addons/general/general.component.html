@@ -169,6 +169,12 @@
             [disabled]="generalForm.invalid"
             (onClick)="saveParams()"
           ></p-button>
+          <p-button
+          label="Clear"
+          class="clearbtn"
+          styleClass="p-button-secondary"
+          (onClick)="generalForm.resetForm()"
+        ></p-button>
         </div>
       </form>
     </div>

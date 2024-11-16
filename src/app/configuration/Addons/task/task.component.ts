@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { ProjectService } from '../../../services/project.service';
 import { environment } from '../../../../environments/environment.development';
-
+import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
@@ -16,7 +16,11 @@ export class TaskComponent {
 
   selectedCategory: any = null; // Ensure no selection initially
 
-  constructor(private projectService: ProjectService) {}
+  constructor(private projectService: ProjectService,
+    private messageService:MessageService,
+  ) {
+    
+  }
 
   async ngOnInit() {
     this.selectedProj = this.projectService.getSelectedProject();
@@ -64,15 +68,27 @@ export class TaskComponent {
       let data = await response.json();
       // console.log(data);
       if (data.isSet) {
-        alert('Fleet configured!');
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Fleet Configured',
+          detail: 'Task Configured with fleet',
+          life: 4000,
+        });
         return;
       }
-      alert('Fleet not configured!');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Task are not Configured with fleet',
+        life: 4000,
+      });
     } catch (error) {
       console.log('Err occured :', error);
     }
   }
-
+  clearForm() {
+    this.selectedCategory = null;
+  }
   selectCategory(category: any) {
     this.selectedCategory = category;
   }

@@ -32,8 +32,8 @@ export class LoginComponent {
       .then((res) => res.json())
       .then((data) => {
         if (data.isCookieDeleted) {
-          this.authService.logout();
           this.projectService.clearProjectData();
+          this.authService.logout();
           // this.router.navigate(['/']);
         }
       })
@@ -133,7 +133,13 @@ export class LoginComponent {
               name: data.user.name,
               role: data.user.role,
             });
-            this.projectService.setSelectedProject(data.project);
+            let project_data = {
+              _id: data.project._id,
+              projectName: data.project.projectName,
+              createdAt: data.project.createdAt,
+              updatedAt: data.project.updatedAt,
+            };
+            this.projectService.setSelectedProject(project_data);
             this.projectService.setProjectCreated(true);
             this.messageService.add({ severity: 'success', summary: `Welcome ${this.projectService.setSelectedProject(data.project)}`, detail: 'Authentication Success', life: 4000 });
             this.router.navigate(['dashboard']);

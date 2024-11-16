@@ -313,7 +313,7 @@ export class ConfigurationComponent implements AfterViewInit {
     if (!mapData) return;
     try {
       let response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${mapData.id}`,
+        `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${mapData.id}`, 
         {
           method: 'GET',
           credentials: 'include',
@@ -996,6 +996,7 @@ setPaginatedData1(){
   }
   showImageUploadPopup = false;
   openImageUploadPopup(): void {
+    this.currEditMap=false;
     // Reset the search filters
     this.startDate = null;
     this.endDate = null;
@@ -1259,6 +1260,11 @@ setPaginatedData1(){
     this.currEditMap = currEditMap;
   }
   editItem(item: any) {
+    if(this.currEditMap){
+      console.log("hey");
+      
+      this.currEditMap = true;
+    }
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${item.mapName}`,
       {
@@ -1266,9 +1272,7 @@ setPaginatedData1(){
         credentials: 'include',
       }
     )
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
         if (!data.map) {
           this.messageService.add({
@@ -1278,6 +1282,7 @@ setPaginatedData1(){
           });
           return;
         }
+  
         if (data.error) {
           this.messageService.add({
             severity: 'error',
@@ -1286,28 +1291,43 @@ setPaginatedData1(){
           });
           return;
         }
-
+  
         const { map } = data;
-        this.currEditMapDet = {
-          mapName: map.mapName,
-          siteName: item.siteName,
-          ratio: map.mpp,
-          imgUrl: `http://${map.imgUrl}`,
-          origin: map.origin,
-          nodes: map.nodes,
-          edges: map.edges,
-          assets: map.stations,
-          zones: map.zones,
-          robos: map.roboPos,
-        };
-        this.currEditMap = true;
-        this.showImageUploadPopup = true;
+        const mapImgUrl = `http://${map.imgUrl}`;
+  
+        // Check if the image URL is accessible
+        this.checkImageLoading(mapImgUrl)
+          .then(() => {
+            // Proceed only if the image loads successfully
+            this.currEditMapDet = {
+              mapName: map.mapName,
+              siteName: item.siteName,
+              ratio: map.mpp,
+              imgUrl: mapImgUrl,
+              origin: map.origin,
+              nodes: map.nodes,
+              edges: map.edges,
+              assets: map.stations,
+              zones: map.zones,
+              robos: map.roboPos,
+            };
+            this.currEditMap = true;
+            this.showImageUploadPopup = true;
 
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Success',
-          detail: 'Map data loaded successfully.',
-        });
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Map data loaded successfully.',
+            });
+          })
+          .catch(() => {
+            // Handle the case where the image fails to load
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to load map image. Please check the image URL or cookies.',
+            });
+          });
       })
       .catch((err) => {
         console.log(err);
@@ -1318,7 +1338,18 @@ setPaginatedData1(){
         });
       });
   }
-
+  
+  // Helper method to check if an image URL loads successfully
+  private checkImageLoading(url: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.src = url;
+  
+      img.onload = () => resolve();  // Image loaded successfully
+      img.onerror = () => reject();  // Error loading the image
+    });
+  }
+  
   async deleteMap(map: any): Promise<boolean> {
     try {
       const response = await fetch(
@@ -1354,19 +1385,35 @@ setPaginatedData1(){
     }
   }
 
-  deleteItem(item: any) {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent);
+  showConfirmationDialog: boolean = false;
+  itemToDelete: any;
+  
+  openDeleteConfirmation(item: any) {
+    this.itemToDelete = item;
+    this.showConfirmationDialog = true;
+  }
+  
+  confirmDelete() {
+    this.showConfirmationDialog = false;
+    this.deleteItemConfirmed(this.itemToDelete);
+  }
+  
+  cancelDelete() {
+    this.showConfirmationDialog = false;
+    this.itemToDelete = null;
+  }
+  
+  deleteItemConfirmed(item: any) {
     let isDeleted = false;
-
-    dialogRef.afterClosed().subscribe(async (result) => {
-      if (result) isDeleted = await this.deleteMap(item);
+  
+    this.deleteMap(item).then((result) => {
+      isDeleted = result;
       if (isDeleted) {
         if (item.id === this.projectService.getMapData().id) {
           this.projectService.setIsMapSet(false);
           this.projectService.clearMapData();
-          // this.ngOnInit();
         }
-        // Assuming currentTable determines which data array to modify
+        
         if (this.currentTable === 'Environment') {
           this.EnvData = this.EnvData.filter((i) => i !== item);
           this.filteredEnvData = this.EnvData;
@@ -1377,8 +1424,10 @@ setPaginatedData1(){
           this.reloadTable();
           this.setPaginatedData();
         }
+  
         this.ngOnInit();
         this.reloadTable();
+  
         console.log('Item deleted:', item);
         this.messageService.add({
           severity: 'success',
@@ -1388,7 +1437,8 @@ setPaginatedData1(){
       }
     });
   }
-
+  
+  
   addItem(item: any) {
     console.log('Add item:', item);
     this.messageService.add({
@@ -1712,6 +1762,7 @@ setPaginatedData1(){
           return;
         }
       });
+      
     this.isPopupOpen = false;
     this.ngOnInit();
     this.cdRef.detectChanges();
@@ -1745,53 +1796,139 @@ setPaginatedData1(){
     this.isPhysicalParametersFormVisible =
       !this.isPhysicalParametersFormVisible;
   }
-
+ 
+  // simulation robots 
+  
+  
+  isMapAvailable(): boolean {
+    return this.selectedMap != null && this.selectedMap.mapName != null;
+  }
+  
+  
   async togglePopup() {
+    console.log('Selected Map:', this.selectedMap);
+  
+    if (!this.isMapAvailable()) {
+      console.log('Map is not available, showing alert.');
+      alert('Please create or select a map to simulate the robots.');
+      return;
+    }
+  
     let simRobos = await this.getSimRobos(this.selectedMap);
-    this.totalRobots = simRobos.length;
+    this.totalRobots = simRobos ? simRobos.length : 0;
     this.isPopupVisible = !this.isPopupVisible;
   }
-
+  
+  
   robotCount: number = 0;
   totalRobots: number = 0;
-
+  
   async getSimRobos(map: any): Promise<any> {
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${map?.mapName}`
     );
-    if (!response.ok)
+    if (!response.ok) {
       console.error('Error while fetching map data : ', response.status);
+      return;
+    }
     let data = await response.json();
     if (!data.error) return data.map.simMode;
   }
-
-  // Function to handle the addition of robots
+  
   async addRobot() {
-    
-    if (this.robotCount > 10) {
-      alert('You cannot enter more than 10 robots.');
+    // Check for valid robot count
+    if (this.robotCount <= 0) {
+      alert('Enter a valid number of robots greater than 0.');
       return;
     }
-    if(this.robotCount + this.totalRobots > 10){
+  
+    // Limit to a maximum of 10 robots in total
+    if (this.robotCount + this.totalRobots > 10) {
       alert('Total robots cannot exceed 10.');
       return;
     }
-    this.totalRobots += this.robotCount;
-    let simRobo = [];
-    for(let i = 0; i < this.totalRobots; i++){
-      simRobo.push({
-        amrId: i,
-        roboName: `MR${i}00`,
-        enable: false,
-        isInitialized : false,
-        pos: { x: 0, y: 0, orientation: 0 },
-      })
-    }
-    let sims = await this.updateSimInMap(simRobo);
-    if(sims) alert('Sim Robos added!');
+  
+    // Fetch the current simRobos data to retain existing robots
+    let existingSimRobos = await this.getSimRobos(this.selectedMap) || [];
     
-    this.robotCount = 0; // Reset the input field after adding
+    // Create new robots based on robotCount
+    let newRobots = [];
+    for (let i = 0; i < this.robotCount; i++) {
+      newRobots.push({
+        amrId: existingSimRobos.length + i,  // ID based on total robots
+        roboName: `MR${existingSimRobos.length + i}00`,  // Unique name
+        enable: false,
+        isInitialized: false,
+        pos: { x: existingSimRobos.length + i, y: 0, orientation: 0 },
+      });
+    }
+  
+    // Combine existing robots with the new robots
+    const updatedSimRobos = [...existingSimRobos, ...newRobots];
+  
+    // Update the map with the new list of robots
+    let sims = await this.updateSimInMap(updatedSimRobos);
+    if (sims) alert('Sim Robos added!');
+  
+    // Update the totalRobots count to reflect all robots now in sim mode
+    this.totalRobots = updatedSimRobos.length;
+  
+    // Reset the robotCount input field
+    this.robotCount = 0;
   }
+
+  async deleteRobot(amrId: number) {
+    try {
+      // Fetch the current list of robots for the selected map
+      let simRobos = await this.getSimRobos(this.selectedMap);
+      if (!simRobos) {
+        alert('No robots to delete.');
+        return;
+      }
+  
+      // Filter out the robot with the specified `amrId`
+      const updatedSimRobos = simRobos.filter((robot: any) => robot.amrId !== amrId);
+  
+      // Update the backend with the modified list of robots
+      let result = await this.updateSimInMap(updatedSimRobos);
+      if (result) {
+        alert(`Robot with ID ${amrId} deleted!`);
+        
+        // Update the local totalRobots count
+        this.totalRobots = updatedSimRobos.length;
+      } else {
+        console.error('Failed to delete robot from the backend.');
+      }
+    } catch (error) {
+      console.error('Error during robot deletion:', error);
+    }
+  }
+  
+  async clearAllRobots() {
+    try {
+      if (this.totalRobots === 0) {
+        alert('No robots to delete.');
+        return;
+      }
+  
+      // Set the robots list to an empty array to clear all robots
+      const updatedSimRobos: any[] = [];
+  
+      // Update the backend with the empty list of robots
+      let result = await this.updateSimInMap(updatedSimRobos);
+      if (result) {
+        alert('All robots deleted!');
+        
+        // Reset the local totalRobots count
+        this.totalRobots = 0;
+      } else {
+        console.error('Failed to clear robots on the backend.');
+      }
+    } catch (error) {
+      console.error('Error during clearing robots:', error);
+    }
+  }
+   
 
 }
   

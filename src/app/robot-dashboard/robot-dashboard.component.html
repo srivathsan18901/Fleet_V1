@@ -206,11 +206,10 @@
             <table class="robot-activity-table">
               <thead>
                 <tr>
-                  <th>Task ID</th>
+                  <th>Robot Id</th>
+                  <th>Robot State</th>
                   <th>Task Name</th>
-                  <th>Robot Name</th>
                   <th>Status</th>
-                  <th>Time </th>
                 </tr>
               </thead>
               <tbody>
@@ -225,12 +224,12 @@
                   </td>
                 </tr>
 
-                <tr *ngFor="let activity of filteredRobotActivities">
+                <tr *ngFor="let activity of filteredRobotActivities | slice:0:5">
                   <td>{{ activity.roboId }}</td>
-                  <td>{{ activity.roboName }}</td>
+                  <!-- <td>{{ activity.roboName }}</td> -->
+                  <td>{{ activity.state }}</td>
                   <td>{{ activity.task }}</td>
-                  <td>{{ activity.taskStatus }}</td>
-                  <td>{{ activity.desc }}</td>
+                  <td>{{ activity.status }}</td>
                 </tr>
               </tbody>
             </table>
@@ -260,10 +259,23 @@
             </tr>
           </thead>
 
-            <tr *ngFor="let notification of filteredNotifications">
-              <td>{{ notification.message }}</td>
-              <td class="align">{{ notification.timestamp }}</td>
+          <tbody>          
+            <!-- Show No Data Row with image and message -->
+            <tr *ngIf="filteredNotifications.length === 0">
+              <td colspan="3" class="no-data">
+                <div class="no-data-container">
+                  <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                  <p class="no-data-text">No data found</p>
+                </div>
+              </td>
             </tr>
+
+            <tr *ngFor="let notification of filteredNotifications | slice:0:10">
+              <td>{{ notification.message }}</td>
+                <td>{{ notification.taskId }}</td>
+                <td>{{ notification.timestamp }}</td>
+            </tr>
+          </tbody>
           </table>
         </div>
       </div>

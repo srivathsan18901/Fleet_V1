@@ -95,6 +95,12 @@
                         [disabled]="!batteryForm.minBattery || !batteryForm.warningBattery"
                         (onClick)="saveBatteryParams()"
                       ></p-button>
+                      <p-button
+                      label="Clear"
+                      class="clearbtn"
+                      styleClass="p-button-secondary"
+                      (onClick)="clearForm()"
+                    ></p-button>
                     </div>
                   <!-- </div> -->
 

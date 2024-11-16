@@ -61,10 +61,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
   ) {}
 
   async ngOnInit() {
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    this.mapData = this.projectService.getMapData();
+    let establishedTime = new Date(this.mapData.createdAt); // created time of map..
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
-    this.mapData = this.projectService.getMapData();
+
     if (!this.mapData) return;
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
@@ -120,17 +122,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.setPaginatedData(); // Set initial paginated data after view is initialized
   }
 
-  getTimeStampsOfDay() {
+  getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
-    let startTimeOfDay = this.getStartOfDay();
+    let startTimeOfDay = this.getStartOfDay(establishedTime);
     return {
       timeStamp1: startTimeOfDay,
       timeStamp2: currentTime,
     };
   }
 
-  getStartOfDay() {
-    return Math.floor(new Date().setHours(0, 0, 0) / 1000);
+  getStartOfDay(establishedTime: Date) {
+    return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
 
   setPaginatedData() {

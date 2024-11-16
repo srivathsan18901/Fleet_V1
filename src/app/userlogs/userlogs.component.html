@@ -132,17 +132,19 @@
           </tr>
         </thead>
 
-              <!-- Show No Data Row with image and message -->
-              <tr *ngIf="paginatedData.length === 0">
-                <td colspan="8" class="no-data">
-                  <div class="no-data-container">
-                    <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
-                    <p class="no-data-text">No data found</p>
-                  </div>
-                </td>
-              </tr>
+              
 
         <tbody class="table-body">
+
+          <!-- Show No Data Row with image and message -->
+          <tr *ngIf="paginatedData.length === 0">
+            <td colspan="8" class="no-data">
+              <div class="no-data-container">
+                <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                <p class="no-data-text">No data found</p>
+              </div>
+            </td>
+          </tr>
           <!-- <tr *ngIf="paginatedData.length === 0">
             <td colspan="6" class="iconTable">No data found</td>
           </tr> -->
@@ -165,7 +167,8 @@
           [length]="filteredTaskData.length"
           [pageSize]="10"
           [pageSizeOptions]="[5, 10, 50]"
-          (page)="onPageChange($event)"
+          (page)="onPageChange()"
+
           showFirstLastButtons>
         </mat-paginator>
       </div>
@@ -186,6 +189,8 @@
           </tr>
         </thead>
 
+        <tbody>
+
               <!-- Show No Data Row with image and message -->
               <tr *ngIf="paginatedData1.length === 0">
                 <td colspan="8" class="no-data">
@@ -196,7 +201,7 @@
                 </td>
               </tr>
 
-        <tbody class="table-body">
+        
           <!-- <tr *ngIf="paginatedData1.length === 0">
             <td colspan="6" class="iconTable">No data found</td>
           </tr> -->
@@ -219,7 +224,8 @@
         [length]="robotData.length"
         [pageSize]="10"
         [pageSizeOptions]="[5, 10]"
-        (page)="onPageChange($event)"
+        (page)="onPageChange()"
+
         showFirstLastButtons
       >
       </mat-paginator>
@@ -238,6 +244,7 @@
             <th class="table-header-cell">Description</th>
           </tr>
         </thead>
+        <tbody>
 
               <!-- Show No Data Row with image and message -->
               <tr *ngIf="paginatedData2.length === 0">
@@ -249,8 +256,10 @@
                 </td>
               </tr>
 
+             
 
-        <tbody class="table-body">
+
+       
           <!-- <tr *ngIf="paginatedData2.length === 0">
             <td colspan="6" class="iconTable">No data found</td>
           </tr> -->
@@ -261,7 +270,9 @@
             <td class="table-cell">{{ item.criticality }}</td>
             <td class="table-cell">{{ item.desc }}</td>
           </tr>
+        
         </tbody>
+      
       </table>
 
     </div>
@@ -274,7 +285,8 @@
         [length]="fleetData.length"
         [pageSize]="10"
         [pageSizeOptions]="[5, 10]"
-        (page)="onPageChange($event)"
+        (page)="onPageChange()"
+
         showFirstLastButtons
       >
       </mat-paginator>

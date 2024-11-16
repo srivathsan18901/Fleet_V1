@@ -7,9 +7,9 @@
       <!-- Title -->
       <!-- Header section -->
       <div class="header-section">
-        <h1 class="header-title">User management</h1>
+        <h1 class="header-title font-arial">User Management</h1>
         <div class="subheader-container">
-          <div class="subheader-text">View and Edit Tasks</div>
+          <div class="subheader-text font-sans">View and Edit Tasks</div>
           <img
             src="../../assets/icons/i-icon.svg"
             alt="Icon"
@@ -17,6 +17,7 @@
           />
         </div>
       </div>
+      
 
       <!-- Button -->
       <span (click)="userCreatePopUpOpen(false)">
@@ -79,7 +80,7 @@
         <mat-paginator
            [length]="filteredData.length"
            [pageSize]="5"
-           [pageSizeOptions]="[5,  ]"
+           [pageSizeOptions]="[5, 10  ]"
            (page)="onPageChange($event)"
            showFirstLastButtons>
         </mat-paginator>
@@ -149,8 +150,8 @@
 
         <div class="flex w-full items-center mt-10 gap-5 justify-end">
           <span class="flex gap-5 items-center">
-            <button (click)="createUser()" class="w-[120px] py-[8px] rounded-md bg-[#D30000] text-[14px] text-white font-semibold">Create User</button>
-            <button (click)="userCreatePopUpOpen(true)" class="w-[120px] py-[8px] rounded-md border-2 border-[#D30000] text-[14px] text-[#D30000] font-semibold">Cancel</button>
+            <button (click)="createUser()" class="w-[120px] py-[8px] rounded-md bg-[#ff3333] text-[14px] text-white font-medium">Create User</button>
+            <button (click)="userCreatePopUpOpen(true)" class="w-[120px] py-[8px] rounded-md border-2 border-[#ff3333] text-[14px] text-[#ff3333] font-medium">Cancel</button>
           </span>
         </div>
       </div>

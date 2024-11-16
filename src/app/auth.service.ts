@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { CookieService } from 'ngx-cookie-service';
 import { ProjectService } from './services/project.service';
+import { environment } from '../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +35,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('timerStartTime');
     localStorage.removeItem('lastSession');
-    fetch('http://localhost:3000/auth/logout', {
+    fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
     })
       .then((res) => res.json())
@@ -43,6 +44,7 @@ export class AuthService {
           this.projectService.clearProjectData();
           this.projectService.clearMapData();
           this.projectService.clearIsMapSet();
+          this.projectService.clearAllUserState();
           console.log('Logging out...');
           this.router.navigate(['/']);
         }

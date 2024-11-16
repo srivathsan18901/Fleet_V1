@@ -217,15 +217,16 @@ export class UserManagementComponent implements OnInit {
           let createdDate = dateString.toLocaleDateString('en-IN', {
             day: '2-digit',
             month: 'short',
-            year: '2-digit',
+            year: 'numeric',
           });
-
+        
+          // Format the time in "11:34 PM" format (12-hour format with AM/PM)
           let createdTime = dateString.toLocaleTimeString('en-IN', {
             hour: '2-digit',
             minute: '2-digit',
-            hour12: false,
+            hour12: true, // Use 12-hour format with AM/PM
           });
-          let formattedDate = `${createdDate} - ${createdTime}`;
+          let formattedDate = `${createdDate}, ${createdTime}`;
 
           return {
             userId: user._id,

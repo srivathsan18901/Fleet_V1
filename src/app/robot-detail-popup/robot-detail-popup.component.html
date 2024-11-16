@@ -1,3 +1,4 @@
+<div class="overlay"></div> 
 <div class="popup-content">
   <!-- <app-fullscreen-button></app-fullscreen-button> -->
     <div class="popup-header">
@@ -34,16 +35,16 @@
 
     <!-- Status container -->
     <div class="status-container z-50 top-[0px]  w-[10vw] h-[8vh]">
-      <span class="status-indicator" [ngClass]="isActive ? 'active' : 'inactive'"></span>
-      <span class="status-text">{{ isActive ? 'Active' : 'Inactive' }}</span>
+      <span class="status-indicator" [ngClass]="data.isConnected ? 'active' : 'inactive'"></span>
+      <span class="status-text">{{ data.isConnected ? 'Active' : 'Inactive' }}</span>
     </div>
     
     <!-- connect button -->
     <button 
       class="status-button absolute z-50 top-[0px] w-[10vw] h-[8vh] 
-      {{ isConnected ? 'connected' : '' }}" 
+      {{ data.isConnected ? 'connected' : '' }}" 
       (click)="toggleConnection()">
-      {{ isConnected ? 'Disconnect' : 'Connect' }}
+      {{ data.isConnected ? 'Disconnect' : 'Connect' }}
     </button>
 
     
@@ -155,7 +156,7 @@
         <div class="details-info">
           <div class="current-task">
             <span class="current-task-label">Current task:</span>
-            <span class="current-task-value">Transporting materials </span>
+            <span class="current-task-value">{{ data.currentTask }} </span>
           </div>
           <div class="current-map">
             <span class="current-map-label">Current map:</span>

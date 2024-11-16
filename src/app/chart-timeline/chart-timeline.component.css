@@ -15,9 +15,15 @@
     margin-bottom: 5px;
     position: relative; /* Position relative for the dropdown arrow */
   }
+  #myChart .apexcharts-toolbar {
+    z-index: 0;
+  }
+  
+
   
   .menu {
     font-size: 14px;
+    font-family: "graphik", Arial,  sans-serif;
     line-height: 1.6;
     color: #ffffff; /* Default font color changed to violet */
     width: fit-content;
@@ -28,7 +34,7 @@
   .menu a {
     text-decoration: none;
     color: inherit;
-    font-family: inherit;
+    font-family: "graphik", Arial,  sans-serif;
     font-size: inherit;
     line-height: inherit;
   }

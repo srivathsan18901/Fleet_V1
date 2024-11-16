@@ -99,6 +99,12 @@
               [disabled]="planner.invalid || externalInterface.invalid || maxLinearVelocity.invalid || maxRobotsCount.invalid || safeThreshhold.invalid || lookAhead.invalid || maxPointstoRes.invalid || FOV.invalid"
               (onClick)="savePlanner()"
             ></p-button>
+            <p-button
+            label="Clear"
+            class="clearbtn"
+            styleClass="p-button-secondary"
+            (onClick)="clearForm()"
+          ></p-button>
           </div>
 
     </div>

@@ -4,6 +4,7 @@ import {
   Input,
   OnInit,
   ViewChild,
+  
 } from '@angular/core';
 import {
   ChartComponent,
@@ -37,6 +38,7 @@ export type ChartOptions = {
   selector: 'app-chart-timeline',
   templateUrl: './chart-timeline.component.html',
   styleUrls: ['./chart-timeline.component.css'],
+
 })
 export class ChartTimelineComponent implements OnInit {
   // @ViewChild('chart') chart: ChartComponent | undefined;

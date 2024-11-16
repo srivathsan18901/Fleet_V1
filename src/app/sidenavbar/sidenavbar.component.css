@@ -1,4 +1,4 @@
-/* @import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap"); */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:weight@100;200;300;400;500;600;700;800&display=swap");
 /* sidenavbar.css */
 
 /* styles.css or styles.scss */
@@ -40,55 +40,231 @@
   .sidebar:hover {
     width: 220px;
   }
+
+  .wifi-icon {
+    width: 24px; /* Adjust size for your icon */
+    height: 24px;
+    margin-right: 8px;
+  }
+  
+
+
+  .fleet-status {
+    display: inline-block; /* Make it a block-level element */
+    padding: 5px 10px; /* Add padding for a button-like appearance */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 1rem; /* Font size */
+    font-weight: bold; /* Bold text for visibility */
+    font-family: "graphik", Arial,  sans-serif;
+    margin-right: 2rem; /* Space between status and other elements */
+    cursor: default; /* Change cursor to indicate non-clickable */
+    text-align: center; /* Center align the text */
+    
+  }
+  
+  .fleet-up {
+    background-color: rgba(0, 255, 0, 0.2); /* Light green background for Fleet Up */
+    color: rgb(5, 206, 5); /* Green text color */
+  }
+  
+  .fleet-down {
+    background-color: rgba(249, 111, 111, 0.2); /* Light gray background for Fleet Down */
+    color: rgb(236, 6, 6); /* Gray text color */
+    box-shadow: 0 0 5px rgba(255, 35, 35, 0.5); /* Heavy box shadow */
+  }
+  
+
+  
+  /* notification */
+
   .notification-popup {
     position: absolute;
     top: 52px;
-    right: 190px;
-    background-color: white;
+    right: 10px;
+    background: linear-gradient(135deg, #d3d3d3, #a9a9a9); /* Grey gradient */
     border: 1px solid #ffffff;
-    box-shadow: 0px 0.25px 6px #7b7b7b;
     padding: 5px;
     border-radius: 10px;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: Arial, sans-serif;
     z-index: 1000;
-    width: 300px;
-    height: auto;
-    overflow-y: auto;
+    width: 600px;
+    height: 600px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3); /* Heavy box shadow */
     display: none; /* Hidden by default */
     opacity: 0;
     transform: translateY(-10px);
     transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-  }
+}
 
-  .notification-popup.show {
+/* Responsive styles for smaller screens */
+@media (max-width: 1200px) {
+    .notification-popup {
+        width: 600px;
+        right: 5px;
+    }
+}
+
+@media (max-width: 900px) {
+    .notification-popup {
+        width: 450px;
+        right: 5px;
+    }
+}
+
+@media (max-width: 600px) {
+    .notification-popup {
+        width: 90%;  /* Takes up 90% of the screen width */
+        right: 5%;
+        left: 5%;
+        max-height: 70vh; /* Further limit height for small screens */
+    }
+}
+
+@media (max-width: 400px) {
+    .notification-popup {
+        width: 95%; /* Even more space for very small screens */
+        right: 2.5%;
+        left: 2.5%;
+    }
+}
+
+.notification-header {
+    display: flex;
+    justify-content: space-between; /* Align items to the start and end */
+    align-items: center; /* Center vertically */
+}
+
+.scrollable-container {
+  max-height: 500px; /* Set a maximum height for the scrollable area */
+  overflow-y: auto;  /* Allows scrolling within this container */
+}
+
+.scrollable-container ul {
+  list-style: none;
+  padding: 10px;
+  margin: 0;
+}
+
+.scrollable-container li {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.button-container {
+    display: flex; /* Use flexbox for the button container */
+    gap: 20px; /* Space between the buttons */
+}
+
+.clear-all-btn {
+    background-color: #ff3333;
+    color: white;
+    border: none;
+    font-size: 14px;
+    font-family: "graphik", Arial,  sans-serif;
+    padding: 4px 18px;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.clear-all-btn:hover {
+    background-color: #d92626;
+}
+
+/* Close Button Styles */
+.close-button {
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: 0px;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-button svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
+}
+
+.close-button:hover {
+    background-color: #da2127;
+}
+
+.close-button:hover svg {
+    fill: white; /* Change color on hover */
+}
+
+.notification-popup.show {
     display: block;
     opacity: 1;
     transform: translateY(0); /* Slide in from above */
-  }
+}
 
-  .notification-popup h3 {
-    font-size: 24px;
-
+.notification-popup h3 {
+    font-size: 28px;
+    font-weight: 600;
+    font-family: "graphik", Arial,  sans-serif;
     color: #f10909;
-  }
+}
 
-  .notification-popup ul {
+.notification-popup ul {
     list-style-type: none;
-    padding: 0;
-  }
+    padding: 5px;
+}
 
-  .notification-popup li {
+.notification-popup li {
     padding: 10px;
-    margin-bottom: 10px;
-    background-color: #f8f8f8;
-    border-left: 5px solid #5bc0de; /* Light blue border */
+    margin-bottom: 5px;
     border-radius: 5px;
+    display: flex;
+    align-items: center;
+    background-color: #f8f8f8;
+    border-left: 5px solid #ff3333; /* Light blue border */
     animation: fadeIn 0.5s ease-in-out; /* Animate list items */
-  }
+}
 
-  .notification-popup li:last-child {
-    margin-bottom: 0;
-  }
+/* Style for notification labels */
+.notification-label {
+    font-weight: bold;
+    font-family: "graphik", Arial,  sans-serif;
+    margin-right: 10px;
+    max-width: 120px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+/* Style for notification messages with ellipsis */
+.notification-message {
+  
+    max-width: 400px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.alert-red {
+    background-color: #f8d7da;
+    color: #d41529;
+}
+
+.alert-yellow {
+    background-color: #fff3cd;
+    color: #f4bb10;
+}
+
+.alert-green {
+    background-color: #d4edda;
+    color: #14e445;
+}
+
+
 
   /* Close Button */
   .notification-popup .close-btn {
@@ -97,6 +273,7 @@
     right: 10px;
     cursor: pointer;
     font-size: 18px;
+    font-family: "graphik", Arial,  sans-serif;
     color: #666;
     transition: color 0.2s;
   }
@@ -122,21 +299,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100px;
+    height: 350px;
     text-align: center;
     flex-direction: column;
   }
 
   .no-notifications svg {
-    width: 50px;
-    height: 50px;
+    width: 150px;
+    height: 150px;
     margin-bottom: 10px;
   }
 
   .no-notifications span {
-    font-size: 14px;
-    color: #888;
+    font-size: 20px;
+    font-family: "graphik", Arial,  sans-serif;
+    color: #ffffff;
   }
+
   .topbar {
     width: 100%;
     height: 50px;
@@ -161,7 +340,7 @@
   }
 
   .username {
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "graphik", Arial,  sans-serif;
     font-weight: bold;
   }
 
@@ -195,6 +374,7 @@
 .profile-info .username {
   font-size: 1.0rem;
   font-weight: bold;
+  font-family: "graphik", Arial,  sans-serif;
   color: #333;
   margin-bottom: 0rem;
   text-transform: capitalize; /* Ensures the first letter is capitalized */
@@ -204,12 +384,14 @@
 .profile-info .userrole {
   font-size: 0.8rem;
   font-weight: normal;
+  font-family: "graphik", Arial,  sans-serif;
   color: #666;
 }
 
   .Logo {
     height: 45px;
     width: 45px;
+    border-radius: 8px;
     /* margin: 15px 0 0 10px; */
   
   }
@@ -279,7 +461,7 @@ app-fullscreen-button{
     opacity: 1;
     font-size: 0.90rem;
     font-weight: bolder;
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "graphik", Arial,  sans-serif;
     color: #ffffff;
   }
 
@@ -312,13 +494,24 @@ app-fullscreen-button{
 
   .stats span {
       font-size: 29px;
+      font-family: "graphik", Arial,  sans-serif;
   }
 
-  .timer{
-    margin-right:2rem;
-    margin-top: 0.8rem;
-  }
+  .timer {
+    background-color: rgb(160, 160, 160); /* Grey background */
+    color: white; /* White font color */
+    font-family: "graphik", Arial,  sans-serif;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: 2rem;
+   
+    display: flex;
+    justify-content: center; /* Center horizontally */
+    align-items: center; /* Center vertically */
 
+    text-align: center; /* Center text */
+  }
+  
 /* profile */
 .Profile {
   display: flex;
@@ -340,6 +533,7 @@ app-fullscreen-button{
 .username {
   font-size: 16px;
   font-weight: bold;
+  font-family: "graphik", Arial,  sans-serif;
   margin: 0;
 }
 
@@ -381,6 +575,7 @@ app-fullscreen-button{
 .popup-username {
   font-size: 16px;
   font-weight: bold;
+  font-family: "graphik", Arial,  sans-serif;
 }
 
 .popup-userrole {
@@ -403,6 +598,8 @@ app-fullscreen-button{
   border: none;
   border-radius: 5px;
   font-size: 14px;
+  font-family: "graphik", Arial,  sans-serif;
+  
   cursor: pointer;
 }
 
@@ -492,3 +689,9 @@ app-fullscreen-button{
   justify-content: flex-start;
   gap: 0.5rem; /* Space between flag and name */
 }
+
+
+
+
+
+/* profile */

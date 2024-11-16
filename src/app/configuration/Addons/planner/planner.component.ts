@@ -1,6 +1,7 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { ProjectService } from '../../../services/project.service';
 import { environment } from '../../../../environments/environment.development';
+import { MessageService } from 'primeng/api';
 
 interface DB {
   name: string;
@@ -34,7 +35,8 @@ export class PlannerComponent {
 
   constructor(
     private projectService: ProjectService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private messageService:MessageService,
   ) {}
 
   async ngOnInit() {
@@ -68,7 +70,19 @@ export class PlannerComponent {
       FOV: Planner.FOV,
     };
   }
-
+  clearForm() {
+    this.formData = {
+      externalInterfaceType: '',
+      maxLinearVelocity: null,
+      maxRobotsCount: null,
+      safeThreshhold: null,
+      lookAhead: null,
+      maxPointstoRes: null,
+      FOV: null
+    };
+    this.selectedPlanner = null;  // Reset dropdown selection
+  }
+  
   async savePlanner() {
     if (!this.selectedProj) return;
     if (!this.selectedPlanner) {
@@ -97,10 +111,20 @@ export class PlannerComponent {
       let data = await response.json();
       // console.log(data);
       if (data.isSet) {
-        alert('Fleet configured!');
+        this.messageService.add({
+          severity: 'info',
+          summary: 'Fleet Configured',
+          detail: 'Planner Configured with fleet',
+          life: 4000,
+        });
         return;
       }
-      alert('Fleet not configured!');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Planner are not Configured with fleet',
+        life: 4000,
+      });
     } catch (error) {
       console.log('Err occured :', error);
     }

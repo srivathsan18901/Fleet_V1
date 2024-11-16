@@ -29,8 +29,11 @@ export class ChartComponent {
   @Input() ONBtn!: boolean;
 
   selectedProj :any | null = null;
-  activeRobots: number = 2;
+  mapData: any | null = null;
+  activeRobots: number = 0;
   totalRobots: number = 0;
+
+  liveRobos: any[] = [];
 
   constructor(private projectService: ProjectService,private cdRef:ChangeDetectorRef) {
     
@@ -113,21 +116,55 @@ export class ChartComponent {
 
   async ngOnInit() {
     this.selectedProj = this.projectService.getSelectedProject();
+    this.mapData = this.projectService.getMapData();
     await this.fetchTotRobos();
+    this.liveRobos = await this.getLiveRoboInfo();
+    this.updateLiveRoboInfo();
+    setInterval(async () => {
+      this.liveRobos = await this.getLiveRoboInfo();
+      this.updateLiveRoboInfo();
+    }, 1000 * 3); // yet to max the interval time..
   }
 
   async fetchTotRobos(){
-    if(!this.selectedProj) return
-    let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/fleet-project/${this.selectedProj._id}`,{
+    if(!this.selectedProj || !this.mapData) return
+    let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.mapData.id}`,{
       method : 'GET',
       credentials :'include'
     })
     let data = await response.json();
-    const { robots } = data.project;
-    console.log(robots);
+    const { populatedRobos } = data;
+    // console.log(data);
     
-    this.totalRobots = robots.length;
+    this.totalRobots = populatedRobos.length;
     this.cdRef.detectChanges();
+  }
+
+  async getLiveRoboInfo(): Promise<any[]> {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
+
+    const data = await response.json();
+    // console.log(data);
+    if (!data.map || data.error) return [];
+    return data.robos;
+  }
+
+  updateLiveRoboInfo() {
+    // console.log(this.liveRobos);
+    
+    if (!('robots' in this.liveRobos)) {
+      this.activeRobots = 0;
+      return;
+    }
+    let { robots }: any = this.liveRobos;
+    this.activeRobots = robots.length;
+    this.chartOptions.series = [(this.activeRobots / this.totalRobots) * 100]; // yet to look at it..
   }
 
   currentActiveRobots(): string {

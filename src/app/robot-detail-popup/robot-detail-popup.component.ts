@@ -12,6 +12,7 @@ export interface Robot {
   currentSpeed: any;
   averageSpeed: any;
   distanceLeft: string;
+  isConnected : boolean;
 
   id: number;
   name: string;
@@ -30,7 +31,7 @@ export interface Robot {
   totalPicks: string;
   totalDrops: string;
   SignalStrength: string;
-  error: string;
+  error: number;
   batteryPercentage: number;
   averagedischarge: number;
   averageChargingTime: string;

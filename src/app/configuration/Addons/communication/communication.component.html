@@ -134,6 +134,12 @@
                               [disabled]="!formData.externalInterfaceIp || !formData.roboInterfaceIp || !selectedCategory"
                               (onClick)="saveCommParams()"
                             ></p-button>
+                            <p-button
+                            label="Clear"
+                            class="clearbtn"
+                            styleClass="p-button-secondary"
+                            (onClick)="resetForm()"
+                          ></p-button>
                           </div>
           </div>
         </div>

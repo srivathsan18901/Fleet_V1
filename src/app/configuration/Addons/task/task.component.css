@@ -64,10 +64,12 @@ input[type="number"] {
 /* Headings within sections */
 h4 {
   font-size: 1.2rem;
+  font-family: "graphik", Arial,  sans-serif;
   margin-bottom: 10px;
 }
 h5{
   font-style:normal;
+  font-family: "graphik", Arial,  sans-serif;
 }
 
 /* Radio button section */
@@ -94,14 +96,18 @@ h5{
   padding: 0.5rem 1rem;
   margin-top: 20rem;
   font-size: 0.8rem;
+  font-family: "graphik", Arial,  sans-serif;
 }
 
 /* Button class specific to p-button-danger */
 
-
+.clearbtn{
+  margin-left: 5px;
+}
 ::ng-deep .p-button {
   padding: 0.5rem 1rem !important;
   font-size: 0.8rem !important;
+  font-family: "graphik", Arial,  sans-serif;
 }
 
 .category-container {
@@ -120,6 +126,7 @@ h5{
 .category-label {
   margin-left: 8px; /* Space between the radio button and the label */
   font-size: 1rem;
+  font-family: "graphik", Arial,  sans-serif;
   color: #4a4a4a;
 }
 

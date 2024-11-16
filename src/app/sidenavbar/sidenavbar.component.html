@@ -1,8 +1,19 @@
 <div class="topbar" >
   <div class="TopbarContents">
+
     <div class="timer">
       <app-timer></app-timer>
     </div>
+
+    <!-- Fleet Status Indicator -->
+    <div class="fleet-status" [ngClass]="{'fleet-up': isFleetUp, 'fleet-down': !isFleetUp}">
+      <i class="wifi-icon" [ngClass]="{'wifi-up': isFleetUp, 'wifi-down': !isFleetUp}"></i>
+      {{ isFleetUp ? 'Fleet Engaged' : 'Fleet Halted' }}
+    </div>
+    
+
+
+    
     <app-fullscreen-button></app-fullscreen-button>
     <img alt=""
       src="../../assets/icons/Notification_icon.svg"
@@ -12,7 +23,6 @@
 
       class="Nlogo"
     />
-
 
     <div class="language-selector">
       <div class="language-toggle" (click)="languageChange()">
@@ -49,29 +59,12 @@
         <p class="username">{{ username }}</p>
         <p class="userrole">{{ userrole }}</p>
       </div>
-
-      <!-- Profile Popup -->
-      <div class="profile-popup" *ngIf="showProfilePopup">
-        <div class="profile-header">
-          <img src="../../assets/icons/profile.png" alt="profile pic" class="popup-profile-pic" />
-          <div class="popup-info">
-            <p class="popup-username">{{ username }}</p>
-            <p class="popup-userrole">{{ userrole }}</p>
-          </div>
-        </div>
-        <hr />
-        <div class="popup-actions">
-          <!-- <button routerLink="/profile" class="profile-btn">View Profile</button> -->
-          <button (click)="logout()" class="logout-btn">Logout</button>
-        </div>
-      </div>
     </div>
-
-
 
   </div>
 </div>
 
+<!-- side bar -->
 <div class="sidebar">
   <div class="sidebar">
     <div class="logo-container">
@@ -95,13 +88,13 @@
         <span class="label">Robots</span>
       </div>
 
-      <div *ngIf="cookieValue.role === 'Administrator' || cookieValue.role === 'Maintainer'" 
-       class="icon4" 
-       routerLink="/configuration" 
-       routerLinkActive="active">
-       <img src="../../assets/icons/Configuration_icons.svg" alt="" class="Clogo" />
-       <span class="label">Configuration</span>
+      @if (cookieValue.role !== "User" ) {
+      <div class="icon4" routerLink="/configuration" routerLinkActive="active">
+        <img src="../../assets/icons/Configuration_icons.svg" alt="" class="Clogo" />
+        <span class="label">Configuration</span>
       </div>
+    }
+
       
       <div class="icon5" routerLink="/Reports" routerLinkActive="active">
         <img src="../../assets/icons/Logs_icons.svg" alt="" class="Llogo" />
@@ -143,22 +136,51 @@
 <!-- notification popup -->
 
 <div class="notification-popup" [ngClass]="{ 'show': isNotificationVisible }" (mouseenter)="cancelAutoClose()" (mouseleave)="startAutoClose()">
-  <div class="close-btn" (click)="closeNotification()">✖</div>
+  <!-- Clear All Button -->
+  <div class="notification-header">
+    <h3>Notifications</h3>
+    <div class="button-container">
+      <button class="clear-all-btn" (click)="clearAllNotifications()">Clear All</button>
+      <button class="close-button" (click)="closeNotification()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
 
-  <h3>Notifications</h3>
-
-  <ng-container *ngIf="notifications && notifications.length > 0; else noNotifications">
-    <ul>
-      <li *ngFor="let notification of notifications">{{ notification }}</li>
-    </ul>
-  </ng-container>
+  <!-- Scrollable notification container -->
+  <div class="scrollable-container">
+    <ng-container *ngIf="notifications && notifications.length > 0; else noNotifications">
+      <ul>
+        <li *ngFor="let notification of notifications" [ngClass]="getNotificationClass(notification.type)">
+          <span class="notification-label">{{ notification.label }}</span>
+          <span class="notification-message">{{ notification.message }}</span>
+        </li>
+      </ul>
+    </ng-container>
+  </div>
 
   <ng-template #noNotifications>
     <div class="no-notifications">
       <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 2200 2200" style="enable-background:new 0 0 2200 2200;" xml:space="preserve">
+<defs>
+	<linearGradient id="popupGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+		<stop offset="0%" style="stop-color:#d3d3d3;" />
+		<stop offset="100%" style="stop-color:#a9a9a9;" />
+	</linearGradient>
+</defs>
 <g id="background">
-	<rect style="fill:#FFFFFF;" width="2200" height="2200"/>
+	<rect style="fill:url(#popupGradient);" width="2200" height="2200"/>
 </g>
 <g id="Objects">
 	<g>
@@ -209,7 +231,7 @@
 			C1047.71,321.35,1100,328.62,1100,328.62z"/>
 	</g>
 </g>
-</svg>
+  </svg>
 
       <span>No notifications to show</span>
     </div>

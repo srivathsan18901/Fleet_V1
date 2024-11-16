@@ -38,6 +38,7 @@ app-sidenavbar{
   border: 1px solid white;
   margin-bottom: 5px;
   font-size: 15px;
+  font-family: "graphik", Arial,  sans-serif;
   padding: 5px;
   border-radius: 10px;
 }
@@ -50,7 +51,7 @@ canvas {
   /* background-color: rgba(212, 125, 125, 0.447); */
   left: 0;
 }
-
+/* live button */
 .ONBtn {
   position: absolute;
   top: 0;
@@ -64,22 +65,81 @@ canvas {
 .CanvasOptions {
   position: absolute;
   bottom: 5%;
-  left: 17%; /* Center horizontally */
-  transform: translateX(-50%);
+  left: 1%;
   display: flex;
-  background-color: rgba(255, 255, 255, 0.442);
+  background-color: #fffcfc6c;
+  /* border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px; */
   border-radius: 10px;
-  justify-content: center;
+  /* border: 1px solid #ff7373; */
+  /* justify-content: center; */
   cursor: pointer;
-  padding: 0 0px;
+  padding: 0;
   box-shadow: 0 3px 6px #ff7373;
-  z-index:11; /* Ensure it stays above other elements */
+  z-index: 11;
+  width: 50px; /* Show the icon width initially */
+  overflow: visible; /* Hide the other options */
+  transition: width 0.5s ease-in-out;
 }
+.options{
+  position: absolute;
+  bottom: 10%;
+  left: 1%;
+  display: flex;
+  background-color: transparent;
+  /* border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px; */
+  border-radius: 10px;
+  margin-left: 50px;
+  /* border: 1px solid #ff7373; */
+  /* justify-content: center; */
+  cursor: pointer;
+  padding: 0;
+  /* box-shadow: 0 3px 6px #ff7373; */
+  z-index: 11;
+  /* width: 20px; Show the icon width initially */
+  overflow: visible; /* Hide the other options */
+  transition: width 0.5s ease-in-out;
+}
+
+.empty {
+  background-color: #ff7373;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Hide the menu icon and show options on hover */
+.CanvasOptions:hover .menu-icon {
+  display: none;
+}
+
+.CanvasOptions .tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* .CanvasOptions {
+  width: 450px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 3px 6px #ff7373;
+} */
 
 .tooltip {
   position: relative;
   display: flex;
   align-items: center;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  opacity: 0;
+  transform: translateX(-20px);
 }
 
 .tooltip .tooltiptext {
@@ -88,57 +148,45 @@ canvas {
   background-color: rgba(136, 132, 132, 0.601);
   color: #ffffff;
   text-align: center;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   border-radius: 6px;
   padding: 5px;
   position: absolute;
-  z-index: 1;
-  bottom: 125%; /* Position the tooltip above the image */
+  z-index: 100;
+  bottom: 135%;
   left: 50%;
   transform: translateX(-50%);
   opacity: 0;
-  transition: opacity 0.3s;
+  transition: opacity 0.3s, visibility 0.3s;
 }
 
+/* Arrow for the tooltip */
 .tooltip .tooltiptext::after {
   content: '';
   position: absolute;
-  top: 100%; /* Arrow below the tooltip */
+  top: 100%;
   left: 50%;
+  z-index: 12;
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
   border-color: rgba(136, 132, 132, 0.601) transparent transparent transparent;
 }
 
+/* Show tooltip text on hover of the tooltip item */
 .tooltip:hover .tooltiptext {
   visibility: visible;
   opacity: 1;
 }
 
-.CanvasOptions:hover{
-  background-color: rgb(255, 255, 255);
-  box-shadow: 0 3px 6px #ff7373;
-}
-#element-id-to-capture {
-  box-shadow: 0 3px 6px #ff7373;
-}
 
 .Expand, .Layout, .Save, .Pointer, .Zoom, .ZoomOut, .Capture,.ModelCanvas {
   padding: 0px 10px;
   cursor: pointer;
 }
 
-.Expand:hover, .Layout:hover, .Save:hover, .Pointer:hover, .Zoom:hover, .ZoomOut:hover, .Capture:hover,.ModelCanvas:hover {
+.Expand:hover, .Layout:hover, .Save:hover, .Pointer:hover, .Zoom:hover, .ZoomOut:hover, .Capture:hover, .ModelCanvas:hover {
   filter: drop-shadow(0 2px 2px #ff0d0d3c);
-}
-
-.empty {
-  background-color: #ff7373;
-  width: 15px;
-  height: 50px;
-  border-top-left-radius: 10px;
-  border-bottom-left-radius: 10px;
 }
 
 .FloorSelector select {
@@ -152,86 +200,217 @@ canvas {
   border: none;
   border-radius: 10px;
   background-color: rgba(199, 186, 186, 0.303);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: bold;
   cursor: pointer;
 }
 
+/* charts */
 .GraphAndCharts {
   position: absolute;
-  top: 100px; /* Adjust as needed */
+  top: 80px; /* Adjust as needed */
   right: 20px; /* Adjust as needed */
   display: flex;
   flex-direction: column;
   gap: 20px; /* Adds space between the charts */
   z-index: 12; /* Ensure it is above the canvas */
 }
+.GraphAndCharts {
+  background-color: #d7d7d7; /* Light gray background */
+  padding: 10px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chart1 p
+{
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 0;
+  text-align: left;
+
+}
+
+
+
+
+.Chart2 p, .Chart3 p {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 0;
+  text-align: left;
+}
 
 .Chart1, .Chart2, .Chart3 {  
-  background-color: rgba(255, 255, 255, 0.442);
-  height: 240px; /* Adjust height as needed */
-  box-shadow: 0 3px 6px #ff7373;
+  background-color: rgb(255, 255, 255);
+  height: 250px; /* Increased height */
+  width: 430px; /* Increased width */
+  box-shadow: 0 4px 8px rgba(128, 128, 128, 0.6); /* Grey drop shadow */
   border-radius: 20px;
-  /* border: 0.5px solid #ff7373; */
 }
 
 .Chart1:hover, .Chart2:hover, .Chart3:hover {
   background-color: rgb(255, 255, 255);
 }
-.Chart2_Chart3{
+
+.Chart2_Chart3 {
   display: flex;
-  gap: 10px;
+  gap: 20px;
 }
+
 .Chart1 {
-  width: 440px;
+  width: 540px; /* Increased width */
   padding: 10px 0px 0px 0px;
 }
 
-.Chart2 p {
-  padding: 20px 0px 0px 20px;
-  font-family: Arial, Helvetica, sans-serif;
+.Chart2, .Chart3 {
+  padding: 10px 0px 0px 10px;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: bold;
 }
 
-.Chart3 p {
-  padding: 20px 0px 0px 20px;
-  font-family: Arial, Helvetica, sans-serif;
-  font-weight: bold;
+.Chart2 {
+  width: 270px; /* Increased width */
+  align-items: center;
+  justify-content: center;
 }
 
 .Chart3 {
-  width: 200px;
+  
+  width: 250px; /* Increased width */
 }
 
+
+
+
+.chart-label {
+  position: absolute;
+  bottom: 10px; /* Adjust as needed to position the label at the bottom of the chart */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  text-align: center;
+  font-size: 16px;
+  font-family: "graphik", Arial,  sans-serif;
+  color: #333;
+  font-weight: 500;
+}
+
+
+/* new for chart */
+
+.Chart3-container {
+  position: relative; /* Allows positioning of the title */
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  align-items: center; /* Center chart and label */
+  height: 100%;
+}
+
+.chart-title {
+  position: absolute; /* Position it freely within the container */
+  top: 0; /* Place it at the top */
+  left: 0; /* Align it to the left */
+  margin: 10px; /* Add some spacing */
+  font-size: 20px; /* Adjust font size */
+  font-weight: bold; /* Make it bold for emphasis */
+  color: #333; /* Set the text color */
+}
+
+.Chart3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+
 .R-Chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chart-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333;
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+
+.U-chart {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.Chart2{
-  width: 230px;
-}
+
 .T-Chart {
-  width: 600px;
+  width: 650px; /* Increased width */
 }
-.Chart2-container,.Chart3-container,.Chart1-container {
+
+
+
+.Chart2-container, .Chart3-container, .Chart1-container {
   position: relative;
 }
 
-.chart3-blur-layer,.chart2-blur-layer,.chart1-blur-layer {
+.chart3-blur-layer, .chart2-blur-layer, .chart1-blur-layer {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.192); /* Semi-transparent white background */
-  /* backdrop-filter: blur(5px);  */
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
   display: flex;
   border-radius: 20px;
   align-items: center;
   justify-content: center;
-  z-index: 10; /* Ensure it is on top of Chart2 */
+  z-index: 10; /* Ensure it is on top of the charts */
 }
+
+
+
+  /* Close Button Styles */
+  .close-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+
+  .close-button svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
+  }
+
+  .close-button:hover {
+    background-color: #da2127;
+  }
+
+  .close-button:hover svg {
+    fill: white; /* Change color on hover */
+  }
+
 /* .blurred {
   filter: blur(5px);
 } */
@@ -303,6 +482,7 @@ canvas {
 .no-map-text {
   margin-top: 20px;
   font-size: 24px;
+  font-family: "graphik", Arial,  sans-serif;
   font-weight: 550;
   color: #7B7B7B;
 }
@@ -311,19 +491,29 @@ canvas {
 .dropdown {
   position: relative;
   display: inline-block;
-  width: 170px;
+  width: 180px;
   margin: 20px;
 }
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
 .dropdown-button:hover{
   background-color: #ff3333;
   color: white;
 }
+
 .dropdown-button {
   width: 100%;
   background-color: #ff333358;
-  color: white;
+  color: rgb(255, 255, 255);
   padding: 10px 20px;
   font-size: 16px;
+  font-family: "graphik", Arial,  sans-serif;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -332,13 +522,13 @@ canvas {
   align-items: center;
 }
 
-
 .dropdown-content {
   display: flex;
   flex-direction: column;
   position: absolute;
   background-color: transparent; /* Changed to transparent */
   width: 100%;
+  background-color: rgb(242, 242, 242);
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   padding: 10px;
   z-index: 1;
@@ -372,6 +562,7 @@ canvas {
 
 .arrow {
   font-size: 12px;
+  font-family: "graphik", Arial,  sans-serif;
   margin-left: 10px;
 }
 
@@ -384,6 +575,7 @@ canvas {
 .switch {
   --circle-dim: 1em; /* Reduced the circle size */
   font-size: 14px;   /* Adjusted font-size */
+  font-family: "graphik", Arial,  sans-serif;
   position: relative;
   display: inline-block;
   width: 3.2em;      /* Reduced the width */
@@ -455,3 +647,93 @@ input:checked ~ .slider-card {
 input:checked ~ .slider {
   background-color: #9ed99c;
 }
+
+.enable-delete-button {
+  background: none;      /* No background */
+  border: none;          /* Remove border */
+  color: rgb(224, 11, 11);          /* Set icon color */
+  cursor: pointer;       /* Pointer on hover */
+  font-size: 18px;       /* Size of the icon */
+  font-family: "graphik", Arial,  sans-serif;
+  padding: 0;            /* Remove padding */
+  transition: color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Add hover effect */
+.enable-delete-button:hover {
+  color: #ff6666; /* Light red color on hover */
+}
+
+
+
+
+
+/* fleet and simulation */
+.indication-button {
+  position: absolute;
+  top: 20px;
+  right: 150px; 
+  filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
+  cursor: pointer;
+  z-index: 13;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* Center content horizontally */
+  width: 150px;  /* Fixed width */
+  height: 41px;  /* Fixed height */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0;  /* Remove padding since we are using fixed size */
+  transition: background-color 0.3s ease;
+}
+
+/* Image inside the button */
+.indication-button img {
+  width: 25px;
+  height: 25px;
+  margin-right: 8px; /* Keep margin for spacing */
+}
+
+/* Text inside the button */
+.indication-button span {
+  font-size: 17px;
+  font-family: "graphik", Arial,  sans-serif;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Background color for Fleet */
+.fleet-background {
+  z-index: auto;
+  background-color: #63b7fc; /* Blue for Fleet */
+  z-index: auto;
+}
+
+/* Background color for Simulation */
+.simulation-background {
+  background-color: #f0453f; /* Red for Simulation */
+}
+
+
+.blinking-svg {
+  /* width: 95px;
+  height: 40px; */
+  animation: glow-blink 1.5s infinite ease-in-out;
+}
+
+/* Define the glowing and blinking effect */
+@keyframes glow-blink {
+  0% {
+    opacity: 1;
+    filter: drop-shadow(0 0 0px #fe0000); /* Reduced spread */
+  }
+  50% {
+    opacity: 0.7;
+    filter: drop-shadow(0 0 5px #ff0000); /* Reduced glow */
+  }
+  100% {
+    opacity: 1;
+    filter: drop-shadow(0 0 0px #fe0000); /* Same as starting state */
+  }
+}
+
