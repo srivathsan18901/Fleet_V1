@@ -74,6 +74,7 @@
     position: sticky;
     top: 0;
     background-color: #FFCDCD; /* Ensure the header has a background color */
+
   }
   tbody {
     border-radius: 0 0 10px 10px; /* Bottom corners rounded */
@@ -87,7 +88,6 @@
     text-align: left;
   }
 
- 
   th {
     background-color: #FFCDCD;
     padding: 10px 20px;
@@ -96,6 +96,7 @@
     font-family: "graphik", Arial,  sans-serif;
     border-bottom: 1px solid #ddd;
     text-align: left;
+    z-index: 1000; /* Ensures it stays on top */
   }
 
   td {
@@ -135,8 +136,6 @@
   text-align: center;
 }
 
- 
- /* Export Button Container */
 /* Export Button Container */
 .export-button-container {
     position: fixed;
@@ -236,7 +235,6 @@
     fill: white; /* Change color on hover */
   }
 
-  /* Main container for the search bar and filters */
   /* Main container for search bar and date filters */
 
   .search-filter-container {
@@ -253,6 +251,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }
+
   .search-box {
     display: flex;
     align-items: center;
@@ -277,8 +276,6 @@
     color: #aaa;
   }
 
-  
-
   .search-btn {
     background-color: #ff5c5c;
     color: white;
@@ -300,12 +297,6 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-
-/* tasks.component.css */
-
-/* tasks.component.css */
-
-/* tasks.component.css */
 
 /* Container for paginator */
 .paginator-container {
@@ -421,7 +412,13 @@
 } */
 
 
+.thead {
+  order: 1; /* Ensure this stays on top */
+}
 
+.switch-container {
+  order: 2; /* Place this below the top bar */
+}
 
 .switch-container {
   display: flex;
@@ -429,8 +426,7 @@
   justify-content: center; /* Horizontal centering */
   gap: 10px; /* Space between the switch and the button */
   width: 100%; /* Ensures container spans the full width of the table cell */
-
-
+  
 }
 .btn-cancel {
   background-color: #f44336; /* Red for cancel */

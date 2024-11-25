@@ -18,16 +18,17 @@ import { sequence } from '@angular/animations';
 import { parse } from 'path';
 import { response } from 'express';
 import { CookieService } from 'ngx-cookie-service';
-import { MapService } from '../map.service';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
-
+import { SessionService } from '../services/session.service';
+import { map } from 'rxjs';
 interface Node {
   nodeId: string;
   sequenceId: number;
   nodeDescription: string;
   released: boolean;
   nodePosition: { x: number; y: number; orientation: number };
+  quaternion:{x:number; y: number; z: number; w: number};
   actions: any[];
   intermediate_node: boolean;
   Waiting_node: boolean;
@@ -307,6 +308,7 @@ export class EnvmapComponent implements AfterViewInit {
   isOpen: boolean = false;
   descriptionWarning: boolean = false;
   currMulNode : Node[] = [];
+  currentQuaternion:{ x: number; y: number;z:number;w:number } | null = null;
   newOrientationAngle: number = 0;
   inputOrientationAngle: number = 0; // The value entered by the user
   // selectedNodeId: string; // Variable to store the selected node
@@ -346,8 +348,8 @@ export class EnvmapComponent implements AfterViewInit {
     private cdRef: ChangeDetectorRef,
     private renderer: Renderer2,
     private projectService: ProjectService,
-    private mapService:MapService,
     private messageService:MessageService,
+    private sessionService:SessionService,
   ) {
     if (this.currEditMap) this.showImage = true;
   }
@@ -403,6 +405,27 @@ export class EnvmapComponent implements AfterViewInit {
         parseInt(this.zones[this.zones.length - 1]?.id) + 1
           ? parseInt(this.zones[this.zones.length - 1].id) + 1
           : this.zoneCounter;
+      this.open();
+    }
+    else if(this.sessionService.isMapInEdit()){
+      this.imageSrc = this.sessionService.getImage();
+      let mapData=this.sessionService.getMapDetails();
+      this.siteName=mapData.siteName;
+      this.mapName=mapData.mapName;
+      this.ratio=mapData.mpp;
+      this.origin=mapData.origin;  
+      this.nodes=mapData.nodes;    
+      this.nodeCounter =
+        parseInt(this.nodes[this.nodes.length - 1]?.nodeId) + 1
+          ? parseInt(this.nodes[this.nodes.length - 1].nodeId) + 1
+          : this.nodeCounter;
+      this.edges=mapData.edges;
+      this.edgeCounter =
+      parseInt(this.edges[this.edges.length - 1]?.edgeId) + 1
+        ? parseInt(this.edges[this.edges.length - 1].edgeId) + 1
+        : this.edgeCounter;
+      this.selectedImage = this.sessionService.base64toFile();
+      // this.zones=mapData.zones;
       this.open();
     }
   }
@@ -789,12 +812,18 @@ export class EnvmapComponent implements AfterViewInit {
     if (this.validationError) {
       return;
     }
+    let quaternion=this.ToQuaternion_(0,0,parseInt(orientation));
+
 
     this.nodes = this.nodes.map(node => {
-      if(this.selectedNode?.nodeId === node.nodeId) node.actions = this.actions;
+      if(this.selectedNode?.nodeId === node.nodeId) {
+        node.actions = this.actions;
+        node.quaternion = quaternion;        
+      }
       return node;
     })
-    
+    console.log("hey out");
+    this.storeNodestoLocal();
     // this.projectService.setNode();
     // Ensure the nodeDetails object includes the checkbox values
     // const updatedNodeDetails = {
@@ -1030,34 +1059,34 @@ export class EnvmapComponent implements AfterViewInit {
   isOptionDisabled(option: string): boolean {
     return this.actions.some((action) => action.actionType === option);
   }
-  imageBase64: string | null = null;
+  // imageBase64: string | null = null;
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
       this.selectedImage = input.files[0];
       const file = input.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e: any) => {
-          this.imageBase64 = e.target.result;
-          console.log(this.imageBase64);
-          // if(this.imageBase64) this.mapService.setOnCreateMapImg(this.imageBase64);  // Save to cookie after conversion
-        };
-        reader.readAsDataURL(file);
-      }
+      // if (file) {
+      //   const reader = new FileReader();
+      //   reader.onload = (e: any) => {
+      //     this.imageBase64 = e.target.result;
+      //     console.log(this.imageBase64);
+      //     // if(this.imageBase64) this.mapService.setOnCreateMapImg(this.imageBase64);  // Save to cookie after conversion
+      //   };
+      //   reader.readAsDataURL(file);
+      // }
       this.fileName = file.name;
       this.showImage = false;
 
       const reader = new FileReader();
       reader.onload = (e: ProgressEvent<FileReader>) => {
         this.imageSrc = e.target!.result as string;
+        // console.log(this.imageSrc);
+        
       };
       reader.readAsDataURL(file);
     }
   }
-  saveToCookie(imageBase64: string) {
-    document.cookie = `image=${imageBase64}; path=/;`;
-  }
+
   private startPoint: { x: number; y: number } | null = null; // Store the initial point
 
   openOriginPopup(): void {
@@ -1320,7 +1349,8 @@ export class EnvmapComponent implements AfterViewInit {
       edges: this.edges,
       zones: this.zones,
       stations: this.assets,
-      roboPos: this.robos
+      roboPos: this.robos,
+      isFleetup: this.projectService.getIsFleetUp()
     };
 
     fetch(
@@ -1361,18 +1391,22 @@ export class EnvmapComponent implements AfterViewInit {
       });
   }
   ToQuaternion_(roll : number, pitch : number, yaw : number){
+    yaw = (yaw * 3.14) / 180;
+    pitch = (pitch * 3.14) / 180;
+    roll = (roll * 3.14) / 180;
+
     const cy = Math.cos(yaw * 0.5);
     const sy = Math.sin(yaw * 0.5);
-    const cp = Math.cos(pitch * 0.5);
-    const sp = Math.sin(pitch * 0.5);
     const cr = Math.cos(roll * 0.5);
     const sr = Math.sin(roll * 0.5);
+    const cp = Math.cos(pitch * 0.5);
+    const sp = Math.sin(pitch * 0.5);
 
     const q = {
-      x: sr * cp * cy - cr * sp * sy,
-      y: cr * sp * cy + sr * cp * sy,
-      z: cr * cp * sy - sr * sp * cy,
-      w: cr * cp * cy + sr * sp * sy,
+      x: cy * sr * cp - sy * cr * sp,
+      y: cy * cr * sp + sy * sr * cp,
+      z: sy * cr * cp - cy * sr * sp,
+      w: cy * cr * cp + sy * sr * sp,
     };
 
     return q;
@@ -1471,7 +1505,7 @@ export class EnvmapComponent implements AfterViewInit {
       nodes: this.nodes,
       stations: this.assets,
       roboPos: this.robos,
-      roboInitialise : roboInit
+      isFleetup: this.projectService.getIsFleetUp()
     };
 
     this.form?.append('mapImg', this.selectedImage);
@@ -1544,6 +1578,7 @@ export class EnvmapComponent implements AfterViewInit {
 
           this.cdRef.detectChanges();
           this.refreshTable.emit(); // Emit the event to refresh the table
+          // window.location.reload();
         }
 
         // Success toast notification
@@ -1569,7 +1604,6 @@ export class EnvmapComponent implements AfterViewInit {
       });
 
     this.form = null;
-    console.log("hey");
     
   }
   confirmDistance(): void {
@@ -1728,13 +1762,27 @@ export class EnvmapComponent implements AfterViewInit {
           }
         }
       }
+      if (this.resolutionInput && this.resolutionInput.nativeElement) {
+        const resolutionInputValue = this.resolutionInput.nativeElement.value;
+  
+        if (!this.ratio) {
+          this.ratio = Number(resolutionInputValue);
+          if (!this.ratio || isNaN(this.ratio)) {
+            this.validationError = 'Please provide a valid resolution or click Locate.';
+            return;
+          }
+        }
+      } else {
+        console.error('Resolution input element not found via ViewChild.');
+      }
+
     if (this.mapName && this.siteName && this.imageSrc ) {
       this.fileName = null;
       this.showImage = true;
       const img = new Image();
       img.src = this.imageSrc;
 
-      img.onload = () => {
+      img.onload =  () => {
         if (this.imageCanvas && this.imageCanvas.nativeElement) {
           const canvas = this.imageCanvas.nativeElement;
           const ctx = canvas.getContext('2d')!;
@@ -1751,33 +1799,33 @@ export class EnvmapComponent implements AfterViewInit {
             overlay.height = canvas.height;
             this.redrawCanvas();
           }
+          if(this.selectedImage && !this.sessionService.isMapInEdit()){
+            this.sessionService.storeImage(this.selectedImage)
+            this.sessionService.storeMapDetails({
+              siteName: this.siteName,
+              mapName: this.mapName,
+              mpp: this.ratio,
+              origin: this.origin,
+            })
+            this.sessionService.onMapEdit();
+          }
+          
         }
       };
-      if (this.imageBase64) {
-        this.mapService.setOnCreateMapImg(this.imageBase64);  // Save the Base64 image in the cookie
-      }
+
     }
     else{
       this.validationError="Please enter Map name and Site name"
     }
-        if (this.resolutionInput && this.resolutionInput.nativeElement) {
-      const resolutionInputValue = this.resolutionInput.nativeElement.value;
 
-      if (!this.ratio) {
-        this.ratio = Number(resolutionInputValue);
-        if (!this.ratio || isNaN(this.ratio)) {
-          this.validationError = 'Please provide a valid resolution or click Locate.';
-          return;
-        }
-      }
-    } else {
-      console.error('Resolution input element not found via ViewChild.');
-    }
   }
   close(): void {
     this.currEditMapChange.emit(false);
     this.showImage = true;
     this.closePopup.emit(); // Then close the popup
+    this.sessionService.deleteImage();
+    this.sessionService.deleteMapEdit();
+    this.sessionService.delMapDetails();
   }
   private isPointInZone(x: number, y: number, zonePoints: any[]): boolean {
     const ctx = this.overlayCanvas.nativeElement.getContext('2d');
@@ -1877,6 +1925,7 @@ export class EnvmapComponent implements AfterViewInit {
     for (const node of this.nodes) {      
       if (this.isNodeClicked(node, x, y) ) {
         this.selectedNode=node;
+        this.currentQuaternion=node.quaternion;
         this.nodeDetails.description = this.selectedNode.nodeDescription;
         this.nodeDetails.intermediate_node = this.selectedNode.intermediate_node;
         this.nodeDetails.waiting_node = this.selectedNode.Waiting_node;
@@ -2302,8 +2351,19 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
   
     return nodeOccupied || assetOccupied || roboOccupied;
   }
+  storeNodestoLocal(){
+    if(!this.sessionService.isMapInEdit())return; 
+    let mapDetails = this.sessionService.getMapDetails();
+    mapDetails.nodes=this.nodes;
+    this.sessionService.storeMapDetails(mapDetails);
+  }
+  storeEdgestoLocal(){
+    if(!this.sessionService.isMapInEdit())return; 
+    let mapDetails = this.sessionService.getMapDetails();
+    mapDetails.edges=this.edges;
+    this.sessionService.storeMapDetails(mapDetails);
+  }
   
-
   plotSingleNode(x: number, y: number): void {
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = canvas.getContext('2d')!;
@@ -2325,6 +2385,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
         nodeDescription: '',
         released: true,
         nodePosition: { x: x, y: transformedY, orientation: 0 },
+        quaternion:{ x: 0, y: 0,z:0,w:1},
         intermediate_node: false,
         Waiting_node: false,
         charge_node: false,
@@ -2346,6 +2407,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
       dock_node:false,
       charge_node:false
     };
+    let quaternion=this.ToQuaternion_(0,0,this.orientationAngle);
 
     let node = {
       nodeId: this.nodeCounter.toString(),
@@ -2353,6 +2415,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
       nodeDescription: '',
       released: true,
       nodePosition: { x: x , y:  transformedY , orientation: this.orientationAngle },
+      quaternion:quaternion,
       actions: [],
       intermediate_node: false,
       Waiting_node: false,
@@ -2363,6 +2426,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
     //{ id: this.nodeCounter.toString(), x, y: transformedY,type: 'single' }
     this.nodes.push(node);
     this.Nodes.push({ ...this.nodeDetails, type: 'single' });
+    this.storeNodestoLocal();
 
     this.nodeCounter++; // Increment the node counter after assignment
     this.isPlottingEnabled = false; // Disable plotting after placing a single node
@@ -2419,6 +2483,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             nodeDescription: '',
             released: true,
             nodePosition: { x: x, y: transformedY, orientation: 0 },
+            quaternion:{ x: 0, y: 0,z:0,w:1},
             actions: [],
             intermediate_node: false,
             Waiting_node: false,
@@ -2437,6 +2502,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             nodeDescription: '',
             released: true,
             nodePosition: { x: x, y: transformedY, orientation: 0 },
+            quaternion:{ x: 0, y: 0,z:0,w:1},
             actions: [],
             intermediate_node: false,
             Waiting_node: false,
@@ -2445,6 +2511,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
         };
         this.firstNode = firstnode;
         this.nodes.push(firstnode);
+        this.storeNodestoLocal();
     } else if (this.secondNode === null) {
         // Plotting the second node
         let secondnode = {
@@ -2453,6 +2520,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             nodeDescription: '',
             released: true,
             nodePosition: { x: x, y: transformedY, orientation: 0 },
+            quaternion:{ x: 0, y: 0,z:0,w:1},
             actions: [],
             intermediate_node: false,
             Waiting_node: false,
@@ -2464,6 +2532,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
         this.currMulNode.push(this.secondNode);
 
         this.nodes.push(secondnode);
+        this.storeNodestoLocal();
 
         this.isDrawingLine = true;
         this.lineStartX = x;
@@ -2518,6 +2587,15 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
     }
     if (this.numberOfIntermediateNodes && this.numberOfIntermediateNodes > 0) {
       if (this.firstNode && this.secondNode && this.numberOfIntermediateNodes > 0) {
+        let quaternion=this.ToQuaternion_(0,0,this.secondNode!.nodePosition.orientation);
+        this.nodes=this.nodes.map((node)=>{
+          if(node.nodeId===this.firstNode?.nodeId){
+            node.nodePosition.orientation=this.secondNode!.nodePosition.orientation;
+            node.quaternion=quaternion;
+          }
+          return node;
+        }
+        )
         const dx = (this.secondNode.nodePosition.x - this.firstNode.nodePosition.x) / (this.numberOfIntermediateNodes + 1);
         const dy = (this.secondNode.nodePosition.y - this.firstNode.nodePosition.y) / (this.numberOfIntermediateNodes + 1);
 
@@ -2554,13 +2632,14 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             this.redrawCanvas();
             return;
           }
-
+          // let quaternion=this.ToQuaternion_(0,0,this.secondNode!.nodePosition.orientation);
           let node = {
             nodeId: this.nodeCounter.toString(),
             sequenceId: this.nodeCounter,
             nodeDescription: 'Intermediate Node',
             released: true,
             nodePosition: { x: x, y: y, orientation: this.secondNode!.nodePosition.orientation },
+            quaternion:quaternion,
             actions: [],
             intermediate_node: true, // Marking it as intermediate
             Waiting_node: false,
@@ -2570,6 +2649,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
 
           this.nodes.push(node);
           this.currMulNode.push(node);
+          
 
           // Draw the node
           this.drawNode(node, 'blue', false);
@@ -2584,6 +2664,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
 
           this.nodeCounter++; // Increment the node counter
         }
+        this.storeNodestoLocal();
       }
       this.plotMulNodesEdges()// call here..
       this.closeIntermediateNodesDialog();
@@ -2620,6 +2701,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
         action: [],
       };
       this.edges.push(edge);
+      this.storeEdgestoLocal();
       this.edgeCounter++;
       // this.drawEdge( arr[i].nodePosition, arr[i+1].nodePosition, this.direction!, arr[i].nodeId, arr[i+1].nodeId );
     }
@@ -2760,6 +2842,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
               action: [],
             };
             this.edges.push(edge);
+            this.storeEdgestoLocal();
             this.drawEdge(
               this.firstNode.nodePosition,
               this.secondNode.nodePosition,
@@ -2788,6 +2871,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
               action: [],
             };
             this.edges.push(edge);
+            this.storeEdgestoLocal();
             this.drawEdge(
               this.firstNode.nodePosition,
               this.secondNode.nodePosition,
@@ -3831,6 +3915,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
         }
         return node;
       });
+      this.storeNodestoLocal();
       this.draggingNode = false;
     }
 

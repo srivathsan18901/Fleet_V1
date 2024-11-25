@@ -207,11 +207,11 @@
           </tr> -->
           <tr *ngFor="let item of paginatedData1; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
             <td class="table-cell">{{ item.dateTime }}</td>
-            <td class="table-cell">{{ item.roboId }}</td>
-            <td class="table-cell">{{ item.roboName }}</td>
-            <td class="table-cell">{{ item.errCode }}</td>
+            <td class="table-cell">{{ item.id }}</td>
+            <td class="table-cell">{{ item.name }}</td>
+            <td class="table-cell">{{ item.error }}</td>
             <td class="table-cell">{{ item.criticality }}</td>
-            <td class="table-cell">{{ item.desc }}</td>
+            <td class="table-cell">{{ item.description }}</td>
           </tr>
         </tbody>
       </table>
@@ -230,6 +230,7 @@
       >
       </mat-paginator>
     </div>
+    
 <div class="table-container">
   <div class="table-wrapper">
     <div class="table-scrollable">

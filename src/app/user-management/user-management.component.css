@@ -5,6 +5,9 @@
 /* The switch - the box around the slider */
 
 
+.flex {
+  font-family: 'Graphik', Arial, sans-serif; /* Specify Graphik and fallback to Arial */
+}
 
 
 .switch {

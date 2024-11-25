@@ -157,6 +157,7 @@
 .robopopup-content button{
  margin: 10px;
 }
+
 .rob-inp, .rob-inp1, .rob-inp2,.rob-inp3{
   padding: 6px;
   display: flex;
@@ -783,11 +784,14 @@ tr:nth-child(even) {
 .tab-menu li {
   margin-right: 20px;
   cursor: pointer;
+  font-family: "graphik", Arial,  sans-serif;
 }
 
 .tab-menu li.active {
   border-bottom: 2px solid #ff7373;
   color: #ff7373;
+  font-family: "graphik", Arial,  sans-serif;
+
 }
 .icon{
   padding-right:10px ;
@@ -1277,7 +1281,7 @@ edit button */
   padding: 25px 35px;
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4); /* Softer shadow for depth */
-  width: 340px;
+  width: 400px;
   text-align: center;
   position: relative;
   animation: popup-fade-in 0.4s ease; /* Fade-in animation */
@@ -1326,17 +1330,18 @@ edit button */
   gap: 10px; /* Adds space between buttons */
 }
 
-.sim-popup-content button {
+.sim-popup-content button:not(.close-popup-btn) {
   flex: 1; /* Ensure buttons take equal space */
   padding: 12px;
   border: none;
   border-radius: 6px;
   font-size: 1rem;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   cursor: pointer;
   color: #ffffff;
   transition: background-color 0.3s ease, transform 0.1s ease; /* Button animation */
 }
+
 
 .sim-popup-content button:hover {
   transform: translateY(-2px); /* Lift effect on hover */
@@ -1470,3 +1475,39 @@ tbody td {
   // border-bottom: 1px solid #ddd;
 }
 
+
+
+  /* Close Button Styles */
+  .close-popup-btn {
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+
+  .close-popup-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
+  }
+
+  .close-popup-btn:hover {
+    background-color: #da2127;
+  }
+
+  .close-popup-btn:hover svg {
+    fill: white; /* Change color on hover */
+  }
+
+
+  

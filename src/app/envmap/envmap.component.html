@@ -263,9 +263,55 @@
                 #orientationInput
                 aria-describedby="Orientation" 
                 />
-          </div>     
+          </div>   
+            
         </div> 
-
+        <div class="quaternion-inputs">
+          <h3 class="q-title">Quaternion</h3>
+          <div class="quaternion-row">
+            <div>
+              <label for="quaternionX">X:</label>
+              <input
+                pInputText
+                id="quaternionX"
+                [(ngModel)]="currentQuaternion!.x"
+                placeholder="Enter X"
+                style="width: 100px;"
+              />
+            </div>
+            <div>
+              <label for="quaternionY">Y:</label>
+              <input
+                pInputText
+                id="quaternionY"
+                [(ngModel)]="currentQuaternion!.y"
+                placeholder="Enter Y"
+                style="width: 100px;"
+              />
+            </div>
+            <div>
+              <label for="quaternionZ">Z:</label>
+              <input
+                pInputText
+                id="quaternionZ"
+                [(ngModel)]="currentQuaternion!.z"
+                placeholder="Enter Z"
+                style="width: 100px;"
+              />
+            </div>
+            <div>
+              <label for="quaternionW">W:</label>
+              <input
+                pInputText
+                id="quaternionW"
+                [(ngModel)]="currentQuaternion!.w"
+                placeholder="Enter W"
+                style="width: 100px;"
+              />
+            </div>
+          </div>
+        </div>
+        
         </div>
           <div class="action-container">
             <div class="action" class="display:flex; text-wrap:nowrap; align-items:center ">
@@ -285,7 +331,7 @@
           </div>
 
           <div *ngIf="actions.length > 0" class="action-div">
-            <p style="font-size: 15px;">Actions:</p>
+            <p style="font-size: 15px;padding: 0px;margin:0px ;">Actions:</p>
             <div class="action-buttons">
               <div *ngFor="let action of actions; let i = index" class="action-item">
                 <button class="action-button" (click)="openActionForm(action)" >
@@ -303,8 +349,8 @@
               id="nodeDescription"
               placeholder="Enter Node Description"
               [(ngModel)]="nodeDetails.description"
-              [style]="{'height':'30px','width':'14.5rem'}"
-            /><br />
+              [style]="{'height':'30px','width':'12.5rem'}"
+            />
           </div>
             <div class="input-group">
               <div class="node-action">

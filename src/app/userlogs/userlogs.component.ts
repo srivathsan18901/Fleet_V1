@@ -2,7 +2,7 @@ import { environment } from '../../environments/environment.development';
 import { ExportService } from '../export.service';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ProjectService } from '../services/project.service';
-import { timeStamp } from 'console';
+import { error, timeStamp } from 'console';
 // import { PageEvent } from '@angular/material/paginator';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
@@ -30,10 +30,13 @@ export class Userlogscomponent {
   paginatedData: any[] = [];
   paginatedData1: any[] = [];
   paginatedData2: any[] = [];
-
+  initialRoboInfos: any[] = []; // to store data of initial robo details..
+  mapDetails: any | null = null;
   // Your task data
   taskData: any[] = [];
-
+  filteredRobots: any[] = []; // To store filtered robots
+  roboerrors: any[]=[];
+  roboErr:any[]=[];
   // Your robot data
   robotData: any[] = [];
 
@@ -47,18 +50,23 @@ export class Userlogscomponent {
     this.mapData = this.projectService.getMapData();
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     this.mapData = this.projectService.getMapData();
     if (!this.mapData) {
       console.log('Seems no map has been selected');
       return;
     }
+    
+    await this.fetchRobos();
     // data rendering
+    await this.getRoboLogs();
+    setInterval(async() => {
+      await this.getRoboLogs();
+    }, 1000*3);
     this.getTaskLogs();
-    this.getRoboLogs();
     this.getFleetLogs();
   }
-
+  
   getTaskLogs() {
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
@@ -105,52 +113,123 @@ export class Userlogscomponent {
         console.log(err);
       });
   }
-
-  getRoboLogs() {
+  async fetchRobos(){
     fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/robo-logs/${this.mapData.id}`,
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.mapData.mapName}`,
       {
-        method: 'POST',
+        method: 'GET',
         credentials: 'include',
-        body: JSON.stringify({
-          timeStamp1: '',
-          timeStamp2: '',
-        }),
       }
     )
-      .then((response) => {
-        // if (!response.ok)
-        //   throw new Error(`Error with the statusCode of ${response.status}`);
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((data) => {
-        const { roboLogs } = data;
-        this.robotData = roboLogs.table[0].values.map((roboErr: any) => {
-          const date = new Date();
-          const formattedDateTime = `${date.toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          })}, ${date.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          })}`;
-          return {
-            dateTime: formattedDateTime,
-            roboId: roboErr.ROBOT_ID,
-            roboName: roboErr.ROBOT_NAME,
-            errCode: '100',
-            criticality: Math.floor(Math.random() * 10),
-            desc: roboErr.DESCRIPTION,
-          };
-        });
-        this.filteredTaskData1 = this.robotData;
-        this.setPaginatedData();
+        if (!data.map || data.error) {  
+          return;
+        }    
+        const { map } = data; 
+         
+        // Check if the image URL is accessible
+        this.robots= map.roboPos
       })
-      .catch((err) => {
-        console.log(err);
+      
+  }
+  async getLiveRoboInfo(): Promise<any[]> {
+    const response = await fetch(`http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    const data = await response.json();
+    if (!data.map || data.error) return [];
+    return data.robos;
+  }
+  robots: any[] = [];
+  liveRobos: any[] = [];
+  updateLiveRoboInfo() {
+    // console.log(this.robots);
+    
+    if (!('robots' in this.liveRobos)) {
+      this.robots = this.initialRoboInfos;
+      return;
+    }
+
+//Robotstatus
+                  
+    let { robots }: any = this.liveRobos;
+    if (!robots.length) this.robots = this.initialRoboInfos;
+    this.robots = this.robots.map((robo) => {
+      robots.forEach((liveRobo: any) => {
+        if (robo.roboDet.id == liveRobo.id) {          
+          robo.errors=liveRobo.robot_errors;
+        }
       });
+      return robo;
+    });
+    this.filteredRobots = this.robots;  
+    this.setPaginatedData();   
+    this.roboerrors=this.robots.map((robo)=>
+      {
+        return{
+          name:robo.roboDet.roboName,
+          error:robo.errors,
+          id:robo.roboDet.id
+        }
+      })                      
+  }
+  async getRoboLogs() {
+    this.liveRobos = await this.getLiveRoboInfo();
+    this.updateLiveRoboInfo();
+    // this.roboErr=[];
+    this.roboerrors.forEach((robo)=>{
+    // console.log(robo.error);
+    let date = new Date();
+    let createdAt = date.toLocaleString('en-IN', {
+      month: 'short',
+      year: 'numeric',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: 'numeric',
+    });
+    if(robo.error['EMERGENCY STOP'].length){
+      robo.error['EMERGENCY STOP'].forEach((error:any) => {
+        this.roboErr.push({
+          name:robo.name,
+          error:error.name,
+          description:error.description,
+          id:robo.id,
+          dateTime:createdAt
+        })
+      });
+    }
+    if(robo.error['LIDAR_ERROR'].length){
+      robo.error['LIDAR_ERROR'].forEach((error:any) => {
+        this.roboErr.push({
+          name:robo.name,
+          error:error.name,
+          description:error.description,
+          id:robo.id,
+          dateTime:createdAt
+        })
+      });
+    }
+  })
+  // console.log(this.roboErr);
+  this.paginatedData1=this.roboErr;
+  // this.roboerrors=[];//later to be removed if needed
+    // console.log(this.liveRobos,this.robots);
+    
+    // fetch(
+    //   `http://${environment.API_URL}:${environment.PORT}/err-logs/robo-logs/${this.mapData.id}`,
+    //   {
+    //     method: 'POST',
+    //     credentials: 'include',
+    //     body: JSON.stringify({
+    //       timeStamp1: '',
+    //       timeStamp2: '',
+    //     }),
+    //   }
+    // )
+
   }
 
   getFleetLogs() {

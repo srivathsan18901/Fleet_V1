@@ -1,14 +1,14 @@
 <!-- chart.component.html -->
  
 <div id="Chart1">
-    <apx-chart
-    
-      [series]="chartOptions.series!"
-      [chart]="chartOptions.chart!"
-      [plotOptions]="chartOptions.plotOptions!"
-      [fill]="chartOptions.fill!"
-      [stroke]="chartOptions.stroke!"
-      [labels]="chartOptions.labels!"
+    <apx-chart 
+    #chart
+      [series]="chartOptions.series"
+      [chart]="chartOptions.chart"
+      [plotOptions]="chartOptions.plotOptions"
+      [fill]="chartOptions.fill"
+      [stroke]="chartOptions.stroke"
+      [labels]="chartOptions.labels"
     ></apx-chart>
   </div>
   

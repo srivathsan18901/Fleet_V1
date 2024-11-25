@@ -132,6 +132,8 @@ export class SidenavbarComponent implements OnInit {
     let data = await response.json();
     // console.log(data.fleetUp);
     this.isFleetUp = data.fleetUp ? true : false;
+    let prevFleetStatus = this.projectService.getIsFleetUp();
+    if(prevFleetStatus === this.isFleetUp) return;
     this.projectService.setIsFleetUp(this.isFleetUp)
   }
 

@@ -78,9 +78,9 @@ export class RobotPopupComponent {
         id: robo.amrId,
         roboName: robo.roboName,
         ipAdd: robo.ipAdd,
-        selected: false,
+        attachmentType:robo.grossInfo.attachmentType,
         uuid:robo.uuid,
-        amrid:robo.amrId
+        amrid:robo.amrId,
       };
     });
 

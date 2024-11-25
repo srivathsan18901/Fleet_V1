@@ -51,22 +51,52 @@
           <!-- Popup for selecting robots -->
           <div *ngIf="isPopupVisible" class="sim-popup-modal">
             <div class="sim-popup-content">
-              <h3>Enter the Number of Robots</h3>
-          
+              <h3>Enter the Robots for simulation </h3>
               <label for="robots">Number of Robots:</label>
-              <input type="number" [(ngModel)]="robotCount" id="robots" placeholder="Enter number of robots">
-            
+              <input 
+                type="number" 
+                [(ngModel)]="robotCount" 
+                id="robots" 
+                placeholder="Enter number of robots" 
+                min="1">
+              
               <div class="sim-button-container">
                 <button (click)="addRobot()">Add</button>
-                <button (click)="closePopup()">Cancel</button>
+                <!-- <button (click)="closePopup()">Cancel</button> -->
+
+                <button class="close-popup-btn" (click)="closePopup()">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="20"
+                    height="20"
+                    class="fill-current text-red-500"
+                  >
+                    <path fill="none" d="M0 0h24v24H0z" />
+                    <path
+                      d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                    />
+                  </svg>
+                </button>
+
+
+                <button (click)="clearAllRobots()">Delete All</button>
               </div>
           
-              <div *ngIf="true">
-              <!-- <div *ngIf="totalRobots > 0"></div> -->
-                <p>Total Robots: {{ totalRobots }}</p>
+              <div *ngIf="totalRobots > 0">
+                
+                <ul>
+                  <li *ngFor="let robot of simRobos">
+                    {{ robot.roboName }}
+                    <button (click)="deleteRobot(robot.amrId)">Delete</button>
+                  </li>
+                </ul>
               </div>
+          
+              <p>Total Robots: {{ totalRobots }}</p>
             </div>
           </div>
+          
             
         
           
@@ -518,6 +548,7 @@
               *ngIf="showImageUploadPopup"
               [EnvData]="this.EnvData"
               [currEditMap]="this.currEditMap"
+              [onMapEdit]="this.onMapEdit"
               [currEditMapDet]="this.currEditMapDet"
               (save)="onPopupSave()"
               (closePopup)="closeImageUploadPopup()"
@@ -592,7 +623,23 @@
             name="serialNumber"
             required
           />
+
         </div>
+        <div style="margin-top: 1rem; margin-right: 1rem; margin-left: 1rem;margin-bottom: 1rem;">
+          <label for="attachmentType" style="margin-right: 1rem; margin-left: 1rem">Attachment Type:</label>
+          <select
+            id="attachmentType"
+            [(ngModel)]="formData.attachmentType"
+            name="attachmentType"
+            required
+            style="padding: 0.6rem;"
+          >
+            <option value="NOT_SET">NOT_SET</option>
+            <option value="LIFTER">LIFTER</option>
+            <option value="SINGLECONVEYOR">SINGLECONVEYOR</option>
+            <option value="TWINCONVEYOR">TWINCONVEYOR</option>
+          </select>
+      </div>
         <div class="flex">
           <div class="robBTN-inp">
             <button

@@ -1,6 +1,6 @@
 <div class="topbar" >
   <div class="TopbarContents">
-
+  <app-loader></app-loader>
     <div class="timer">
       <app-timer></app-timer>
     </div>
@@ -34,14 +34,17 @@
           <path d="M5.75505 8.33739L0 2.58245L1.91834 0.664062L5.75505 4.50076L9.59169 0.664062L11.51 2.58245L5.75505 8.33739Z" fill="black"/>
         </svg>
       </div>
-      <div *ngIf="languageArrowState" class="language-dropdown">
+      <!-- language dropdown -->
+
+      
+      <!-- <div *ngIf="languageArrowState" class="language-dropdown">
         <div *ngFor="let flag of flags; trackBy: trackFlag" class="language-option" (click)="changeFlag(flag.order)">
           <span class="option-info">
             <div [(innerHTML)]="flag.flagComp" class="flag-icon"></div>
             <p class="flag-name">{{flag.nameTag}}</p>
           </span>
         </div>
-      </div>
+      </div> -->
     </div>
 
 

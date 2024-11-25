@@ -20,6 +20,7 @@ import { MessageService } from 'primeng/api';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormBuilder } from '@angular/forms';
 import { v4 as uuid } from 'uuid';
+import { SessionService } from '../services/session.service';
 
 interface Poll {
   ip: string;
@@ -83,6 +84,7 @@ export class ConfigurationComponent implements AfterViewInit {
   currEditRobo: any | null = null;
 
   currEditMap: boolean = false;
+  onMapEdit:boolean=false;
   currEditMapDet: any | null = null;
   agvKinematicsOptions: any[] = [
     { name: 'DIFF', value: 'DIFF' },
@@ -114,13 +116,14 @@ export class ConfigurationComponent implements AfterViewInit {
   paginatedData: any[] = [];
   paginatedData1: any[] = [];
   paginatedData2: any[] = [];
+simRobos: any;
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private projectService: ProjectService,
     public dialog: MatDialog, // Inject MatDialog
     private messageService: MessageService,
-
+    private sessionService :SessionService
   ) {
     this.filteredEnvData = [...this.EnvData];
     // this.filteredRobotData = [...this.robotData];
@@ -200,6 +203,10 @@ export class ConfigurationComponent implements AfterViewInit {
           });
           this.projectService.setIsMapSet(true);
         }
+      }
+      if(this.sessionService.isMapInEdit()){
+        this.onMapEdit = true;
+        this.showImageUploadPopup = true;
       }
       // })
     } catch (error) {
@@ -1261,8 +1268,6 @@ setPaginatedData1(){
   }
   editItem(item: any) {
     if(this.currEditMap){
-      console.log("hey");
-      
       this.currEditMap = true;
     }
     fetch(
@@ -1466,11 +1471,11 @@ setPaginatedData1(){
   // isAGVGeometryFormVisible = false;
   // isLoadSpecificationFormVisible = false;
   // isLocalizationParametersFormVisible = false;
-
   formData =  {
     robotName: '',
     manufacturer: '',
     serialNumber: '',
+    attachmentType: 'NOT_SET',
     typeSpecification: {
       seriesName: '',
       seriesDescription: '',
@@ -1510,6 +1515,7 @@ setPaginatedData1(){
       robotName: '',
       manufacturer: '',
       serialNumber: '',
+      attachmentType: 'NOT_SET',
       typeSpecification: {
         seriesName: '',
         seriesDescription: '',
@@ -1703,13 +1709,16 @@ setPaginatedData1(){
     let amrId = 0;
     if (this.robotData.length)
       amrId = this.robotData[this.robotData.length - 1].amrId + 1;
+    const  dateInSecs = Math.round(Date.now() / 1000)
+    let uuid=(parseInt(dateInSecs.toString().slice(-8)));
+
     const roboDetails = {
       projectName: project.projectName,
       mapId: currMap.id,
       mapName: currMap.mapName,
       roboName: this.formData.robotName,
       amrId: amrId,
-      uuid: uuid(),
+      uuid: uuid,
       // isSimMode : false,
       ipAdd: this.currentRoboDet.ip,
       macAdd: this.currentRoboDet.mac,
@@ -1859,6 +1868,7 @@ setPaginatedData1(){
         roboName: `MR${existingSimRobos.length + i}00`,  // Unique name
         enable: false,
         isInitialized: false,
+        imgState:"",
         pos: { x: existingSimRobos.length + i, y: 0, orientation: 0 },
       });
     }
@@ -1877,33 +1887,7 @@ setPaginatedData1(){
     this.robotCount = 0;
   }
 
-  async deleteRobot(amrId: number) {
-    try {
-      // Fetch the current list of robots for the selected map
-      let simRobos = await this.getSimRobos(this.selectedMap);
-      if (!simRobos) {
-        alert('No robots to delete.');
-        return;
-      }
-  
-      // Filter out the robot with the specified `amrId`
-      const updatedSimRobos = simRobos.filter((robot: any) => robot.amrId !== amrId);
-  
-      // Update the backend with the modified list of robots
-      let result = await this.updateSimInMap(updatedSimRobos);
-      if (result) {
-        alert(`Robot with ID ${amrId} deleted!`);
-        
-        // Update the local totalRobots count
-        this.totalRobots = updatedSimRobos.length;
-      } else {
-        console.error('Failed to delete robot from the backend.');
-      }
-    } catch (error) {
-      console.error('Error during robot deletion:', error);
-    }
-  }
-  
+ 
   async clearAllRobots() {
     try {
       if (this.totalRobots === 0) {
@@ -1930,6 +1914,49 @@ setPaginatedData1(){
   }
    
 
-}
+
+
+
+
+
+
+  async deleteRobot(amrId: number) {
+    try {
+      if (this.totalRobots === 0) {
+        alert('No robots available to delete.');
+        return;
+      }
   
+      // Fetch the current simRobos data
+      let existingSimRobos = await this.getSimRobos(this.selectedMap) || [];
+  
+      // Check if the robot with the given amrId exists
+      const robotToDelete = existingSimRobos.find((robot: { amrId: number; }) => robot.amrId === amrId);
+      if (!robotToDelete) {
+        alert(`Robot with ID ${amrId} not found.`);
+        return;
+      }
+  
+      // Filter out the robot to be deleted
+      const updatedSimRobos = existingSimRobos.filter((robot: { amrId: number; }) => robot.amrId !== amrId);
+  
+      // Update the backend with the updated list of robots
+      let result = await this.updateSimInMap(updatedSimRobos);
+      if (result) {
+        alert(`Robot with ID ${amrId} deleted!`);
+        
+        // Update the local totalRobots count
+        this.totalRobots = updatedSimRobos.length;
+      } else {
+        alert('Failed to delete the robot from the backend.');
+      }
+    } catch (error) {
+      console.error('Error during robot deletion:', error);
+    }
+  }
+  
+
+}
+
+
 
