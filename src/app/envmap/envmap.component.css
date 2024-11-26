@@ -308,7 +308,13 @@ h2 {
   height: 30px;
   cursor: pointer;
 } */
-
+.form-control {
+  height: 30px;
+  border-radius: 5px;
+}
+.form-control option{
+  font-size: 10px;
+}
 .form-container,
 .form1-container {
   margin-top: 10px;
@@ -564,9 +570,15 @@ canvas {
 .node-row {
   display: flex;
   justify-content: center; /* Align items evenly between the rows */
-  gap: 2rem; /* Space between columns */
+  gap: 1rem; /* Space between columns */
+  font-size: 5px;
 }
-
+.node1-sub{
+  margin-bottom:10px;
+}
+.predockPoseDropdown{
+  width: 20px;
+}
 .node1 {
   display: flex;
   align-items: center;

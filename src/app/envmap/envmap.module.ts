@@ -13,6 +13,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastModule } from 'primeng/toast';
+import { RadioButtonModule } from 'primeng/radiobutton';
 
 
 @NgModule({
@@ -30,7 +31,8 @@ import { ToastModule } from 'primeng/toast';
     InputMaskModule,
     InputGroupAddonModule,
     DropdownModule,
-    ToastModule
+    ToastModule,
+    RadioButtonModule
   ]
 })
 export class EnvmapModule { }

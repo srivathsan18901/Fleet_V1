@@ -225,6 +225,7 @@ export class DashboardComponent implements AfterViewInit {
       this.projectService.setInLive(true);
       this.isInLive = true;
     }
+    
     // console.log(this.simMode);
   }
 
@@ -282,7 +283,11 @@ export class DashboardComponent implements AfterViewInit {
     this.robotImages['charge'].src = 'assets/Roboimg/charge.svg';
     this.robotImages['failed'].src = 'assets/Roboimg/failed.svg';
   }
-  
+  isStateDivVisible: boolean = false;
+
+  toggleStateDiv(): void {
+    this.isStateDivVisible = !this.isStateDivVisible;
+  }
   // initSimRoboPos() {
   //   const imgWidth = this.mapImg.width; // * this.zoomLevel
   //   const imgHeight = this.mapImg.height; // * this.zoomLevel    
@@ -1328,6 +1333,7 @@ async onInitMapImg() {
       canvasOptions.style.boxShadow = '0 3px 6px #ff7373';
     }
   }
+  
   async plotAllRobots(robotsData: any) {
     const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d');

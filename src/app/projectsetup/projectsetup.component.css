@@ -99,6 +99,7 @@
   display: flex;
   justify-content: center;
 }
+
 .input-container1 {
   position: relative;
   margin: 20px 0px 10px 0px;
@@ -267,7 +268,7 @@ select.ProjList {
 
 /* Style the main dropdown container */
 .ProjList .p-dropdown {
-  height: 29px; /* Set the height */
+  height: 20px; /* Set the height */
   display: flex;
   align-items: center; /* Center content vertically */
 }
@@ -281,6 +282,7 @@ select.ProjList {
 
 /* You can also add padding or other styling to make it look better */
 .ProjList .p-dropdown {
+  max-height: 3;
   padding: 5px;
   border-radius: 5px;
 }
@@ -290,3 +292,10 @@ select.ProjList {
   max-height: 200px; /* Add a max-height if the list is too long */
   overflow-y: auto;  /* Add vertical scroll if needed */
 }
+
+::ng-deep .p-dropdown-items-wrapper{
+  max-height: 90px !important;
+  width:165px;
+  font-size: 12px;
+}
+

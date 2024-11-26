@@ -22,6 +22,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { SessionService } from '../services/session.service';
 import { map } from 'rxjs';
+
 interface Node {
   nodeId: string;
   sequenceId: number;
@@ -34,6 +35,8 @@ interface Node {
   Waiting_node: boolean;
   charge_node: boolean;
   dock_node: boolean;
+  pre_dockNodeId:number|null;
+  Un_dockNodeId:number|null;
 }
 interface Edge {
   edgeId: string; //Unique edge identification
@@ -308,7 +311,7 @@ export class EnvmapComponent implements AfterViewInit {
   isOpen: boolean = false;
   descriptionWarning: boolean = false;
   currMulNode : Node[] = [];
-  currentQuaternion:{ x: number; y: number;z:number;w:number } | null = null;
+  currentQuaternion:{ x: number; y: number; z:number; w:number } | null = null;
   newOrientationAngle: number = 0;
   inputOrientationAngle: number = 0; // The value entered by the user
   // selectedNodeId: string; // Variable to store the selected node
@@ -353,6 +356,7 @@ export class EnvmapComponent implements AfterViewInit {
   ) {
     if (this.currEditMap) this.showImage = true;
   }
+  
   ngOnInit() {
     this.selectedMap = this.projectService.getMapData();
     if(!this.selectedMap) return;
@@ -405,6 +409,7 @@ export class EnvmapComponent implements AfterViewInit {
         parseInt(this.zones[this.zones.length - 1]?.id) + 1
           ? parseInt(this.zones[this.zones.length - 1].id) + 1
           : this.zoneCounter;
+      this.sessionService.onMapEdit();   //discuss later 
       this.open();
     }
     else if(this.sessionService.isMapInEdit()){
@@ -425,7 +430,16 @@ export class EnvmapComponent implements AfterViewInit {
         ? parseInt(this.edges[this.edges.length - 1].edgeId) + 1
         : this.edgeCounter;
       this.selectedImage = this.sessionService.base64toFile();
-      // this.zones=mapData.zones;
+      this.zones=mapData.zones;
+      this.zoneCounter =
+      parseInt(this.zones[this.zones.length - 1]?.id) + 1
+        ? parseInt(this.zones[this.zones.length - 1].id) + 1
+        : this.zoneCounter;
+      this.assets=mapData.assets;
+      this.assetCounter =
+      this.assets[this.assets.length - 1]?.id + 1
+        ? this.assets[this.assets.length - 1].id + 1
+        : this.assetCounter;
       this.open();
     }
   }
@@ -802,7 +816,47 @@ export class EnvmapComponent implements AfterViewInit {
       this.validationError=null;
   }
   
-  saveNodeDetails(x: string, y: string, orientation: string): void {
+  selectedNodeType: string = '';
+
+  updateNodeType(): void {
+    // Reset all node types to false
+    this.nodeDetails.intermediate_node = false;
+    this.nodeDetails.waiting_node = false;
+    this.nodeDetails.charge_node = false;
+    this.nodeDetails.dock_node = false;
+
+    // Set the selected node type to true
+    switch (this.selectedNodeType) {
+      case 'Intermediate':
+        this.nodeDetails.intermediate_node = true;
+        break;
+      case 'Waiting':
+        this.nodeDetails.waiting_node = true;
+        break;
+      case 'Charge':
+        this.nodeDetails.charge_node = true;
+        break;
+      case 'Dock':
+        this.nodeDetails.dock_node = true;
+        break;
+    }
+    if (this.selectedNodeType === 'Dock' && this.selectedNode) {
+      this.fetchConnectedNodes(this.selectedNode.nodeId);
+    } else {
+      this.connectedNodes = []; // Clear connected nodes if not a Dock node
+    }
+  }
+  fetchConnectedNodes(nodeId: string): void {
+    // Use the edges array to find connected nodes
+    const connectedNodeIds = this.edges
+      .filter(edge => edge.startNodeId === nodeId || edge.endNodeId === nodeId)
+      .map(edge => (edge.startNodeId === nodeId ? edge.endNodeId : edge.startNodeId));
+  
+    // Fetch node details for the connected node IDs
+    this.connectedNodes = this.nodes.filter(node => connectedNodeIds.includes(node.nodeId));
+  }
+  
+  saveNodeDetails(x: string, y: string,orientation: string ): void {
     this.validationError = '';
     
     if (!this.nodeDetails.description) {
@@ -812,17 +866,18 @@ export class EnvmapComponent implements AfterViewInit {
     if (this.validationError) {
       return;
     }
-    let quaternion=this.ToQuaternion_(0,0,parseInt(orientation));
-
+    // let quaternion=this.ToQuaternion_(0,0,parseInt(orientation));
+    let quaternion=this.currentQuaternion;
 
     this.nodes = this.nodes.map(node => {
       if(this.selectedNode?.nodeId === node.nodeId) {
         node.actions = this.actions;
-        node.quaternion = quaternion;        
+        node.quaternion = quaternion ? quaternion : {x:0,y:0,z:0,w:1};      
+        if(this.selectedPredockPose)  node.pre_dockNodeId =parseInt(this.selectedPredockPose);
+        if(this.selectedUndockPose)  node.Un_dockNodeId =parseInt(this.selectedUndockPose);
       }
       return node;
     })
-    console.log("hey out");
     this.storeNodestoLocal();
     // this.projectService.setNode();
     // Ensure the nodeDetails object includes the checkbox values
@@ -884,6 +939,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.resetParameters(); // Reset the parameters
     this.actions = []; // Clear the actions array
     this.selectedAction = ''; // Reset the selected action
+    this.selectedNodeType = '';
     this.isNodeDetailsPopupVisible = false; // Hide the popup if needed
   }
   openActionForm(action: any): void {
@@ -1046,7 +1102,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.actions = [];
     this.selectedAction = null;
     this.selectedNode = null;
-
+    this.selectedNodeType="";
     this.isNodeDetailsPopupVisible = false;
     this.hideActionForms();
   }
@@ -1578,6 +1634,7 @@ export class EnvmapComponent implements AfterViewInit {
 
           this.cdRef.detectChanges();
           this.refreshTable.emit(); // Emit the event to refresh the table
+          this.sessionService.grossDelete();
           // window.location.reload();
         }
 
@@ -1806,6 +1863,10 @@ export class EnvmapComponent implements AfterViewInit {
               mapName: this.mapName,
               mpp: this.ratio,
               origin: this.origin,
+              nodes:this.nodes,
+              edges:this.edges,
+              assets:this.assets,
+              zones:this.zones
             })
             this.sessionService.onMapEdit();
           }
@@ -1925,6 +1986,11 @@ export class EnvmapComponent implements AfterViewInit {
     for (const node of this.nodes) {      
       if (this.isNodeClicked(node, x, y) ) {
         this.selectedNode=node;
+        if(node.intermediate_node) this.selectedNodeType = "Intermediate";
+        else if(node.Waiting_node) this.selectedNodeType = "Waiting";
+        else if(node.charge_node) this.selectedNodeType = "Charge";
+        else if(node.dock_node) this.selectedNodeType = "Dock";
+        // this.selectedPredockPose=node.pre_dockNodeId.toString();
         this.currentQuaternion=node.quaternion;
         this.nodeDetails.description = this.selectedNode.nodeDescription;
         this.nodeDetails.intermediate_node = this.selectedNode.intermediate_node;
@@ -2363,7 +2429,18 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
     mapDetails.edges=this.edges;
     this.sessionService.storeMapDetails(mapDetails);
   }
-  
+  storeZonestoLocal(){
+    if(!this.sessionService.isMapInEdit())return; 
+    let mapDetails = this.sessionService.getMapDetails();
+    mapDetails.zones=this.zones;
+    this.sessionService.storeMapDetails(mapDetails);
+  }
+  storeAssetstoLocal(){
+    if(!this.sessionService.isMapInEdit())return; 
+    let mapDetails = this.sessionService.getMapDetails();
+    mapDetails.assets=this.assets;
+    this.sessionService.storeMapDetails(mapDetails);
+  }
   plotSingleNode(x: number, y: number): void {
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = canvas.getContext('2d')!;
@@ -2390,6 +2467,8 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
         Waiting_node: false,
         charge_node: false,
         dock_node:false,
+        pre_dockNodeId:null,
+        Un_dockNodeId:null,
         actions: [],
       },
       color,
@@ -2420,7 +2499,9 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
       intermediate_node: false,
       Waiting_node: false,
       charge_node: false,
-      dock_node: false
+      dock_node: false,
+      pre_dockNodeId:null,
+      Un_dockNodeId:null
     };
 
     //{ id: this.nodeCounter.toString(), x, y: transformedY,type: 'single' }
@@ -2488,7 +2569,9 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             intermediate_node: false,
             Waiting_node: false,
             charge_node: false,
-            dock_node: false
+            dock_node: false,
+            pre_dockNodeId:null,
+            Un_dockNodeId:null
         },
         color,
         false
@@ -2507,7 +2590,9 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             intermediate_node: false,
             Waiting_node: false,
             charge_node: false,
-            dock_node: false
+            dock_node: false,
+            pre_dockNodeId:null,
+            Un_dockNodeId:null
         };
         this.firstNode = firstnode;
         this.nodes.push(firstnode);
@@ -2525,7 +2610,9 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             intermediate_node: false,
             Waiting_node: false,
             charge_node: false,
-            dock_node: false
+            dock_node: false,
+            pre_dockNodeId:null,
+            Un_dockNodeId:null
         };
         this.secondNode = secondnode;
         this.currMulNode.push(this.firstNode);
@@ -2644,7 +2731,9 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
             intermediate_node: true, // Marking it as intermediate
             Waiting_node: false,
             charge_node: false,
-            dock_node: false
+            dock_node: false,
+            pre_dockNodeId:null,
+            Un_dockNodeId:null
           };
 
           this.nodes.push(node);
@@ -3070,6 +3159,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
         asset.orientation = this.orientationAngle;
       return asset;
     });
+    this.storeAssetstoLocal();
     this.overlayCanvas.nativeElement.addEventListener(
       'mousemove',
       this.onMouseMove.bind(this)
@@ -3261,6 +3351,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
       };
       this.zones.push(zone);
       this.zoneCounter++;
+      this.storeZonestoLocal();
     }
 
     this.isPopupVisible = false; // Hide the popup
@@ -3382,6 +3473,10 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
     }
     return false;
   }
+  connectedNodes: any[] = []; // Array to store connected nodes
+  selectedPredockPose: string | null = null; // Holds the selected Predock Pose
+  selectedUndockPose: string | null = null;
+
   originalRoboPosition: { x: number; y: number } | null = null;
   originalAssetPosition: { x : number; y: number } | null = null;
   originalNodePosition: { x : number; y: number } | null = null;
@@ -3480,7 +3575,7 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
       }
         this.selectedAsset = asset;
         this.assets.push(asset);
-
+        this.storeAssetstoLocal();
         this.plotAsset(x, y, this.selectedAssetType);
         if (this.selectedAssetType === 'docking') {
           this.isDrawingLine = true; //..

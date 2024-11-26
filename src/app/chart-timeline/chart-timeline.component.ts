@@ -84,6 +84,7 @@ export class ChartTimelineComponent implements OnInit {
     private cdRef: ChangeDetectorRef
   ) {
     // this.chartOptions = this.getChartOptions(this.cpuUtilArr, 'CPU Utilization');
+    // console.log(this.cpuUtilArr,"chart fn")
     this.chartOptions = {
       series: [
         {
@@ -228,6 +229,7 @@ export class ChartTimelineComponent implements OnInit {
     const limitedTime = time.length > limit ? time.slice(-limit) : time;
 
     // this.chartOptions.series = [{ name: seriesName, data: limitedData }];
+    console.log("plot chart fn",seriesName,"--",data,"---",time,"--",limit)
     this.chart.updateOptions(
       {
         series: [{ name: seriesName, data: limitedData }],
@@ -258,7 +260,9 @@ export class ChartTimelineComponent implements OnInit {
 
   async updateCpuUtil() {
     // this.chartOptions.xaxis.range = 12; // get use of it..
-    this.clearAllIntervals(this.cpuUtilTimeInterval);
+    // console.log(this.cpuUtilTimeInterval,"interval")
+    this.clearAllIntervals(this.cpuUtilTimeInterval); //argu is null
+    // console.log(this.currentFilter,"current filter") // current val is null
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.cpuUtilTimeInterval);
       this.cpuUtilTimeInterval = 0;
@@ -267,6 +271,7 @@ export class ChartTimelineComponent implements OnInit {
         this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
         this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
       }
+      console.log("throughput 1")
       this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries, 30 );
       return;
     }
@@ -274,10 +279,12 @@ export class ChartTimelineComponent implements OnInit {
     if (this.cpuUtilTimeInterval) return;
 
     const data = await this.fetchChartData( 'cpu-utilization', this.currentFilter, '', '' );
+    // console.log(data,"data") //hold the chart data
     if (data.cpuUtil) {
       this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
       this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
     }
+    console.log("throughPut 2")
     this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries );
 
     this.cpuUtilTimeInterval = setInterval(async () => {
@@ -286,6 +293,7 @@ export class ChartTimelineComponent implements OnInit {
         this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
         this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
       }
+      console.log("throughPut 3")
       this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries );
     }, 1000 * 2);
   }

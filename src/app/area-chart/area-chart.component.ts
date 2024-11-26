@@ -168,7 +168,6 @@ export class AreaChartComponent implements OnInit {
 
   applyFilter(event: any) {
     this.currentFilter = event.target.value.toLowerCase();
-
     // this.intervals.forEach((interval) => {
     //   if (this[interval]) {
     if (this.selectedMetric === 'Throughput')
@@ -220,15 +219,18 @@ export class AreaChartComponent implements OnInit {
         }),
       }
     );
+    console.log(await response.json(),"json resposne")
     return await response.json();
   }
 
   async updateThroughput() {
     // this.chartOptions.xaxis.range = 12; // get use of it..
+    // console.log(this.currentFilter,"current fileter")
     this.clearAllIntervals(this.throuputTimeInterval);
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.throuputTimeInterval);
       this.throuputTimeInterval = 0;
+      // console.log('week or month is selected')
       const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
       if (data.throughput) {
         this.throughputArr = data.throughput.map((stat: any) => stat.rate);
@@ -485,7 +487,17 @@ export class AreaChartComponent implements OnInit {
 
   getTimeStampsOfDay() {
     let currentTime = Math.floor(new Date().getTime() / 1000);
-    let startTimeOfDay = this.getStartOfDay();
+    let startTimeOfDay;
+    if(this.currentFilter == 'week'){
+       startTimeOfDay = this.weekStartOfDay()
+    }
+    else if(this.currentFilter == 'month'){
+      startTimeOfDay = this.monthStartOfDay()
+    }
+    else{
+      startTimeOfDay= this.getStartOfDay()
+    }
+    
     return {
       timeStamp1: startTimeOfDay,
       timeStamp2: currentTime,
@@ -494,5 +506,20 @@ export class AreaChartComponent implements OnInit {
 
   getStartOfDay() {
     return Math.floor(new Date().setHours(0, 0, 0) / 1000);
+  }
+
+  weekStartOfDay(){
+
+    let currentDate = new Date();
+
+    // Subtract 7 days (last week) from the current date
+    let lastWeekDate = new Date();
+    lastWeekDate.setDate(currentDate.getDate() - 7);
+
+    return(Math.floor(new Date(lastWeekDate).setHours(0,0,0)/1000))
+  }
+
+  monthStartOfDay(){
+
   }
 }

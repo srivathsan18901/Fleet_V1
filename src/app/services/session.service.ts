@@ -100,9 +100,9 @@ export class SessionService {
     }
   }
   grossDelete(){
-    // localStorage.removeItem(this.imgKey);
-    // localStorage.removeItem("isMapInEdit");
-    // localStorage.removeItem(this.mapKey);
-    localStorage.clear();
+    localStorage.removeItem(this.imgKey);
+    localStorage.removeItem("isMapInEdit");
+    localStorage.removeItem(this.mapKey);
+    // localStorage.clear();
   }
 }

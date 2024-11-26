@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
+import { interval } from 'rxjs';
 
 @Component({
   selector: 'app-robot-dashboard',
@@ -125,7 +126,6 @@ export class RobotDashboardComponent implements OnInit {
         body: JSON.stringify(bodyData),
       }
     );
-
     return await response.json();
   }
 
@@ -136,21 +136,25 @@ export class RobotDashboardComponent implements OnInit {
     let averageSpeed = await this.fetchFleetStatus('average-speed', {
       mapId: mapId,
     });
+    // console.log(averageSpeed,"average speed")
     if (averageSpeed.averageSpeed)
       this.statisticsData.averageSpeed = averageSpeed.averageSpeed;
     let totDistance = await this.fetchFleetStatus('total-distance', {
       mapId: mapId,
     });
+    // console.log(totDistance,"totDistance")
     if (totDistance.totalDistance)
       this.statisticsData.totalDistance = totDistance.totalDistance;
     let roboUtil = await this.fetchFleetStatus('robo-util', {
       mapId: mapId,
     });
+    // console.log(roboUtil,"roboUtil")
     if (roboUtil.roboUtilization)
       this.statisticsData.robotUtilization = roboUtil.roboUtilization;
     let networkConn = await this.fetchFleetStatus('network-conn', {
       mapId: mapId,
     });
+    // console.log(networkConn,"networkConn")
     if (networkConn.networkConnection)
       this.statisticsData.networkConnection = networkConn.networkConnection;
   }
@@ -224,4 +228,13 @@ export class RobotDashboardComponent implements OnInit {
   onViewAllClick() {
     this.router.navigate(['/robot logs']); // Navigate to the tasks page
   }
+
+  ngAfterViewInit(){
+      let reloadData=interval(2000).subscribe(()=>{
+        this.getFleetGrossStatus()
+      })
+  }
+
 }
+
+

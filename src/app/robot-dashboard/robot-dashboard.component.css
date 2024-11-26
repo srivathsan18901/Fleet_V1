@@ -588,3 +588,7 @@ h2 {
   color: rgba(0, 0, 0, 0.7); /* Customize text color */
   text-align: center;
 }
+
+::ng-deep .apexcharts-toolbar{
+  z-index: 0 !important;
+}

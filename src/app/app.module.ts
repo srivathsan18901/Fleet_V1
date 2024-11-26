@@ -52,6 +52,7 @@ import { AppServerModule } from './app.module.server';
 import { SupportComponent } from './support/support.component';
 import { FaqComponent } from './faq/faq.component';
 import { CheckboxModule } from 'primeng/checkbox';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { ContactusComponent } from './support/Addons/contactus/contactus.component';
 import { DialogModule } from 'primeng/dialog';
 import { LoaderComponent } from './loader/loader.component';
@@ -67,7 +68,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 // import { BrowserModule } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
+import {MatRadioModule} from '@angular/material/radio';
 
 
 
@@ -112,10 +113,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
     TimerComponent
   ],
   imports: [
+    MatRadioModule,
     NgApexchartsModule,
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    RadioButtonModule,
     FormsModule,
     BrowserModule,
     RouterModule.forRoot([]),

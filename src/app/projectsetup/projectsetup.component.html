@@ -109,13 +109,16 @@
         </div>
         <div class="ProjDiv3" *ngIf="isProjDiv3Visible">
           <p-dropdown
-          class="ProjList" appendTo="body"
+          class="ProjList"
+          appendTo="body"
           [options]="productList"
           [(ngModel)]="selectedProject"
           optionLabel="projectName"
           placeholder="Project List"
           (onChange)="onProjectChange($event.value)"
+          [style]="{ 'position': 'relative' }"
         ></p-dropdown>
+        
           <div class="ButtonSet">
             <button class="OpenBTN" (click)="openProject()">OPEN</button>
             <button (click)="showProjDiv3()" class="BackBTN">BACK</button>

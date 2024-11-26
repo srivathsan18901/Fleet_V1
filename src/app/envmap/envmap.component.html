@@ -233,6 +233,7 @@
           <h2>Node Details</h2>
           <h3>Nodeid:  {{ selectedNode?.nodeId }}</h3>
           <div class="Nodevalues">
+            <h3 class="q-title">Position</h3>
           <div class="XY-coor">
           <div >
             <label for="X_Co">X</label>
@@ -254,8 +255,8 @@
                 aria-describedby="Y-Coordinate" 
                 />
           </div>  
-          <div>
-            <label for="Orientation">Orientation</label>
+          <!-- <div>
+            <label for="Orientation">Angle</label>
             <input 
                 pInputText
                 id="Orientation" 
@@ -263,16 +264,17 @@
                 #orientationInput
                 aria-describedby="Orientation" 
                 />
-          </div>   
+          </div>    -->
             
         </div> 
         <div class="quaternion-inputs">
-          <h3 class="q-title">Quaternion</h3>
+          <h3 class="q-title">Orientation</h3>
           <div class="quaternion-row">
             <div>
               <label for="quaternionX">X:</label>
               <input
                 pInputText
+                type="number"
                 id="quaternionX"
                 [(ngModel)]="currentQuaternion!.x"
                 placeholder="Enter X"
@@ -283,6 +285,7 @@
               <label for="quaternionY">Y:</label>
               <input
                 pInputText
+                type="number"
                 id="quaternionY"
                 [(ngModel)]="currentQuaternion!.y"
                 placeholder="Enter Y"
@@ -293,6 +296,7 @@
               <label for="quaternionZ">Z:</label>
               <input
                 pInputText
+                type="number"
                 id="quaternionZ"
                 [(ngModel)]="currentQuaternion!.z"
                 placeholder="Enter Z"
@@ -303,6 +307,7 @@
               <label for="quaternionW">W:</label>
               <input
                 pInputText
+                type="number"
                 id="quaternionW"
                 [(ngModel)]="currentQuaternion!.w"
                 placeholder="Enter W"
@@ -356,53 +361,48 @@
               <div class="node-action">
                 <div class="node-row">
                   <div class="node1">
-                    <label for="Intermediate_Stn" class="label">Intermediate Node:</label>
-                    <p-checkbox
-                      id="Intermediate_Stn"
-                      [binary]="true"
-                      inputId="binary"
-                      [(ngModel)]="nodeDetails.intermediate_node"
-                    ></p-checkbox>
+                    <label for="nodeTypeDropdown" class="label">Node Type:</label>
+                    <select
+                      id="nodeTypeDropdown"
+                      class="form-control"
+                      [(ngModel)]="selectedNodeType"
+                      (change)="updateNodeType()"
+                    >
+                      <option [value]="'Intermediate'">Intermediate Node</option>
+                      <option [value]="'Waiting'">Waiting Node</option>
+                      <option [value]="'Charge'">Charge Node</option>
+                      <option [value]="'Dock'">Dock Node</option>
+                    </select>
                   </div>
-                  <div class="node1">
-                    <label for="Waiting_Stn" class="label">Waiting Node:</label>
-                    <p-checkbox
-                      id="Waiting_Stn"
-                      [binary]="true"
-                      inputId="binary"
-                      [(ngModel)]="nodeDetails.waiting_node"
-                    ></p-checkbox>
+                  <div>
+                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock'">
+                    <label for="predockPoseDropdown" class="label">Predock Pose:</label>
+                    <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedPredockPose">
+                      <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
+                        {{ node.nodeId }}
+                      </option>
+                    </select>
                   </div>
-                </div>
-              
-                <div class="node-row">
-                  <div class="node1">
-                    <label for="Charge_Stn" class="label">Charge Node:</label>
-                    <p-checkbox
-                      id="Charge_Stn"
-                      [binary]="true"
-                      inputId="binary"
-                      [(ngModel)]="nodeDetails.charge_node"
-                    ></p-checkbox>
+                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock'">
+                    <label for="predockPoseDropdown" class="label">Undock Pose:</label>
+                    <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedUndockPose">
+                      <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
+                        {{ node.nodeId }}
+                      </option>
+                    </select>
                   </div>
-                  <div class="node1">
-                    <label for="Dock_Stn" class="label">Dock Node:</label>
-                    <p-checkbox
-                      id="Dock_Stn"
-                      [binary]="true"
-                      inputId="binary"
-                      [(ngModel)]="nodeDetails.dock_node"
-                    ></p-checkbox>
                   </div>
                 </div>
               </div>
+              
               
           <div class="Node-btn1">
             <div *ngIf="validationError" class="node-validation-error">*{{ validationError }}</div>
           </div>
           <div class="Node-btn">
             <button class="Delnode-btn" (click)="deleteSelectedNode()">Delete Node</button>
-            <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, orientationInput.value)">Save</button>
+            <!-- <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, orientationInput.value)">Save</button> use for later--> 
+            <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, yInput.value)">Save</button>
             <button class="closenode-btn" (click)="closeNodeDetailsPopup()">Close</button>
           </div>
         </div>
