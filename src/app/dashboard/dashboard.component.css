@@ -225,7 +225,7 @@ canvas {
   /* From https://css.glass */ 
   background: rgba(255, 255, 255, 0.2); 
   border-radius: 16px; 
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); 
+  box-shadow: 0 4px 30px rgba(226, 114, 114, 0.653); 
   backdrop-filter: blur(5px); 
   -webkit-backdrop-filter: blur(5px); 
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -241,14 +241,11 @@ canvas {
   text-align: left;
 
 }
-
-
-
-
 .Chart2 p, .Chart3 p {
   font-size: 20px;
   font-weight: bold;
   color: #333333;
+  
   font-family: "graphik", Arial,  sans-serif;
   margin-bottom: 0;
   text-align: left;
@@ -258,10 +255,13 @@ canvas {
   /* background-color: rgb(255, 255, 255); */
   height: 250px; /* Increased height */
   width: 430px; /* Increased width */
-  box-shadow: 0 4px 8px rgba(128, 128, 128, 0.6); /* Grey drop shadow */
+  box-shadow: 0 4px 8px rgba(200, 94, 94, 0.6); /* Grey drop shadow */
   border-radius: 20px;
   /*  */
- /* From https://css.glass */ background: rgba(255, 255, 255, 0.2); border-radius: 16px; box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.3);
+ /* From https://css.glass */ 
+ background: rgba(255, 255, 255, 0.2); 
+ border-radius: 16px; 
+ backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .Chart1:hover, .Chart2:hover, .Chart3:hover {

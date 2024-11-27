@@ -130,7 +130,7 @@ export class StatisticsComponent {
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) return;
-    this.getGrossStatus();
+    await this.getGrossStatus();
     this.operationPie = await this.fetchTasksStatus();
     this.taskStatus_interval = setInterval(async () => {
       this.operationPie = await this.fetchTasksStatus();
@@ -166,13 +166,14 @@ export class StatisticsComponent {
   // async to synchronous...
   async getGrossStatus() {
     const mapId = this.selectedMap.id;
+    const projectId = this.projectService.getSelectedProject()._id;
 
     let throughputData = await this.fetchFleetStatus('system-throughput', {
       mapId: mapId,
     });
     // if (throughputData.systemThroughput)
     //   this.statisticsData.systemThroughput = throughputData.systemThroughput;
-    let uptime = await this.fetchFleetStatus('system-uptime', { mapId: mapId });
+    let uptime = await this.fetchFleetStatus('system-uptime', { projectId: projectId });
     if (uptime.systemUptime)
       this.statisticsData.systemUptime = uptime.systemUptime;
     await this.fetchFleetStatus('success-rate', {

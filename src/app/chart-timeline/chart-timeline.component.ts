@@ -229,7 +229,7 @@ export class ChartTimelineComponent implements OnInit {
     const limitedTime = time.length > limit ? time.slice(-limit) : time;
 
     // this.chartOptions.series = [{ name: seriesName, data: limitedData }];
-    console.log("plot chart fn",seriesName,"--",data,"---",time,"--",limit)
+    // console.log("plot chart fn",seriesName,"--",data,"---",time,"--",limit)
     this.chart.updateOptions(
       {
         series: [{ name: seriesName, data: limitedData }],
@@ -284,7 +284,7 @@ export class ChartTimelineComponent implements OnInit {
       this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
       this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
     }
-    console.log("throughPut 2")
+    // console.log("throughPut 2")
     this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries );
 
     this.cpuUtilTimeInterval = setInterval(async () => {
@@ -293,7 +293,7 @@ export class ChartTimelineComponent implements OnInit {
         this.cpuUtilArr = data.cpuUtil.map((stat: any) => stat.rate);
         this.cpuXaxisSeries = data.cpuUtil.map( (stat: any) => stat.time );
       }
-      console.log("throughPut 3")
+      // console.log("throughPut 3")
       this.plotChart( 'Throughput', this.cpuUtilArr, this.cpuXaxisSeries );
     }, 1000 * 2);
   }

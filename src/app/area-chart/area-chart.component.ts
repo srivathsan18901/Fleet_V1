@@ -206,6 +206,8 @@ export class AreaChartComponent implements OnInit {
   ) {
     // alter to date..
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    // console.log(timeStamp1,"start date")
+    // console.log(timeStamp2,'end date')
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
       {
@@ -219,7 +221,7 @@ export class AreaChartComponent implements OnInit {
         }),
       }
     );
-    console.log(await response.json(),"json resposne")
+    // console.log(await response.json(),"json resposne")
     return await response.json();
   }
 
@@ -274,11 +276,53 @@ export class AreaChartComponent implements OnInit {
     }, 1000 * 60); // 60 * 60
   }
 
+  async fetchStarvationData(
+    endpoint: string,
+    timeSpan: string,
+    startTime: string,
+    endTime: string
+  ) {
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    
+    // Fetch data from the API
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timeSpan: timeSpan, 
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+      }
+    );
+  
+    const data = await response.json();
+    
+    // Assuming data contains a list of tasks
+    if (data && data.tasks) {
+      const totalTasks = data.tasks.length;
+      const notAssignedCount = data.tasks.filter(
+        (task: any) => task.TaskStatus_Names === 'NOTASSIGNED'
+      ).length;
+  
+      const notAssignedPercentage = (notAssignedCount / totalTasks) * 100;
+  
+      // Return the data with the calculated NOTASSIGNED percentage
+      return { tasks: data.tasks, notAssignedPercentage };
+    }
+  
+    return { tasks: [], notAssignedPercentage: 0 };
+  }
+  
   async updateStarvationRate() {
-    // this.chartOptions.xaxis.range = 12;
-    let startTime = new Date().setHours(0, 0, 0, 0); // set current time to starting time of the current day..
-    let endTime = new Date().setMilliseconds(0); // time in milliseconds..
+    let startTime = new Date().setHours(0, 0, 0, 0);
+    let endTime = new Date().setMilliseconds(0); 
+  
     this.clearAllIntervals(this.starvationTimeInterval);
+    
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.starvationTimeInterval);
       this.starvationTimeInterval = 0;
@@ -302,39 +346,42 @@ export class AreaChartComponent implements OnInit {
       );
       return;
     }
-
+  
     if (this.starvationTimeInterval) return;
-
-    const data = await this.fetchChartData(
+  
+    const data = await this.fetchStarvationData(
       'starvationrate',
       this.currentFilter,
       '',
       ''
     );
-    if (data.starvation) {
-      this.starvationArr = data.starvation.map((stat: any) => stat.rate);
-      this.starvationXaxisSeries = data.starvation.map(
-        (stat: any) => stat.time
-      );
+    if (data.tasks && data.notAssignedPercentage !== undefined) {
+      this.starvationArr = data.tasks.map((task: any) => task.rate); // Assuming tasks contain the rate field
+      this.starvationXaxisSeries = data.tasks.map((task: any) => task.time);
+      
+      // Plot the NOTASSIGNED percentage in the chart
+      this.plotNotAssignedPercentage(data.notAssignedPercentage);
     }
+  
     this.plotChart(
       'Starvation rate',
       this.starvationArr,
       this.starvationXaxisSeries
-    ); // this.selectedMetric..
-
+    );
+  
     this.starvationTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
+      const data = await this.fetchStarvationData(
         'starvationrate',
         this.currentFilter,
         '',
         ''
       );
-      if (data.starvation) {
-        this.starvationArr = data.starvation.map((stat: any) => stat.rate);
-        this.starvationXaxisSeries = data.starvation.map(
-          (stat: any) => stat.time
-        );
+      if (data.tasks && data.notAssignedPercentage !== undefined) {
+        this.starvationArr = data.tasks.map((task: any) => task.rate);
+        this.starvationXaxisSeries = data.tasks.map((task: any) => task.time);
+        
+        // Plot the NOTASSIGNED percentage in the chart
+        this.plotNotAssignedPercentage(data.notAssignedPercentage);
       }
       this.plotChart(
         'Starvation rate',
@@ -343,14 +390,74 @@ export class AreaChartComponent implements OnInit {
       );
     }, 1000 * 2);
   }
+  
+  // Function to plot NOTASSIGNED percentage in the graph
+  plotNotAssignedPercentage(percentage: number) {
+    // Assuming you want to plot this value as a separate series in the chart
+    // You may use a charting library like ApexCharts to add a new series
+    this.chartOptions.series.push({
+      name: 'NOTASSIGNED Percentage',
+      data: [percentage], // You can adjust this to fit the timeline if needed
+    });
+    this.plotChart(
+      'Starvation rate',
+      this.starvationArr,
+      this.starvationXaxisSeries
+    );
+  }
+  
 
+  async fetchPickAccuracyData(
+    endpoint: string,
+    timeSpan: string,
+    startTime: string,
+    endTime: string
+  ) {
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    
+    // Fetch data from the API
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timeSpan: timeSpan, 
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+      }
+    );
+  
+    const data = await response.json();
+  
+    // Assuming data contains a list of tasks
+    if (data && data.tasks) {
+      const totalTasks = data.tasks.length;
+      const completedCount = data.tasks.filter(
+        (task: any) => task.TaskStatus_Names === 'COMPLETED'
+      ).length;
+  
+      const completedPercentage = (completedCount / totalTasks) * 100;
+  
+      // Return the data with the calculated COMPLETED percentage
+      return { tasks: data.tasks, completedPercentage };
+    }
+  
+    return { tasks: [], completedPercentage: 0 };
+  }
+  
   async updatePickAccuracy() {
-    let startTime = new Date().setHours(0, 0, 0, 0); // set current time to starting time of the current day..
-    let endTime = new Date().setMilliseconds(0); // time in milliseconds..
+    let startTime = new Date().setHours(0, 0, 0, 0); // Set current time to starting time of the current day..
+    let endTime = new Date().setMilliseconds(0); // Time in milliseconds..
+  
     this.clearAllIntervals(this.pickAccTimeInterval);
+  
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.pickAccTimeInterval);
       this.pickAccTimeInterval = 0;
+      
       const data = await this.fetchChartData(
         'pickaccuracy',
         this.currentFilter,
@@ -371,37 +478,43 @@ export class AreaChartComponent implements OnInit {
       );
       return;
     }
-
+  
     if (this.pickAccTimeInterval) return;
-
-    const data = await this.fetchChartData(
+  
+    // Fetch the data and calculate the COMPLETED percentage
+    const data = await this.fetchPickAccuracyData(
       'pickaccuracy',
       this.currentFilter,
       '',
       ''
     );
-    if (data.pickAccuracy) {
-      this.pickAccuracyArr = data.pickAccuracy.map((stat: any) => stat.rate);
-      this.pickAccXaxisSeries = data.pickAccuracy.map((stat: any) => stat.time);
+    if (data.tasks && data.completedPercentage !== undefined) {
+      this.pickAccuracyArr = data.tasks.map((task: any) => task.rate); // Assuming tasks contain the rate field
+      this.pickAccXaxisSeries = data.tasks.map((task: any) => task.time);
+      
+      // Plot the COMPLETED percentage in the chart
+      this.plotCompletedPercentage(data.completedPercentage);
     }
+  
     this.plotChart(
       'Pick accuracy',
       this.pickAccuracyArr,
       this.pickAccXaxisSeries
     );
-
+  
     this.pickAccTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
+      const data = await this.fetchPickAccuracyData(
         'pickaccuracy',
         this.currentFilter,
         '',
         ''
       );
-      if (data.pickAccuracy) {
-        this.pickAccuracyArr = data.pickAccuracy.map((stat: any) => stat.rate);
-        this.pickAccXaxisSeries = data.pickAccuracy.map(
-          (stat: any) => stat.time
-        );
+      if (data.tasks && data.completedPercentage !== undefined) {
+        this.pickAccuracyArr = data.tasks.map((task: any) => task.rate);
+        this.pickAccXaxisSeries = data.tasks.map((task: any) => task.time);
+        
+        // Plot the COMPLETED percentage in the chart
+        this.plotCompletedPercentage(data.completedPercentage);
       }
       this.plotChart(
         'Pick accuracy',
@@ -410,14 +523,83 @@ export class AreaChartComponent implements OnInit {
       );
     }, 1000 * 2);
   }
+  
+  // Function to plot COMPLETED percentage in the graph
+  plotCompletedPercentage(percentage: number) {
+    // Assuming you want to plot this value as a separate series in the chart
+    // You may use a charting library like ApexCharts to add a new series
+    this.chartOptions.series.push({
+      name: 'COMPLETED Percentage',
+      data: [percentage], // You can adjust this to fit the timeline if needed
+    });
+    this.plotChart(
+      'Pick accuracy',
+      this.pickAccuracyArr,
+      this.pickAccXaxisSeries
+    );
+  }
+  
 
+  async fetchErrorRateData(
+    endpoint: string,
+    timeSpan: string,
+    startTime: string,
+    endTime: string
+  ) {
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    
+    // Fetch data from the API
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timeSpan: timeSpan, 
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+      }
+    );
+  
+    const data = await response.json();
+  
+    // Assuming data contains a list of tasks
+    if (data && data.tasks) {
+      const totalTasks = data.tasks.length;
+  
+      // Count the number of tasks with "FAILED", "CANCELLED", and "REJECTED" statuses
+      const failedCount = data.tasks.filter(
+        (task: any) => task.TaskStatus_Names === 'FAILED'
+      ).length;
+      const cancelledCount = data.tasks.filter(
+        (task: any) => task.TaskStatus_Names === 'CANCELLED'
+      ).length;
+      const rejectedCount = data.tasks.filter(
+        (task: any) => task.TaskStatus_Names === 'REJECTED'
+      ).length;
+  
+      // Calculate the error rate
+      const errorRate = ((totalTasks - (failedCount + cancelledCount + rejectedCount)) / totalTasks) * 100;
+  
+      // Return the data with the calculated error rate
+      return { tasks: data.tasks, errorRate };
+    }
+  
+    return { tasks: [], errorRate: 0 };
+  }
+  
   async updateErrorRate() {
-    let startTime = new Date().setHours(0, 0, 0, 0); // set current time to starting time of the current day..
-    let endTime = new Date().setMilliseconds(0); // time in milliseconds..
+    let startTime = new Date().setHours(0, 0, 0, 0); // Set current time to starting time of the current day..
+    let endTime = new Date().setMilliseconds(0); // Time in milliseconds..
+  
     this.clearAllIntervals(this.errRateTimeInterval);
+  
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.errRateTimeInterval);
       this.errRateTimeInterval = 0;
+      
       const data = await this.fetchChartData(
         'err-rate',
         this.currentFilter,
@@ -436,35 +618,67 @@ export class AreaChartComponent implements OnInit {
       );
       return;
     }
-
+  
     if (this.errRateTimeInterval) return;
-
-    const data = await this.fetchChartData(
+  
+    // Fetch the data and calculate the error rate
+    const data = await this.fetchErrorRateData(
       'err-rate',
       this.currentFilter,
       '',
       ''
     );
-    if (data.errRate) {
-      this.errRateArr = data.errRate.map((stat: any) => stat.rate);
-      this.errRateXaxisSeries = data.errRate.map((stat: any) => stat.time);
+    if (data.tasks && data.errorRate !== undefined) {
+      this.errRateArr = data.tasks.map((task: any) => task.rate); // Assuming tasks contain the rate field
+      this.errRateXaxisSeries = data.tasks.map((task: any) => task.time);
+      
+      // Plot the error rate percentage in the chart
+      this.plotErrorRate(data.errorRate);
     }
-    this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries); // this.selectedMetric..
-
+  
+    this.plotChart(
+      'Error rate',
+      this.errRateArr,
+      this.errRateXaxisSeries
+    );
+  
     this.errRateTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
+      const data = await this.fetchErrorRateData(
         'err-rate',
         this.currentFilter,
         '',
         ''
       );
-      if (data.errRate) {
-        this.errRateArr = data.errRate.map((stat: any) => stat.rate);
-        this.errRateXaxisSeries = data.errRate.map((stat: any) => stat.time);
+      if (data.tasks && data.errorRate !== undefined) {
+        this.errRateArr = data.tasks.map((task: any) => task.rate);
+        this.errRateXaxisSeries = data.tasks.map((task: any) => task.time);
+        
+        // Plot the error rate percentage in the chart
+        this.plotErrorRate(data.errorRate);
       }
-      this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries);
+      this.plotChart(
+        'Error rate',
+        this.errRateArr,
+        this.errRateXaxisSeries
+      );
     }, 1000 * 2);
   }
+  
+  // Function to plot error rate in the graph
+  plotErrorRate(errorRate: number) {
+    // Assuming you want to plot this value as a separate series in the chart
+    // You may use a charting library like ApexCharts to add a new series
+    this.chartOptions.series.push({
+      name: 'Error Rate',
+      data: [errorRate], // You can adjust this to fit the timeline if needed
+    });
+    this.plotChart(
+      'Error rate',
+      this.errRateArr,
+      this.errRateXaxisSeries
+    );
+  }
+  
 
   clearAllIntervals(currInterval: number) {
     if (currInterval !== this.throuputTimeInterval) {
@@ -520,6 +734,12 @@ export class AreaChartComponent implements OnInit {
   }
 
   monthStartOfDay(){
+// Get the current date
+let currentDate = new Date();
 
+// Subtract 1 month from the current date
+let lastMonthDate = new Date();
+lastMonthDate.setMonth(currentDate.getMonth() - 1);
+return(Math.floor(new Date(lastMonthDate).setHours(0,0,0)/1000))
   }
 }

@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ProjectService } from '../services/project.service';
 import { Subscription } from 'rxjs';
+import { environment } from '../../environments/environment.development';
 
 @Component({
   selector: 'app-timer',
@@ -26,15 +27,40 @@ export class TimerComponent {
   ngOnInit() {
     this.initializeTimer();
     // this.initializeFiveMinuteTimer();   
-    this.subscription = this.projectService.isFleetUp$.subscribe(status => {
-      // this.fleetStatus = status;
+    this.subscription = this.projectService.isFleetUp$.subscribe(async (status) => {
       console.log('Fleet status changed:', status);
-      // this.performActionOnStateChange(status); // Optional: Trigger a method on change
+      await this.recordFleetStatus(status); // change the method by storing it in cookie, later for sure!!!
     }); 
   }
+
   ngOnDestroy(): void {
     this.subscription.unsubscribe(); // Clean up the subscription
   }
+
+  async recordFleetStatus(status: boolean): Promise<void>{
+    let projectId = this.projectService.getSelectedProject();
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project/track-fleet-status`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: projectId._id,
+          isFleetOn: status,
+          timeStamp: Date.now()
+        })
+      }
+    );
+    // if (!response.ok) {
+    //   console.log('Err with status code of ', response.status);
+    // }
+    let data = await response.json();
+    if (data.error) return;
+    const { fleetRecords } = data;
+    // console.log(fleetRecords);
+  }
+
   initializeTimer() {
     const storedStartTime = localStorage.getItem('timerStartTime');
     const lastSession = localStorage.getItem('lastSession');

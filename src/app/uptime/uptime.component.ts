@@ -7,6 +7,7 @@ import {
   ChartComponent,
 } from 'ng-apexcharts';
 import { environment } from '../../environments/environment.development';
+import { ProjectService } from '../services/project.service';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -26,10 +27,12 @@ export class UptimeComponent {
   @Input() ONBtn!: boolean;
   public chartOptions: Partial<ChartOptions>;
 
-  uptimePercentage: number = 96;
-  eventSource!: EventSource;
+  uptimePercentage: number = 0;
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private projectService:ProjectService
+  ) {
     this.chartOptions = {
       series: [this.uptimePercentage],
       chart: {
@@ -92,35 +95,36 @@ export class UptimeComponent {
     };
   }
 
-  ngOnInit() {
-    if (!this.ONBtn) return;
-    this.getUptime();
+  async ngOnInit() {
+    await this.getUptime();
   }
 
   getUptimeIfOn() {
     if (this.ONBtn) {
-      if (this.eventSource) this.eventSource.close();
       this.chartOptions.series = [0];
       return;
     }
     this.getUptime();
   }
 
-  getUptime() {
-    if (this.eventSource) this.eventSource.close();
-    let URL = `http://${environment.API_URL}:${environment.PORT}/dashboard/uptime/map123`;
-    this.eventSource = new EventSource(URL);
-    try {
-      this.eventSource.onmessage = (event) => {
-        const uptime = JSON.parse(event.data);
-        this.uptimePercentage = uptime.percentage;
-        this.chartOptions.series = [this.uptimePercentage];
-        this.cdr.detectChanges();
-      };
-    } catch (error) {}
-    this.eventSource.onerror = (error) => {
-      console.error('SSE error:', error);
-      this.eventSource.close();
-    };
+  async getUptime() {
+    const projectId = this.projectService.getSelectedProject()._id;
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-gross-status/system-uptime`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ projectId: projectId }),
+      }
+    );
+
+    let data = await response.json();
+    // console.log(data);
+    if (data.error) return;
+    let { systemUptime } = data;
+    this.uptimePercentage = systemUptime;
+    
+    this.chartOptions.series = [this.uptimePercentage];
   }
 }

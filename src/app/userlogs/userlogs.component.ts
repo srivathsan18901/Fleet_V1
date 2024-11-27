@@ -201,8 +201,63 @@ export class Userlogscomponent {
         })
       });
     }
+    if(robo.error['MANUAL MODE'].length){
+      robo.error['MANUAL MODE'].forEach((error:any) => {
+        this.roboErr.push({
+          name:robo.name,
+          error:error.name,
+          description:error.description,
+          id:robo.id,
+          dateTime:createdAt
+        })
+      });
+    }
     if(robo.error['LIDAR_ERROR'].length){
       robo.error['LIDAR_ERROR'].forEach((error:any) => {
+        this.roboErr.push({
+          name:robo.name,
+          error:error.name,
+          description:error.description,
+          id:robo.id,
+          dateTime:createdAt
+        })
+      });
+    }
+    if(robo.error['WAIT FOR ACK'].length){
+      robo.error['WAIT FOR ACK'].forEach((error:any) => {
+        this.roboErr.push({
+          name:robo.name,
+          error:error.name,
+          description:error.description,
+          id:robo.id,
+          dateTime:createdAt
+        })
+      });
+    }
+    if(robo.error['Dock Failed'].length){
+      robo.error['Dock Failed'].forEach((error:any) => {
+        this.roboErr.push({
+          name:robo.name,
+          error:error.name,
+          description:error.description,
+          id:robo.id,
+          dateTime:createdAt
+        })
+      });
+    }
+    if(robo.error['Trolley Detection'].length){
+      robo.error['Trolley Detection'].forEach((error:any) => {
+        this.roboErr.push({
+          name:robo.name,
+          error:error.name,
+          description:error.description,
+          id:robo.id,
+          dateTime:createdAt
+        })
+      });
+    }
+    if(robo.error['Docking Complete'].length){
+      robo.error['Docking Complete'].forEach((error:any) => {
         this.roboErr.push({
           name:robo.name,
           error:error.name,

@@ -4,6 +4,8 @@ import {
   ChangeDetectorRef,
   ViewChild,
   ElementRef,
+  EventEmitter,
+  Output
 } from '@angular/core';
 import domtoimage from 'dom-to-image-more';
 import RecordRTC from 'recordrtc';
@@ -14,6 +16,8 @@ import { ThroughputComponent } from '../throughput/throughput.component';
 import { MessageService } from 'primeng/api';
 import { state } from '@angular/animations';
 import { log } from 'console';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
   MEDIUM_SPEED_ZONE = 'Medium Speed Zone',
@@ -147,6 +151,7 @@ export class DashboardComponent implements AfterViewInit {
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
     private messageService:MessageService,
+    private isFleetService: IsFleetService
   ) {
     if (this.projectService.getIsMapSet()) return;
     // this.onInitMapImg(); // yet to remove..
@@ -163,6 +168,7 @@ export class DashboardComponent implements AfterViewInit {
     console.log(this.isFleet,"fleet condition")
     console.log("toggle is clicked")
     this.isFleet = !this.isFleet;
+    this.isFleetService.setIsFleet(this.isFleet);
     this.redrawCanvas();
   }
 
@@ -1268,7 +1274,7 @@ async onInitMapImg() {
             );
 
             // Store each robot's position and orientation using the robot ID
-            robotsData[robot.id] = { posX, posY, yaw: yaw, state:robot.robot_state }; // here we go...
+            robotsData[robot.id] = { posX, posY, yaw: yaw, state:robot.robot_state,speed:robot.speed }; // here we go...
 
             console.log(robot.id, robot.pose.position.x, robot.pose.position.y);
 
@@ -1335,6 +1341,8 @@ async onInitMapImg() {
   }
   
   async plotAllRobots(robotsData: any) {
+    console.log(robotsData.speed);
+    
     const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d');
 
@@ -1377,7 +1385,6 @@ async onInitMapImg() {
         //   ctx.drawImage(tempCanvas, centerX, centerY);
         // }
       }
-
       for (let [index, robotId] of Object.keys(robotsData).entries()) {
         const { posX, posY, yaw, state } = robotsData[robotId];
         let imgState ="robotB";

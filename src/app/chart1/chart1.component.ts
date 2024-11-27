@@ -122,7 +122,7 @@ export class Chart1Component {
       labels: ["Active Robots"]
     };
   }
-  async ngOnInit() {
+  async ngOnInit() {    
     await this.getMapDetails();
     this.totalRobots = this.simMode.length;
     this.activeRobots = await this.getLiveRoboInfo();
@@ -172,7 +172,6 @@ export class Chart1Component {
 
   }
   getTotalRobos(){
-
     return `${this.activeRobots} / ${this.totalRobots}`;
   }
   async getLiveRoboInfo(): Promise<number> {
