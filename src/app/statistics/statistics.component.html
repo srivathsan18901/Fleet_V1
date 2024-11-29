@@ -143,6 +143,7 @@
       <div class="area-chart-container">
         <app-area-chart
         (systemThroughputEvent)="updateSysThroughput($event)"
+        [taskData]="operationPie"
         ></app-area-chart>
       </div>
       <div class="donut-chart-container">

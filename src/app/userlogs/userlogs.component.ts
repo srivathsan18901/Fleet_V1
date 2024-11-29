@@ -289,7 +289,7 @@ export class Userlogscomponent {
 
   getFleetLogs() {
     fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/fleet-logs/${this.mapData.id}`,
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/fleet-logss/${this.mapData.id}`,
       {
         method: 'POST',
         credentials: 'include',

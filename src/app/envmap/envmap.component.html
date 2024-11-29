@@ -22,10 +22,11 @@
     <div class="form-wrapper" *ngIf="fileName && !showImage">
       <!-- Form for additional details -->
       <div class="form-container" *ngIf="fileName && !showImage">
-        <label for="mapName">Map Name</label>
+        <label for="mapName" >Map Name</label>
         <input pInputText
           type="text"
           id="mapName"
+          maxlength="250"
           [(ngModel)]="mapName"
           placeholder="Enter map name"
         />
@@ -36,6 +37,7 @@
           id="siteName"
           [(ngModel)]="siteName"
           placeholder="Enter site name"
+          maxlength="250"
           (keyup.enter)="open()"
         />
       </div>

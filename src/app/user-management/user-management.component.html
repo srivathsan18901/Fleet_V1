@@ -111,10 +111,10 @@
         </p>
       </span>
       <!-- User Credentials Form -->
-      <div class="w-full h-full flex flex-col items-start justify-start mt-10 gap-5">
+      <div class="w-full h-full flex flex-col items-start justify-start mt-10 gap-5" >
         <!-- Username and UserRole -->
         <span class="w-full flex items-center justify-center gap-5">
-          <input [(ngModel)] = "userName" type="text" placeholder="Username" class="w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
+          <input [(ngModel)] = "userName" type="text" maxlength="250" placeholder="Username" class="w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
           <!-- DropDown -->
           <span class="relative w-[40%] flex px-4 py-3 items-center justify-between gap-5 rounded-lg shadow-[0_0_30px_#00000030]" (click)="userRoleChange()">
             <p class="font-semibold capitalize text-[14px]">{{userRole}}</p>
@@ -136,12 +136,12 @@
         <span class="w-full flex-col relative flex items-start justify-between gap-3">
           <span class="w-full flex gap-10 items-center justify-center">
             <span class="w-full relative flex items-center justify-end">
-              <input [(ngModel)] = "passWord" type="{{passwordType}}" placeholder="Password" class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
+              <input [(ngModel)] = "passWord" type="{{passwordType}}" maxlength="50" placeholder="Password" class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
               <p class="absolute text-[10px] right-2 bottom-1 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer" (click)="showPassword()">{{passwordView}}</p>
-            </span>
+            </span> 
 
             <span class="w-full relative flex items-center justify-end">
-              <input [(ngModel)] = "confrimPassword" type="{{confrimPasswordType}}" placeholder="Confrim Password" class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
+              <input [(ngModel)] = "confrimPassword" type="{{confrimPasswordType}}" maxlength="50" placeholder="Confrim Password" class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
               <p class="absolute text-[10px] right-2 bottom-1 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer" (click)="showConfrimPassword()">{{confrimPasswordView}}</p>
             </span>
           </span>

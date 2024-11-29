@@ -260,7 +260,9 @@ export class StatisticsComponent {
         else if (
           task === 'INPROGRESS' ||
           task === 'COMPLETED' ||
-          task === 'ACCEPTED'
+          task === 'ACCEPTED' ||
+          task === 'ERROR' ||
+          task === 'WARNING'
         )
           tasksStatus[1] += 1;
         else if (task === 'NOTASSIGNED') tasksStatus[2] += 1;

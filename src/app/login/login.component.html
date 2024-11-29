@@ -40,7 +40,7 @@
     <div class="details">
       <div>
       <div class="inputUScontainer" (click)="onContainerClick($event)">
-        <input id="username" type="text" required placeholder=" " />
+        <input id="username" type="text" required placeholder=" " maxlength="250"/>
         <label for="username">Username</label>
       </div>
       <div class="inputPScontainer" (click)="onContainerClick($event)">
@@ -49,6 +49,7 @@
           type="{{ passwordFieldType }}"
           required
           placeholder=" "
+          maxlength="50"
         />
         <label for="password">Password</label>
         <img
