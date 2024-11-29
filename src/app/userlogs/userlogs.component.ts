@@ -350,10 +350,6 @@ export class Userlogscomponent {
       );
     }
   }
-
-
-
-
   onSearch(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
     this.searchInput = inputValue; // Store the search input value

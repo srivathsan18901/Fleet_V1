@@ -15,11 +15,11 @@ export class RobotDashboardComponent implements OnInit {
   robotActivities: any[] = [];
   liveRobos: any[] = [];
   statisticsData: any = {
-    averageSpeed: 75,
+    averageSpeed: 0,
     averageSpeedchange: 8.5,
     totalDistance: 99.9,
     totalDistanceChange: 0.2,
-    robotUtilization: 35,
+    robotUtilization: 0,
     robotUtilizationChange: -1.5,
     networkConnection: 100,
     networkConnectionChange: 5.2,
@@ -104,10 +104,10 @@ export class RobotDashboardComponent implements OnInit {
     this.router.navigate(['/statistics/robot']);
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) return;
-    this.getFleetGrossStatus();
     this.robotActivities = await this.getLiveRoboInfo();
     this.updateLiveRoboInfo();
     this.filteredRobotActivities = this.robotActivities;
+    this.getFleetGrossStatus();
     setInterval(async () => {
       this.robotActivities = await this.getLiveRoboInfo();
       this.updateLiveRoboInfo();
@@ -133,24 +133,22 @@ export class RobotDashboardComponent implements OnInit {
   async getFleetGrossStatus() {
     const mapId = this.selectedMap.id;
 
-    let averageSpeed = await this.fetchFleetStatus('average-speed', {
-      mapId: mapId,
-    });
-    // console.log(averageSpeed,"average speed")
-    if (averageSpeed.averageSpeed)
-      this.statisticsData.averageSpeed = averageSpeed.averageSpeed;
+    let averageSpeed = this.getAvgSpeed();
+    this.statisticsData.averageSpeed = averageSpeed;
+
     let totDistance = await this.fetchFleetStatus('total-distance', {
       mapId: mapId,
     });
     // console.log(totDistance,"totDistance")
     if (totDistance.totalDistance)
       this.statisticsData.totalDistance = totDistance.totalDistance;
-    let roboUtil = await this.fetchFleetStatus('robo-util', {
-      mapId: mapId,
-    });
-    // console.log(roboUtil,"roboUtil")
-    if (roboUtil.roboUtilization)
-      this.statisticsData.robotUtilization = roboUtil.roboUtilization;
+
+    // let roboUtil = await this.fetchFleetStatus('robo-util', {
+    //   mapId: mapId,
+    // });
+    // if (roboUtil.roboUtilization)
+    //   this.statisticsData.robotUtilization = roboUtil.roboUtilization;
+
     let networkConn = await this.fetchFleetStatus('network-conn', {
       mapId: mapId,
     });
@@ -184,7 +182,12 @@ export class RobotDashboardComponent implements OnInit {
       // this.robots = this.initialRoboInfos;
       return;
     }
+
+    let tot_robotUtilization = 0;
+    let roboNotIdle = ["MOVESTATE", "DOCKSTATE", "UNDOCKSTATE", "LOADSTATE", "UNLOADSTATE"]
+
     this.robotActivities = robots.map((robo: any) => {
+      if (roboNotIdle.includes(robo.robot_state)) tot_robotUtilization += 1;
       return {
         roboId: robo.id,
         task: robo.current_task,
@@ -192,6 +195,7 @@ export class RobotDashboardComponent implements OnInit {
         state: robo.robot_state,
       };
     });
+    this.statisticsData.robotUtilization = `${(tot_robotUtilization / robots.length) * 100} %`;
     this.filteredRobotActivities = this.robotActivities;
   }
 
@@ -235,6 +239,19 @@ export class RobotDashboardComponent implements OnInit {
       })
   }
 
+  getAvgSpeed(): string{
+    if (!('robots' in this.robotActivities)) return `${0} m/s`;
+
+    let { robots }: any = this.robotActivities;
+    if (!robots.length) return `${0} m/s`;
+
+    let tot_speed = 0;
+    for (let i = 0; i < robots.length; i++){
+      tot_speed += robots[i].Speed;
+    }
+
+    return `${tot_speed/robots.length} m/s`;
+  }
 }
 
 

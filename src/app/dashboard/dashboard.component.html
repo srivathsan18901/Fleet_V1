@@ -1,224 +1,488 @@
 <div id="container">
-
   <!-- Sidebar -->
   <!-- <app-sidenavbar></app-sidenavbar> -->
-  <app-loader></app-loader>
- 
-  
+  <!-- <app-loader></app-loader> -->
 
   <!-- Main Content -->
   <div class="mainContent">
-
     <div *ngIf="!isImage" class="no-map-container">
       <!-- Image -->
       <!-- <img src="assets/maps/dashboard.jpg" alt="No Map Available" class="no-map-image">  -->
-      <span class="flex size-[550px] -mt-20"> <img src="../../assets/noMapImg.svg" alt=""> </span>
+      <span class="flex size-[550px] -mt-20">
+        <img src="../../assets/noMapImg.svg" alt="" />
+      </span>
 
       <!-- Text -->
-      <p class="py-4 font-bold text-[24px] text-[#00000050] -mt-20"> - No Maps Found -</p>
+      <p class="py-4 font-bold text-[24px] text-[#00000050] -mt-20">
+        - No Maps Found -
+      </p>
     </div>
-    <div (click)="toggleStateDiv()" style="position: absolute;text-align: center; height: 30px;width: 30px; bottom: 40px; right:5px;color: #000; background: rgba(229, 223, 223, 0.448);box-shadow: 1px 1px 10px rgba(255, 0, 0, 0.292); border: 0px solid #ccc; border-radius: 60px; padding: 5px; z-index: 2;font-size: 10px;" >
-      <p style="font-size: 15px;font-weight: bold;">?</p>
+    <div *ngIf="canvasNoImage" class="no-map-container">
+      <!-- Image -->
+      <!-- <img src="assets/maps/dashboard.jpg" alt="No Map Available" class="no-map-image">  -->
+      <span class="flex size-[550px] -mt-20">
+        <img src="../../assets/noMapImg.svg" alt="" />
+      </span>
+
+      <!-- Text -->
+      <p class="py-4 font-bold text-[24px] text-[#00000050] -mt-20">
+        - No Maps Found -
+      </p>
     </div>
-    <div  [style.display]="isStateDivVisible ? 'block' : 'none'" class="state-container" style="position: absolute;text-align: center; bottom: 80px; right:15px;color: #000; box-shadow: 1px 1px 10px rgba(255, 0, 0, 0.292); background: rgba(255, 255, 255, 0.908); border: 0px solid #ccc; border-radius: 10px; padding: 15px; z-index: 2;font-size: 15px;">
-      <div style="display: flex;flex-direction: row;">
-        <div style="height: 20px;width: 30px;background-color: #8f910d; margin-right: 10px;"></div>
+    <div
+      (click)="toggleStateDiv()"
+      style="
+        position: absolute;
+        text-align: center;
+        height: 30px;
+        width: 30px;
+        bottom: 40px;
+        right: 5px;
+        color: #000;
+        background: rgba(229, 223, 223, 0.448);
+        box-shadow: 1px 1px 10px rgba(255, 0, 0, 0.292);
+        border: 0px solid #ccc;
+        border-radius: 60px;
+        padding: 5px;
+        z-index: 2;
+        font-size: 10px;
+      "
+    >
+      <p style="font-size: 15px; font-weight: bold">?</p>
+    </div>
+    <div
+      [style.display]="isStateDivVisible ? 'block' : 'none'"
+      class="state-container"
+      style="
+        position: absolute;
+        text-align: center;
+        bottom: 80px;
+        right: 15px;
+        color: #000;
+        box-shadow: 1px 1px 10px rgba(255, 0, 0, 0.292);
+        background: rgba(255, 255, 255, 0.908);
+        border: 0px solid #ccc;
+        border-radius: 10px;
+        padding: 15px;
+        z-index: 2;
+        font-size: 15px;
+      "
+    >
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #8f910d;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Initialization</p>
       </div>
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #eaed39; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #eaed39;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Configuration</p>
       </div>
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #ffa500; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #ffa500;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Pause</p>
       </div>
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #ff0800; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #ff0800;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Error</p>
       </div>
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #0b663c; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #0b663c;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Waiting</p>
       </div>
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #065baa; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #065baa;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Idle</p>
       </div>
       <!-- MOVESTATE -->
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #08ad66; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #08ad66;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Moving</p>
       </div>
       <!-- DOCKSTATE -->
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #a3cfe8; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #a3cfe8;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Docking</p>
       </div>
       <!-- UNDOCKSTATE -->
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #a3cfe8; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #a3cfe8;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Undocking</p>
       </div>
       <!-- LOADSTATE -->
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #f5adae; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #f5adae;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Loading</p>
       </div>
       <!-- UNLOADSTATE -->
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #533621; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #533621;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Unloading</p>
       </div>
       <!-- CHARGESTATE -->
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #9900cc; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #9900cc;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Charging</p>
       </div>
       <!-- FAILEDSTATE -->
-      <div style="display: flex; flex-direction: row;">
-        <div style="height: 20px; width: 30px; background-color: #ff0800; margin-right: 10px;"></div>
+      <div style="display: flex; flex-direction: row">
+        <div
+          style="
+            height: 20px;
+            width: 30px;
+            background-color: #ff0800;
+            margin-right: 10px;
+          "
+        ></div>
         <p>Failed</p>
-      </div>    
-      
+      </div>
     </div>
     <!-- dashboard.component.html -->
-    <div id="Pos_tooltip" style="position: absolute; bottom: 5px; right:5px;color: #000;  background: transparent; border: 0px solid #ccc; border-radius: 4px; padding: 5px; z-index: 2;font-size: 10px;"></div>    <!-- Canvases -->
-    <div id="roboTooltip" style="position: absolute; display: none; pointer-events: none; background: #33333348; color: #000000; padding: 5px; border-radius: 4px; font-size: 12px;z-index: 2;font-weight: bold;"></div>
+    <div
+      id="Pos_tooltip"
+      style="
+        position: absolute;
+        bottom: 5px;
+        right: 5px;
+        color: #000;
+        background: transparent;
+        border: 0px solid #ccc;
+        border-radius: 4px;
+        padding: 5px;
+        z-index: 2;
+        font-size: 10px;
+      "
+    ></div>
+    <!-- Canvases -->
+    <div
+      id="roboTooltip"
+      style="
+        position: absolute;
+        display: none;
+        pointer-events: none;
+        background: #33333348;
+        color: #000000;
+        padding: 5px;
+        border-radius: 4px;
+        font-size: 12px;
+        z-index: 2;
+        font-weight: bold;
+      "
+    ></div>
     <!-- <canvas *ngIf="showModelCanvas" id="modelCanvas" (mousedown)="panStartModelCanvas($event)"></canvas> -->
-    <canvas #myCanvas id="myCanvas" (mousedown)="panStart($event)"  (mouseleave)="onMouseLeave()"></canvas>
+    <div *ngIf="canvasloader" class="canvas-loader">
+      <div *ngIf="canvasloader" class="loader-background">
+        <div class="middle">
+          <div class="bar bar1"></div>
+          <div class="bar bar2"></div>
+          <div class="bar bar3"></div>
+          <div class="bar bar4"></div>
+          <div class="bar bar5"></div>
+          <div class="bar bar6"></div>
+          <div class="bar bar7"></div>
+          <div class="bar bar8"></div>
+        </div>
+      </div>
+    </div>
+    <canvas
+      #myCanvas
+      id="myCanvas"
+      (mousedown)="panStart($event)"
+      (mouseleave)="onMouseLeave()"
+    ></canvas>
     <!-- <canvas *ngIf="showModelCanvas" #modelCanvas id="modelCanvas" ></canvas> -->
 
     <!-- enable robots dropdown -->
     <div class="dropdown">
       <!-- Dropdown Button with Arrow -->
-      <button class="dropdown-button" (click)="toggleDropdown()" [disabled]="!simMode.length">
+      <button
+        class="dropdown-button"
+        (click)="toggleDropdown()"
+        [disabled]="!simMode.length"
+      >
         Enable Robot
-        <svg [ngClass]="{'rotate': isDropdownOpen}" class="duration-300" width="14" height="15" viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7.00007 12.3125L0 5.42194L2.33335 3.125L7.00007 7.71879L11.6667 3.125L14 5.42194L7.00007 12.3125Z" fill="white"/>
+        <svg
+          [ngClass]="{ rotate: isDropdownOpen }"
+          class="duration-300"
+          width="14"
+          height="15"
+          viewBox="0 0 14 15"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M7.00007 12.3125L0 5.42194L2.33335 3.125L7.00007 7.71879L11.6667 3.125L14 5.42194L7.00007 12.3125Z"
+            fill="white"
+          />
         </svg>
       </button>
-    
+
       <!-- Dropdown content, will only display if robots are present -->
       <div class="dropdown-content" *ngIf="isDropdownOpen && simMode.length">
         <div *ngIf="isFleet">
-        <div *ngFor="let robot of robos; let i = index" class="dropdown-item">
-          <span>{{ robot.roboDet.id }}</span>
-          <span>{{ robot.roboDet.roboName }}</span>
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="robot.isActive" (change)="activateRobot(robot)" [disabled]="!isFleetUp">
-            <div class="slider"></div>
-            <div class="slider-card">
-              <div class="slider-card-face slider-card-front"></div>
-              <div class="slider-card-face slider-card-back"></div>
-            </div>
-          </label>          
-    
-          <!-- Delete icon with click event -->
-          <button class="enable-delete-button" (click)="deleteRobot(i)">
-            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12.5" cy="12.5" r="12.5" fill="black"/>
-              <path d="M10.8333 5L10 5.75H5V7.25H20V5.75H15L14.1667 5H10.8333ZM6.1377 8.75L7.41048 18.6978C7.52048 19.4403 8.23083 20 9.0625 20H15.9359C16.7675 20 17.4787 19.4411 17.5895 18.6919L18.8623 8.75H6.1377Z" fill="white"/>
-              </svg>             
-          </button>
-        </div>
+          <div *ngFor="let robot of robos; let i = index" class="dropdown-item">
+            <span>{{ robot.roboDet.id }}</span>
+            <span>{{ robot.roboDet.roboName }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                [(ngModel)]="robot.isActive"
+                (change)="activateRobot(robot)"
+                [disabled]="!isFleetUp"
+              />
+              <div class="slider"></div>
+              <div class="slider-card">
+                <div class="slider-card-face slider-card-front"></div>
+                <div class="slider-card-face slider-card-back"></div>
+              </div>
+            </label>
+
+            <!-- Delete icon with click event -->
+            <button class="enable-delete-button" (click)="deleteRobot(i)">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12.5" cy="12.5" r="12.5" fill="black" />
+                <path
+                  d="M10.8333 5L10 5.75H5V7.25H20V5.75H15L14.1667 5H10.8333ZM6.1377 8.75L7.41048 18.6978C7.52048 19.4403 8.23083 20 9.0625 20H15.9359C16.7675 20 17.4787 19.4411 17.5895 18.6919L18.8623 8.75H6.1377Z"
+                  fill="white"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
         <div *ngIf="!isFleet">
-        <div *ngFor="let robot of simMode; let i = index" class="dropdown-item">
-          <span>{{ robot.amrId }}</span>
-          <span>{{ robot.roboName }}</span>
-          <label class="switch">
-            <input type="checkbox" [(ngModel)]="robot.isActive" (change)="activateRobot(robot)" [disabled]="!isFleetUp">
-            <div class="slider"></div>
-            <div class="slider-card">
-              <div class="slider-card-face slider-card-front"></div>
-              <div class="slider-card-face slider-card-back"></div>
-            </div>
-          </label>          
-    
-          <!-- Delete icon with click event -->
-          <button class="enable-delete-button" (click)="deleteRobot(i)">
-            <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="12.5" cy="12.5" r="12.5" fill="black"/>
-              <path d="M10.8333 5L10 5.75H5V7.25H20V5.75H15L14.1667 5H10.8333ZM6.1377 8.75L7.41048 18.6978C7.52048 19.4403 8.23083 20 9.0625 20H15.9359C16.7675 20 17.4787 19.4411 17.5895 18.6919L18.8623 8.75H6.1377Z" fill="white"/>
-              </svg>             
-          </button>
-        </div>
+          <div
+            *ngFor="let robot of simMode; let i = index"
+            class="dropdown-item"
+          >
+            <span>{{ robot.amrId }}</span>
+            <span>{{ robot.roboName }}</span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                [(ngModel)]="robot.isActive"
+                (change)="activateRobot(robot)"
+                [disabled]="!isFleetUp"
+              />
+              <div class="slider"></div>
+              <div class="slider-card">
+                <div class="slider-card-face slider-card-front"></div>
+                <div class="slider-card-face slider-card-back"></div>
+              </div>
+            </label>
+
+            <!-- Delete icon with click event -->
+            <button class="enable-delete-button" (click)="deleteRobot(i)">
+              <svg
+                width="25"
+                height="25"
+                viewBox="0 0 25 25"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <circle cx="12.5" cy="12.5" r="12.5" fill="black" />
+                <path
+                  d="M10.8333 5L10 5.75H5V7.25H20V5.75H15L14.1667 5H10.8333ZM6.1377 8.75L7.41048 18.6978C7.52048 19.4403 8.23083 20 9.0625 20H15.9359C16.7675 20 17.4787 19.4411 17.5895 18.6919L18.8623 8.75H6.1377Z"
+                  fill="white"
+                />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </div>
-    
-  <!-- fleet and simulation -->
-  <button class="indication-button" [ngClass]="buttonClass" (click)="toggleMode()">
-    <img [src]="iconUrl" class="icon" alt="Icon">
-    <span>{{ buttonLabel }}</span>
-  </button>
+
+    <!-- fleet and simulation -->
+    <button
+      class="indication-button"
+      [ngClass]="buttonClass"
+      (click)="toggleMode()"
+    >
+      <img [src]="iconUrl" class="icon" alt="Icon" />
+      <span>{{ buttonLabel }}</span>
+    </button>
     <!-- ON Button -->
-     
+
     <div class="ONBtn" (click)="startStopOpt()">
-      <img 
-        [src]="getOnBtnImage()" 
-        alt="Toggle Button" 
-        [ngClass]="{ 'blinking-svg': isInLive }" 
+      <img
+        [src]="getOnBtnImage()"
+        alt="Toggle Button"
+        [ngClass]="{ 'blinking-svg': isInLive }"
       />
     </div>
-    
-    
+
     <!-- Floor Selector -->
     <div class="FloorSelector" *ngIf="ONBtn"></div>
 
     <!-- Canvas Options (Zoom, Pan, Capture, etc.) -->
     <div class="CanvasOptions">
-      <span class="empty" (click)="toggleOptions()">     
-        <img src="../../assets/CanvasOptions/setting.svg" >   
+      <span class="empty" (click)="toggleOptions()">
+        <img src="../../assets/CanvasOptions/setting.svg" />
       </span>
       <div class="options">
-      <!-- Zoom In -->
-      <div class="tooltip">
-        <img src="../../assets/CanvasOptions/Zoom.svg" class="Zoom" (click)="zoomIn()" />
-        <span class="tooltiptext">Zoom In</span>
-      </div>
+        <!-- Zoom In -->
+        <div class="tooltip">
+          <img
+            src="../../assets/CanvasOptions/Zoom.svg"
+            class="Zoom"
+            (click)="zoomIn()"
+          />
+          <span class="tooltiptext">Zoom In</span>
+        </div>
 
-      <!-- Zoom Out -->
-      <div class="tooltip">
-        <img src="../../assets/CanvasOptions/ZoomOut.svg" class="ZoomOut" (click)="zoomOut()" />
-        <span class="tooltiptext">Zoom Out</span>
-      </div>
+        <!-- Zoom Out -->
+        <div class="tooltip">
+          <img
+            src="../../assets/CanvasOptions/ZoomOut.svg"
+            class="ZoomOut"
+            (click)="zoomOut()"
+          />
+          <span class="tooltiptext">Zoom Out</span>
+        </div>
 
-      <!-- Pan -->
-      <div class="tooltip">
-        <img src="../../assets/CanvasOptions/Pan.svg" class="Expand" (click)="togglePan()" />
-        <span class="tooltiptext">Pan</span>
-      </div>
+        <!-- Pan -->
+        <div class="tooltip">
+          <img
+            src="../../assets/CanvasOptions/Pan.svg"
+            class="Expand"
+            (click)="togglePan()"
+          />
+          <span class="tooltiptext">Pan</span>
+        </div>
 
-      <!-- Capture -->
-      <div class="tooltip">
-        <img src="../../assets/CanvasOptions/Capture.svg" class="Capture" (click)="captureCanvas()" />
-        <span class="tooltiptext">Capture</span>
-      </div>
+        <!-- Capture -->
+        <div class="tooltip">
+          <img
+            src="../../assets/CanvasOptions/Capture.svg"
+            class="Capture"
+            (click)="captureCanvas()"
+          />
+          <span class="tooltiptext">Capture</span>
+        </div>
 
-      <!-- Record -->
-      <div class="tooltip">
-        <img
-          [src]="recording ? '../../assets/CanvasOptions/StopRecord.svg' : '../../assets/CanvasOptions/Record.svg'"
-          class="Save"
-          (click)="toggleRecording()"
-        />
-        <span class="tooltiptext">{{ recording ? "Stop Recording" : "Start Recording" }}</span>
-      </div>
+        <!-- Record -->
+        <div class="tooltip">
+          <img
+            [src]="
+              recording
+                ? '../../assets/CanvasOptions/StopRecord.svg'
+                : '../../assets/CanvasOptions/Record.svg'
+            "
+            class="Save"
+            (click)="toggleRecording()"
+          />
+          <span class="tooltiptext">{{
+            recording ? "Stop Recording" : "Start Recording"
+          }}</span>
+        </div>
 
-      <!-- Dashboard -->
-      <div class="tooltip">
-        <img src="../../assets/CanvasOptions/Dashboard.svg" class="Pointer" (click)="toggleDashboard()" />
-        <span class="tooltiptext">Dashboard</span>
-      </div>
+        <!-- Dashboard -->
+        <div class="tooltip">
+          <img
+            src="../../assets/CanvasOptions/Dashboard.svg"
+            class="Pointer"
+            (click)="toggleDashboard()"
+          />
+          <span class="tooltiptext">Dashboard</span>
+        </div>
 
-      <!-- Model Canvas -->
-      <div class="tooltip">
-        <img src="../../assets/CanvasOptions/Model.svg" class="ModelCanvas" (click)="toggleModelCanvas()" />
-        <span class="tooltiptext">Map Option</span>
+        <!-- Model Canvas -->
+        <div class="tooltip">
+          <img
+            src="../../assets/CanvasOptions/Model.svg"
+            class="ModelCanvas"
+            (click)="toggleModelCanvas()"
+          />
+          <span class="tooltiptext">Map Option</span>
+        </div>
       </div>
-    </div>
       <!-- <div class="tooltip">
         <img src="../../assets/CanvasOptions/live.svg" class="ModelCanvas" (click)="fetchlive()" />
         <span class="tooltiptext">Go Live</span>
@@ -228,12 +492,19 @@
     <!-- Dashboard Charts and Graphs -->
     <div class="GraphAndCharts" *ngIf="showDashboard">
       <button class="close-button" (click)="onClose()">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
           <path fill="none" d="M0 0h24v24H0z" />
-          <path d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
         </svg>
       </button>
-    
+
       <!-- Uptime and Robot Charts -->
       <div class="Chart2_Chart3">
         <div class="Chart2-container">
@@ -246,25 +517,17 @@
             <span class="chart-label">Total Uptime</span>
           </div>
         </div>
-      
+
         <div class="Chart3-container">
           <div class="Chart3" [ngClass]="{ blurred: ONBtn }">
-            <p class="chart-title">Robots</p> <!-- Top-left title -->
-            <app-chart1 
-            [isFleet]="this.isFleet"
-            [ONBtn]="ONBtn"
-            >
-          </app-chart1>
+            <p class="chart-title">Robots</p>
+            <!-- Top-left title -->
+            <app-chart1 [isFleet]="this.isFleet" [ONBtn]="ONBtn"> </app-chart1>
             <span class="chart-label">No of Robots</span>
           </div>
         </div>
-        
-        
       </div>
-      
-      
-      
-    
+
       <!-- Throughput Chart -->
       <div class="Chart1-container">
         <div class="Chart1" [ngClass]="{ blurred: ONBtn }">
@@ -272,15 +535,13 @@
         </div>
       </div>
     </div>
-    
-
   </div>
-
 </div>
 
-<div id="robo-popup" style="position: absolute; display: none;  padding: 10px;">
+<div id="robo-popup" style="position: absolute; display: none; padding: 10px">
   <!-- <button *ngIf="!moveEnabled" (click)="enableMove()">Move</button> -->
-  <button (click)="initializeRobo()"> {{ updatedrobo?.isInitialized ? 'Release Robot' : 'Initialize Robot' }} </button>
+  <button (click)="initializeRobo()">
+    {{ updatedrobo?.isInitialized ? "Release Robot" : "Initialize Robot" }}
+  </button>
   <button (click)="cancelAction()">Cancel</button>
 </div>
-

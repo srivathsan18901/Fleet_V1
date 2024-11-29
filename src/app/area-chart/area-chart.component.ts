@@ -228,16 +228,20 @@ export class AreaChartComponent implements OnInit {
   async updateThroughput() {
     // this.chartOptions.xaxis.range = 12; // get use of it..
     // console.log(this.currentFilter,"current fileter")
+    // console.log('chart updating')
     this.clearAllIntervals(this.throuputTimeInterval);
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.throuputTimeInterval);
       this.throuputTimeInterval = 0;
-      // console.log('week or month is selected')
       const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
+      // console.log(data,'data')
       if (data.throughput) {
-        this.throughputArr = data.throughput.map((stat: any) => stat.rate);
-        this.throughputXaxisSeries = data.throughput.map( (stat: any) => stat.time );
+        this.throughputArr = data.throughput.Stat.map((stat: any) => stat.TotalThroughPutPerHour);
+        this.throughputXaxisSeries = data.throughput.Stat.map(
+          (stat: any,index:any) => ++index
+        );
       }
+      // console.log('line 245')
       this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries, 30 );
       return;
     }
@@ -247,17 +251,18 @@ export class AreaChartComponent implements OnInit {
     const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
     let { Stat } = data.throughput;
     // console.log(Stat);
-
+    // console.log(data,'data from line 256')
     if (data.throughput) {
       // this.throughputArr = data.throughput.map((stat: any) => stat.rate);
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
       this.throughputXaxisSeries = Stat.map(
         // (stat: any) => stat.time
-        (stat: any) =>
-          new Date().toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        (stat: any,index:any) => ++index 
+          // new Date().toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
       );
       this.systemThroughputEvent.emit(this.throughputArr);
     }
+    // console.log('line 265')
     this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries ); // this.selectedMetric..
 
     this.throuputTimeInterval = setInterval(async () => {
@@ -267,13 +272,14 @@ export class AreaChartComponent implements OnInit {
       if (data.throughput) {
         this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
         this.throughputXaxisSeries = Stat.map(
-          (stat: any) => new Date().toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+          (stat: any,index:number) => ++index 
         );
         this.systemThroughputEvent.emit(this.throughputArr);
       }
-      
+      // console.log('line 278')
       this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries );
     }, 1000 * 60); // 60 * 60
+    // console.log('chart fn')
   }
 
   async fetchStarvationData(
@@ -332,6 +338,8 @@ export class AreaChartComponent implements OnInit {
         '',
         ''
       );
+      console.log(data,'data update')
+
       if (data.starvation) {
         this.starvationArr = data.starvation.map((stat: any) => stat.rate);
         this.starvationXaxisSeries = data.starvation.map(

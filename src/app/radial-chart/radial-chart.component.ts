@@ -87,14 +87,17 @@ export class RadialChartComponent implements OnInit {
     });
 
     await this.getMapDetails();
+ 
     if (this.selectedMap) return;
     this.selectedMap = this.projectService.getMapData();
+
     this.roboStatePie = await this.getRobosStates();
     this.chartOptions.series = [...this.roboStatePie]; // Update series with data
+
     setInterval(async () => {
       this.roboStatePie = await this.getRobosStates();
       this.chartOptions.series = [...this.roboStatePie];
-    }, 1000 * 3); // Update every 3 seconds
+    }, 1000 * 5); // Update every 5 seconds
   }
   
   updateChart() {
@@ -104,6 +107,7 @@ export class RadialChartComponent implements OnInit {
   public activeRobots: number = 0; // Example active robots count
   public totalRobots: number = 0;
   public errorRobots: number = 0;
+
   async getMapDetails() {
     this.mapData = this.projectService.getMapData();
     let response = await fetch(
@@ -112,33 +116,15 @@ export class RadialChartComponent implements OnInit {
     if (!response.ok)
       throw new Error(`Error with status code of ${response.status}`);
     let data = await response.json();
-  
+
     if (!data.map) return;
     let mapDet = data.map;
-  
-    // When isFleet is false, use simMode instead of roboPos
-    this.robos = this.isFleet ? mapDet.roboPos : mapDet.simMode;
-  
+
+    this.robos = mapDet.roboPos;
     this.simMode = mapDet.simMode;  // Assuming this is also required for other parts of your logic
-  
-    this.totalRobots = this.robos.length;
-    this.activeRobots = this.robos.filter((robo: any) => robo.isActive).length;
-  
-    // Example: Calculate state distribution
-    const inactiveRobots = this.totalRobots - this.activeRobots;
-    // if ('EMERGENCY STOP' in mapDet.roboPos.robot_errors || 'LIDAR_ERROR' in mapDet.roboPos.robot_errors) {
-    //   this.errorRobots += 1;
-    // }
-    const errorRobots = 0; // 20% of inactive as error
-    
-    const healthyRobots = this.activeRobots;
-    
-    this.roboStatePie = [healthyRobots, inactiveRobots - errorRobots, errorRobots];
-    console.log(this.roboStatePie);
+
+    this.totalRobots = this.isFleet ? this.robos.length : this.simMode.length;
     this.totCount = this.totalRobots.toString();
-  
-    // Update chart options
-    this.chartOptions.series = [...this.roboStatePie];
   }
   
   
@@ -161,40 +147,22 @@ export class RadialChartComponent implements OnInit {
       }
     );
   
-    let data = await response.json();
-  
+    let data = await response.json(); 
     if (!data.map || data.error) return [0, 0, 0];
-    
-    if (data.error) {
-      console.log('Error while getting robot states:', data.error);
-      return [0, 0, 0];
-    }
-    
-    let robots: any;
-  
-    // Conditional based on `isFleet`
-    if (this.isFleet) {
-      robots = data.robos?.robots;
-    } else {
-      robots = this.simMode; // Assuming `this.simMode.robots` contains the robots data
-    }
-  
+
+    let { robots } = data.robos;
+    // console.log(robots)
     if (!robots) return [0, this.totalRobots, 0];
-  
+    
     let active_robos = 0;
     let err_robos = 0;
   
     robots.forEach((robo: any) => {
-      if(!this.isFleet)active_robos += robo.isConnected ? 1 : 0;
       active_robos += robo.isConnected ? 1 : 0;
-  
-      if ('EMERGENCY STOP' in robo.robot_errors || 'LIDAR_ERROR' in robo.robot_errors) {
-        err_robos += 1;
-      }
+      if ('EMERGENCY STOP' in robo.robot_errors || 'LIDAR_ERROR' in robo.robot_errors) err_robos += 1;
     });
   
-    console.log("tot robos : ", active_robos, err_robos, this.totalRobots);
-  
+    // console.log("tot robos : ", [active_robos - err_robos, active_robos - this.totalRobots, err_robos]);
     return [active_robos - err_robos, active_robos - this.totalRobots, err_robos];
   }
   
