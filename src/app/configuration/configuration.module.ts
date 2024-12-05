@@ -2,11 +2,11 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConfigurationComponent } from './configuration.component';
 import { IPScannerComponent } from '../ipscanner/ipscanner.component';
-import { GeneralComponent } from './Addons/general/general.component';
-import { PlannerComponent } from './Addons/planner/planner.component';
-import { TaskComponent } from './Addons/task/task.component';
-import { BatteryComponent } from './Addons/battery/battery.component';
-import { CommunicationComponent } from './Addons/communication/communication.component';
+// import { GeneralComponent } from './Addons/general/general.component';
+// import { PlannerComponent } from './Addons/planner/planner.component';
+// import { TaskComponent } from './Addons/task/task.component';
+// import { BatteryComponent } from './Addons/battery/battery.component';
+// import { CommunicationComponent } from './Addons/communication/communication.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { FormsModule } from '@angular/forms';
@@ -21,14 +21,14 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { ReactiveFormsModule } from '@angular/forms';
-
+import { MessageService } from 'primeng/api';
 @NgModule({
   declarations: [
-            GeneralComponent,
-             PlannerComponent,
-             TaskComponent,
-             BatteryComponent,
-             CommunicationComponent,
+            // GeneralComponent,
+            //  PlannerComponent,
+            //  TaskComponent,
+            //  BatteryComponent,
+            //  CommunicationComponent,
 
   ],
   imports: [
@@ -44,15 +44,15 @@ import { ReactiveFormsModule } from '@angular/forms';
     DropdownModule,
     RadioButtonModule,
     ToastModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
 
   ],
   exports: [
-     GeneralComponent,
-     PlannerComponent,
-     TaskComponent,
-     BatteryComponent,
-     CommunicationComponent,
+    //  GeneralComponent,
+    //  PlannerComponent,
+    //  TaskComponent,
+    //  BatteryComponent,
+    //  CommunicationComponent,
      InputGroupModule,
      InputTextModule,
 ],

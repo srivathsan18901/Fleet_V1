@@ -1,4 +1,4 @@
-<div class="overlay"></div> 
+<div class="overlay"></div>
 <div class="popup-content">
   <!-- <app-fullscreen-button></app-fullscreen-button> -->
     <div class="popup-header">
@@ -17,19 +17,26 @@
           />
         </svg>
       </button>
-      
-      <!-- emergency stop -->
+
       <div class="switch demo3">
-        <input type="checkbox" id="emergencyStop" />
+        <input
+          type="checkbox"
+          id="emergencyStop"
+          [checked]="!isEmergencyStop"
+          (change)="onToggle($event)"
+           readonly
+           disabled
+        />
         <label for="emergencyStop"><i></i></label>
         <span class="tooltip">Emergency Stop</span>
       </div>
 
-    
+
+
     <!-- wifi module -->
     <div class="wifi-signal ">
       <div class="wifi-style flex z-50">
-        <div class="wifi" [ngClass]="currentSignalClass"></div> 
+        <div class="wifi" [ngClass]="currentSignalClass"></div>
       </div>
     </div>
 
@@ -38,33 +45,33 @@
       <span class="status-indicator" [ngClass]="data.isConnected ? 'active' : 'inactive'"></span>
       <span class="status-text">{{ data.isConnected ? 'Active' : 'Inactive' }}</span>
     </div>
-    
+
     <!-- connect button -->
-    <button 
-      class="status-button absolute z-50 top-[0px] w-[10vw] h-[8vh] 
-      {{ data.isConnected ? 'connected' : '' }}" 
+    <button
+      class="status-button absolute z-50 top-[0px] w-[10vw] h-[8vh]
+      {{ data.isConnected ? 'connected' : '' }}"
       (click)="toggleConnection()">
       {{ data.isConnected ? 'Disconnect' : 'Connect' }}
     </button>
 
-    
+
 
     <div class="robot-detail-container relative ">
       <svg
-      width="590" 
+      width="590"
       height="832"
-      viewBox="0 0 590 832" 
+      viewBox="0 0 590 832"
       fill="none"
       xmlns="http://www.w3.org/2000/svg">
-      <rect width="590" height="580" rx="15" fill="white" /> 
+      <rect width="590" height="580" rx="15" fill="white" />
     </svg>
- 
+
    </div>
   <div class="robot-image-container">
     <img [src]="data.imageUrl" alt="{{data.name}}" class="robot-image">
   </div>
 
-  
+
   <div class="battery-frame">
     <div class="battery-container">
       <div class="battery">
@@ -80,7 +87,7 @@
       <!-- <p class="battery-percentage">{{ data.batteryPercentage }}%</p> -->
       <!-- <p>{{ data.isCharging ? 'Charging' : 'Not Charging' }}</p> -->
     </div>
-    
+
     <!-- Battery Details -->
       <div class="battery-details">
         <div class="average-discharge">
@@ -100,7 +107,7 @@
   </div>
 
 
-  
+
   <div class="speed-container">
     <div class="current-speed-container">
       <span class="label">Current speed</span>
@@ -109,7 +116,7 @@
         <span class="unit">m/s</span>
       </div>
     </div>
-  
+
     <div class="speed-details-container">
       <div class="average-speed-container">
         <div class="speed-value-container">
@@ -117,7 +124,7 @@
           <span class="unit">m/s</span>
         </div>
         <span class="label">Average speed</span>
-  
+
         <!-- Added Average Transfer Time -->
         <div class="transfer-time-container">
           <div class="transfer-value-container">
@@ -127,14 +134,14 @@
           <span class="label">Average Transfer Time</span>
         </div>
       </div>
-  
+
       <div class="maximum-speed-container">
         <div class="speed-value-container">
           <span class="speed-value">{{ data.maximumspeed }}</span>
           <span class="unit">m/s</span>
         </div>
         <span class="label">Maximum speed</span>
-  
+
         <!-- Added Average Docking Time -->
         <div class="docking-time-container">
           <div class="docking-value-container">
@@ -146,8 +153,8 @@
       </div>
     </div>
   </div>
-  
-  
+
+
   <!-- Details ( current task and map) -->
   <div class="frame-1597881883_1874-1899">
     <div class="details-container">
@@ -165,7 +172,7 @@
         </div>
       </div>
     </div>
-    
+
 
    <!-- Total pick and drop -->
  <div class="pick-drop-container">
@@ -200,7 +207,7 @@
     </div>
     <span class="pick-drop-label">Total Pick / Drop</span>
   </div>
-  <span class="pick-drop-values">{{ data.totalPicks }} / {{ data.totalDrops }}</span>
+  <span class="pick-drop-values">{{ pick.pickCount }} / {{ pick.dropCount }}</span>
 </div>
 
 
@@ -340,9 +347,10 @@
       </div>
       <span class="robot-utilization-label">Robot Utilization</span>
     </div>
-    <span class="robot-utilization-value">{{ data.robotutilization }} %</span> 
+    <span class="robot-utilization-value">{{ robotUtilization }} %</span>
   </div>
 </div>
+
 
 
 
@@ -488,17 +496,17 @@
         <span class="error-value">{{ data.error }}</span>
       </div>
       <div class="button-container">
-        
+
       </div>
     </div>
   </div>
-    
+
 
     <div class="id-info-item">
       <strong>ID:</strong> {{data.id}}
     </div>
-  
+
 </div>
 </div>
 
-  
+

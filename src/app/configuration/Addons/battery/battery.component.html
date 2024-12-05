@@ -2,14 +2,14 @@
   <div class="content-fluid1">
     <div class="general">
       <!-- <form> -->
-        <h3 style="margin-left: 1.5rem;">Battery Details</h3>
+        <h3 style="margin-left: 1.5rem;font-family: 'graphik', Arial, sans-serif;">Battery Details</h3>
         <div class="container">
           <div class="form-control">
 
             <!-- Battery Fields -->
             <div class="field">
               <!-- Minimum Battery -->
-              <label for="minBattery" style="margin-right: 1.5rem;">Minimum Battery: </label>
+              <label for="minBattery" style="margin-right: 1.5rem;font-family: 'graphik', Arial, sans-serif;">Minimum Battery: </label>
               <input
                 class="input"
                 type="number"
@@ -90,7 +90,6 @@
                         label="Submit"
                         type="submit"
                         class="block mt-1 pt-2"
-                        icon="pi pi-check-circle"
                         styleClass="p-button-danger p-button1"
                         [disabled]="!batteryForm.minBattery || !batteryForm.warningBattery"
                         (onClick)="saveBatteryParams()"

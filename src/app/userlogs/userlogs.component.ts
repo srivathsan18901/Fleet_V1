@@ -1,3 +1,4 @@
+
 import { environment } from '../../environments/environment.development';
 import { ExportService } from '../export.service';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
@@ -5,6 +6,9 @@ import { ProjectService } from '../services/project.service';
 import { error, timeStamp } from 'console';
 // import { PageEvent } from '@angular/material/paginator';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { ModeService } from '../dashboard/mode.service';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-userlogs',
@@ -16,6 +20,7 @@ export class Userlogscomponent {
   mapData: any | null = null;
   activeFilter: any;
   ONBtn: any;
+  currentMode = '';
   searchQuery: string = '';
   searchInput: string = ''; // Add this property to your component class
   isPopupVisible: boolean | undefined;
@@ -42,10 +47,15 @@ export class Userlogscomponent {
 
   // Your fleet data
   fleetData: any[] = [];
+  isFleet: boolean = false; // Store the emitted value
+  private subscriptions: Subscription[] = [];
+  
 
   constructor(
     private exportService: ExportService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private modeService: ModeService,
+    private isFleetService: IsFleetService
   ) {
     this.mapData = this.projectService.getMapData();
   }
@@ -56,7 +66,19 @@ export class Userlogscomponent {
       console.log('Seems no map has been selected');
       return;
     }
+    this.modeService.currentMode$.subscribe((mode) => {
+      this.currentMode = mode; // React to mode updates
+      // console.log(this.currentMode,"dkjnonvofpsp")
+    });
+        // Subscribe to the isFleet$ observable
+        const fleetSub = this.isFleetService.isFleet$.subscribe((status: boolean) => {
+          this.isFleet = status; // Update the value whenever it changes
+          console.log('Received fleet state:', this.isFleet); // For debugging
+        });
     
+        this.subscriptions.push(fleetSub);
+      
+    this.onModeChange(this.currentMode);
     await this.fetchRobos();
     // data rendering
     await this.getRoboLogs();
@@ -66,16 +88,40 @@ export class Userlogscomponent {
     this.getTaskLogs();
     this.getFleetLogs();
   }
-  
+
+  async ngAfterViewInit(){
+    this.setPaginatedData();
+  }
+
+  onModeChange(newMode: string) {
+    this.currentMode = newMode; // Update mode on event
+    console.log('Mode changed to:', newMode);
+  }
+
+  getTimeStampsOfDay(establishedTime: Date) {
+    let currentTime = Math.floor(new Date().getTime() / 1000);
+    let startTimeOfDay = this.getStartOfDay(establishedTime);
+    return {
+      timeStamp1: startTimeOfDay,
+      timeStamp2: currentTime,
+    };
+  }
+  getStartOfDay(establishedTime: Date) {
+    return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
+  }
+
   getTaskLogs() {
+    this.mapData = this.projectService.getMapData();
+    let establishedTime = new Date(this.mapData.createdAt);
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
       {
         method: 'POST',
         credentials: 'include',
         body: JSON.stringify({
-          timeStamp1: '',
-          timeStamp2: '',
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
         }),
       }
     )
@@ -86,7 +132,12 @@ export class Userlogscomponent {
       })
       .then((data) => {
         const { taskLogs } = data;
-        this.taskData = taskLogs.notifications.map((taskErr: any) => {
+              // Filter the notifications to include only those with specified statuses
+      const filteredLogs = taskLogs.notifications.filter(
+        (taskErr: any) =>
+          ['FAILED', 'CANCELLED', 'REJECTED'].includes(taskErr.name)
+      );
+        this.taskData = filteredLogs.map((taskErr: any) => {
           const date = new Date();
           const formattedDateTime = `${date.toLocaleDateString('en-IN', {
             day: '2-digit',
@@ -99,11 +150,13 @@ export class Userlogscomponent {
           })}`;
           return {
             dateTime: formattedDateTime,
-            taskId: taskErr.taskId,
-            taskName: 'Pick Packs',
-            errCode: taskErr.name,
+            taskId: taskErr.task_id,
+            taskName: taskErr.sub_task[0]?.task_type
+            ? taskErr.sub_task[0]?.task_type
+            : 'N/A',
+            errCode: "Err001",
             criticality: taskErr.criticality,
-            desc: taskErr.description,
+            desc: "Robot is in Error State",
           };
         });
         this.filteredTaskData = this.taskData;
@@ -123,15 +176,15 @@ export class Userlogscomponent {
     )
       .then((response) => response.json())
       .then((data) => {
-        if (!data.map || data.error) {  
+        if (!data.map || data.error) {
           return;
-        }    
-        const { map } = data; 
-         
+        }
+        const { map } = data;
+
         // Check if the image URL is accessible
         this.robots= map.roboPos
       })
-      
+
   }
   async getLiveRoboInfo(): Promise<any[]> {
     const response = await fetch(`http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`, {
@@ -147,26 +200,26 @@ export class Userlogscomponent {
   liveRobos: any[] = [];
   updateLiveRoboInfo() {
     // console.log(this.robots);
-    
+
     if (!('robots' in this.liveRobos)) {
       this.robots = this.initialRoboInfos;
       return;
     }
 
 //Robotstatus
-                  
+
     let { robots }: any = this.liveRobos;
     if (!robots.length) this.robots = this.initialRoboInfos;
     this.robots = this.robots.map((robo) => {
       robots.forEach((liveRobo: any) => {
-        if (robo.roboDet.id == liveRobo.id) {          
+        if (robo.roboDet.id == liveRobo.id) {
           robo.errors=liveRobo.robot_errors;
         }
       });
       return robo;
     });
-    this.filteredRobots = this.robots;  
-    this.setPaginatedData();   
+    this.filteredRobots = this.robots;
+    this.setPaginatedData();
     this.roboerrors=this.robots.map((robo)=>
       {
         return{
@@ -174,8 +227,12 @@ export class Userlogscomponent {
           error:robo.errors,
           id:robo.roboDet.id
         }
-      })                      
+      })
   }
+
+
+
+
   async getRoboLogs() {
     this.liveRobos = await this.getLiveRoboInfo();
     this.updateLiveRoboInfo();
@@ -272,7 +329,7 @@ export class Userlogscomponent {
   this.paginatedData1=this.roboErr;
   // this.roboerrors=[];//later to be removed if needed
     // console.log(this.liveRobos,this.robots);
-    
+
     // fetch(
     //   `http://${environment.API_URL}:${environment.PORT}/err-logs/robo-logs/${this.mapData.id}`,
     //   {
@@ -353,7 +410,7 @@ export class Userlogscomponent {
   onSearch(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
     this.searchInput = inputValue; // Store the search input value
-    
+
     if (!inputValue) {
       this.resetSearch(); // Reset data if input is cleared
     } else {
@@ -374,29 +431,29 @@ export class Userlogscomponent {
         )
       );
     }
-  
+
     // Reset the paginator after filtering
     if (this.paginator) {
       this.paginator.firstPage();
     }
-  
+
     this.setPaginatedData(); // Update paginated data after filtering
   }
-  
+
   // Function to reset the search input and data
   resetSearch(): void {
     this.filteredTaskData = this.taskData;
     this.filteredTaskData1 = this.robotData;
     this.filteredTaskData2 = this.fleetData;
   }
-  
+
   // Function to clear the search input when the page changes
   onPageChange(): void {
     this.searchInput = ''; // Clear the search input
     this.resetSearch();    // Reset the data
     this.setPaginatedData(); // Update paginated data
   }
-  
+
 
 
   trackByTaskId(index: number, item: any): number {
@@ -447,6 +504,8 @@ export class Userlogscomponent {
 
   showTable(table: string) {
     this.currentTable = table;
+    console.log("clicked")
+    this.setPaginatedData();
   }
 
   setCurrentTable(table: string) {
@@ -468,14 +527,29 @@ export class Userlogscomponent {
 
   exportData(format: string) {
     const data = this.getCurrentTableData();
+    // let csvHeader:any={};
+    let excelHeader:any={}
     switch (format) {
       case 'csv':
-        this.exportService.exportToCSV(data, `${this.currentTable}DataExport`);
+        let csvHeader:{[k:string]:any}={}
+          if(data.length==0){
+             csvHeader['status']=true;
+             csvHeader['structure']=this.structuredFormatter(this.currentTable)[0]
+          }
+          csvHeader['length']=this.structuredFormatter(this.currentTable)[1]
+        this.exportService.exportToCSV(data, `${this.currentTable}DataExport`,csvHeader);
         break;
       case 'excel':
+        let excelHeader:{[k:string]:any}={}
+          if(data.length==0){
+            excelHeader['status']=true,
+            excelHeader['structure']=this.structuredFormatter(this.currentTable)[0]
+         }
+         excelHeader['length']=this.structuredFormatter(this.currentTable)[1]
         this.exportService.exportToExcel(
           data,
-          `${this.currentTable}DataExport`
+          `${this.currentTable}DataExport`,
+         excelHeader
         );
         break;
       case 'pdf':
@@ -483,6 +557,41 @@ export class Userlogscomponent {
         break;
       default:
         console.error('Invalid export format');
+    }
+  }
+
+  structuredFormatter(type:any):any{
+    switch (type) {
+      case 'task':
+        return [[{
+            dateTime: '',
+            taskId: '',
+            taskName: '',
+            errCode: '',
+            criticality: '',
+            desc: '',
+        }],6];
+      case 'robot':
+        return [[{
+            dateTime: '',
+            robotId: '',
+            robotName: '',
+            errCode: '',
+            criticality: '',
+            desc: '',
+        }],6];
+      case 'fleet':
+        return [[{
+          dateTime: '',
+          moduleName: '',
+          errCode: '',
+          criticality: '',
+          desc: '',
+        }],5];
+      default:
+        return {
+
+        };
     }
   }
 

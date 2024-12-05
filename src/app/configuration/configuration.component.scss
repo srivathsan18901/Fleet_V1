@@ -1295,7 +1295,7 @@ edit button */
 .sim-popup-content h3 {
   margin-top: 20px; 
   margin-bottom: 30px;
-  font-size: 30px;
+  font-size: 20px;
   font-family: "graphik", Arial,  sans-serif;
   color: #DA2127;
   font-weight: 600;
@@ -1306,9 +1306,10 @@ edit button */
 
 
 .sim-popup-content input[type="number"] {
-  width: 100%;
+  width: 50px;
   padding: 12px;
   margin-top: 10px;
+  margin-left: 5px;
   margin-bottom: 20px;
   border: 1px solid #ddd;
   border-radius: 6px;
@@ -1316,11 +1317,28 @@ edit button */
   font-family: "graphik", Arial,  sans-serif;
   transition: border-color 0.2s;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  -moz-appearance: textfield; /* Firefox */
+  -webkit-appearance: none; /* Chrome, Safari, Edge */
+  appearance: none; /* Standard */
 }
-
+.simulation-button.disabled {
+  opacity: 0.5; /* Makes the button look "disabled" */
+  cursor: not-allowed; /* Changes the cursor to indicate it's disabled */
+}
+.error-message{
+  color: #dc2b31;
+}
+.Success-message{
+  color: #34580d;
+}
 .sim-popup-content input[type="number"]:focus {
   border-color: #28a745; /* Green border on focus */
   outline: none;
+}
+.sim-popup-content input[type="number"]::-webkit-inner-spin-button,
+.sim-popup-content input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
 .sim-button-container {
@@ -1509,5 +1527,97 @@ tbody td {
     fill: white; /* Change color on hover */
   }
 
+  // loader
+  /* Loader Background to cover full screen */
+.loader-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  z-index: 9999; /* Ensures the loader is above all other content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+// loader
+.edit-loader{
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  right: 50%;
+}
+
+/* Adjust loader bars */
+.middle {
+  display: flex;
+  gap: 5px; /* Adds a small gap between bars */
+}
+
+.bar {
+  width: 10px;
+  height: 70px;
+  display: inline-block;
+  transform-origin: bottom center;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  animation: loader 1.2s linear infinite;
+  background-color: transparent;
+}
+
+.bar1 { animation-delay: 0.1s; }
+.bar2 { animation-delay: 0.2s; }
+.bar3 { animation-delay: 0.3s; }
+.bar4 { animation-delay: 0.4s; }
+.bar5 { animation-delay: 0.5s; }
+.bar6 { animation-delay: 0.6s; }
+.bar7 { animation-delay: 0.7s; }
+.bar8 { animation-delay: 0.8s; }
+
+@keyframes loader {
+  0% {
+    transform: scaleY(0.1);
+    background: transparent;
+  }
+  50% {
+    transform: scaleY(1);
+    background: #ed2c1a; /* Red color */
+  }
+  100% {
+    transform: scaleY(0.1);
+    background: transparent;
+  }
+}
+.sidebar {
+  position: relative; /* Ensure it has a positioning context */
+  z-index: 10000; /* Higher than loader */
+  /* Other styles */
+}
   
+
+.date-inputs label{
+  font-family: "graphik", Arial,  sans-serif !important;
+}
+
+::ng-deep .mat-paginator {
+  font-family: "Graphik", Arial, sans-serif !important; /* Change font family */
+}
+
+::ng-deep .mat-paginator .mat-paginator-range-label {
+ font-family: "Graphik", Arial, sans-serif !important; /* Change font family */
+}
+
+::ng-deep .mat-paginator .mat-paginator-page-size .mat-select-trigger {
+  font-family: "Graphik", Arial, sans-serif !important; /* Change font family */
+}
+
+::ng-deep .mat-paginator .mat-button {
+  font-family: "Graphik", Arial, sans-serif !important; /* Change font family */
+}
+
+.form-group{
+  font-family: "Graphik", Arial, sans-serif !important; /* Change font family */
+
+}

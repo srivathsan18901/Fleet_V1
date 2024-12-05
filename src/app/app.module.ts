@@ -44,7 +44,7 @@ import { EnvmapModule } from './envmap/envmap.module';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { UserManagementComponent } from './user-management/user-management.component';
 import { FullscreenButtonComponent } from './fullscreen-button/fullscreen-button.component';
-import { ConfigurationModule } from './configuration/configuration.module';
+// import { ConfigurationModule } from './configuration/configuration.module';
 import { DropdownModule } from 'primeng/dropdown';import { RadialChartComponent } from './radial-chart/radial-chart.component';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -69,6 +69,11 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 // import { BrowserModule } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {MatRadioModule} from '@angular/material/radio';
+import { BatteryComponent } from './configuration/Addons/battery/battery.component';
+import { GeneralComponent } from './configuration/Addons/general/general.component';
+import { PlannerComponent } from './configuration/Addons/planner/planner.component';
+import { CommunicationComponent } from './configuration/Addons/communication/communication.component';
+import { TaskComponent } from './configuration/Addons/task/task.component';
 
 
 
@@ -110,7 +115,14 @@ import {MatRadioModule} from '@angular/material/radio';
     FaqComponent,
     ContactusComponent,
     LoaderComponent,
-    TimerComponent
+    TimerComponent,
+    BatteryComponent,
+    GeneralComponent,
+    PlannerComponent,
+    CommunicationComponent,
+    TaskComponent,
+
+
   ],
   imports: [
     MatRadioModule,
@@ -126,7 +138,7 @@ import {MatRadioModule} from '@angular/material/radio';
     EnvmapModule,
     MatDialogModule,
     MatPaginatorModule,
-    ConfigurationModule,
+    // ConfigurationModule,
     InputTextModule,
     ButtonModule,
     DropdownModule,

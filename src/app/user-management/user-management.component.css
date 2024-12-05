@@ -1,18 +1,16 @@
 /* @tailwind base;
 @tailwind components;
 @tailwind utilities; */
-/* From Uiverse.io by RaspberryBee */ 
+/* From Uiverse.io by RaspberryBee */
 /* The switch - the box around the slider */
 
-
 .flex {
-  font-family: 'Graphik', Arial, sans-serif; /* Specify Graphik and fallback to Arial */
+  font-family: "Graphik", Arial, sans-serif; /* Specify Graphik and fallback to Arial */
 }
-
 
 .switch {
   font-size: 17px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   position: relative;
   display: inline-block;
   width: 3.5em;
@@ -24,6 +22,7 @@
   opacity: 0;
   width: 0;
   height: 0;
+  pointer-events: none;
 }
 
 /* The slider */
@@ -35,7 +34,7 @@
   right: 0;
   bottom: 0;
   background-color: rgb(182, 182, 182);
-  transition: .4s;
+  transition: 0.4s;
   border-radius: 10px;
 }
 
@@ -49,7 +48,7 @@
   bottom: 0.3em;
   transform: rotate(270deg);
   background-color: rgb(255, 255, 255);
-  transition: .4s;
+  transition: 0.4s;
 }
 
 .switch input:checked + .slider {
@@ -57,7 +56,7 @@
 }
 
 .switch input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
+  box-shadow: 0 0 1px #2196f3;
 }
 
 .switch input:checked + .slider:before {
@@ -75,72 +74,71 @@
   background-color: white;
 }
 
-  /* Header section styles */
-  .header-section {
-    margin-bottom: 0px;
-  }
+/* Header section styles */
+.header-section {
+  margin-bottom: 0px;
+}
 
-  p {
-    margin: 0px;
-  }
+p {
+  margin: 0px;
+}
 
-  .header-title {
-    font-size: 36px;
-    font-family: "graphik", Arial,  sans-serif;
-    font-weight: bold;
-    color: #DA2127;
-    margin: 0;
-  }
+.header-title {
+  font-size: 36px;
+  font-family: "graphik", Arial, sans-serif;
+  font-weight: bold;
+  color: #da2127;
+  margin: 0;
+}
 
-  .subheader-container {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-  }
+.subheader-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
 
-  .subheader-text {
-    font-size: 16px;
-    font-family: "graphik", Arial,  sans-serif;
-    color: #333;
-  }
+.subheader-text {
+  font-size: 16px;
+  font-family: "graphik", Arial, sans-serif;
+  color: #333;
+}
 
-  .subheader-icon {
-    width: 23px;
-    height: 13px;
-  }
+.subheader-icon {
+  width: 23px;
+  height: 13px;
+}
 
-  .no-data-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 150px; /* Adjust height as needed */
-  }
-  
-  .no-data-image {
-    width: 100px;
-    height: auto;
-    margin-bottom: 0rem;
-  }
-  
-  .no-data-text {
-    font-size: 16px;
-    font-family: "graphik", Arial,  sans-serif;
-    color: rgba(0, 0, 0, 0.7);
-    text-align: center;
-  }
+.no-data-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 150px; /* Adjust height as needed */
+}
 
-.bg-blur
-{
-  background: rgba(0, 0, 0,0.7);
+.no-data-image {
+  width: 100px;
+  height: auto;
+  margin-bottom: 0rem;
+}
+
+.no-data-text {
+  font-size: 16px;
+  font-family: "graphik", Arial, sans-serif;
+  color: rgba(0, 0, 0, 0.7);
+  text-align: center;
+}
+
+.bg-blur {
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4.1px);
 }
 
 .popup {
-padding: 35px;
-background: #F5F5F5;
-box-shadow: 0px 0px 31.8px 28px rgba(0, 0, 0, 0.25);
-border-radius: 20px;
+  padding: 35px;
+  background: #f5f5f5;
+  box-shadow: 0px 0px 31.8px 28px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
 }
 
 .rotateArrow {
@@ -160,8 +158,8 @@ border-radius: 20px;
   border-radius: 100px;
 }
 
-.twoColors:nth-child(even){
-  background-color: #EFEFEF;
+.twoColors:nth-child(even) {
+  background-color: #efefef;
 }
 
 .twoColors:nth-child(odd) {
@@ -175,7 +173,7 @@ border-radius: 20px;
   background-color: rgb(20, 20, 20);
   border: none;
   font-weight: 600;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -185,22 +183,22 @@ border-radius: 20px;
   overflow: hidden;
   position: relative;
   text-decoration: none !important;
- }
- .edit-svgIcon {
+}
+.edit-svgIcon {
   width: 17px;
   transition-duration: 0.3s;
- }
- .edit-svgIcon path {
+}
+.edit-svgIcon path {
   fill: white;
- }
- .edit-button:hover {
-  width: 120px;
+}
+.edit-button:hover {
+  width: 90px;
   border-radius: 50px;
   transition-duration: 0.3s;
   background-color: rgb(255, 69, 69);
   align-items: center;
- }
- .edit-button:hover .edit-svgIcon {
+}
+.edit-button:hover .edit-svgIcon {
   width: 20px;
   transition-duration: 0.3s;
   transform: translateY(60%);
@@ -209,34 +207,34 @@ border-radius: 20px;
   -o-transform: rotate(360deg);
   -ms-transform: rotate(360deg);
   transform: rotate(360deg);
- }
- .edit-button::before {
+}
+.edit-button::before {
   display: none;
   content: "Edit";
   color: white;
   transition-duration: 0.3s;
   font-size: 2px;
-  font-family: "graphik", Arial,  sans-serif;
- }
- .edit-button:hover::before {
+  font-family: "graphik", Arial, sans-serif;
+}
+.edit-button:hover::before {
   display: block;
   padding-right: 10px;
   font-size: 13px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   opacity: 1;
   transform: translateY(0px);
   transition-duration: 0.3s;
- }
+}
 
- /* Delete */
- .delete-button {
+/* Delete */
+.delete-button {
   width: 30px;
   height: 30px;
   border-radius: 50%;
   background-color: rgb(20, 20, 20);
   border: none;
   font-weight: 600;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -245,24 +243,23 @@ border-radius: 20px;
   transition-duration: 0.3s;
   overflow: hidden;
   position: relative;
- }
+}
 
- 
- .delete-svgIcon {
+.delete-svgIcon {
   width: 15px;
   transition-duration: 0.3s;
- }
- .delete-svgIcon path {
+}
+.delete-svgIcon path {
   fill: white;
- }
- .delete-button:hover {
+}
+.delete-button:hover {
   width: 90px;
   border-radius: 50px;
   transition-duration: 0.3s;
   background-color: rgb(255, 69, 69);
   align-items: center;
- }
- .delete-button:hover .delete-svgIcon {
+}
+.delete-button:hover .delete-svgIcon {
   width: 20px;
   transition-duration: 0.3s;
   transform: translateY(60%);
@@ -271,26 +268,26 @@ border-radius: 20px;
   -o-transform: rotate(360deg);
   -ms-transform: rotate(360deg);
   transform: rotate(360deg);
- }
- .delete-button::before {
+}
+.delete-button::before {
   display: none;
   content: "Delete";
   color: white;
   transition-duration: 0.3s;
   font-size: 2px;
-  font-family: "graphik", Arial,  sans-serif;
- }
- .delete-button:hover::before {
+  font-family: "graphik", Arial, sans-serif;
+}
+.delete-button:hover::before {
   display: block;
   padding-right: 10px;
   font-size: 13px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   opacity: 1;
   transform: translateY(0px);
   transition-duration: 0.3s;
- }
+}
 
- .close-button {
+.close-button {
   position: absolute;
   top: 20px;
   right: 20px;
@@ -321,8 +318,7 @@ border-radius: 20px;
   fill: white; /* Change color on hover */
 }
 
-
- .table-row {
+.table-row {
   border-bottom: 1px solid white; /* White line between rows */
   padding: 5px 0; /* Reduced padding */
 }
@@ -336,17 +332,16 @@ border-radius: 20px;
   border-right: none; /* Remove border for the last column */
 }
 
-.bg-blur
-{
-  background: rgba(0, 0, 0,0.7);
+.bg-blur {
+  background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(4.1px);
 }
 
 .popup {
-padding: 35px;
-background: #F5F5F5;
-box-shadow: 0px 0px 35px 10px rgba(0, 0, 0, 0.25);
-border-radius: 20px;
+  padding: 35px;
+  background: #f5f5f5;
+  box-shadow: 0px 0px 35px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 20px;
 }
 
 .rotateArrow {
@@ -366,7 +361,7 @@ border-radius: 20px;
   border-radius: 100px;
 }
 
-.twoColors:nth-child(even){
+.twoColors:nth-child(even) {
   background-color: #ffeeee;
 }
 
@@ -374,12 +369,262 @@ border-radius: 20px;
   background-color: white;
 }
 
-.create-user{
-
+.create-user {
   padding: 10px 20px;
-    background-color: #ff3333;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  background-color: #ff3333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/*USER MANAGEMENT STYLES*/
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 20px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: 0.4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: #d30000;
+}
+
+input:checked + .slider:before {
+  transform: translateX(20px);
+}
+
+input:disabled + .slider {
+  background-color: #e4e4e4;
+}
+
+.grid {
+    display: grid;
+
+}
+
+.grid-cols-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.auto-fit-grid {
+  display: grid;
+  gap: 1.5rem; /* Space between cards */
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Automatically adjust columns */
+  grid-auto-rows: 300px; /* Enforce uniform row height */
+  justify-content: stretch; /* Stretch to fill available space */
+  align-items: stretch; /* Ensure all cards stretch to fill the grid */
+}
+
+
+
+@media (min-width: 1024px) { /* Adjust for desktop/fullscreen */
+  .auto-fit-grid {
+    grid-template-columns: repeat(3, 1fr); /* Set to 3 columns */
+    grid-template-rows: repeat(2, auto); /* Set to 2 rows for 6 cards */
+  }
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+.text-gray-400 {
+  color: #b5b5b5;
+}
+
+.text-black {
+  color: #000;
+}
+
+.icon-size {
+  width: 32px; /* Adjust as needed */
+  height: 32px; /* Adjust as needed */
+  object-fit: contain;
+}
+
+.parent-container {
+  max-height: 85vh; /* Set maximum height to a percentage of the viewport */
+  overflow-y: hidden; /* Disable vertical scrolling */
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Adjust spacing */
+}
+.auto-fit-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Adjust the card size */
+  gap: 1rem;
+}
+
+
+.mt-5 {
+  margin-top: 0px;
+}
+
+
+.tab-content {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+  position: absolute; /* Prevent stacking issues */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.slide-in {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slide-out {
+  transform: translateX(-100%);
+  opacity: 0;
+}
+
+.switch {
+  display: inline-block;
+  width: 34px;
+  height: 20px;
+  position: relative;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 20px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(14px);
+}
+
+/* Container for each option */
+.option-container {
+  display: flex; /* Enable flexbox */
+  align-items: center; /* Vertically center items */
+  justify-content: space-between; /* Push text and toggle to opposite sides */
+  gap: 1rem; /* Optional spacing */
+  width: 100%;
+}
+
+/* Text styles */
+.option-text {
+  font-size: 15px;
+  font-weight: 500;
+  color: #a3a3a3;
+  margin: 0; /* Reset margin */
+}
+
+/* Switch styles */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px; /* Increased width */
+  height: 28px; /* Increased height */
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 28px;
+}
+
+/* Style for the slider knob */
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 22px;  /*Knob height*/
+  width: 22px; /*knob width*/
+  left: 0px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #4caf50;
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+input:disabled + .slider:before {
+  background-color: #f5f5f5;
+}
+
+input:disabled + .slider {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
 }

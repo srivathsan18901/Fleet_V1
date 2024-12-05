@@ -47,6 +47,8 @@ export class Chart1Component {
         width: 240,
         height: 250,
         type: "radialBar",
+        offsetX: -5, // Horizontal offset
+        offsetY: -10, // Vertical offset
         toolbar: {
           show: false
         }
@@ -70,7 +72,7 @@ export class Chart1Component {
           track: {
             background: "#FFE5E5",
             strokeWidth: "100%",
-            margin: 10
+            margin: 5
           },
           dataLabels: {
             show: true,
@@ -183,7 +185,7 @@ export class Chart1Component {
 
     const data = await response.json();
     if (!data.map || data.error) return 0;
-    return data.robos.count;
+    return data.robos.count||0;
   }
 
  ngOnChanges() {

@@ -648,6 +648,7 @@ app-fullscreen-button{
 
 .flag-name {
   font-weight: 600; /* Bold text */
+  font-family:"graphik", Arial, sans-serif; 
   margin-top: 0.8rem; /* Adjust margin for centering */
 }
 

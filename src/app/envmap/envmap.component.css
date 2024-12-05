@@ -625,6 +625,7 @@ canvas {
   display: inline;
   margin: 5px;
 }
+
 .nodepopup-overlay {
   position: fixed;
   top: 0;

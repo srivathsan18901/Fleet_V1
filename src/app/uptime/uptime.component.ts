@@ -45,15 +45,22 @@ export class UptimeComponent {
           offsetY: -10,
           offsetX: -20,
           startAngle: -90,
-          endAngle: 90,
+          endAngle: 90,          
           hollow: {
-            size: '60%', // Adjusted for better visual balance
-          },
+            size: '50%', // Adjusted for better visual balance
+          },          
           track: {
-            background: '#e5e5e5', // Light gray for a soft background
+            background: '#fee8e8', // Light gray for a soft background
             strokeWidth: '100%',
             margin: 1,
-          },
+            dropShadow: {
+              enabled: true,
+              top: 3,
+              left: 0,
+              blur: 4,
+              opacity: 0.24
+            }
+          },          
           dataLabels: {
             name: {
               show: false,
@@ -62,7 +69,7 @@ export class UptimeComponent {
               offsetY: 0,
               fontSize: '28px', // Slightly smaller for a sleeker look
               fontWeight: 'bold',
-              color: '#004080', // Dark blue for percentage text
+              color: '#f0453f', // Dark blue for percentage text
             },
           },
         },
@@ -71,7 +78,7 @@ export class UptimeComponent {
         type: 'gradient',
         gradient: {
           shade: 'dark',
-          gradientToColors: ['#00CFFF'], // End in bright cyan
+          gradientToColors: ['#f0453f'], // End in bright cyan
           shadeIntensity: 0.5,
           type: 'vertical',
           opacityFrom: 1,
@@ -80,12 +87,12 @@ export class UptimeComponent {
           colorStops: [
             {
               offset: 0,
-              color: '#0073E6', // Start with a vibrant blue
+              color: '#f0453f', // Start with a vibrant blue
               opacity: 1,
             },
             {
               offset: 100,
-              color: '#00CFFF', // End with bright cyan
+              color: '#ffe9e9', // End with bright cyan
               opacity: 1,
             },
           ],

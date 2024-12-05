@@ -116,13 +116,13 @@
                   <td>{{ item.taskType }}</td>
                   <td>{{ item.status }}</td>
                   <td>{{ item.roboName }}</td>
-                  <td>{{ item.destinationLocation }}</td>
                   <td>{{ item.sourceLocation }}</td>
+                  <td>{{ item.destinationLocation }}</td>
                   <td>
                     <!-- Switch Container -->
                     <div class="switch-container">
                       <!-- Switch -->
-                      <label class="switch">
+                      <!-- <label class="switch">
                         <input type="checkbox" class="chbox" [checked]="!item.paused" (click)="onPause(item)">
                         <span class="slider slider--0" [ngClass]="{ 'slider--0': !item.paused }">
                           {{ item.paused ? 'Activate' : 'Pause' }}
@@ -133,12 +133,17 @@
                         </div>
                         <div class="slider slider--2"></div>
                         <div class="slider slider--3"> Activate</div>
-                      </label>
+                      </label> -->
 
 
                       <!-- Cancel Button -->
-                      <button class="btn-common btn-cancel" (click)="onCancel(item)">Cancel</button>
-                    </div>
+                      <button 
+                      *ngIf="item.status !== 'COMPLETED' && item.status !== 'CANCELLED'" 
+                       class="btn-common btn-cancel" 
+                      (click)="onCancel(item)">
+                      Cancel
+                    </button>
+                   </div>
                   </td>
                 </tr>
               </tbody>

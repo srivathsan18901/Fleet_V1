@@ -22,6 +22,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { SessionService } from '../services/session.service';
 import { map } from 'rxjs';
+// import { NodeGraphService } from '../services/nodegraph.service';
 
 interface Node {
   nodeId: string;
@@ -353,6 +354,7 @@ export class EnvmapComponent implements AfterViewInit {
     private projectService: ProjectService,
     private messageService:MessageService,
     private sessionService:SessionService,
+    // private nodeGraphService:NodeGraphService
   ) {
     if (this.currEditMap) this.showImage = true;
   }
@@ -409,7 +411,7 @@ export class EnvmapComponent implements AfterViewInit {
         parseInt(this.zones[this.zones.length - 1]?.id) + 1
           ? parseInt(this.zones[this.zones.length - 1].id) + 1
           : this.zoneCounter;
-      this.sessionService.onMapEdit();   //discuss later 
+      // this.sessionService.onMapEdit();   //discuss later 
       this.open();
     }
     else if(this.sessionService.isMapInEdit()){
@@ -879,6 +881,7 @@ export class EnvmapComponent implements AfterViewInit {
       return node;
     })
     this.storeNodestoLocal();
+    
     // this.projectService.setNode();
     // Ensure the nodeDetails object includes the checkbox values
     // const updatedNodeDetails = {
@@ -922,6 +925,7 @@ export class EnvmapComponent implements AfterViewInit {
       this.selectedNode.nodePosition.x = (parsedX+this.origin.x||0)/this.ratio!||1;
       this.selectedNode.nodePosition.y = (parsedY+this.origin.y||0)/this.ratio!||1;
       this.selectedNode.nodePosition.orientation = parsedOrientation;
+      
       console.log(this.selectedNode.nodePosition.x,this.selectedNode.nodePosition.y)
       if (nodeIndex !== -1) {        
         this.nodes[nodeIndex].nodeDescription = this.nodeDetails.description;
@@ -1525,7 +1529,6 @@ export class EnvmapComponent implements AfterViewInit {
       });
       return zone;
     });
-
     this.robos = this.robos.map((robo) => {
       robo.pos.x = ((robo.pos.x * (this.ratio || 1))- (this.origin.x || 0));
       robo.pos.y = ((robo.pos.y * (this.ratio || 1))- (this.origin.y || 0));
@@ -1534,19 +1537,20 @@ export class EnvmapComponent implements AfterViewInit {
     
     let orientation = {x :0, y : 0, z : 0, w : 0};
     if(this.nodes.length)
-    orientation = this.ToQuaternion_(0,0,this.nodes[0].nodePosition.orientation);
-
+      orientation = this.ToQuaternion_(0,0,this.nodes[0].nodePosition.orientation);
+    
     let roboInit  = {
       id: 0,
       pose: {
         position: {
-            x: this.nodes[0].nodePosition.x,
-            y: this.nodes[0].nodePosition.y,
-            z: this.nodes[0].nodePosition.orientation
+          x: this.nodes[0].nodePosition.x,
+          y: this.nodes[0].nodePosition.y,
+          z: this.nodes[0].nodePosition.orientation
         },
         orientation: orientation
       }
     }
+
 
     this.form = new FormData();
     const mapData = {
@@ -1566,8 +1570,6 @@ export class EnvmapComponent implements AfterViewInit {
 
     this.form?.append('mapImg', this.selectedImage);
     this.form?.append('mapData', JSON.stringify(mapData));
-
-
 
     fetch(`http://${environment.API_URL}:${environment.PORT}/dashboard/maps`, {
       method: 'POST',
@@ -1644,8 +1646,7 @@ export class EnvmapComponent implements AfterViewInit {
           summary: 'Success',
           detail: 'Map saved successfully',
           life: 4000,
-        });
-        
+        });        
         this.closePopup.emit();
       })
       .catch((error) => {
@@ -3476,7 +3477,6 @@ plotRobo(x: number, y: number, isSelected: boolean = false, orientation: number 
   connectedNodes: any[] = []; // Array to store connected nodes
   selectedPredockPose: string | null = null; // Holds the selected Predock Pose
   selectedUndockPose: string | null = null;
-
   originalRoboPosition: { x: number; y: number } | null = null;
   originalAssetPosition: { x : number; y: number } | null = null;
   originalNodePosition: { x : number; y: number } | null = null;

@@ -210,7 +210,7 @@ export class AreaChartComponent implements OnInit {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     // console.log(timeStamp1,"start date")
     // console.log(timeStamp2,'end date')
-    console.log(endTime,'endpoint')
+    console.log(timeSpan,'time span')
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
       {

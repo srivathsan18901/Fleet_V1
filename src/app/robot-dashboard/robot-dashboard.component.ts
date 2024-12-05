@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
@@ -14,6 +14,9 @@ export class RobotDashboardComponent implements OnInit {
   selectedMap: any | null = null;
   robotActivities: any[] = [];
   liveRobos: any[] = [];
+
+  processedErrors : Set<string>;
+  
   statisticsData: any = {
     averageSpeed: 0,
     averageSpeedchange: 8.5,
@@ -25,93 +28,27 @@ export class RobotDashboardComponent implements OnInit {
     networkConnectionChange: 5.2,
   }; // Initialize the array with mock data
 
-  // robotActivities = [
-
-  //   // { id: 2, name: 'AMR-001', task: 'Transporting materials', progress: 85, status: 'Actively Working' },
-  // ];
-
-  notifications = [
-    {
-      message: 'Low Battery',
-      taskId: 'AMR-001',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Task Assigned ',
-      taskId: ' AMR-002',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Obstacle Detected ',
-      taskId: ' AMR-003',
-      timestamp: '2024-08-16',
-    },
-    {
-      message: 'Low Battery',
-      taskId: 'AMR-001',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Task Assigned ',
-      taskId: ' AMR-002',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Obstacle Detected ',
-      taskId: ' AMR-003',
-      timestamp: '2024-08-16',
-    },
-    {
-      message: 'Low Battery',
-      taskId: 'AMR-001',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Task Assigned ',
-      taskId: ' AMR-002',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Obstacle Detected ',
-      taskId: ' AMR-003',
-      timestamp: '2024-08-16',
-    },
-    {
-      message: 'Low Battery',
-      taskId: 'AMR-001',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Task Assigned ',
-      taskId: ' AMR-002',
-      timestamp: '2024-08-16 14:32',
-    },
-    {
-      message: 'Obstacle Detected ',
-      taskId: ' AMR-003',
-      timestamp: '2024-08-16',
-    },
-    
-    // { message: 'Obstacle Detected - AMR-003', timestamp: '2024-08-16' },
-  ];
-
-  
+  notifications :any[] = [];
 
   filteredRobotActivities = this.robotActivities;
   filteredNotifications = this.notifications;
 
-  constructor(private router: Router, private projectService: ProjectService) {}
+  constructor(private router: Router, private projectService: ProjectService, private cdRef: ChangeDetectorRef) {
+    this.processedErrors = new Set<string>();
+  }
 
   async ngOnInit() {
     this.router.navigate(['/statistics/robot']);
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) return;
     this.robotActivities = await this.getLiveRoboInfo();
+    this.getRoboStatus(); // update only err, warning..
     this.updateLiveRoboInfo();
     this.filteredRobotActivities = this.robotActivities;
     this.getFleetGrossStatus();
     setInterval(async () => {
       this.robotActivities = await this.getLiveRoboInfo();
+      this.getRoboStatus(); // update only err, warning..
       this.updateLiveRoboInfo();
       this.filteredRobotActivities = this.robotActivities;
       // this.filteredRobotActivities = this.robotActivities.flat(); // flat() to convert nested of nested array to single array..
@@ -136,7 +73,7 @@ export class RobotDashboardComponent implements OnInit {
     const mapId = this.selectedMap.id;
 
     let averageSpeed = this.getAvgSpeed();
-    this.statisticsData.averageSpeed = averageSpeed;
+    this.statisticsData.averageSpeed = averageSpeed || "Loading...";
 
     // let totDistance = this.getTotDistance()
     // this.statisticsData.totalDistance = totDistance;
@@ -180,6 +117,50 @@ export class RobotDashboardComponent implements OnInit {
     return data.robos;
   }
 
+  getRoboStatus(): void{
+    if (!('robots' in this.robotActivities)) return;
+
+    let { robots }: any = this.robotActivities;
+    if (!robots.length) return;
+
+   robots.forEach((robot: any) => {
+      if (robot.robot_errors) {
+        for (const [errorType, errors] of Object.entries(robot.robot_errors)) { // [errorType, errors] => [key, value]
+          // if (errorType === "NO ERROR") continue;
+          for (let error of (errors as any[])) {
+            let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "MANUAL MODE", "DOCKING", "NO ERROR"]; //Robot Errors List from RabbitMQ
+            let criticality = "Normal";
+
+            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3])) 
+              criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
+            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2])) 
+              criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
+
+            let notificationKey = `${error.description} on robot ID ${robot.id}`;
+            if (this.processedErrors?.has(notificationKey)) continue;
+            this.processedErrors?.add(notificationKey);
+
+            this.notifications.push({
+              errorName: errorType,
+              roboId: `${robot.type}-${robot.id}`,
+              desc: `${error.description}`,
+            });
+
+            this.cdRef.detectChanges(); // yet to notify..
+          }
+        }
+      }
+   });
+
+  //  console.log(this.notifications);
+  }
+
+  // Clear all notifications when the button is clicked
+  clearAllNotifications() {
+    this.notifications = [];
+    this.processedErrors.clear();
+  }
+
   updateLiveRoboInfo() {
     if (!('robots' in this.robotActivities)) {
       // this.robots = this.initialRoboInfos;
@@ -208,9 +189,21 @@ export class RobotDashboardComponent implements OnInit {
         criticality: robo.Criticality,
       };
     });
-    this.statisticsData.robotUtilization = `${(tot_robotUtilization / robots.length) * 100} %`;
-    this.statisticsData.totalDistance = `${tot_Dis/robots.length} m`;
-    this.statisticsData.networkConnection = `${tot_Network/robots.length} dB`;
+    this.statisticsData.robotUtilization = 
+      tot_robotUtilization && robots.length 
+      ? `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %` 
+      : "Loading...";
+    
+    this.statisticsData.totalDistance = 
+        tot_Dis && robots.length 
+        ? `${(tot_Dis / robots.length).toFixed(2)} m` 
+        : "Loading...";
+        
+    this.statisticsData.networkConnection = 
+        tot_Network && robots.length 
+        ? `${(tot_Network / robots.length).toFixed(2)} dB` 
+        : "Loading...";
+
     this.filteredRobotActivities = this.robotActivities;
 
   }
@@ -232,7 +225,7 @@ export class RobotDashboardComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     const query = input.value.toLowerCase();
     this.filteredNotifications = this.notifications.filter((notification) =>
-      notification.message.toLowerCase().includes(query)
+      notification.errorName.toLowerCase().includes(query)
     );
   }
 
@@ -256,10 +249,10 @@ export class RobotDashboardComponent implements OnInit {
   }
 
   getAvgSpeed(): string{
-    if (!('robots' in this.robotActivities)) return `${0} m/s`;
+    if (!('robots' in this.robotActivities)) return `Loading...`;
 
     let { robots }: any = this.robotActivities;
-    if (!robots.length) return `${0} m/s`;
+    if (!robots.length) return `Loading...`;
 
     let tot_speed = 0;
     for (let i = 0; i < robots.length; i++){

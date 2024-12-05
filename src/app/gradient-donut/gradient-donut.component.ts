@@ -91,6 +91,7 @@ export class GradientDonutComponent implements OnInit {
                 fontWeight: 'bold',
                 color: '#121212',
                 offsetY: -7,
+                style: { fontFamily: '"Graphik", Arial, sans-serif' },
               },
               value: {
                 show: true,
@@ -99,6 +100,7 @@ export class GradientDonutComponent implements OnInit {
                 color: '#121212',
                 offsetY: 6,
                 formatter: (val: any) => `${val}%`, // Formatting the value to show percentage
+                style: { fontFamily: '"Graphik", Arial, sans-serif' },
               },
               total: {
                 show: true,
@@ -106,6 +108,7 @@ export class GradientDonutComponent implements OnInit {
                 fontSize: '1.2em',
                 fontWeight: 'bold',
                 color: '#121212',
+                style: { fontFamily: '"Graphik", Arial, sans-serif' },
               },
             },
           },
@@ -117,6 +120,7 @@ export class GradientDonutComponent implements OnInit {
           fontSize: this.dataLabelFontSize,
           fontWeight: 'bold',
           colors: ['#000000'],
+          fontFamily: '"Graphik", Arial, sans-serif',
         },
       },
       fill: {
@@ -131,6 +135,7 @@ export class GradientDonutComponent implements OnInit {
         },
         labels: {
           colors: ['#000000'], // Adjust color as needed
+          style: { fontFamily: '"Graphik", Arial, sans-serif' },
         },
       },
       labels: this.labels,
@@ -144,6 +149,7 @@ export class GradientDonutComponent implements OnInit {
         style: {
           fontSize: '1.2em',
           color: '#263238',
+          fontFamily: '"Graphik", Arial, sans-serif',
         },
       },
       responsive: this.responsive,

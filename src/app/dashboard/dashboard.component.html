@@ -280,7 +280,6 @@
       <button
         class="dropdown-button"
         (click)="toggleDropdown()"
-        [disabled]="!simMode.length"
       >
         Enable Robot
         <svg
@@ -300,7 +299,7 @@
       </button>
 
       <!-- Dropdown content, will only display if robots are present -->
-      <div class="dropdown-content" *ngIf="isDropdownOpen && simMode.length">
+      <div class="dropdown-content" *ngIf="isDropdownOpen">
         <div *ngIf="isFleet">
           <div *ngFor="let robot of robos; let i = index" class="dropdown-item">
             <span>{{ robot.roboDet.id }}</span>
@@ -320,7 +319,7 @@
             </label>
 
             <!-- Delete icon with click event -->
-            <button class="enable-delete-button" (click)="deleteRobot(i)">
+            <!-- <button class="enable-delete-button" (click)="deleteRobot(robot, i)">
               <svg
                 width="25"
                 height="25"
@@ -334,7 +333,7 @@
                   fill="white"
                 />
               </svg>
-            </button>
+            </button> -->
           </div>
         </div>
         <div *ngIf="!isFleet">
@@ -359,7 +358,7 @@
             </label>
 
             <!-- Delete icon with click event -->
-            <button class="enable-delete-button" (click)="deleteRobot(i)">
+            <button class="enable-delete-button" (click)="deleteRobot(robot ,i)">
               <svg
                 width="25"
                 height="25"

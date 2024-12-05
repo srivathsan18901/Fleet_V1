@@ -13,14 +13,20 @@
     display: flex;
     justify-content: left;
     margin-bottom: 5px;
+    gap:20px;
     position: relative; /* Position relative for the dropdown arrow */
   }
+
   #myChart .apexcharts-toolbar {
     z-index: 0;
   }
   
-
-  
+  #overall .link {
+    width: 150px;
+  }
+  #overall .item:hover{
+    width: 150px;
+  }
   .menu {
     font-size: 14px;
     font-family: "graphik", Arial,  sans-serif;
@@ -115,6 +121,10 @@
     border-top: transparent;
     border-color: #DA2127; /* Violet color */
     width: 200px; /* Ensure the dropdown width matches the button's width */
+  }
+
+  #overall .item:hover .submenu{
+    width: 150px;
   }
   
   .menu .item:hover .link {

@@ -150,6 +150,7 @@
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    font-family:"graphik", Arial, sans-serif; 
   }
 
   /* Export Popup Styles */
@@ -423,7 +424,7 @@
 .switch-container {
   display: flex;
   align-items: center; /* Vertical alignment */
-  justify-content: center; /* Horizontal centering */
+  justify-content: left; /* Horizontal centering */
   gap: 10px; /* Space between the switch and the button */
   width: 100%; /* Ensures container spans the full width of the table cell */
   

@@ -5,8 +5,23 @@
   <!-- Sidebar -->
   <!-- <app-sidenavbar></app-sidenavbar> -->
   <app-loader></app-loader>
+  <!-- <p-toast></p-toast> -->
 
-
+ <!-- loader -->
+ <div *ngIf="editLoader" class="edit-loader">
+  <div *ngIf="editLoader" class="loader-background">
+    <div class="middle">
+      <div class="bar bar1"></div>
+      <div class="bar bar2"></div>
+      <div class="bar bar3"></div>
+      <div class="bar bar4"></div>
+      <div class="bar bar5"></div>
+      <div class="bar bar6"></div>
+      <div class="bar bar7"></div>
+      <div class="bar bar8"></div>
+    </div>
+  </div>
+</div>
     <div class="mainContent">
 
       <div class="header-section">
@@ -45,21 +60,33 @@
         <!-- simulation -->
         <!-- robots.component.html -->
 
-          <div class="simulation-container" *ngIf="currentTable === 'robot'">
-            <button class="simulation-button" (click)="togglePopup()" [disabled]="!isMapAvailable()">Simulation</button>    
-          </div>
-
+        <div class="simulation-container" *ngIf="currentTable === 'robot'">
+          <button 
+            class="simulation-button" 
+            (click)="togglePopup()" 
+            [class.disabled]="!isMapAvailable()" 
+            [disabled]="!isMapAvailable()">
+            Simulation
+          </button>
+        </div>
+        
           <!-- Popup for selecting robots -->
           <div *ngIf="isPopupVisible" class="sim-popup-modal">
             <div class="sim-popup-content">
-              <h3>Enter the Robots for simulation </h3>
+              <h3>Enter the Robots for Simulation </h3>
+              <div>
               <label for="robots">Number of Robots:</label>
+              
               <input 
                 type="number" 
                 [(ngModel)]="robotCount" 
                 id="robots" 
                 placeholder="Enter number of robots" 
                 min="1">
+              </div>
+              <h4 *ngIf="robotCountError" class="error-message">
+                No Robots Added
+              </h4>
               
               <div class="sim-button-container">
                 <button (click)="addRobot()">Add</button>
@@ -96,11 +123,7 @@
           
               <p>Total Robots: {{ totalRobots }}</p>
             </div>
-          </div>
-          
-            
-        
-          
+          </div>    
         <!-- Date Filter and Date Inputs -->
         <div class="date-filters" *ngIf="currentTable === 'Environment'">
           <div class="date-inputs">
@@ -171,10 +194,25 @@
         </div>
       </div>
 
+     
+
       <!-- Table -->
       <div class="table-containers">
         
         <div class="table-container">
+          <div *ngIf="tableLoader" class="loader-background">
+            <div class="middle">
+              <div class="bar bar1"></div>
+              <div class="bar bar2"></div>
+              <div class="bar bar3"></div>
+              <div class="bar bar4"></div>
+              <div class="bar bar5"></div>
+              <div class="bar bar6"></div>
+              <div class="bar bar7"></div>
+              <div class="bar bar8"></div>
+            </div>
+          </div> 
+          
           <div class="env-table">
             <table *ngIf="currentTable === 'Environment' && !imageUploaded">
               <thead>
@@ -235,7 +273,7 @@
                   <td class="iconTable">
                     <button class="sel-btn" (click)="selectMap(item)">
                       <!-- [disabled]="isButtonDisabled(item)" -->
-                      <!-- SELECT -->
+                      <!-- SELECT -->              
                       {{ item.mapName === this.selectedMap?.mapName ? "Deselect" : "Select" }}
                     </button>
                   </td>
@@ -299,7 +337,7 @@
                   <td>{{ (paginator ? paginator.pageIndex * paginator.pageSize : 0) + i + 1 }}</td>
                   <td>{{ item.ipAdd }}</td>
                   <td>{{ item.amrId }}</td>
-                  <td>{{ item.uuid.slice(0, 8)+'...' }}</td>
+                  <td>{{ item.uuid }}</td>
                   <td>{{ item.roboName }}</td>
                   <td class="iconTable">
                     <div class="edit">
@@ -386,12 +424,13 @@
                 <span *ngIf="endIPInput.invalid && endIPInput.touched" class="error">
                   <!-- Invalid IP Address -->
                 </span>
-            </div>
+            </div >
 
               <button
                 type="button"
                 class="start-button"
                 (click)="startScanning()"
+                [disabled]="!isMapAvailable()"
               >
                 Scan
               </button>
@@ -399,6 +438,7 @@
                 type="button"
                 class="stop-button"
                 (click)="stopScanning()"
+                [disabled]="!isMapAvailable()"
               >
                 Stop
               </button>

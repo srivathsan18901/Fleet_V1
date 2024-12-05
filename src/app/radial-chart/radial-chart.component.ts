@@ -97,7 +97,7 @@ export class RadialChartComponent implements OnInit {
     setInterval(async () => {
       this.roboStatePie = await this.getRobosStates();
       this.chartOptions.series = [...this.roboStatePie];
-    }, 1000 * 5); // Update every 5 seconds
+    }, 1000 * 2); // Update every 5 seconds
   }
   
   updateChart() {

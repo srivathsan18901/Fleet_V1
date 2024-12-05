@@ -31,16 +31,33 @@ export class TasksComponent implements OnInit, AfterViewInit {
     console.log(`${action} task: ${item.taskId}`);
   }
 
-  onCancel(item: any) {
-    // Find the index of the item in the tasks array and remove it
-    const index = this.tasks.indexOf(item);
-    if (index > -1) {
-      this.tasks.splice(index, 1); // Remove the task from the tasks array
+  async onCancel(item: any) {    
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/cancel-task`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapId: this.mapData.id,
+          taskId:item.taskId
+        }),
+      }
+    );
+    let data=await response.json();
+    console.log(item);
+    
+    if(!data.isTaskCancelled) {
+      alert(data.response || data.msg)
+      return
     }
-
-    // Update the filteredTaskData and reapply pagination
-    this.filteredTaskData = [...this.tasks]; // Ensure it's updated
-    this.setPaginatedData(); // Recalculate the displayed paginated data
+    if(data.isTaskCancelled){
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Task Cancelled',
+      });
+    }
   }
 
   mapData: any | null = null;
@@ -84,7 +101,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // if (!response.ok)
     //   throw new Error(`Error with status code of : ${response.status}`);
     let data = await response.json();
-
+console.log(data,'task data')
     if (!data.tasks) return;
     const { tasks } = data.tasks;
     if (!('tasks' in data.tasks)) {
@@ -97,6 +114,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     if (tasks)
       this.tasks = tasks.map((task: any) => {
+        // if(task.task_status.status === "COMPLETED")
         return {
           taskId: task.task_id,
           taskType: task.sub_task[0]?.task_type
@@ -110,6 +128,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
           destinationLocation: 'N/A',
         };
       });
+      console.log(this.filteredTaskData,'filtered data')
+      console.log(this.tasks,'task  sep data')
     this.filteredTaskData = this.tasks;
     // console.log(this.tasks);
     this.setPaginatedData();
@@ -189,7 +209,21 @@ export class TasksComponent implements OnInit, AfterViewInit {
     try {
       switch (format) {
         case 'csv':
-          this.exportService.exportToCSV(data, 'TaskDataExport');
+           let csvHeader:{[k:string]:any}={}
+          if(data.length==0){
+            csvHeader['status']=true
+            csvHeader['structure']=[{
+              taskId:'',
+              taskType:'',
+              status:'',
+              roboName:'',
+              sourceLocation:'',
+              destinationLocation:''
+            }]
+          }
+          csvHeader['length']=6;
+          // console.log(data,'excel task cmptdata')
+          this.exportService.exportToCSV(data, 'TaskDataExport',csvHeader);
           this.messageService.add({
             severity: 'success',
             summary: 'Export Successful',
@@ -198,7 +232,20 @@ export class TasksComponent implements OnInit, AfterViewInit {
           });
           break;
         case 'excel':
-          this.exportService.exportToExcel(data, 'TaskDataExport');
+          let excelHeader:{[k:string]:any}={}
+          if(data.length==0){
+            excelHeader['status']=true
+            excelHeader['structure']=[{
+              taskId:'',
+              taskType:'',
+              status:'',
+              roboName:'',
+              sourceLocation:'',
+              destinationLocation:''
+            }]
+         }
+         excelHeader['length']=6;
+          this.exportService.exportToExcel(data, 'TaskDataExport',excelHeader);
           this.messageService.add({
             severity: 'success',
             summary: 'Export Successful',

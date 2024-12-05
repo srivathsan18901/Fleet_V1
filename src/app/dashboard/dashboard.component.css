@@ -58,8 +58,8 @@ canvas {
 /* live button */
 .ONBtn {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: -14px;
+  right: -25px;
   padding: 20px 30px 0px 0px;
   filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
   cursor: pointer;
@@ -68,8 +68,8 @@ canvas {
 
 .CanvasOptions {
   position: absolute;
-  bottom: 5%;
-  left: 1%;
+  bottom: 5px;
+  left: 5px;
   display: flex;
   background-color: #fffcfc6c;
   /* border-top-left-radius: 10px;
@@ -223,9 +223,9 @@ canvas {
   padding: 10px;
   /*  */
   /* From https://css.glass */ 
-  background: rgba(255, 255, 255, 0.2); 
+  /* background: rgba(255, 255, 255, 0.134);  */
   border-radius: 16px; 
-  box-shadow: 0 4px 30px rgba(226, 114, 114, 0.653); 
+  /* box-shadow: 0 4px 30px rgba(226, 114, 114, 0.653);  */
   backdrop-filter: blur(5px); 
   -webkit-backdrop-filter: blur(5px); 
   border: 1px solid rgba(255, 255, 255, 0.3);
@@ -248,6 +248,7 @@ canvas {
   
   font-family: "graphik", Arial,  sans-serif;
   margin-bottom: 0;
+  margin-top: 0;
   text-align: left;
 }
 
@@ -277,8 +278,12 @@ canvas {
   width: 540px; /* Increased width */
   padding: 10px 0px 0px 0px;
 }
-
-.Chart2, .Chart3 {
+.Chart3 {
+  padding: 0px 0px 0px 10px;
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: bold;
+}
+.Chart2{
   padding: 10px 0px 0px 10px;
   font-family: "graphik", Arial,  sans-serif;
   font-weight: bold;
@@ -319,7 +324,7 @@ canvas {
   position: relative; /* Allows positioning of the title */
   display: flex;
   flex-direction: column; /* Stack elements vertically */
-  align-items: center; /* Center chart and label */
+  /* align-items: center; Center chart and label */
   height: 100%;
 }
 
@@ -503,7 +508,7 @@ canvas {
   position: relative;
   display: inline-block;
   width: 180px;
-  margin: 20px;
+  margin: 5px;
 }
 
 .dropdown-item {
@@ -675,15 +680,11 @@ input:checked ~ .slider {
   color: #ff6666; /* Light red color on hover */
 }
 
-
-
-
-
 /* fleet and simulation */
 .indication-button {
   position: absolute;
-  top: 20px;
-  right: 150px; 
+  top: 5px;
+  right: 105px; 
   filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
   cursor: pointer;
   z-index: 13;
@@ -723,6 +724,7 @@ input:checked ~ .slider {
 /* Background color for Simulation */
 .simulation-background {
   background-color: #f0453f; /* Red for Simulation */
+
 }
 
 
@@ -734,18 +736,7 @@ input:checked ~ .slider {
 
 /* Define the glowing and blinking effect */
 @keyframes glow-blink {
-  0% {
-    opacity: 1;
-    filter: drop-shadow(0 0 0px #fe0000); /* Reduced spread */
-  }
-  50% {
-    opacity: 0.7;
-    filter: drop-shadow(0 0 5px #ff0000); /* Reduced glow */
-  }
-  100% {
-    opacity: 1;
-    filter: drop-shadow(0 0 0px #fe0000); /* Same as starting state */
-  }
+
 }
 
 /* canvas loader */

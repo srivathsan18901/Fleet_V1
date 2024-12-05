@@ -78,6 +78,8 @@ export class ThroughputComponent {
         type: 'area',
         height: 225, // Set height
         width: 520, // Set width
+        offsetY: 5,
+        offsetX: 10,
         zoom: {
           enabled: false,
         },

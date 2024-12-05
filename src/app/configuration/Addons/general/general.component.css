@@ -22,6 +22,8 @@
     bottom: .5rem;
     position: relative;
     color: red;
+    font-family: "Graphik", Arial, sans-serif !important; /* Change font family */
+
 }
 
 .field {

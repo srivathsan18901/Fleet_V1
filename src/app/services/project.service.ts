@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { CookieService } from 'ngx-cookie-service';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable, retry } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { environment } from '../../environments/environment.development';
 
 @Injectable({
   providedIn: 'root',
@@ -8,12 +10,18 @@ import { BehaviorSubject } from 'rxjs';
 export class ProjectService {
   private projectCreatedKey = 'is-project-setted';
   private selectedProjectKey = 'project-data';
+
   private inLive: BehaviorSubject<boolean> = new BehaviorSubject<boolean>( false );
-  private isFleetUp: BehaviorSubject<boolean> = new BehaviorSubject<boolean>( false );
+  private isFleetUp: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  
+  initializeMapSelectedStatus: any
+  
   inLive$ = this.inLive.asObservable();
   isFleetUp$ = this.isFleetUp.asObservable();
 
-  constructor(private cookieService: CookieService) {}
+  constructor(private cookieService: CookieService, private http: HttpClient) {}
+
+  private apiUrl = `http://${environment.API_URL}:${environment.PORT}/get_robot_utilization`;
 
   setProjectCreated(created: boolean) {
     this.cookieService.set('is-project-setted', JSON.stringify(created), {
@@ -91,5 +99,20 @@ export class ProjectService {
 
   setIsFleetUp(value: boolean): void {
     this.isFleetUp.next(value);
+  }
+
+  getRobotUtilization(mapId: string, timeStamp1: number, timeStamp2: number): Observable<any> {
+    return this.http.post(this.apiUrl, { mapId, timeStamp1, timeStamp2 });
+  }
+
+  setInitializeMapSelected(value:boolean){
+    this.initializeMapSelectedStatus=value
+    // console.log('set initializer called and status--->',this.initializeMapSelectedStatus)
+    this.cookieService.set('mapInitializeStatus',this.initializeMapSelectedStatus)
+  }
+
+  getInitializeMapSelected(){
+    // console.log('get initialize called and status -->',this.cookieService.get('mapInitializeStatus'))
+    return this.cookieService.get('mapInitializeStatus');
   }
 }

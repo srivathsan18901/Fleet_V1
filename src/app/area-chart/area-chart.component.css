@@ -169,13 +169,14 @@
 .submenu .submenu-link {
   display: block;
   padding: 12px 24px;
+  padding-left: 45px;
   width: 100%;
   position: relative;
-  text-align: left; /* Aligning the dropdown data to the left */
-  color: #DA2127; /* Violet font color for dropdown items */
+  text-align: left;
+  color: #DA2127;
   transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
-  box-sizing: border-box; /* Include padding in the element's total width */
-  width: 100%; /* Match the width of the parent item */
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .submenu .submenu-item:last-child .submenu-link {
@@ -239,6 +240,7 @@
   background-color: rgb(160, 160, 160);
   color: white;
   cursor: pointer;
+  font-family:"graphik", Arial, sans-serif; 
   border-radius: 10px;
   transition: background-color 0.3s ease;
 }
@@ -248,6 +250,10 @@
   background-color: red;
 }
 
+.svg-button {
+  background-color: black;
+}
 
-
-
+::ng-deep .apexcharts-legend-text{
+  font-family: "graphik", Arial,  sans-serif !important;
+}

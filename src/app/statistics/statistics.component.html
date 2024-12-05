@@ -33,9 +33,9 @@
         <!-- Stat card 1 -->
         <div class="stat-card stat-card-1">
           <div class="stat-value">System throughput</div>
-          <h2>{{ statisticsData.systemThroughput }}</h2>
+          <h2>{{ statisticsData.systemThroughput || 'Loading...'}}</h2>
           <div class="stat-change positive">
-            +{{ statisticsData.systemThroughputChange }}% <span>&uarr;</span>
+            <!-- +{{ statisticsData.systemThroughputChange }}% <span>&uarr;</span> -->
           </div>
           <div class="stat-chart">
             <section>
@@ -61,7 +61,7 @@
           <div class="stat-value">System uptime</div>
           <h2>{{ statisticsData.systemUptime || 'Loading...' }}</h2>
           <div class="stat-change positive">
-            +{{ statisticsData.systemUptimeChange }}% <span>&uarr;</span>
+            <!-- +{{ statisticsData.systemUptimeChange }}% <span>&uarr;</span> -->
           </div>
           <div class="stat-chart">
             <section>
@@ -86,9 +86,9 @@
         <div class="stat-card stat-card-3">
           <div class="stat-value">Success rate</div>
           <!-- <h2>{{ statisticsData.successRate || 'Loading...' }}</h2> -->
-          <h2>{{ statisticsData.successRate}}</h2>
+          <h2>{{ statisticsData.successRate || 'Loading...'}}</h2>
           <div class="stat-change negative">
-            {{ statisticsData.successRateChange }}% <span>&darr;</span>
+            <!-- {{ statisticsData.successRateChange }}% <span>&darr;</span> -->
           </div>
           <div class="stat-chart">
             <section>
@@ -114,7 +114,7 @@
           <div class="stat-value">Responsiveness</div>
           <h2>{{ statisticsData.responsiveness || 'Loading...' }}</h2>
           <div class="stat-change positive">
-            +{{ statisticsData.responsivenessChange }}% <span>&uarr;</span>
+            <!-- +{{ statisticsData.responsivenessChange }}% <span>&uarr;</span> -->
           </div>
           <div class="stat-chart">
             <section>
