@@ -12,6 +12,7 @@ import { AuthService } from '../auth.service';
 import { ProjectService } from '../services/project.service';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment.development';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-sidenavbar',
@@ -21,7 +22,8 @@ import { environment } from '../../environments/environment.development';
 export class SidenavbarComponent implements OnInit {
   username: string | null = null;
   userrole: string | null = null;
-  robotActivities: any[] = []
+  robotActivities: any[] = [];
+  fleetActivities: any[] = [];
   selectedMap: any | null = null;
 
   showNotificationPopup = false; // Property to track popup visibility
@@ -48,6 +50,7 @@ export class SidenavbarComponent implements OnInit {
 
   filteredRobotActivities = this.robotActivities;
   filteredNotifications = this.notifications;
+  userManagementData:any;
 
   constructor(
     private authService: AuthService,
@@ -61,6 +64,10 @@ export class SidenavbarComponent implements OnInit {
   }
 
   async ngOnInit() {
+    console.log('side nav bar')
+    this.userManagementData=JSON.parse(this.projectService.userManagementSericeGet());
+    console.log(this.userManagementData,'robot permission')
+    // console.log(JSON.parse(this.userManagementData),'user management data from service get')
     const user = this.authService.getUser();
     if (user) {
       this.username = user.name;
@@ -77,6 +84,7 @@ export class SidenavbarComponent implements OnInit {
       await this.getFleetStatus();
     }, 1000 * 2); // max to 30 or 60 sec
   }
+  
 
   async getFleetStatus() {
     let response = await fetch(
@@ -88,6 +96,56 @@ export class SidenavbarComponent implements OnInit {
     let prevFleetStatus = this.projectService.getIsFleetUp();
     if(prevFleetStatus === this.isFleetUp) return;
     this.projectService.setIsFleetUp(this.isFleetUp)
+  }
+
+  async getFleetLogStatus(){
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
+    const data = await response.json();
+    if (!data.map || data.error) return ;
+    this.fleetActivities = data.objs;
+    if(!('objects' in this.fleetActivities)) return;
+    let { objs }: any = this.fleetActivities;
+    if (!objs.length) return;
+
+    objs.forEach((robot: any) => {
+      if (robot.fleet_errors) {
+        for (const [errorType, errors] of Object.entries(robot.robot_errors)) { // [errorType, errors] => [key, value]
+          // if (errorType === "NO ERROR") continue;
+          for (let error of (errors as any[])) {
+            let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "DOCKING ERROR", "LOADING ERROR", "NO ERROR"]; //Robot Errors List from RabbitMQ
+            let criticality = "Normal";
+
+            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3])) 
+              criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
+            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2])) 
+              criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
+
+            let notificationKey = `${error.description} on robot ID ${robot.id}`;
+            if (this.processedErrors?.has(notificationKey)) continue;
+            this.processedErrors?.add(notificationKey);
+
+            this.notifications.push({
+              label: `${criticality}`,
+              message: `${error.description} on robot ID ${robot.id}`,
+              type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+            });
+
+            this.cdRef.detectChanges(); // yet to notify..
+          }
+        }
+      }
+    });
+
+    
+
+
+
   }
 
   async getRoboStatus(): Promise<void> {
@@ -103,11 +161,17 @@ export class SidenavbarComponent implements OnInit {
     // console.log(data);
     if (!data.map || data.error) return ;
     this.robotActivities = data.robos;
+    
 
     if (!('robots' in this.robotActivities)) return;
+    
 
     let { robots }: any = this.robotActivities;
     if (!robots.length) return;
+
+    
+
+
 
     robots.forEach((robot: any) => {
       if (robot.robot_errors) {
@@ -117,9 +181,9 @@ export class SidenavbarComponent implements OnInit {
             let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "DOCKING ERROR", "LOADING ERROR", "NO ERROR"]; //Robot Errors List from RabbitMQ
             let criticality = "Normal";
 
-            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3])) 
+            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3]))
               criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
-            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2])) 
+            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2]))
               criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
 
             let notificationKey = `${error.description} on robot ID ${robot.id}`;

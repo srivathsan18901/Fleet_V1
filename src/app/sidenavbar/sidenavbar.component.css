@@ -46,7 +46,7 @@
     height: 24px;
     margin-right: 8px;
   }
-  
+
 
 
   .fleet-status {
@@ -59,36 +59,40 @@
     margin-right: 2rem; /* Space between status and other elements */
     cursor: default; /* Change cursor to indicate non-clickable */
     text-align: center; /* Center align the text */
-    
+
   }
-  
+
   .fleet-up {
     background-color: rgba(0, 255, 0, 0.2); /* Light green background for Fleet Up */
     color: rgb(5, 206, 5); /* Green text color */
   }
-  
+
   .fleet-down {
     background-color: rgba(249, 111, 111, 0.2); /* Light gray background for Fleet Down */
     color: rgb(236, 6, 6); /* Gray text color */
     box-shadow: 0 0 5px rgba(255, 35, 35, 0.5); /* Heavy box shadow */
   }
-  
 
-  
+
+
   /* notification */
 
   .notification-popup {
     position: absolute;
     top: 52px;
+
     right: 10px;
-    background: linear-gradient(135deg, #d3d3d3, #a9a9a9); /* Grey gradient */
+    background-color: rgba(243, 243, 243, 0.301);
+    backdrop-filter: blur(10px);
     border: 1px solid #ffffff;
+    background-color: rgba(243, 243, 243, 0.301);
+    backdrop-filter: blur(10px);
     padding: 5px;
     border-radius: 10px;
     font-family: Arial, sans-serif;
     z-index: 1000;
     width: 600px;
-    height: 600px;
+    height: auto;
     box-shadow: 0 0 30px rgba(0, 0, 0, 0.3); /* Heavy box shadow */
     display: none; /* Hidden by default */
     opacity: 0;
@@ -242,7 +246,7 @@
 
 /* Style for notification messages with ellipsis */
 .notification-message {
-  
+
     max-width: 400px;
     overflow: hidden;
     white-space: nowrap;
@@ -299,21 +303,21 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 350px;
+    height: auto;
     text-align: center;
     flex-direction: column;
   }
 
   .no-notifications svg {
-    width: 150px;
-    height: 150px;
+    width: 100px;
+    height: 100px;
     margin-bottom: 10px;
   }
 
   .no-notifications span {
     font-size: 20px;
     font-family: "graphik", Arial,  sans-serif;
-    color: #ffffff;
+    color: #2b2828;
   }
 
   .topbar {
@@ -367,7 +371,7 @@
   /* .profile-info p {
     margin: 0;
     font-size: 1.0rem;
-    
+
   } */
 
   /* Styling for the username */
@@ -393,7 +397,7 @@
     width: 45px;
     border-radius: 8px;
     /* margin: 15px 0 0 10px; */
-  
+
   }
 
   .logo2{
@@ -504,14 +508,14 @@ app-fullscreen-button{
     padding: 5px 10px;
     border-radius: 5px;
     margin-right: 2rem;
-   
+
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
 
     text-align: center; /* Center text */
   }
-  
+
 /* profile */
 .Profile {
   display: flex;
@@ -599,7 +603,7 @@ app-fullscreen-button{
   border-radius: 5px;
   font-size: 14px;
   font-family: "graphik", Arial,  sans-serif;
-  
+
   cursor: pointer;
 }
 
@@ -633,7 +637,7 @@ app-fullscreen-button{
 }
 
 /* .language-toggle:hover {
-  box-shadow: 0 35px 35px rgba(0, 0, 0, 0.25); 
+  box-shadow: 0 35px 35px rgba(0, 0, 0, 0.25);
 } */
 
 .language-info {
@@ -648,7 +652,7 @@ app-fullscreen-button{
 
 .flag-name {
   font-weight: 600; /* Bold text */
-  font-family:"graphik", Arial, sans-serif; 
+  font-family:"graphik", Arial, sans-serif;
   margin-top: 0.8rem; /* Adjust margin for centering */
 }
 

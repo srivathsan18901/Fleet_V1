@@ -208,7 +208,7 @@
           </table>
         </div>
       </div>
-      
+
 
       <!-- Notifications Section -->
       <div class="notifications-container">
@@ -218,7 +218,6 @@
             <input
               type="text"
               placeholder="Search notifications..."
-              (input)="onSearchNotifications($event)"
             />
           </div>
           <!-- <button class="view-all-btn">View All</button> -->
@@ -243,11 +242,12 @@
                   </div>
                 </td>
               </tr>
-            
+
               <tr *ngFor="let notification of filteredNotifications | slice:0:10">
-                <td>{{ notification.message }}</td>
+                <!-- <td>{{ notification.message }}</td>
                 <td>{{ notification.taskId }}</td>
-                <td>{{ notification.timestamp }}</td>
+                <td>{{ notification.timestamp }}</td> -->
+                <!-- <td>{{ notification.taskId }}</td> -->
               </tr>
             </tbody>
           </table>

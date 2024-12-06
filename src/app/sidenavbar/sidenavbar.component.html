@@ -10,10 +10,10 @@
       <i class="wifi-icon" [ngClass]="{'wifi-up': isFleetUp, 'wifi-down': !isFleetUp}"></i>
       {{ isFleetUp ? 'Fleet Engaged' : 'Fleet Halted' }}
     </div>
-    
 
 
-    
+
+
     <app-fullscreen-button></app-fullscreen-button>
     <img alt=""
       src="../../assets/icons/Notification_icon.svg"
@@ -36,7 +36,7 @@
       </div>
       <!-- language dropdown -->
 
-      
+
       <!-- <div *ngIf="languageArrowState" class="language-dropdown">
         <div *ngFor="let flag of flags; trackBy: trackFlag" class="language-option" (click)="changeFlag(flag.order)">
           <span class="option-info">
@@ -74,51 +74,51 @@
       <img src="../../assets/Motherson_full_logo.jpeg" alt="" class="Logo" />
       <img src="../../assets/shared image.jpeg" alt="" class="logo2">
     </div>
-    
+
     <div class="icons">
-      <div class="icon1" routerLink="/dashboard" routerLinkActive="active">
+      <div *ngIf="userManagementData.permissions.generalPermissions.dashboard" class="icon1" routerLink="/dashboard" routerLinkActive="active">
         <img src="../../assets/icons/dashboard_icon copy.svg" alt="" class="Dlogo" />
         <span class="label">Dashboard</span>
       </div>
 
-      <div class="icon2" routerLink="/statistics" routerLinkActive="active">
+      <div *ngIf="userManagementData.permissions.generalPermissions.statistics" class="icon2" routerLink="/statistics" routerLinkActive="active">
         <img src="../../assets/icons/Statistics.svg" alt="" class="Slogo" />
         <span class="label">Statistics</span>
       </div>
 
-      <div class="icon3" routerLink="/robots" routerLinkActive="active">
+      <div *ngIf="userManagementData.permissions.generalPermissions.robots" class="icon3" routerLink="/robots" routerLinkActive="active">
         <img src="../../assets/icons/Statistics_icon.svg" alt="" class="Slogo" />
         <span class="label">Robots</span>
       </div>
 
       @if (cookieValue.role !== "User" ) {
-      <div class="icon4" routerLink="/configuration" routerLinkActive="active">
+      <div  class="icon4" routerLink="/configuration" routerLinkActive="active">
         <img src="../../assets/icons/Configuration_icons.svg" alt="" class="Clogo" />
         <span class="label">Configuration</span>
       </div>
     }
 
       
-      <div class="icon5" routerLink="/Reports" routerLinkActive="active">
+      <div *ngIf="userManagementData.permissions.generalPermissions.errors" class="icon5" routerLink="/Reports" routerLinkActive="active">
         <img src="../../assets/icons/Logs_icons.svg" alt="" class="Llogo" />
         <span class="label">Error logs</span>
       </div>
-      <div class="icon6" routerLink="/tasks" routerLinkActive="active">
+      <div *ngIf="userManagementData.permissions.generalPermissions.tasks" class="icon6" routerLink="/tasks" routerLinkActive="active">
         <img src="../../assets/icons/Tasks_icons.svg" alt="" class="Llogo" />
         <span class="label">Tasks</span>
       </div>
 
       @if (cookieValue.role === "Administrator") {
-        <div class="icon7" routerLink="/usermanagement" routerLinkActive="active">
+        <div *ngIf="userManagementData.permissions.generalPermissions.userManagement" class="icon7" routerLink="/usermanagement" routerLinkActive="active">
           <img src="../../assets/icons/Usermanagement_icons.svg" alt="" class="Llogo" />
           <span class="label">User Management</span>
         </div>
       }
 
-      <div class="icon8" routerLink="/support" routerLinkActive="active">
+      <!-- <div class="icon8" routerLink="/support" routerLinkActive="active">
         <img src="../../assets/icons/support.svg" alt=""  class="Llogo" />
         <span class="label">Support</span>
-      </div>
+      </div> -->
     </div>
       <!-- <div class="icon5" routerLink="/usermanagement">
       <img
@@ -178,8 +178,8 @@
 	 viewBox="0 0 2200 2200" style="enable-background:new 0 0 2200 2200;" xml:space="preserve">
 <defs>
 	<linearGradient id="popupGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-		<stop offset="0%" style="stop-color:#d3d3d3;" />
-		<stop offset="100%" style="stop-color:#a9a9a9;" />
+		<!-- <stop offset="0%" style="stop-color:#d3d3d3;" /> -->
+		<!-- <stop offset="100%" style="stop-color:#a9a9a9;" /> -->
 	</linearGradient>
 </defs>
 <g id="background">

@@ -14,7 +14,6 @@ export interface Robot {
   averageSpeed: any;
   distanceLeft: string;
   isConnected : boolean;
-
   id: number;
   name: string;
   imageUrl: string;
@@ -41,6 +40,7 @@ export interface Robot {
   maximumspeed: string;
   averagetransfertime: string;
   averagedockingtime: string;
+  distance:number;
 }
 
 @Component({
@@ -62,6 +62,8 @@ export class RobotDetailPopupComponent {
   isConnected: boolean = true;
   robotUtilization: string = '0';
   pick: any;
+  specific : any;
+  distance: any;
 
   toggleConnection() {
     console.log('toggle is clicked')
@@ -128,18 +130,20 @@ export class RobotDetailPopupComponent {
       return;
     }
     this.pick = this.fetchChartData();
+    this.specific = this.robotDetails();
+    this.distance = this.fetchDistance();
+    console.log(this.specific,"=======================specific======================");
+    console.log(this.pick,"==========================pick===================");
+    console.log(this.distance,"======================distance=======================");
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    // console.log('Battery Percentage:', this.data.batteryPercentage);
-    // console.log('Is Charging:', this.data.isCharging);
     this.setSignalStrength(this.data.SignalStrength);
-    console.log(this.data,'data')
+    console.log(this.data,'data=========================')
     this.mapId = this.selectedMap.id;
     console.log("dolu", this.mapId)
     this.populatedRobo();
     console.log(this.populatedRobo)
     this.fetchLiveRobosData();
-    this.projectService.getRobotUtilization(this.mapId, timeStamp1, timeStamp2)
-    .subscribe(
+    this.projectService.getRobotUtilization(this.mapId, timeStamp1, timeStamp2).subscribe(
       (data) => {
         if (data && data.robots && data.robots.length > 0) {
           this.robotUtilization = data.robots[0].utilization_percentage;
@@ -152,11 +156,10 @@ export class RobotDetailPopupComponent {
     console.log(this.robotUtilization,"---------------robot utilization ------------");
    }
 
-   fetchChartData(
-  ): Promise<any> {
+   fetchChartData(): Promise<any> {
     const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     // console.log(timeSpan, 'time span robot');
-  
+
     // Return a Promise to handle asynchronous behavior
     return fetch(
       `http://${environment.API_URL}:${environment.PORT}/get_pickdropCount`,
@@ -176,7 +179,50 @@ export class RobotDetailPopupComponent {
       return response.json();
     });
   }
-  
+
+  fetchDistance(): Promise<any> {
+    const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    // console.log(timeSpan, 'time span robot');
+
+    // Return a Promise to handle asynchronous behavior
+    return fetch(
+      `http://${environment.API_URL}:${environment.PORT}/get_distance`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+      }
+    ).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    });
+  }
+
+  robotDetails(): Promise<any> {
+    const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+    // console.log(timeSpan, 'time span robot');
+
+    // Return a Promise to handle asynchronous behavior
+    return fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
+      {
+        method: 'GET',
+        credentials: 'include'
+      }
+    ).then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    });
+  }
+
 
    populatedRobo():void{
     fetch(`http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`, {

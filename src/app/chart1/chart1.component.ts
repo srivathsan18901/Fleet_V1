@@ -124,9 +124,14 @@ export class Chart1Component {
       labels: ["Active Robots"]
     };
   }
-  async ngOnInit() {    
+  async ngOnInit() {
     await this.getMapDetails();
-    this.totalRobots = this.simMode.length;
+    if(this.isFleet){
+      this.totalRobots=this.robos.length;
+    }
+    else{
+      this.totalRobots=this.simMode.length;
+    }
     this.activeRobots = await this.getLiveRoboInfo();
     // console.log(this.activeRobots,this.totalRobots);
     const percentage = (this.activeRobots / this.totalRobots) * 100;
@@ -138,17 +143,17 @@ export class Chart1Component {
       this.chartOptions.series&&
       this.chartOptions.plotOptions.radialBar &&
       this.chartOptions.plotOptions.radialBar.dataLabels
-    ) 
+    )
     {
       this.chartOptions.series=[percentage]
       this.chartOptions.plotOptions.radialBar.dataLabels.value = {
         ...this.chartOptions.plotOptions.radialBar.dataLabels.value,
         formatter: () => this.getTotalRobos(), // Ensure 'this' is correctly bound
       };
-      
+
     }
   }
-  
+
   async getMapDetails() {
     this.mapData = this.projectService.getMapData();
     let response = await fetch(
@@ -158,11 +163,16 @@ export class Chart1Component {
       throw new Error(`Error with status code of ${response.status}`);
     let data = await response.json();
     if (!data.map) return;
-    let mapDet = data.map;  
+    let mapDet = data.map;
 
     this.robos = mapDet.roboPos;
     this.simMode= mapDet.simMode;
-    this.totalRobots = this.simMode.length;
+    if(this.isFleet){
+      this.totalRobots=this.robos.length;
+    }
+    else{
+      this.totalRobots=this.simMode.length;
+    }
     // yet to check..
     // if(!this.isInLive)
     // this.simMode = mapData.simMode.map((robo: any) => {
@@ -189,10 +199,10 @@ export class Chart1Component {
   }
 
  ngOnChanges() {
-    
-    if(this.isFleet){         
+
+    if(this.isFleet){
       this.totalRobots = this.robos.length;
-      
+
       const percentage = (this.activeRobots / this.totalRobots) * 100;
 
       // Ensure the required objects exist before assignment
@@ -202,7 +212,7 @@ export class Chart1Component {
         this.chartOptions.series&&
         this.chartOptions.plotOptions.radialBar &&
         this.chartOptions.plotOptions.radialBar.dataLabels
-      ) 
+      )
       {
         this.chartOptions.series=[percentage]
         this.chartOptions.plotOptions.radialBar.dataLabels.value = {
@@ -212,9 +222,9 @@ export class Chart1Component {
       }
     }
     else{
-            
+
       this.totalRobots = this.simMode.length;
-      
+
       const percentage = (this.activeRobots / this.totalRobots) * 100;
 
       // Ensure the required objects exist before assignment
@@ -224,7 +234,7 @@ export class Chart1Component {
         this.chartOptions.series&&
         this.chartOptions.plotOptions.radialBar &&
         this.chartOptions.plotOptions.radialBar.dataLabels
-      ) 
+      )
       {
         this.chartOptions.series=[percentage]
         this.chartOptions.plotOptions.radialBar.dataLabels.value = {
@@ -233,6 +243,6 @@ export class Chart1Component {
         };
       }
       }
-      
+
   }
 }

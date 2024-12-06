@@ -1,11 +1,13 @@
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
-// import { CookieService } from 'ngx-cookie-service';
+import { CookieService } from 'ngx-cookie-service';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { env } from 'node:process';
 import { MessageService } from 'primeng/api';
+import { UserPermissionService } from '../services/user-permission.service';
+
 
 @Component({
   selector: 'app-login',
@@ -21,7 +23,9 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private projectService: ProjectService, // private cookieService: CookieService
+    private projectService: ProjectService, //private cookieService: CookieService
+    private UserService:ProjectService,
+    private userPermissionService:UserPermissionService,
     private messageService: MessageService
   ) {}
 
@@ -113,6 +117,7 @@ export class LoginComponent {
         // if (res.ok) {
         //   return res.json();
         // } else
+        console.log(res,'---response')
         if (res.status === 404 || res.status === 401) {
           this.errorMessage =
             "*Wrong password or user with this role doesn't exist";
@@ -124,7 +129,12 @@ export class LoginComponent {
       .then((data) => {
         // console.log(data.user.projects);
         if (data.user) {
+          console.log(data.user.id,'----data id')
+          this.fetchUserPermissions(data.user.id)
           if (data.user.role === 'User') {
+            console.log('user initilalized')
+            // this.fetchUserPermissions(data.user.id)
+         
             if (!data.project) {
               alert('No project has been assigned to this user.');
               return;
@@ -142,7 +152,9 @@ export class LoginComponent {
             this.projectService.setSelectedProject(project_data);
             this.projectService.setProjectCreated(true);
             this.messageService.add({ severity: 'success', summary: `Welcome ${this.projectService.setSelectedProject(data.project)}`, detail: 'Authentication Success', life: 4000 });
-            this.router.navigate(['dashboard']);
+            setTimeout(() => {
+              this.router.navigate(['/dashboard']);
+            }, 100);
             return;
           }
           this.authService.login({
@@ -182,5 +194,37 @@ export class LoginComponent {
       this.focusedContainer.classList.remove('focused');
       this.focusedContainer = null;
     }
+  }
+
+  // user auth
+   fetchUserPermissions(userId: string) {
+    console.log(userId,'---------------userId')
+    fetch(
+      `http://${environment.API_URL}:${environment.PORT}/auth/get-permissions/${userId}`
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch user permissions');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data,'permission -----------');
+        this.UserService.userManagementService(data)
+        // Update the local permission state
+        let {permissions } = data
+        this.userPermissionService.setPermissions(permissions)
+        // console.log(this.userPermissionService.getPermissions())
+     
+      })
+      .catch((error) => {
+        console.error('Error fetching user permissions:', error);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Failed',
+          detail: 'Error fetching user permissions',
+          life: 5000,
+        });
+      });
   }
 }

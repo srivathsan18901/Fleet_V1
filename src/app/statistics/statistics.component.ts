@@ -10,6 +10,8 @@ import { ProjectService } from '../services/project.service';
 })
 export class StatisticsComponent {
   products: any;
+  fleetActivities: any;
+  processedErrors: any;
   getSeverity(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -23,41 +25,41 @@ export class StatisticsComponent {
   // ];
 
   notifications = [
-    {
-      message: 'Low Battery',
-      taskId: 'AMR-001',
-      timestamp: '15 Nov 2024, 10:54 pm',
-    },
-    {
-      message: 'Task Assigned ',
-      taskId: ' AMR-002',
-      timestamp: '17 Nov 2024, 1:54 pm',
-    },
-    {
-      message: 'Obstacle Detected ',
-      taskId: ' AMR-003',
-      timestamp: '21 Dec 2024, 10:27 am',
-    },
-    {
-      message: 'Low Battery',
-      taskId: 'AMR-001',
-      timestamp: '21 Dec 2024, 10:50 am',
-    },
-    {
-      message: 'Task Assigned ',
-      taskId: ' AMR-002',
-      timestamp: '23 Dec 2024, 1:02 pm',
-    },
-    {
-      message: 'Obstacle Detected ',
-      taskId: ' AMR-003',
-      timestamp: '23 Dec 2024, 6:02 pm',
-    },
-    {
-      message: 'Low Battery',
-      taskId: 'AMR-001',
-      timestamp: '5 Jan 2024, 4:02 pm',
-    }
+    // {
+    //   message: '',
+    //   taskId: '',
+    //   timestamp: '',
+    // },
+    // {
+    //   message: 'Task Assigned ',
+    //   taskId: ' AMR-002',
+    //   timestamp: '17 Nov 2024, 1:54 pm',
+    // },
+    // {
+    //   message: 'Obstacle Detected ',
+    //   taskId: ' AMR-003',
+    //   timestamp: '21 Dec 2024, 10:27 am',
+    // },
+    // {
+    //   message: 'Low Battery',
+    //   taskId: 'AMR-001',
+    //   timestamp: '21 Dec 2024, 10:50 am',
+    // },
+    // {
+    //   message: 'Task Assigned ',
+    //   taskId: ' AMR-002',
+    //   timestamp: '23 Dec 2024, 1:02 pm',
+    // },
+    // {
+    //   message: 'Obstacle Detected ',
+    //   taskId: ' AMR-003',
+    //   timestamp: '23 Dec 2024, 6:02 pm',
+    // },
+    // {
+    //   message: 'Low Battery',
+    //   taskId: 'AMR-001',
+    //   timestamp: '5 Jan 2024, 4:02 pm',
+    // }
   ];
 
   statisticsData: any = {
@@ -137,6 +139,57 @@ export class StatisticsComponent {
     return await response.json();
   }
 
+//FLEET LOG API FOR DASHBOARD
+  async getFleetLogStatus(){
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
+    const data = await response.json();
+    if (!data.map || data.error) return ;
+    this.fleetActivities = data.objs;
+    if(!('objects' in this.fleetActivities)) return;
+    let { objs }: any = this.fleetActivities;
+    if (!objs.length) return;
+
+    objs.forEach((robot: any) => {
+      if (robot.fleet_errors) {
+        for (const [errorType, errors] of Object.entries(robot.robot_errors)) { // [errorType, errors] => [key, value]
+          // if (errorType === "NO ERROR") continue;
+          for (let error of (errors as any[])) {
+            let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "DOCKING ERROR", "LOADING ERROR", "NO ERROR"]; //Robot Errors List from RabbitMQ
+            let criticality = "Normal";
+
+            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3]))
+              criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
+            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2]))
+              criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
+
+            let notificationKey = `${error.description} on robot ID ${robot.id}`;
+            if (this.processedErrors?.has(notificationKey)) continue;
+            this.processedErrors?.add(notificationKey);
+
+            // this.notifications.push({
+            //   label: `${criticality}`,
+            //   message: `${error.description} on robot ID ${robot.id}`,
+            //   type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+            // });
+
+            this.cdRef.detectChanges(); // yet to notify..
+          }
+        }
+      }
+    });
+
+
+
+
+
+  }
+
   // async to synchronous...
   async getGrossStatus() {
     const mapId = this.selectedMap.id;
@@ -204,7 +257,7 @@ export class StatisticsComponent {
         if(task.TaskAssignTime>=task.TaskAddTime){
         tot_responsiveness += task.TaskAssignTime - task.TaskAddTime
         console.log("tot_responsiveness",tot_responsiveness );}
-        
+
         return {
           taskId: task.task_id,
           taskName: task.sub_task[0]?.task_type
@@ -219,7 +272,7 @@ export class StatisticsComponent {
         Math.round(average_responsiveness)
       } ms`;
       console.log("Responsiveness",Math.round(average_responsiveness));
-      
+
       return fleet_tasks;
     }
     return [];
@@ -311,13 +364,13 @@ export class StatisticsComponent {
     );
   }
 
-  onSearchNotifications(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    const query = input.value.toLowerCase();
-    this.filteredNotifications = this.notifications.filter((notification) =>
-      notification.message.toLowerCase().includes(query)
-    );
-  }
+  // onSearchNotifications(event: Event): void {
+  //   const input = event.target as HTMLInputElement;
+  //   const query = input.value.toLowerCase();
+  //   this.filteredNotifications = this.notifications.filter((notification) =>
+  //     // notification.message.toLowerCase().includes(query)
+  //   );
+  // }
 
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);

@@ -349,6 +349,7 @@
                 [(ngModel)]="robot.isActive"
                 (change)="activateRobot(robot)"
                 [disabled]="!isFleetUp"
+                [ngClass]="{'active': robot.isActive, 'inactive': !robot.isActive}"
               />
               <div class="slider"></div>
               <div class="slider-card">

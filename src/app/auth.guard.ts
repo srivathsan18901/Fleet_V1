@@ -15,10 +15,7 @@ import { LoaderService } from './loader.service';
 export class AuthGuard implements CanActivate {
   constructor(private authService: AuthService, private router: Router, private loaderService: LoaderService) {}
 
-  canActivate(
-    next: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Observable<boolean> | Promise<boolean> | boolean {
+  canActivate( next: ActivatedRouteSnapshot, state: RouterStateSnapshot ): Observable<boolean> | Promise<boolean> | boolean {
     const url: string = state.url;
     return this.checkLogin(url);
 

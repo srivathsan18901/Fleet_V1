@@ -29,7 +29,7 @@
 }
 
 ::ng-deep .apexcharts-toolbar {
-  z-index: 0;
+  z-index: 0 !important;
 }
 
 
@@ -104,7 +104,7 @@
 .menu .link svg {
   width: 14px;
   height: 14px;
-  
+
   fill: #ffffff; /* Violet color for the arrow */
   transition: all 0.48s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -240,7 +240,7 @@
   background-color: rgb(160, 160, 160);
   color: white;
   cursor: pointer;
-  font-family:"graphik", Arial, sans-serif; 
+  font-family:"graphik", Arial, sans-serif;
   border-radius: 10px;
   transition: background-color 0.3s ease;
 }

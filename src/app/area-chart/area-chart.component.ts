@@ -564,7 +564,7 @@ export class AreaChartComponent implements OnInit {
         'Pick accuracy',
         this.pickAccuracyArr,
         this.pickAccXaxisSeries,
-        30
+        12
       );
       // start
       // const data = await this.fetchPickAccuracyData(

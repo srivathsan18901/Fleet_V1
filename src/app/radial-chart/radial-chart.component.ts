@@ -28,7 +28,7 @@ export type ChartOptions = {
 export class RadialChartComponent implements OnInit {
   @ViewChild("chart") chart!: ChartComponent;
   @Input() isFleet!:boolean;
-  
+
   mapData:any|null=null;
   robos: any[] = [];
   simMode:any[]=[];
@@ -76,7 +76,7 @@ export class RadialChartComponent implements OnInit {
       stroke: {
         lineCap: 'round', // Rounded end of bars for better visual
       },
-      labels: ['Healthy', 'Inactive', 'Error'], // Label names
+      labels: ['Active', 'Inactive', 'Error'], // Label names
     };
   }
 
@@ -87,7 +87,7 @@ export class RadialChartComponent implements OnInit {
     });
 
     await this.getMapDetails();
- 
+
     if (this.selectedMap) return;
     this.selectedMap = this.projectService.getMapData();
 
@@ -99,7 +99,7 @@ export class RadialChartComponent implements OnInit {
       this.chartOptions.series = [...this.roboStatePie];
     }, 1000 * 2); // Update every 5 seconds
   }
-  
+
   updateChart() {
     this.chartOptions.series = [...this.roboStatePie];
   }
@@ -126,8 +126,8 @@ export class RadialChartComponent implements OnInit {
     this.totalRobots = this.isFleet ? this.robos.length : this.simMode.length;
     this.totCount = this.totalRobots.toString();
   }
-  
-  
+
+
   applyFilter(filter: string) {
     this.currentFilter = filter;
     this.updateChartWithFilter();
@@ -140,30 +140,34 @@ export class RadialChartComponent implements OnInit {
 
   async getRobosStates(): Promise<number[]> {
     const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`, 
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`,
       {
         method: 'GET',
         credentials: 'include'
       }
     );
-  
-    let data = await response.json(); 
+
+    let data = await response.json();
     if (!data.map || data.error) return [0, 0, 0];
 
-    let { robots } = data.robos;
-    // console.log(robots)
-    if (!robots) return [0, this.totalRobots, 0];
-    
+    let robots = data.robos;
+    // console.log("hAI",data.robos)
+    if (!data.robos) return [0, 0, 0];
+
     let active_robos = 0;
     let err_robos = 0;
-  
-    robots.forEach((robo: any) => {
-      active_robos += robo.isConnected ? 1 : 0;
-      if ('EMERGENCY STOP' in robo.robot_errors || 'LIDAR_ERROR' in robo.robot_errors) err_robos += 1;
+    console.log("hey",robots.robots);
+    if(!robots.robots) return [0, 0, 0];
+    robots.robots.forEach((robo: any) => {
+      console.log("HEY",robo.enableRobot);
+      active_robos += robo.enableRobot;
+
+      if (robo.robotError != 0) err_robos += 1;
+      // if ('EMERGENCY STOP' == robo.robotError || 'LIDAR_ERROR' == robo.robotError) err_robos += 1;
     });
-  
-    // console.log("tot robos : ", [active_robos - err_robos, active_robos - this.totalRobots, err_robos]);
-    return [active_robos - err_robos, active_robos - this.totalRobots, err_robos];
+
+    // console.log("tot robos : ", [active_robos , this.totalRobots-active_robos , err_robos]);
+    return [active_robos , this.totalRobots-active_robos , err_robos];
   }
-  
+
 }

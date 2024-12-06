@@ -622,6 +622,7 @@ export class UserManagementComponent implements OnInit {
 
   // fetch user permission..
   fetchUserPermissions(userId: string) {
+    console.log(userId,'---------------userId')
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/auth/get-permissions/${userId}`
     )
@@ -632,7 +633,7 @@ export class UserManagementComponent implements OnInit {
         return response.json();
       })
       .then((data) => {
-        // console.log(data.permissions);
+        console.log(data,'permission -----------');
         // Update the local permission state
 
         let {generalPermissions, configurationPermissions} = data.permissions
@@ -859,8 +860,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   deleteUserPopUp() {
-    this.deleteUserOCstate = true;
+    this.deleteUserOCstate = !this.deleteUserOCstate;
   }
 }
-
 

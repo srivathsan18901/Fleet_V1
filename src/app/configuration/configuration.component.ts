@@ -20,6 +20,8 @@ import { MessageService } from 'primeng/api';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormBuilder } from '@angular/forms';
 import { v4 as uuid } from 'uuid';
+import { CookieService } from 'ngx-cookie-service';
+import { AuthService } from '../auth.service';
 import { SessionService } from '../services/session.service';
 
 interface Poll {
@@ -75,6 +77,11 @@ export class ConfigurationComponent implements AfterViewInit {
   filteredipData: any[] = [];
   filteredRobotData: any[] = [];
   tableLoader:any;
+  cookieValue: any;
+  userManagementData:any;
+  username: string | null = null;
+  userrole                                                : string | null = null;
+
 
   // formData: any;
   isPopupOpen: boolean = false;
@@ -121,13 +128,17 @@ export class ConfigurationComponent implements AfterViewInit {
 
   // loader
   editLoader:boolean=false;
+  configurationPermissions: any;
+  environmentPermissions: { read: any; view: any; edit: any; } | undefined;
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private projectService: ProjectService,
     public dialog: MatDialog, // Inject MatDialog
     private messageService: MessageService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private authService: AuthService,
+    private cookieService: CookieService,
   ) {
     this.filteredEnvData = [...this.EnvData];
     // this.filteredRobotData = [...this.robotData];
@@ -136,6 +147,50 @@ export class ConfigurationComponent implements AfterViewInit {
 
   async ngOnInit() {
     console.log('ngon init triggered');
+    this.userManagementData=JSON.parse(this.projectService.userManagementSericeGet());
+    console.log(this.userManagementData.permissions.configurationPermissions,'--configuration permissions')
+
+    if(this.userManagementData?.permissions?.configuraionPermissions){
+      this.configurationPermissions = this.userManagementData.permissions.configurationPermissions;
+      console.log('Config Permissions --', this.userManagementData.configuraionPermissions)
+    }else {
+      console.error('Configuration permissions not found in response');
+      this.configurationPermissions = null; // Fallback for safety
+    }
+
+    if (this.userManagementData?.permissions?.configurationPermissions) {
+      this.configurationPermissions = this.userManagementData.permissions.configurationPermissions;
+    
+      // Extract specific states for "Environment"
+      this.environmentPermissions = {
+        read: this.configurationPermissions.environment.read ?? false,
+        view: this.configurationPermissions.environment.view ?? false,
+        edit: this.configurationPermissions.environment.edit ?? false,
+      };
+    
+      console.log('Environment Permissions:', this.environmentPermissions);
+    } else {
+      console.error('Configuration permissions not found in response');
+      this.configurationPermissions = null; // Fallback for safety
+      this.environmentPermissions = { read: false, view: false, edit: false }; // Default permissions
+
+    }
+    
+
+    
+
+    
+
+
+
+
+    const user = this.authService.getUser();
+    if (user) {
+      this.username = user.name;
+      this.userrole = user.role;
+    }
+    this.cookieValue = JSON.parse(this.cookieService.get('_user'));
+    this.selectedMap = this.projectService.getMapData();
     try {
       this.loadData();
       this.setPaginatedData();

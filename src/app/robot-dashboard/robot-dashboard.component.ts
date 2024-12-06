@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { interval } from 'rxjs';
+import { log } from 'node:console';
 
 @Component({
   selector: 'app-robot-dashboard',
@@ -16,7 +17,7 @@ export class RobotDashboardComponent implements OnInit {
   liveRobos: any[] = [];
 
   processedErrors : Set<string>;
-  
+
   statisticsData: any = {
     averageSpeed: 0,
     averageSpeedchange: 8.5,
@@ -45,7 +46,7 @@ export class RobotDashboardComponent implements OnInit {
     this.getRoboStatus(); // update only err, warning..
     this.updateLiveRoboInfo();
     this.filteredRobotActivities = this.robotActivities;
-    this.getFleetGrossStatus();
+    // this.getFleetGrossStatus();
     setInterval(async () => {
       this.robotActivities = await this.getLiveRoboInfo();
       this.getRoboStatus(); // update only err, warning..
@@ -69,38 +70,9 @@ export class RobotDashboardComponent implements OnInit {
   }
 
   // async to synchronous...
-  async getFleetGrossStatus() {
-    const mapId = this.selectedMap.id;
-
-    let averageSpeed = this.getAvgSpeed();
-    this.statisticsData.averageSpeed = averageSpeed || "Loading...";
-
-    // let totDistance = this.getTotDistance()
-    // this.statisticsData.totalDistance = totDistance;
-
-    // let tot_Network = this.getNetworkConn()
-    // this.statisticsData.networkConnection = tot_Network;
-
-    // let totDistance = await this.fetchFleetStatus('total-distance', {
-    //   mapId: mapId,
-    // });
-    // // console.log(totDistance,"totDistance")
-    // if (totDistance.totalDistance)
-    //   this.statisticsData.totalDistance = totDistance.totalDistance;
-
-    // let roboUtil = await this.fetchFleetStatus('robo-util', {
-    //   mapId: mapId,
-    // });
-    // if (roboUtil.roboUtilization)
-    //   this.statisticsData.robotUtilization = roboUtil.roboUtilization;
-
-    // let networkConn = await this.fetchFleetStatus('network-conn', {
-    //   mapId: mapId,
-    // });
-    // // console.log(networkConn,"networkConn")
-    // if (networkConn.networkConnection)
-    //   this.statisticsData.networkConnection = networkConn.networkConnection;
-  }
+  // async getFleetGrossStatus() {
+  //   const mapId = this.selectedMap.id;
+  // }
 
   async getLiveRoboInfo(): Promise<any[]> {
     const response = await fetch(
@@ -131,9 +103,9 @@ export class RobotDashboardComponent implements OnInit {
             let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "MANUAL MODE", "DOCKING", "NO ERROR"]; //Robot Errors List from RabbitMQ
             let criticality = "Normal";
 
-            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3])) 
+            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3]))
               criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
-            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2])) 
+            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2]))
               criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
 
             let notificationKey = `${error.description} on robot ID ${robot.id}`;
@@ -175,12 +147,14 @@ export class RobotDashboardComponent implements OnInit {
     let tot_robotUtilization = 0;
     let tot_Dis = 0;
     let tot_Network = 0;
+    let tot_speed = 0;
     let roboNotIdle = ["MOVESTATE", "DOCKSTATE", "UNDOCKSTATE", "LOADSTATE", "UNLOADSTATE"]
 
     this.robotActivities = robots.map((robo: any) => {
       if (roboNotIdle.includes(robo.robot_state)) tot_robotUtilization += 1;
       tot_Dis += robo.DISTANCE;
-      tot_Network += robo.NETWORK;
+      tot_Network += robo.NetworkSpeed;
+      tot_speed += robo['Robot Speed'];
       return {
         roboId: robo.id,
         task: robo.current_task,
@@ -189,20 +163,25 @@ export class RobotDashboardComponent implements OnInit {
         criticality: robo.Criticality,
       };
     });
-    this.statisticsData.robotUtilization = 
-      tot_robotUtilization && robots.length 
-      ? `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %` 
-      : "Loading...";
-    
-    this.statisticsData.totalDistance = 
-        tot_Dis && robots.length 
-        ? `${(tot_Dis / robots.length).toFixed(2)} m` 
-        : "Loading...";
-        
-    this.statisticsData.networkConnection = 
-        tot_Network && robots.length 
-        ? `${(tot_Network / robots.length).toFixed(2)} dB` 
-        : "Loading...";
+    this.statisticsData.robotUtilization = `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %`;
+      // tot_robotUtilization && robots.length
+      // ? `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %`
+      // : "Loading...";
+
+    this.statisticsData.totalDistance = `${(tot_Dis / robots.length).toFixed(2)} m`
+        // tot_Dis && robots.length
+        // ? `${(tot_Dis / robots.length).toFixed(2)} m`
+        // : "Loading...";
+
+    this.statisticsData.networkConnection = `${(tot_Network / robots.length).toFixed(2)} dBm`;
+        // tot_Network && robots.length
+        // ? `${(tot_Network / robots.length).toFixed(2)} dBm`
+        // : "Loading...";
+
+    this.statisticsData.averageSpeed = `${(tot_speed / robots.length).toFixed(2)} m/s`;
+        // tot_speed && robots.length
+        // ? `${(tot_speed / robots.length).toFixed(2)} m/s`
+        // : "Loading...";
 
     this.filteredRobotActivities = this.robotActivities;
 
@@ -243,24 +222,11 @@ export class RobotDashboardComponent implements OnInit {
   }
 
   ngAfterViewInit(){
-      let reloadData=interval(2000).subscribe(()=>{
-        this.getFleetGrossStatus()
-      })
+      // let reloadData=interval(2000).subscribe(()=>{
+      //   this.getFleetGrossStatus()
+      // })
   }
 
-  getAvgSpeed(): string{
-    if (!('robots' in this.robotActivities)) return `Loading...`;
-
-    let { robots }: any = this.robotActivities;
-    if (!robots.length) return `Loading...`;
-
-    let tot_speed = 0;
-    for (let i = 0; i < robots.length; i++){
-      tot_speed += robots[i].Speed;
-    }
-
-    return `${tot_speed/robots.length} m/s`;
-  }
   // getTotDistance(): string{
   //   if (!('robots' in this.robotActivities)) return `${0} m`;
 
