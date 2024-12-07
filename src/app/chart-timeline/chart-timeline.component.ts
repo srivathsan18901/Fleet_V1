@@ -594,8 +594,7 @@ export class ChartTimelineComponent implements OnInit {
     );
     console.log(data,'data robot util')
     if (data.roboUtil) {
-      this.roboUtilArr = data.roboUtil.Robot_Utilization
-      .map(
+      this.roboUtilArr = data.roboUtil.Robot_Utilization.map(
         (stat: any) =>{
           let res;
           for (let key in stat) {
