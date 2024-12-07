@@ -1,7 +1,6 @@
+
 <div class="sidenavbar">
-
   <div id="container">
-
     <!-- Sidebar -->
     <!-- <app-sidenavbar></app-sidenavbar> -->
     <app-loader></app-loader>
@@ -23,12 +22,15 @@
       </div>
     </div>
     <div class="mainContent">
-
       <div class="header-section">
         <h1 class="header-title">{{ activeHeader }}</h1>
         <div class="subheader-container">
           <div class="subheader-text">Create and edit Configuration</div>
-          <img src="../../assets/icons/i-icon.svg" alt="Icon" class="subheader-icon" />
+          <img
+            src="../../assets/icons/i-icon.svg"
+            alt="Icon"
+            class="subheader-icon"
+          />
         </div>
       </div>
 
@@ -36,10 +38,20 @@
         <!-- Search Bar -->
         <div class="search-filter-container">
           <div class="search-box">
-            <input type="text" maxlength="250" (input)="onSearch($event)" placeholder="Search For Something..."
-              class="search-input" [(ngModel)]="searchTerm" (ngModelChange)="searchTermChanged()" />
+            <input
+              type="text"
+              maxlength="250"
+              (input)="onSearch($event)"
+              placeholder="Search For Something..."
+              class="search-input"
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="searchTermChanged()"
+            />
             <button class="search-btn">
-              <img src="../../assets/icons/download-removebg-preview.png" alt="Search" />
+              <img
+                src="../../assets/icons/download-removebg-preview.png"
+                alt="Search"
+              />
             </button>
           </div>
         </div>
@@ -47,8 +59,12 @@
         <!-- robots.component.html -->
 
         <div class="simulation-container" *ngIf="currentTable === 'robot'">
-          <button class="simulation-button" (click)="togglePopup()" [class.disabled]="!isMapAvailable()"
-            [disabled]="!isMapAvailable()">
+          <button
+            class="simulation-button"
+            (click)="togglePopup()"
+            [class.disabled]="!isMapAvailable()"
+            [disabled]="!isMapAvailable()"
+          >
             Simulation
           </button>
         </div>
@@ -56,11 +72,17 @@
         <!-- Popup for selecting robots -->
         <div *ngIf="isPopupVisible" class="sim-popup-modal">
           <div class="sim-popup-content">
-            <h3>Enter the Robots for Simulation </h3>
+            <h3>Enter the Robots for Simulation</h3>
             <div>
               <label for="robots">Number of Robots:</label>
 
-              <input type="number" [(ngModel)]="robotCount" id="robots" placeholder="Enter number of robots" min="1">
+              <input
+                type="number"
+                [(ngModel)]="robotCount"
+                id="robots"
+                placeholder="Enter number of robots"
+                min="1"
+              />
             </div>
             <h4 *ngIf="robotCountError" class="error-message">
               No Robots Added
@@ -71,20 +93,24 @@
               <!-- <button (click)="closePopup()">Cancel</button> -->
 
               <button class="close-popup-btn" (click)="closePopup()">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20"
-                  class="fill-current text-red-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
+                  class="fill-current text-red-500"
+                >
                   <path fill="none" d="M0 0h24v24H0z" />
                   <path
-                    d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z" />
+                    d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                  />
                 </svg>
               </button>
-
 
               <button (click)="clearAllRobots()">Delete All</button>
             </div>
 
             <div *ngIf="totalRobots > 0">
-
               <ul>
                 <li *ngFor="let robot of simRobos">
                   {{ robot.roboName }}
@@ -100,54 +126,74 @@
         <div class="date-filters" *ngIf="currentTable === 'Environment'">
           <div class="date-inputs">
             <label for="start-date">Start Date:</label>
-            <input pInputText type="date" id="start-date" [ngModel]="startDate ? formatDate(startDate) : null"
-              (ngModelChange)="onDateChange($event, 'start')" [min]="minDate" [max]="maxDate"
-              style="height: 35px; width: 150px" />
+            <input
+              pInputText
+              type="date"
+              id="start-date"
+              [ngModel]="startDate ? formatDate(startDate) : null"
+              (ngModelChange)="onDateChange($event, 'start')"
+              [min]="minDate"
+              [max]="maxDate"
+              style="height: 35px; width: 150px"
+            />
 
             <label for="end-date">End Date:</label>
-            <input pInputText type="date" id="end-date" [ngModel]="endDate ? formatDate(endDate) : null"
-              (ngModelChange)="onDateChange($event, 'end')" [min]="minDate" [max]="maxDate"
-              style="height: 35px; width: 150px" />
+            <input
+              pInputText
+              type="date"
+              id="end-date"
+              [ngModel]="endDate ? formatDate(endDate) : null"
+              (ngModelChange)="onDateChange($event, 'end')"
+              [min]="minDate"
+              [max]="maxDate"
+              style="height: 35px; width: 150px"
+            />
           </div>
-
         </div>
-
       </div>
 
       <!-- Buttons -->
       <div class="button-container">
         <div class="button-frame">
           <div class="">
-            <button *ngIf="userManagementData?.permissions?.configurationPermissions?.environment?.enabled"
-              class="button" [ngClass]="{
+            <button
+              class="button"
+              [ngClass]="{
                 'active-button': activeButton === 'Environment',
                 'transition-active': isTransitioning
-              }" (click)="showTable('Environment')" (click)="setActiveButton('Environment')">
+              }"
+              (click)="showTable('Environment')"
+              (click)="setActiveButton('Environment')"
+            >
               Environment
             </button>
-            <button *ngIf="userManagementData?.permissions?.configurationPermissions?.robot?.enabled" class="button"
+            <button
+              class="button"
               [ngClass]="{
                 'active-button': activeButton === 'robot',
                 'transition-active': isTransitioning
-              }" (click)="showTable('robot')" (click)="setActiveButton('robot')">
+              }"
+              (click)="showTable('robot')"
+              (click)="setActiveButton('robot')"
+            >
               Robot
             </button>
-            <button *ngIf="userManagementData?.permissions?.configurationPermissions?.fleet?.enabled" class="button"
+            <button
+              class="button"
               [ngClass]="{
                 'active-button': activeButton === 'fleet',
                 'transition-active': isTransitioning
-              }" (click)="setActiveButton('fleet')">
+              }"
+              (click)="setActiveButton('fleet')"
+            >
               Fleet
             </button>
           </div>
         </div>
       </div>
 
-
-
       <!-- Table -->
       <div class="table-containers">
-
         <div class="table-container">
           <div *ngIf="tableLoader" class="loader-background">
             <div class="middle">
@@ -163,22 +209,13 @@
           </div>
 
           <div class="env-table">
-            <table *ngIf="currentTable === 'Environment' && !imageUploaded ">
+            <table *ngIf="currentTable === 'Environment' && !imageUploaded">
               <thead>
                 <tr>
                   <th>Map Name</th>
                   <th>Site Name</th>
                   <th>Last Created</th>
-                  <th class="iconTable">
-                    <div
-                      *ngIf="configurationPermissions.environment.enabled === true &&configurationPermissions.environment.edit=== true"
-                      style="visibility: hidden;">Edit/Delete</div>
-                  </th>
-                  <th class="iconTable">
-                    <div
-                      *ngIf="configurationPermissions.environment.enabled === true &&configurationPermissions.environment.edit=== true"
-                      style="visibility: hidden;">Edit/Delete</div>
-                  </th>
+                  <th class="iconTable">Edit/Delete</th>
                   <th class="iconTable">Pick Map</th>
                 </tr>
               </thead>
@@ -186,21 +223,36 @@
                 <tr *ngIf="paginatedData.length === 0">
                   <td colspan="5" class="no-data">
                     <div class="no-data-container">
-                      <img src="../assets/no-data.png" alt="No Data" class="no-data-image">
+                      <img
+                        src="../assets/no-data.png"
+                        alt="No Data"
+                        class="no-data-image"
+                      />
                       <p class="no-data-text">No data found</p>
                     </div>
                   </td>
                 </tr>
-                <tr *ngFor="
+                <tr
+                  *ngFor="
                     let item of paginatedData;
                     index as i;
                     trackBy: trackByTaskId
-                  " [class.paused]="item.paused">
+                  "
+                  [class.paused]="item.paused"
+                >
                   <td title="{{ item.mapName }}">
-                    {{ item.mapName.length > 10 ? (item.mapName | slice:0:10) + '...' : item.mapName }}
+                    {{
+                      item.mapName.length > 10
+                        ? (item.mapName | slice : 0 : 10) + "..."
+                        : item.mapName
+                    }}
                   </td>
                   <td title="{{ item.siteName }}">
-                    {{ item.siteName.length > 10 ? (item.siteName | slice:0:10) + '...' : item.siteName }}
+                    {{
+                      item.siteName.length > 10
+                        ? (item.siteName | slice : 0 : 10) + "..."
+                        : item.siteName
+                    }}
                   </td>
 
                   <td>
@@ -208,48 +260,57 @@
                   </td>
                   <td class="iconTable">
                     <div class="edit">
-                      <button
-                        *ngIf="configurationPermissions.environment.enabled === true &&configurationPermissions.environment.edit=== true"
-                        class="edit-button" (click)="editItem(item)">
+                      <button class="edit-button" (click)="editItem(item)">
                         <svg class="edit-svgIcon" viewBox="0 0 512 512">
                           <path
-                            d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z">
-                          </path>
+                            d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
+                          ></path>
                         </svg>
                       </button>
 
                       <!-- delete button -->
 
-
                       <button
-                        *ngIf="configurationPermissions.environment.enabled === true &&configurationPermissions.environment.edit=== true"
-                        class="delete-button" (click)="openDeleteConfirmation(item)">
+                        class="delete-button"
+                        (click)="openDeleteConfirmation(item)"
+                      >
                         <svg class="delete-svgIcon" viewBox="0 0 448 512">
                           <path
-                            d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z">
-                          </path>
+                            d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"
+                          ></path>
                         </svg>
                       </button>
-
                     </div>
                   </td>
                   <td class="iconTable">
                     <button class="sel-btn" (click)="selectMap(item)">
                       <!-- [disabled]="isButtonDisabled(item)" -->
                       <!-- SELECT -->
-                      {{ item.mapName === this.selectedMap?.mapName ? "Deselect" : "Select" }}
+                      {{
+                        item.mapName === this.selectedMap?.mapName
+                          ? "Deselect"
+                          : "Select"
+                      }}
                     </button>
                   </td>
                 </tr>
               </tbody>
             </table>
-
-
           </div>
-          <div *ngIf="currentTable === 'Environment' && filteredEnvData.length == EnvData.length">
-            <div class="paginator-container" *ngIf="filteredEnvData.length > 0 ">
-              <mat-paginator [length]="filteredEnvData.length" [pageSize]="5" [pageSizeOptions]="[5, 10, ]"
-                (page)="onPageChange($event)" showFirstLastButtons>
+          <div
+            *ngIf="
+              currentTable === 'Environment' &&
+              filteredEnvData.length == EnvData.length
+            "
+          >
+            <div class="paginator-container" *ngIf="filteredEnvData.length > 0">
+              <mat-paginator
+                [length]="filteredEnvData.length"
+                [pageSize]="5"
+                [pageSizeOptions]="[5, 10]"
+                (page)="onPageChange($event)"
+                showFirstLastButtons
+              >
               </mat-paginator>
             </div>
           </div>
@@ -267,7 +328,6 @@
               </tr>
             </thead>
             <tbody>
-
               <!-- Show No Data Row with image and message -->
               <!-- <tr *ngIf="paginatedData1.length === 0">
                   <td colspan="8" class="no-data">
@@ -278,58 +338,75 @@
                   </td>
                 </tr> -->
 
-
               <tr *ngIf="paginatedData1.length === 0">
                 <td colspan="6" class="no-data">
                   <div class="no-data-container">
-                    <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                    <img
+                      src="../../assets/no-data.png"
+                      alt="No Data"
+                      class="no-data-image"
+                    />
                     <p class="no-data-text">No data found</p>
                   </div>
                 </td>
                 <!-- <td colspan="4" class="iconTable">No data found</td> -->
               </tr>
-              <tr *ngFor="let item of paginatedData1; index as i;trackBy: trackByTaskName" [class.paused]="item.paused">
+              <tr
+                *ngFor="
+                  let item of paginatedData1;
+                  index as i;
+                  trackBy: trackByTaskName
+                "
+                [class.paused]="item.paused"
+              >
                 <!-- <td><input type="checkbox" [(ngModel)]="item.isSimMode" /></td> -->
-                <td>{{ (paginator ? paginator.pageIndex * paginator.pageSize : 0) + i + 1 }}</td>
+                <td>
+                  {{
+                    (paginator ? paginator.pageIndex * paginator.pageSize : 0) +
+                      i +
+                      1
+                  }}
+                </td>
                 <td>{{ item.ipAdd }}</td>
                 <td>{{ item.amrId }}</td>
-                <td>{{ item.uuid.slice(0, 8)+'...' }}</td>
+                <td>{{ item.uuid.slice(0, 8) + "..." }}</td>
                 <td>{{ item.roboName }}</td>
                 <td class="iconTable">
                   <div class="edit">
                     <button class="edit-button" (click)="editRobo(item)">
-                      <svg
-                        *ngIf="configurationPermissions.robot.enabled === true &&configurationPermissions.robot.edit=== true"
-                        class="edit-svgIcon" viewBox="0 0 512 512">
+                      <svg class="edit-svgIcon" viewBox="0 0 512 512">
                         <path
-                          d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z">
-                        </path>
+                          d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
+                        ></path>
                       </svg>
                     </button>
 
                     <!-- delete button -->
 
-                    <button
-                      *ngIf="configurationPermissions.robot.enabled === true &&configurationPermissions.robot.edit=== true"
-                      class="delete-button" (click)="deleteRobo(item)">
-                      <svg
-                        *ngIf="configurationPermissions.robot.enabled === true &&configurationPermissions.robot.edit=== true"
-                        class="delete-svgIcon" viewBox="0 0 448 512">
+                    <button class="delete-button" (click)="deleteRobo(item)">
+                      <svg class="delete-svgIcon" viewBox="0 0 448 512">
                         <path
-                          d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z">
-                        </path>
+                          d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"
+                        ></path>
                       </svg>
                     </button>
-
                   </div>
                 </td>
               </tr>
             </tbody>
           </table>
           <div *ngIf="currentTable === 'robot'">
-            <div class="paginator-container" *ngIf="filteredRobotData.length > 0">
-              <mat-paginator [length]="filteredRobotData.length" [pageSize]="5" [pageSizeOptions]="[5, 10]"
-                (page)="onPageChanges($event)" showFirstLastButtons>
+            <div
+              class="paginator-container"
+              *ngIf="filteredRobotData.length > 0"
+            >
+              <mat-paginator
+                [length]="filteredRobotData.length"
+                [pageSize]="5"
+                [pageSizeOptions]="[5, 10]"
+                (page)="onPageChanges($event)"
+                showFirstLastButtons
+              >
               </mat-paginator>
             </div>
           </div>
@@ -342,47 +419,81 @@
             </button> -->
 
           <div class="popup-overlay" *ngIf="showRobotParametersPopup">
-            <app-robot-parameters-popup (close)="closeRobotParametersPopup()"></app-robot-parameters-popup>
+            <app-robot-parameters-popup
+              (close)="closeRobotParametersPopup()"
+            ></app-robot-parameters-popup>
           </div>
           <!-- Add this in your main component HTML -->
           <div class="form-group" *ngIf="currentTable === 'robot'">
             <label for="ipRangeFrom">IP Range:</label>
             <div class="uservalid">
-              <input pInputText id="ipRangeFrom" type="text" placeholder="255.255.0.0" [(ngModel)]="startIP"
-                name="startIP" pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$" #startIPInput="ngModel" required />
-              <span *ngIf="startIPInput.invalid && startIPInput.touched" class="error">
+              <input
+                pInputText
+                id="ipRangeFrom"
+                type="text"
+                placeholder="255.255.0.0"
+                [(ngModel)]="startIP"
+                name="startIP"
+                pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+                #startIPInput="ngModel"
+                required
+              />
+              <span
+                *ngIf="startIPInput.invalid && startIPInput.touched"
+                class="error"
+              >
                 <!-- Invalid IP Address -->
               </span>
             </div>
 
             <span>to: </span>
             <div class="uservalid">
-              <input pInputText id="ipRangeTo" type="text" placeholder="255.255.0.0" [(ngModel)]="EndIP" name="endIP"
-                pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$" #endIPInput="ngModel" required />
-              <span *ngIf="endIPInput.invalid && endIPInput.touched" class="error">
+              <input
+                pInputText
+                id="ipRangeTo"
+                type="text"
+                placeholder="255.255.0.0"
+                [(ngModel)]="EndIP"
+                name="endIP"
+                pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
+                #endIPInput="ngModel"
+                required
+              />
+              <span
+                *ngIf="endIPInput.invalid && endIPInput.touched"
+                class="error"
+              >
                 <!-- Invalid IP Address -->
               </span>
             </div>
 
-            <button type="button" class="start-button" (click)="startScanning()" [disabled]="!isMapAvailable()">
+            <button
+              type="button"
+              class="start-button"
+              (click)="startScanning()"
+              [disabled]="!isMapAvailable()"
+            >
               Scan
             </button>
-            <button type="button" class="stop-button" (click)="stopScanning()" [disabled]="!isMapAvailable()">
+            <button
+              type="button"
+              class="stop-button"
+              (click)="stopScanning()"
+              [disabled]="!isMapAvailable()"
+            >
               Stop
             </button>
             <div *ngIf="isScanning" class="loading-spinner"></div>
-
-
-
           </div>
 
           <div class="popup-overlay" *ngIf="showIPScannerPopup">
-            <app-ipscanner *ngIf="showIPScannerPopup" (close)="closeIPScanner()"></app-ipscanner>
+            <app-ipscanner
+              *ngIf="showIPScannerPopup"
+              (close)="closeIPScanner()"
+            ></app-ipscanner>
           </div>
 
           <table *ngIf="currentTable === 'robot'">
-
-
             <thead>
               <tr>
                 <th>IP</th>
@@ -398,16 +509,23 @@
                 <!-- <td colspan="6" class="iconTable">No data found</td> -->
                 <td colspan="6" class="no-data">
                   <div class="no-data-container">
-                    <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
+                    <img
+                      src="../../assets/no-data.png"
+                      alt="No Data"
+                      class="no-data-image"
+                    />
                     <p class="no-data-text">No data found</p>
                   </div>
                 </td>
               </tr>
-              <tr *ngFor="
-                    let item of ipScanData;
-                    index as i;
-                    trackBy: trackByTaskId
-                  " [class.paused]="item.paused">
+              <tr
+                *ngFor="
+                  let item of ipScanData;
+                  index as i;
+                  trackBy: trackByTaskId
+                "
+                [class.paused]="item.paused"
+              >
                 <td>{{ item.ip }}</td>
                 <td>{{ item.mac }}</td>
                 <td>{{ item.host }}</td>
@@ -424,7 +542,10 @@
             </tbody>
           </table>
 
-          <div class="paginator-container" *ngIf="currentTable === 'robot' && !imageUploaded">
+          <div
+            class="paginator-container"
+            *ngIf="currentTable === 'robot' && !imageUploaded"
+          >
             <!-- <mat-paginator
                 [length]="ipScanData.length"
                 [pageSize]="5"
@@ -435,73 +556,88 @@
               </mat-paginator> -->
           </div>
 
-            <div *ngIf="currentTab === 'fleet'">
-              <ul class="tab-menu">
-                <li
-                  [class.active]="fleetTab === 'general'"
-                  (click)="setFleetTab('general')"
-                >
-                  General
-                </li>
-                <!-- <li
+          <div *ngIf="currentTab === 'fleet'">
+            <ul class="tab-menu">
+              <li
+                [class.active]="fleetTab === 'general'"
+                (click)="setFleetTab('general')"
+              >
+                General
+              </li>
+              <!-- <li
                   [class.active]="fleetTab === 'planner'"
                   (click)="setFleetTab('planner')"
                 >
-                  Planner
-                </li>
+                Planner
+              </li>
                 <li
                   [class.active]="fleetTab === 'task'"
                   (click)="setFleetTab('task')"
                 >
-                  Task
-                </li>
+                Task
+              </li>
                 <li
                   [class.active]="fleetTab === 'battery'"
                   (click)="setFleetTab('battery')"
                 >
-                  Battery
-                </li>
+                Battery
+              </li>
                 <li
                   [class.active]="fleetTab === 'communication'"
                   (click)="setFleetTab('communication')"
                 >
-                  Communication
-                </li> -->
-              </ul>
+                Communication
+              </li> -->
+            </ul>
 
-              <div *ngIf="fleetTab === 'general'">
-                <!-- <h2>Edit the Fleet Parameters</h2> -->
-                <!-- Add content for the General tab -->
-                <app-general></app-general>
-              </div>
-              <!-- <div *ngIf="fleetTab === 'planner'">
-                <app-planner></app-planner>
-              </div>
-              <div *ngIf="fleetTab === 'task'">
-                <app-task></app-task>
-              </div>
-              <div *ngIf="fleetTab === 'battery'">
-                <app-battery></app-battery>
-              </div>
-              <div *ngIf="fleetTab === 'communication'">
-                <app-communication></app-communication>
-              </div> -->
+            <div *ngIf="fleetTab === 'general'">
+              <!-- <h2>Edit the Fleet Parameters</h2> -->
+              <!-- Add content for the General tab -->
+              <app-general></app-general>
             </div>
+            <!-- <div *ngIf="fleetTab === 'planner'"> -->
+            <!-- <h2>Planner Settings</h2> -->
+            <!-- Add content for the Planner tab -->
+            <!-- <app-planner></app-planner> -->
+            <!-- </div> -->
+            <!-- <div *ngIf="fleetTab === 'task'"> -->
+            <!-- <h2>Task Management</h2> -->
+            <!-- Add content for the Task tab -->
+            <!-- <app-task></app-task> -->
+            <!-- </div> -->
+            <!-- <div *ngIf="fleetTab === 'battery'"> -->
+            <!-- <h2>Battery Information</h2> -->
+            <!-- Add content for the Battery tab -->
+            <!-- <app-battery></app-battery> -->
+            <!-- </div> -->
+            <!-- <div *ngIf="fleetTab === 'communication'"> -->
+            <!-- <h2>Communication Settings</h2> -->
+            <!-- <app-communication></app-communication> -->
+            <!-- </div> -->
+          </div>
 
           <div class="Create-button-container">
-            <button class="Create-button" *ngIf="activeButton === 'Environment'" (click)="openImageUploadPopup()">
+            <button
+              class="Create-button"
+              *ngIf="activeButton === 'Environment'"
+              (click)="openImageUploadPopup()"
+            >
               Create
             </button>
           </div>
-          <app-envmap *ngIf="showImageUploadPopup" [EnvData]="this.EnvData" [currEditMap]="this.currEditMap"
-            [onMapEdit]="this.onMapEdit" [currEditMapDet]="this.currEditMapDet" (save)="onPopupSave()"
-            (closePopup)="closeImageUploadPopup()" (currEditMapChange)="onCurrEditMapChange($event)"
-            (refreshTable)="reloadTable()">
+          <app-envmap
+            *ngIf="showImageUploadPopup"
+            [EnvData]="this.EnvData"
+            [currEditMap]="this.currEditMap"
+            [onMapEdit]="this.onMapEdit"
+            [currEditMapDet]="this.currEditMapDet"
+            (save)="onPopupSave()"
+            (closePopup)="closeImageUploadPopup()"
+            (currEditMapChange)="onCurrEditMapChange($event)"
+            (refreshTable)="reloadTable()"
+          >
           </app-envmap>
-
-
         </div>
-
       </div>
 
       <!-- Popup form -->
@@ -510,33 +646,87 @@
           <div>
             <form (ngSubmit)="saveItem()" formGroup="formData">
               <div class="modal-header">
-                <span class="close-icon close-button" (click)="closeroboPopup()">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <span
+                  class="close-icon close-button"
+                  (click)="closeroboPopup()"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                  >
                     <path fill="none" d="M0 0h24v24H0z" />
                     <path
-                      d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z" />
-                  </svg></span>
+                      d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                    /></svg
+                ></span>
                 <h2>Add Robot</h2>
               </div>
 
               <div class="rob-inp">
-                <label for="robotName" style="margin-right: 1rem; margin-left: 1rem">Robot Name:</label>
-                <input pInputText type="text" id="robotName" [(ngModel)]="formData.robotName" name="robotName"
-                  required />
+                <label
+                  for="robotName"
+                  style="margin-right: 1rem; margin-left: 1rem"
+                  >Robot Name:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="robotName"
+                  [(ngModel)]="formData.robotName"
+                  name="robotName"
+                  required
+                />
 
-                <label for="manufacturer" style="margin-right: 1rem; margin-left: 1rem">Manufacturer:</label>
-                <input pInputText type="text" id="manufacturer" [(ngModel)]="formData.manufacturer" name="manufacturer"
-                  required />
+                <label
+                  for="manufacturer"
+                  style="margin-right: 1rem; margin-left: 1rem"
+                  >Manufacturer:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="manufacturer"
+                  [(ngModel)]="formData.manufacturer"
+                  name="manufacturer"
+                  required
+                />
 
-                <label for="serialNumber" style="margin-right: 1rem; margin-left: 1rem">Serial Number:</label>
-                <input pInputText type="text" id="serialNumber" [(ngModel)]="formData.serialNumber" name="serialNumber"
-                  required />
-
+                <label
+                  for="serialNumber"
+                  style="margin-right: 1rem; margin-left: 1rem"
+                  >Serial Number:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="serialNumber"
+                  [(ngModel)]="formData.serialNumber"
+                  name="serialNumber"
+                  required
+                />
               </div>
-              <div style="margin-top: 1rem; margin-right: 1rem; margin-left: 1rem;margin-bottom: 1rem;">
-                <label for="attachmentType" style="margin-right: 1rem; margin-left: 1rem">Attachment Type:</label>
-                <select id="attachmentType" [(ngModel)]="formData.attachmentType" name="attachmentType" required
-                  style="padding: 0.6rem;">
+              <div
+                style="
+                  margin-top: 1rem;
+                  margin-right: 1rem;
+                  margin-left: 1rem;
+                  margin-bottom: 1rem;
+                "
+              >
+                <label
+                  for="attachmentType"
+                  style="margin-right: 1rem; margin-left: 1rem"
+                  >Attachment Type:</label
+                >
+                <select
+                  id="attachmentType"
+                  [(ngModel)]="formData.attachmentType"
+                  name="attachmentType"
+                  required
+                  style="padding: 0.6rem"
+                >
                   <option value="NOT_SET">NOT_SET</option>
                   <option value="LIFTER">LIFTER</option>
                   <option value="SINGLECONVEYOR">SINGLECONVEYOR</option>
@@ -545,43 +735,69 @@
               </div>
               <div class="flex">
                 <div class="robBTN-inp">
-                  <button class="rob-btn" [ngClass]="{ 'active-btn': isTypeSpecificationFormVisible }"
-                    (click)="toggleTypeSpecificationForm($event)" id="typeSpecificationLink">
+                  <button
+                    class="rob-btn"
+                    [ngClass]="{ 'active-btn': isTypeSpecificationFormVisible }"
+                    (click)="toggleTypeSpecificationForm($event)"
+                    id="typeSpecificationLink"
+                  >
                     Type Specification
                   </button>
                 </div>
 
                 <div class="robBTN-inp">
-                  <button class="rob-btn" [ngClass]="{ 'active-btn': isProtocolLimitsFormVisible }"
-                    (click)="toggleProtocolLimitsForm($event)" id="protocolLimitsLink">
+                  <button
+                    class="rob-btn"
+                    [ngClass]="{ 'active-btn': isProtocolLimitsFormVisible }"
+                    (click)="toggleProtocolLimitsForm($event)"
+                    id="protocolLimitsLink"
+                  >
                     Protocol Limits
                   </button>
                 </div>
 
                 <div class="robBTN-inp">
-                  <button class="rob-btn" [ngClass]="{ 'active-btn': isProtocolFeaturesFormVisible }"
-                    (click)="toggleProtocolFeaturesForm($event)" id="protocolFeaturesLink">
+                  <button
+                    class="rob-btn"
+                    [ngClass]="{ 'active-btn': isProtocolFeaturesFormVisible }"
+                    (click)="toggleProtocolFeaturesForm($event)"
+                    id="protocolFeaturesLink"
+                  >
                     Protocol Features
                   </button>
                 </div>
 
                 <div class="robBTN-inp">
-                  <button class="rob-btn" [ngClass]="{ 'active-btn': isAGVGeometryFormVisible }"
-                    (click)="toggleAGVGeometryForm($event)" id="agvGeometryLink">
+                  <button
+                    class="rob-btn"
+                    [ngClass]="{ 'active-btn': isAGVGeometryFormVisible }"
+                    (click)="toggleAGVGeometryForm($event)"
+                    id="agvGeometryLink"
+                  >
                     AGV Geometry
                   </button>
                 </div>
 
                 <div class="robBTN-inp">
-                  <button class="rob-btn" [ngClass]="{ 'active-btn': isLoadSpecificationFormVisible }"
-                    (click)="toggleLoadSpecificationForm($event)" id="loadSpecificationLink">
+                  <button
+                    class="rob-btn"
+                    [ngClass]="{ 'active-btn': isLoadSpecificationFormVisible }"
+                    (click)="toggleLoadSpecificationForm($event)"
+                    id="loadSpecificationLink"
+                  >
                     Load Specification
                   </button>
                 </div>
 
                 <div class="robBTN-inp">
-                  <button class="rob-btn" [ngClass]="{ 'active-btn': isLocalizationParametersFormVisible }"
-                    (click)="toggleLocalizationParametersForm($event)" id="localizationParametersLink">
+                  <button
+                    class="rob-btn"
+                    [ngClass]="{
+                      'active-btn': isLocalizationParametersFormVisible
+                    }"
+                    (click)="toggleLocalizationParametersForm($event)"
+                    id="localizationParametersLink"
+                  >
                     Localization Parameters
                   </button>
                 </div>
@@ -593,17 +809,33 @@
             </form>
           </div>
           <div class="Sub-form">
-            <div *ngIf="isLocalizationParametersFormVisible" class="localization-parameters-form">
+            <div
+              *ngIf="isLocalizationParametersFormVisible"
+              class="localization-parameters-form"
+            >
               <!-- Localization Parameters form fields here -->
               <div class="rob-inp">
                 <label for="localizationType">Localization Type:</label>
-                <input pInputText type="text" id="localizationType" [(ngModel)]="formData.localizationParameters.type"
-                  name="localizationType" style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="localizationType"
+                  [(ngModel)]="formData.localizationParameters.type"
+                  name="localizationType"
+                  style="text-align: center"
+                />
 
-                <label for="localizationDescription">Localization Description:</label>
-                <input pInputText type="text" id="localizationDescription"
-                  [(ngModel)]="formData.localizationParameters.description" name="localizationDescription"
-                  style="text-align:center;" />
+                <label for="localizationDescription"
+                  >Localization Description:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="localizationDescription"
+                  [(ngModel)]="formData.localizationParameters.description"
+                  name="localizationDescription"
+                  style="text-align: center"
+                />
               </div>
               <div>
                 <!-- <button pButton type="button" (click)="saveLocalizationParameters()">
@@ -619,16 +851,31 @@
               </div>
             </div>
 
-            <div *ngIf="isLoadSpecificationFormVisible" class="load-specification-form">
+            <div
+              *ngIf="isLoadSpecificationFormVisible"
+              class="load-specification-form"
+            >
               <!-- Load Specification form fields here -->
               <div class="rob-inp">
                 <label for="loadPositions">Load Positions:</label>
-                <input pInputText type="text" id="loadPositions" [(ngModel)]="formData.loadSpecification.loadPositions"
-                  name="loadPositions" style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="loadPositions"
+                  [(ngModel)]="formData.loadSpecification.loadPositions"
+                  name="loadPositions"
+                  style="text-align: center"
+                />
 
                 <label for="loadSets">Load Sets:</label>
-                <input pInputText type="text" id="loadSets" [(ngModel)]="formData.loadSpecification.loadSets"
-                  name="loadSets" style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="loadSets"
+                  [(ngModel)]="formData.loadSpecification.loadSets"
+                  name="loadSets"
+                  style="text-align: center"
+                />
               </div>
               <div>
                 <!-- <button pButton type="button" (click)="saveLoadSpecification()">
@@ -643,18 +890,38 @@
             <div *ngIf="isAGVGeometryFormVisible" class="agv-geometry-form">
               <!-- AGV Geometry form fields here -->
               <div class="rob-inp">
-                <label for="wheelDefinitions" style="margin-right: 1.2rem">Wheel Definitions:</label>
-                <input pInputText type="text" id="wheelDefinitions" [(ngModel)]="formData.agvGeometry.wheelDefinitions"
-                  name="wheelDefinitions" style="text-align:center;" />
+                <label for="wheelDefinitions" style="margin-right: 1.2rem"
+                  >Wheel Definitions:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="wheelDefinitions"
+                  [(ngModel)]="formData.agvGeometry.wheelDefinitions"
+                  name="wheelDefinitions"
+                  style="text-align: center"
+                />
 
                 <label for="envelopes2d">Envelopes 2D:</label>
-                <input pInputText type="text" id="envelopes2d" [(ngModel)]="formData.agvGeometry.envelopes2d"
-                  name="envelopes2d" style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="envelopes2d"
+                  [(ngModel)]="formData.agvGeometry.envelopes2d"
+                  name="envelopes2d"
+                  style="text-align: center"
+                />
               </div>
               <div class="rob-inp3">
                 <label for="envelopes3d">Envelopes 3D:</label>
-                <input pInputText type="text" id="envelopes3d" [(ngModel)]="formData.agvGeometry.envelopes3d"
-                  style="margin-right: .1rem;text-align:center;" name="envelopes3d" />
+                <input
+                  pInputText
+                  type="text"
+                  id="envelopes3d"
+                  [(ngModel)]="formData.agvGeometry.envelopes3d"
+                  style="margin-right: 0.1rem; text-align: center"
+                  name="envelopes3d"
+                />
               </div>
               <div>
                 <!-- <button pButton type="button" (click)="saveAGVGeometry()">
@@ -666,28 +933,58 @@
               </div>
             </div>
 
-            <div *ngIf="isProtocolFeaturesFormVisible" class="protocol-features-form">
+            <div
+              *ngIf="isProtocolFeaturesFormVisible"
+              class="protocol-features-form"
+            >
               <!-- Protocol Features form fields here -->
               <div class="rob-inp2">
                 <label for="optionalParameters">Optional Parameters:</label>
-                <input pInputText type="text" id="optionalParameters"
-                  [(ngModel)]="formData.protocolFeatures.optionalParameters" name="optionalParameters" class="inputype"
-                  style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="optionalParameters"
+                  [(ngModel)]="formData.protocolFeatures.optionalParameters"
+                  name="optionalParameters"
+                  class="inputype"
+                  style="text-align: center"
+                />
 
                 <label for="actionScopes">Action Scopes:</label>
-                <input pInputText type="text" id="actionScopes" [(ngModel)]="formData.protocolFeatures.actionScopes"
-                  name="actionScopes" class="inputype" style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="actionScopes"
+                  [(ngModel)]="formData.protocolFeatures.actionScopes"
+                  name="actionScopes"
+                  class="inputype"
+                  style="text-align: center"
+                />
               </div>
               <div class="rob-inp2" style="margin-left: 23px">
-                <label for="actionParameters" style="margin-right: 0.5rem">Action Parameters:</label>
-                <input pInputText type="text" id="actionParameters"
-                  [(ngModel)]="formData.protocolFeatures.actionParameters" name="actionParameters" class="inputype"
-                  style="text-align:center;" />
+                <label for="actionParameters" style="margin-right: 0.5rem"
+                  >Action Parameters:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="actionParameters"
+                  [(ngModel)]="formData.protocolFeatures.actionParameters"
+                  name="actionParameters"
+                  class="inputype"
+                  style="text-align: center"
+                />
 
                 <label for="resultDescription">Result Description:</label>
-                <input pInputText type="text" id="resultDescription"
-                  [(ngModel)]="formData.protocolFeatures.resultDescription" name="resultDescription" class="inputype"
-                  style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="resultDescription"
+                  [(ngModel)]="formData.protocolFeatures.resultDescription"
+                  name="resultDescription"
+                  class="inputype"
+                  style="text-align: center"
+                />
               </div>
               <div>
                 <!-- <button pButton type="button" (click)="saveProtocolFeatures()">
@@ -699,21 +996,47 @@
               </div>
             </div>
 
-            <div *ngIf="isProtocolLimitsFormVisible" class="protocol-limits-form">
+            <div
+              *ngIf="isProtocolLimitsFormVisible"
+              class="protocol-limits-form"
+            >
               <!-- Protocol Limits form fields here -->
               <div class="rob-inp">
-                <label for="maxStringLens" style="margin-right: 1.5rem">Max String Lengths:</label>
-                <input pInputText type="text" id="maxStringLens" [(ngModel)]="formData.protocolLimits.maxStringLens"
-                  name="maxStringLens" class="inputype" style="text-align:center;" />
+                <label for="maxStringLens" style="margin-right: 1.5rem"
+                  >Max String Lengths:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="maxStringLens"
+                  [(ngModel)]="formData.protocolLimits.maxStringLens"
+                  name="maxStringLens"
+                  class="inputype"
+                  style="text-align: center"
+                />
 
                 <label for="maxArrayLens">Max Array Lengths:</label>
-                <input pInputText type="text" id="maxArrayLens" [(ngModel)]="formData.protocolLimits.maxArrayLens"
-                  name="maxArrayLens" class="inputype" style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="maxArrayLens"
+                  [(ngModel)]="formData.protocolLimits.maxArrayLens"
+                  name="maxArrayLens"
+                  class="inputype"
+                  style="text-align: center"
+                />
               </div>
               <div class="rob-inp3">
                 <label for="timing">Timing:</label>
-                <input pInputText type="text" id="timing" [(ngModel)]="formData.protocolLimits.timing"
-                  style="margin-right: .2rem;text-align:center;" name="timing" class="inputype" />
+                <input
+                  pInputText
+                  type="text"
+                  id="timing"
+                  [(ngModel)]="formData.protocolLimits.timing"
+                  style="margin-right: 0.2rem; text-align: center"
+                  name="timing"
+                  class="inputype"
+                />
               </div>
               <div>
                 <!-- <button pButton type="button" (click)="saveProtocolLimits()">
@@ -728,45 +1051,100 @@
               </div>
             </div>
 
-            <div *ngIf="isTypeSpecificationFormVisible" class="type-specification-form">
+            <div
+              *ngIf="isTypeSpecificationFormVisible"
+              class="type-specification-form"
+            >
               <div class="rob-inp">
-                <label for="seriesName" style="margin-right: 3.3rem">Series Name:</label>
-                <input pInputText type="text" id="seriesName" [(ngModel)]="formData.typeSpecification.seriesName"
-                  name="seriesName" class="inputype" style="margin-right:1rem; text-align:center;" />
+                <label for="seriesName" style="margin-right: 3.3rem"
+                  >Series Name:</label
+                >
+                <input
+                  pInputText
+                  type="text"
+                  id="seriesName"
+                  [(ngModel)]="formData.typeSpecification.seriesName"
+                  name="seriesName"
+                  class="inputype"
+                  style="margin-right: 1rem; text-align: center"
+                />
 
                 <label for="seriesDescription">Series Description:</label>
-                <input pInputText type="text" id="seriesDescription"
-                  [(ngModel)]="formData.typeSpecification.seriesDescription" name="seriesDescription" class="inputype"
-                  style="text-align:center;" />
+                <input
+                  pInputText
+                  type="text"
+                  id="seriesDescription"
+                  [(ngModel)]="formData.typeSpecification.seriesDescription"
+                  name="seriesDescription"
+                  class="inputype"
+                  style="text-align: center"
+                />
               </div>
               <div class="rob-inp1">
                 <label for="agvKinematic">AGV Kinematic:</label>
-                <p-dropdown [options]="agvKinematicsOptions" id="agvKinematic"
-                  [(ngModel)]="formData.typeSpecification.agvKinematic" name="agvKinematic" optionLabel="name"
-                  optionValue="value" placeholder="Select AGV Kinematic" styleClass="custom-dropdown"></p-dropdown>
+                <p-dropdown
+                  [options]="agvKinematicsOptions"
+                  id="agvKinematic"
+                  [(ngModel)]="formData.typeSpecification.agvKinematic"
+                  name="agvKinematic"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="Select AGV Kinematic"
+                  styleClass="custom-dropdown"
+                ></p-dropdown>
 
                 <label for="agvClass">AGV Class:</label>
-                <p-dropdown [options]="agvClassOptions" id="agvClass" [(ngModel)]="formData.typeSpecification.agvClass"
-                  name="agvClass" optionLabel="name" optionValue="value" placeholder="Select AGV Class"
-                  styleClass="custom-dropdown"></p-dropdown>
+                <p-dropdown
+                  [options]="agvClassOptions"
+                  id="agvClass"
+                  [(ngModel)]="formData.typeSpecification.agvClass"
+                  name="agvClass"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="Select AGV Class"
+                  styleClass="custom-dropdown"
+                ></p-dropdown>
               </div>
 
               <div class="rob-inp2">
                 <label for="maxLoadMass">Max Load Mass (Kg):</label>
-                <input pInputText type="number" id="maxLoadMass" [(ngModel)]="formData.typeSpecification.maxLoadMass"
-                  name="maxLoadMass" class="inputype" style="margin-right: 1.2rem;text-align:center;" />
+                <input
+                  pInputText
+                  type="number"
+                  id="maxLoadMass"
+                  [(ngModel)]="formData.typeSpecification.maxLoadMass"
+                  name="maxLoadMass"
+                  class="inputype"
+                  style="margin-right: 1.2rem; text-align: center"
+                />
 
                 <label for="localizationTypes">Localization Types:</label>
-                <p-dropdown [options]="localizationTypes" id="localizationTypes"
-                  [(ngModel)]="formData.typeSpecification.localizationTypes" name="localizationTypes" optionLabel="name"
-                  optionValue="value" placeholder="Select Localization Types" styleClass="custom-dropdown"></p-dropdown>
+                <p-dropdown
+                  [options]="localizationTypes"
+                  id="localizationTypes"
+                  [(ngModel)]="formData.typeSpecification.localizationTypes"
+                  name="localizationTypes"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="Select Localization Types"
+                  styleClass="custom-dropdown"
+                ></p-dropdown>
               </div>
               <div class="rob-inp3">
-                <label for="navigationTypes" style="margin-right: 2rem">Navigation Types:</label>
-                <p-dropdown [options]="navigationTypes" id="navigationTypes"
-                  [(ngModel)]="formData.typeSpecification.navigationTypes" name="navigationTypes" optionLabel="name"
-                  optionValue="value" placeholder="Select Navigation Types" [style]="{ 'margin-right': '1.2rem' }"
-                  styleClass="custom-dropdown"></p-dropdown>
+                <label for="navigationTypes" style="margin-right: 2rem"
+                  >Navigation Types:</label
+                >
+                <p-dropdown
+                  [options]="navigationTypes"
+                  id="navigationTypes"
+                  [(ngModel)]="formData.typeSpecification.navigationTypes"
+                  name="navigationTypes"
+                  optionLabel="name"
+                  optionValue="value"
+                  placeholder="Select Navigation Types"
+                  [style]="{ 'margin-right': '1.2rem' }"
+                  styleClass="custom-dropdown"
+                ></p-dropdown>
               </div>
               <!-- <button pButton type="button" (click)="saveTypeSpecification()">
           Save
@@ -777,7 +1155,12 @@
             </div>
           </div>
           <div class="btn-rob">
-            <button pButton class="p-button1" type="submit" (click)="saveRoboInfo()">
+            <button
+              pButton
+              class="p-button1"
+              type="submit"
+              (click)="saveRoboInfo()"
+            >
               Submit
             </button>
             <!-- <button pButton class="p-button1" type="button" (click)="closeroboPopup()">Close</button> -->
@@ -790,8 +1173,15 @@
           <h2>Confirm Delete</h2>
           <p>Are you sure you want to delete this item?</p>
           <div>
-            <button (click)="confirmDelete()" class="confirm-button">Delete</button>
-            <button (click)="cancelDelete()" class="cancel-button">Cancel</button>
+            <button (click)="confirmDelete()" class="confirm-button">
+              Delete
+            </button>
+            <button (click)="cancelDelete()" class="cancel-button">
+              Cancel
+            </button>
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>

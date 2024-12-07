@@ -1,3 +1,4 @@
+
 import {
   Component,
   ElementRef,
@@ -20,8 +21,6 @@ import { MessageService } from 'primeng/api';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormBuilder } from '@angular/forms';
 import { v4 as uuid } from 'uuid';
-import { CookieService } from 'ngx-cookie-service';
-import { AuthService } from '../auth.service';
 import { SessionService } from '../services/session.service';
 
 interface Poll {
@@ -76,12 +75,7 @@ export class ConfigurationComponent implements AfterViewInit {
   filteredEnvData: any[] = [];
   filteredipData: any[] = [];
   filteredRobotData: any[] = [];
-  tableLoader:any;
-  cookieValue: any;
-  userManagementData:any;
-  username: string | null = null;
-  userrole                                                : string | null = null;
-
+  tableLoader: any;
 
   // formData: any;
   isPopupOpen: boolean = false;
@@ -127,18 +121,14 @@ export class ConfigurationComponent implements AfterViewInit {
   simRobos: any;
 
   // loader
-  editLoader:boolean=false;
-  configurationPermissions: any;
-  environmentPermissions: { read: any; view: any; edit: any; } | undefined;
+  editLoader: boolean = false;
 
   constructor(
     private cdRef: ChangeDetectorRef,
     private projectService: ProjectService,
     public dialog: MatDialog, // Inject MatDialog
     private messageService: MessageService,
-    private sessionService: SessionService,
-    private authService: AuthService,
-    private cookieService: CookieService,
+    private sessionService: SessionService
   ) {
     this.filteredEnvData = [...this.EnvData];
     // this.filteredRobotData = [...this.robotData];
@@ -147,50 +137,6 @@ export class ConfigurationComponent implements AfterViewInit {
 
   async ngOnInit() {
     console.log('ngon init triggered');
-    this.userManagementData=JSON.parse(this.projectService.userManagementSericeGet());
-    console.log(this.userManagementData.permissions.configurationPermissions,'--configuration permissions')
-
-    if(this.userManagementData?.permissions?.configuraionPermissions){
-      this.configurationPermissions = this.userManagementData.permissions.configurationPermissions;
-      console.log('Config Permissions --', this.userManagementData.configuraionPermissions)
-    }else {
-      console.error('Configuration permissions not found in response');
-      this.configurationPermissions = null; // Fallback for safety
-    }
-
-    if (this.userManagementData?.permissions?.configurationPermissions) {
-      this.configurationPermissions = this.userManagementData.permissions.configurationPermissions;
-    
-      // Extract specific states for "Environment"
-      this.environmentPermissions = {
-        read: this.configurationPermissions.environment.read ?? false,
-        view: this.configurationPermissions.environment.view ?? false,
-        edit: this.configurationPermissions.environment.edit ?? false,
-      };
-    
-      console.log('Environment Permissions:', this.environmentPermissions);
-    } else {
-      console.error('Configuration permissions not found in response');
-      this.configurationPermissions = null; // Fallback for safety
-      this.environmentPermissions = { read: false, view: false, edit: false }; // Default permissions
-
-    }
-    
-
-    
-
-    
-
-
-
-
-    const user = this.authService.getUser();
-    if (user) {
-      this.username = user.name;
-      this.userrole = user.role;
-    }
-    this.cookieValue = JSON.parse(this.cookieService.get('_user'));
-    this.selectedMap = this.projectService.getMapData();
     try {
       this.loadData();
       this.setPaginatedData();
@@ -217,14 +163,14 @@ export class ConfigurationComponent implements AfterViewInit {
 
       this.mapData = this.projectService.getSelectedProject(); // _id
       if (!this.mapData) return;
-      this.tableLoader=true;
+      this.tableLoader = true;
       let response = await fetch(
         `http://${environment.API_URL}:${environment.PORT}/fleet-project/${this.mapData._id}`,
         { credentials: 'include' }
       );
       if (!response.ok) throw new Error(`Error code of ${response.status}`);
       let data = await response.json();
-      this.tableLoader=false
+      this.tableLoader = false;
       const { sites } = data.project;
       this.EnvData = sites
         .flatMap((sites: any) => {
@@ -415,8 +361,8 @@ export class ConfigurationComponent implements AfterViewInit {
       // });
 
       if (data.error) return;
-      if (data.populatedRobos) this.robotData = data.populatedRobos ;
-      this.filteredRobotData = this.robotData ;
+      if (data.populatedRobos) this.robotData = data.populatedRobos;
+      this.filteredRobotData = this.robotData;
       this.setPaginatedData1();
       this.reloadTable();
       // console.log(this.filteredRobotData)
@@ -959,7 +905,7 @@ export class ConfigurationComponent implements AfterViewInit {
     }
 
     if (this.startIP === '' || this.EndIP === '') {
-      this.setPaginatedData() 
+      this.setPaginatedData();
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -1332,12 +1278,11 @@ export class ConfigurationComponent implements AfterViewInit {
     this.isPopupVisible = true;
   }
 
-
   onCurrEditMapChange(currEditMap: boolean) {
     this.currEditMap = currEditMap;
   }
   editItem(item: any) {
-    this.editLoader=true;
+    this.editLoader = true;
     if (this.currEditMap) {
       this.currEditMap = true;
     }
@@ -1348,11 +1293,9 @@ export class ConfigurationComponent implements AfterViewInit {
         credentials: 'include',
       }
     )
-      .then((response) =>
-        { 
-          return response.json()
-        }
-      )
+      .then((response) => {
+        return response.json();
+      })
       .then((data) => {
         if (!data.map) {
           this.messageService.add({
@@ -1393,7 +1336,7 @@ export class ConfigurationComponent implements AfterViewInit {
             };
             this.currEditMap = true;
             this.showImageUploadPopup = true;
-            this.editLoader=false
+            this.editLoader = false;
 
             this.messageService.add({
               severity: 'success',
@@ -1892,7 +1835,7 @@ export class ConfigurationComponent implements AfterViewInit {
   // simulation robots
 
   isMapAvailable(): boolean {
-    return this.selectedMap != null && this.selectedMap.mapName != null ;
+    return this.selectedMap != null && this.selectedMap.mapName != null;
   }
 
   async togglePopup() {
@@ -1930,9 +1873,9 @@ export class ConfigurationComponent implements AfterViewInit {
     this.imageHeight = 0;
     this.imageWidth = 0;
     this.robotCountError = false;
-    this.robotCount=0;
+    this.robotCount = 0;
   }
-  
+
   robotCountError: boolean = false;
   async addRobot() {
     // Check for valid robot count
@@ -1949,7 +1892,7 @@ export class ConfigurationComponent implements AfterViewInit {
         detail: 'Total robots cannot exceed 10.',
         life: 4000,
       });
-      
+
       return;
     }
 
@@ -1982,7 +1925,7 @@ export class ConfigurationComponent implements AfterViewInit {
         life: 4000,
       });
     }
-        
+
     this.robotCountError = false;
     // Update the totalRobots count to reflect all robots now in sim mode
     this.totalRobots = updatedSimRobos.length;
@@ -2009,7 +1952,7 @@ export class ConfigurationComponent implements AfterViewInit {
       // Update the backend with the empty list of robots
       let result = await this.updateSimInMap(updatedSimRobos);
       if (result) {
-          this.messageService.add({
+        this.messageService.add({
           severity: 'info',
           summary: 'Info',
           detail: 'All robots deleted!',
@@ -2051,7 +1994,9 @@ export class ConfigurationComponent implements AfterViewInit {
       }
 
       // Filter out the robot to be deleted
-      const updatedSimRobos = existingSimRobos.filter((robot: { amrId: number; }) => robot.amrId !== amrId);  
+      const updatedSimRobos = existingSimRobos.filter(
+        (robot: { amrId: number }) => robot.amrId !== amrId
+      );
       // Update the backend with the updated list of robots
       let result = await this.updateSimInMap(updatedSimRobos);
       if (result) {
