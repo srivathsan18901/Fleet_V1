@@ -1,0 +1,203 @@
+<div class="layout-container">
+  <!-- <app-sidenavbar></app-sidenavbar> -->
+  <app-fullscreen-button></app-fullscreen-button>
+  <app-loader></app-loader>
+  <div class="content-container">
+    <div class="main-content">
+
+
+
+      <!-- Header section -->
+      <div class="header-section">
+        <h1 class="header-title">Tasks</h1>
+        <div class="subheader-container">
+          <div class="subheader-text">View and Edit Tasks</div>
+          <img
+            src="../../assets/icons/i-icon.svg"
+            alt="Icon"
+            class="subheader-icon"
+          />
+        </div>
+      </div>
+
+      <!-- search container -->
+      <div class="search-filter-container">
+        <!-- Search Bar -->
+        <div class="search-box">
+          <input type="text" (input)="onSearch($event)" placeholder="Search For Tasks..." />
+          <button class="search-btn">
+            <img
+              src="../../assets/icons/download-removebg-preview.png"
+              alt="Search"
+            />
+          </button>
+        </div>
+
+        <!-- Options Container -->
+        <!-- <div class="options-container">
+          <div class="filter-options">
+            <button
+              [class.active]="activeFilter === 'today'"
+              (click)="setActiveFilter('today')"
+            >
+              Today
+            </button>
+            <button
+              [class.active]="activeFilter === 'week'"
+              (click)="setActiveFilter('week')"
+            >
+              Week
+            </button>
+            <button
+              [class.active]="activeFilter === 'month'"
+              (click)="setActiveFilter('month')"
+            >
+              Month
+            </button>
+          </div>
+
+          <div class="date-inputs">
+            <label for="start-date" class="date-label"></label>
+            <input
+              type="date"
+              id="start-date"
+              (change)="onDateChange($event)"
+              class="date-input"
+            />
+
+            <label for="end-date" class="date-label"></label>
+            <input
+              type="date"
+              id="end-date"
+              (change)="onDateChange($event)"
+              class="date-input"
+            />
+          </div>
+        </div> -->
+      </div>
+
+      <!-- Table -->
+      <div class="table-container">
+        <div class="table-wrapper">
+
+          <!-- Table container without scroll -->
+          <div class="table-responsive">
+            <table class="table">
+              <thead >
+                <tr>
+                  <th>S.no</th>
+                  <th>Task ID</th>
+                  <th>Task Type</th>
+                  <th>Status</th>
+                  <th>Robot Name</th>
+                  <!-- <th>Source</th> -->
+                  <th>Destination</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+
+                <!-- Show No Data Row with image and message -->
+               <tr *ngIf="paginatedData.length === 0">
+                <td colspan="8" class="no-data">
+                  <div class="no-data-container">
+                    <img src="../assets/no-data.png" alt="No Data" class="no-data-image">
+                    <p class="no-data-text">No data found</p>
+                  </div>
+                </td>
+              </tr>
+               <!-- Display table rows when data exists -->
+                <tr *ngIf="paginatedData.length === 0">
+                  <!-- <td colspan="6" class="iconTable">No data found</td> -->
+                </tr>
+                <tr *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ item.taskId }}</td>
+                  <td>{{ item.taskType }}</td>
+                  <td>{{ item.status }}</td>
+                  <td>{{ item.roboName }}</td>
+                  <td>{{ item.sourceLocation }}</td>
+                  <!-- <td>{{ item.destinationLocation }}</td> -->
+                  <td>
+                    <!-- Switch Container -->
+                    <div class="switch-container">
+                      <!-- Switch -->
+                      <!-- <label class="switch">
+                        <input type="checkbox" class="chbox" [checked]="!item.paused" (click)="onPause(item)">
+                        <span class="slider slider--0" [ngClass]="{ 'slider--0': !item.paused }">
+                          {{ item.paused ? 'Activate' : 'Pause' }}
+                        </span>
+                        <div class="slider slider--1">
+                          <div></div>
+                          <div></div>
+                        </div>
+                        <div class="slider slider--2"></div>
+                        <div class="slider slider--3"> Activate</div>
+                      </label> -->
+
+
+                      <!-- Cancel Button -->
+                      <button 
+                      *ngIf="item.status !== 'COMPLETED' && item.status !== 'CANCELLED' && item.status !== 'FAILED'" 
+                       class="btn-common btn-cancel" 
+                      (click)="onCancel(item)">
+                      Cancel
+                    </button>
+                   </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+
+        <!-- Paginator -->
+    <div  class="paginator-container" *ngIf="filteredTaskData.length > 0" >
+      <mat-paginator
+        [length]="filteredTaskData.length"
+        [pageSize]="5"
+        [pageSizeOptions]="[5, 10]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
+      </mat-paginator>
+    </div>
+
+      <!-- Export -->
+      <!-- Export -->
+      <div class="export-button-container">
+        <button class="export-button" (click)="showPopup()">Export</button>
+        <div *ngIf="isPopupVisible" class="export-popup">
+          <div class="popup-content">
+
+            
+            <button class="close-button" (click)="onClose()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path
+                  d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                />
+              </svg>
+            </button>
+            <h3>Select Format</h3>
+            <div class="button-container">
+              <button (click)="exportData('csv')">Export as CSV</button>
+              <button (click)="exportData('excel')">Export as Excel</button>
+              <!-- <button (click)="exportData('pdf')">Export as PDF</button> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+

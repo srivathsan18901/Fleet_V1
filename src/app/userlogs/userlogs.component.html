@@ -1,0 +1,408 @@
+<div class="layout-container">
+  <!-- <app-sidenavbar></app-sidenavbar> -->
+
+  <app-loader></app-loader>
+  <div class="content-container">
+    <div class="main-content">
+      <!-- Header section -->
+      <div class="header-section">
+        <h1 class="header-title">{{ activeHeader }}</h1>
+        <div class="subheader-container">
+          <div class="subheader-text">Create and edit logs</div>
+          <img
+            src="../../assets/icons/i-icon.svg"
+            alt="Icon"
+            class="subheader-icon"
+          />
+        </div>
+      </div>
+
+      <!-- search container -->
+      <div class="search-filter-container">
+        <!-- Search Bar -->
+        <div class="search-box">
+          <input
+            type="text"
+            (input)="onSearch($event)"
+            placeholder="Search For Logs..."
+          />
+          <button class="search-btn">
+            <img
+              src="../../assets/icons/download-removebg-preview.png"
+              alt="Search"
+            />
+          </button>
+        </div>
+
+        <!-- Options Container -->
+        <!-- <div class="options-container">
+          <div class="filter-options">
+            <button
+              [class.active]="activeFilter === 'today'"
+              (click)="setActiveFilter('today')"
+            >
+              Today
+            </button>
+            <button
+              [class.active]="activeFilter === 'week'"
+              (click)="setActiveFilter('week')"
+            >
+              Week
+            </button>
+            <button
+              [class.active]="activeFilter === 'month'"
+              (click)="setActiveFilter('month')"
+            >
+              Month
+            </button>
+          </div>
+
+          <div class="date-inputs">
+            <label for="start-date" class="date-label"></label>
+            <input
+              type="date"
+              id="start-date"
+              (change)="onDateChange($event)"
+              class="date-input"
+            />
+
+            <label for="end-date" class="date-label"></label>
+            <input
+              type="date"
+              id="end-date"
+              (change)="onDateChange($event)"
+              class="date-input"
+            />
+          </div>
+        </div> -->
+      </div>
+      <!--  -->
+
+      <!-- Buttons -->
+      <div class="button-container">
+        <div class="button-frame">
+          <div class="mb-4">
+            <button
+              class="button"
+              [ngClass]="{
+                'active-button': activeButton === 'task',
+                'transition-active': isTransitioning
+              }"
+              (click)="showTable('task')"
+              (click)="setActiveButton('task')"
+            >
+              Task
+            </button>
+            <button
+              class="button"
+              [ngClass]="{
+                'active-button': activeButton === 'robot',
+                'transition-active': isTransitioning
+              }"
+              (click)="showTable('robot')"
+              (click)="setActiveButton('robot')"
+            >
+              Robot
+            </button>
+            <button
+              class="button"
+              [ngClass]="{
+                'active-button': activeButton === 'fleet',
+                'transition-active': isTransitioning
+              }"
+              (click)="showTable('fleet')"
+              (click)="setActiveButton('fleet')"
+            >
+              Fleet
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-container">
+        <div class="table-wrapper">
+          <div class="table-scrollable">
+            <!-- Task Table -->
+            <table class="table" *ngIf="currentTable === 'task'">
+              <thead class="table-header">
+                <tr>
+                  <th class="table-header-cell">Date and time</th>
+                  <th class="table-header-cell">Task ID</th>
+                  <th class="table-header-cell">Task name</th>
+                  <th class="table-header-cell">Error code</th>
+                  <th class="table-header-cell">Criticality</th>
+                  <th class="table-header-cell">Description</th>
+                </tr>
+              </thead>
+
+              <tbody
+                class="table-body"
+                *ngIf="currentTable === 'task' && isFleet == true"
+              >
+                <!-- Show No Data Row with image and message -->
+                <tr *ngIf="paginatedData.length === 0 && isFleet == true">
+                  <td colspan="8" class="no-data">
+                    <div class="no-data-container">
+                      <img
+                        src="../../assets/no-data.png"
+                        alt="No Data"
+                        class="no-data-image"
+                      />
+                      <p class="no-data-text">No data found</p>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- <tr *ngIf="paginatedData.length === 0">
+            <td colspan="6" class="iconTable">No data found</td>
+          </tr> -->
+                <tr
+                  *ngFor="
+                    let item of paginatedData;
+                    index as i;
+                    trackBy: trackByTaskId
+                  "
+                  [class.paused]="item.paused"
+                >
+                  <td class="table-cell">{{ item.dateTime }}</td>
+                  <td class="table-cell">{{ item.taskId }}</td>
+                  <td class="table-cell">{{ item.taskName }}</td>
+                  <td class="table-cell">{{ item.errCode }}</td>
+                  <td class="table-cell">{{ item.criticality }}</td>
+                  <td class="table-cell">{{ item.desc }}</td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="currentTable === 'task' && isFleet == false">
+                <tr *ngIf="isFleet == false">
+                  <td colspan="8" class="no-data">
+                    <div class="no-data-container">
+                      <img
+                        src="../../assets/image.png"
+                        alt="Simulation Mode"
+                        class="no-data-image"
+                      />
+                      <p class="no-data-text">Sim mode has been enabled.</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- Paginator -->
+      <div
+        class="paginator-container"
+        *ngIf="
+          currentTable === 'task' &&
+          filteredTaskData.length > 0 &&
+          isFleet == true
+        "
+      >
+        <mat-paginator
+          [length]="filteredTaskData.length"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10, 50]"
+          (page)="onPageChange()"
+          showFirstLastButtons
+        >
+        </mat-paginator>
+      </div>
+
+      <div class="table-container">
+        <div class="table-wrapper">
+          <div class="table-scrollable">
+            <!-- Robot Table -->
+            <table class="table" *ngIf="currentTable === 'robot'">
+              <thead class="table-header">
+                <tr>
+                  <th class="table-header-cell">Date and time</th>
+                  <th class="table-header-cell">Robot ID</th>
+                  <th class="table-header-cell">Robot name</th>
+                  <th class="table-header-cell">Error code</th>
+                  <th class="table-header-cell">Criticality</th>
+                  <th class="table-header-cell">Description</th>
+                </tr>
+              </thead>
+
+              <tbody *ngIf="currentTable === 'robot' && isFleet == true">
+                <!-- Show No Data Row with image and message -->
+                <tr *ngIf="paginatedData1.length === 0 && isFleet == true">
+                  <td colspan="8" class="no-data">
+                    <div class="no-data-container">
+                      <img
+                        src="../../assets/no-data.png"
+                        alt="No Data"
+                        class="no-data-image"
+                      />
+                      <p class="no-data-text">No data found</p>
+                    </div>
+                  </td>
+                </tr>
+
+                <!-- <tr *ngIf="paginatedData1.length === 0">
+            <td colspan="6" class="iconTable">No data found</td>
+          </tr> -->
+                <tr
+                  *ngFor="
+                    let item of paginatedData1;
+                    index as i;
+                    trackBy: trackByTaskId
+                  "
+                  [class.paused]="item.paused"
+                >
+                  <td class="table-cell">{{ item.dateTime }}</td>
+                  <td class="table-cell">{{ item.id }}</td>
+                  <td class="table-cell">{{ item.name }}</td>
+                  <td class="table-cell">{{ item.error }}</td>
+                  <td class="table-cell">{{ item.criticality }}</td>
+                  <td class="table-cell">{{ item.description }}</td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="currentTable === 'robot' && isFleet == false">
+                <tr *ngIf="paginatedData1.length === 0 && isFleet == false">
+                  <td colspan="8" class="no-data">
+                    <div class="no-data-container">
+                      <img
+                        src="../../assets/image.png"
+                        alt="Simulation Mode"
+                        class="no-data-image"
+                      />
+                      <p class="no-data-text">Sim mode has been enabled.</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- Paginator -->
+      <div
+        class="paginator-container"
+        *ngIf="
+          currentTable === 'robot' && robotData.length > 0 && isFleet == true
+        "
+      >
+        <mat-paginator
+          [length]="robotData.length"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10]"
+          (page)="onPageChange()"
+          showFirstLastButtons
+        >
+        </mat-paginator>
+      </div>
+
+      <div class="table-container">
+        <div class="table-wrapper">
+          <div class="table-scrollable">
+            <!-- Fleet Table -->
+            <table class="table" *ngIf="currentTable === 'fleet'">
+              <thead class="table-header">
+                <tr>
+                  <th class="table-header-cell">Date and time</th>
+                  <th class="table-header-cell">Module name</th>
+                  <th class="table-header-cell">Error code</th>
+                  <th class="table-header-cell">Criticality</th>
+                  <th class="table-header-cell">Description</th>
+                </tr>
+              </thead>
+              <tbody *ngIf="currentTable === 'fleet' && isFleet == true">
+                <!-- Show No Data Row with image and message -->
+                <tr *ngIf="paginatedData2.length === 0 && isFleet == true">
+                  <td colspan="8" class="no-data">
+                    <div class="no-data-container">
+                      <img
+                        src="../../assets/no-data.png"
+                        alt="No Data"
+                        class="no-data-image"
+                      />
+                      <p class="no-data-text">No data found</p>
+                    </div>
+                  </td>
+                </tr>
+                <!-- <tr *ngIf="paginatedData2.length === 0">
+            <td colspan="6" class="iconTable">No data found</td>
+          </tr> -->
+                <tr
+                  *ngFor="
+                    let item of paginatedData2;
+                    index as i;
+                    trackBy: trackByTaskId
+                  "
+                  [class.paused]="item.paused"
+                >
+                  <td class="table-cell">{{ item.dateTime }}</td>
+                  <td class="table-cell">{{ item.moduleName }}</td>
+                  <td class="table-cell">{{ item.errCode }}</td>
+                  <td class="table-cell">{{ item.criticality }}</td>
+                  <td class="table-cell">{{ item.desc }}</td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="currentTable === 'fleet' && isFleet == false">
+                <tr *ngIf="isFleet == false">
+                  <td colspan="8" class="no-data">
+                    <div class="no-data-container">
+                      <img
+                        src="../../assets/image.png"
+                        alt="Simulation Mode"
+                        class="no-data-image"
+                      />
+                      <p class="no-data-text">Sim mode has been enabled.</p>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paginator -->
+      <div
+        class="paginator-container"
+        *ngIf="
+          currentTable === 'fleet' && fleetData.length > 0 && isFleet == true
+        "
+      >
+        <mat-paginator
+          [length]="fleetData.length"
+          [pageSize]="10"
+          [pageSizeOptions]="[5, 10]"
+          (page)="onPageChange()"
+          showFirstLastButtons
+        >
+        </mat-paginator>
+      </div>
+
+      <!-- Export -->
+      <div class="export-button-container">
+        <button class="export-button" (click)="showPopup()">Export</button>
+        <div *ngIf="isPopupVisible" class="export-popup">
+          <div class="popup-content">
+            <button class="close-button" (click)="onClose()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path
+                  d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                />
+              </svg>
+            </button>
+            <h3>Select Format</h3>
+            <div class="button-container">
+              <button (click)="exportData('csv')">Export as CSV</button>
+              <button (click)="exportData('excel')">Export as Excel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,65 @@
+name: Deploy Angular App to Docker
+
+on:
+  push:
+    branches:
+      - FleetUI_FE_Development  # branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      AWS_REGION: ap-south-1  # Change to your region
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build Docker image
+      run: |
+        docker build -t my-fleetfeapp-repo:latest .
+
+    - name: List Docker images
+      run: docker images
+
+    - name: Log in to Amazon ECR
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_REGION: ap-south-1  # Change to your actual region if needed
+      run: |
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com
+
+    - name: Tag Docker image
+      run: |
+        echo "Tagging image with repository: 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest"
+        docker tag my-fleetfeapp-repo:latest "207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest"
+
+    - name: Push Docker image to ECR
+      run: |
+        echo "Pushing image to ECR repository"
+        docker push "207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest"
+
+    - name: Save Docker image
+      run: |
+        docker save my-fleetfeapp-repo -o my-fleetfeapp-repo.tar
+
+    - name: Deploy to EC2
+      env:
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
+        HOST: ${{ secrets.EC2_HOST }}
+        USER: ${{ secrets.EC2_USER }}
+      run: |
+        echo "$PRIVATE_KEY" > private_key.pem
+        chmod 600 private_key.pem
+        
+        scp -o StrictHostKeyChecking=no -i private_key.pem my-fleetfeapp-repo.tar "$USER@$HOST:~/my-fleetfeapp-repo.tar"
+
+        ssh -o StrictHostKeyChecking=no -i private_key.pem "$USER@$HOST" << EOF
+        docker load -i ~/my-fleetfeapp-repo.tar
+        docker run -d -p 80:80 --name fleet_container my-fleetfeapp-repo
+        EOF

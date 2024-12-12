@@ -1,0 +1,56 @@
+<div class="container1">
+  <div class="content-fluid1">
+    <div class="general">
+      <!-- <form> -->
+        <div class="container">
+          <div class="form-control">
+            <div class="head1">
+              <h4><b>Task Manager</b></h4>
+              <div class="radio">
+                <label for="task" style="margin-bottom: 2rem;">Task Manager Type: </label>
+                <div class="category-container">
+                  <div *ngFor="let category of categories" class="field-checkbox">
+                    <p-radioButton
+                      [inputId]="category.key"
+                      name="category"
+                      [value]="category"
+                      [(ngModel)]="selectedCategory"
+                      required>
+                    </p-radioButton>
+                    <label [for]="category.key" class="category-label">
+                      {{ category.name }}
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Validation Error Message -->
+                <div *ngIf="!selectedCategory && selectedCategory !== null" class="validation-error">
+                  <small>Task Manager Type is required.</small>
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+          <!-- Submit Button -->
+          
+        </div>
+        <div class="mt-1 centers">
+          <p-button
+            label="Submit"
+            type="submit"
+            class="block mt-1 pt-2"
+            styleClass="p-button-danger p-button1"
+            [disabled]="!selectedCategory"
+            (onClick)="saveTaskParams()">
+          </p-button>
+          <p-button
+          label="Clear"
+          class="clearbtn"
+          styleClass="p-button-secondary"
+          (onClick)="clearForm()"
+        ></p-button>
+        </div>
+        
+
+</div>

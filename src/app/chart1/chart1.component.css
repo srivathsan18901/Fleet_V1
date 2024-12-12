@@ -1,0 +1,14 @@
+/* Apply to the host element to remove all padding/margin */
+
+.chart-container {
+    text-align: bottom; /* Center align the content */
+  }
+  
+  .chart-label {
+    font-size: 22px;
+    color: #F71717;
+    font-weight: semibold;
+    text-align: center;
+    margin-top: 10px; /* Adjust spacing if needed */
+  }
+  

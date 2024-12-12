@@ -1,0 +1,971 @@
+<div class="popup-overlay">
+  <div
+    class="popup-content"
+    [ngClass]="{ 'fixed-size': showImage, 'dynamic-size': !showImage }"
+    [ngStyle]="{ 'pointer-events': showImage ? 'none' : 'auto' }"
+  >
+
+    <h3 *ngIf="!showImage">Select and insert Map file</h3>
+    <!-- Image for file upload -->
+    <label for="fileInput" class="upload-image" *ngIf="!showImage">
+      <img src="../../assets/icons/arrow-down-circle.svg" alt="Upload" />
+      <input
+        type="file"
+        id="fileInput"
+        accept="image/png, image/jpeg"
+        (change)="onFileSelected($event)"
+        hidden
+      />
+    </label>
+    <!-- Display selected file name -->
+    <div *ngIf="fileName && !showImage" class="file-name">{{ fileName }}</div>
+    <div class="form-wrapper" *ngIf="fileName && !showImage">
+      <!-- Form for additional details -->
+      <div class="form-container" *ngIf="fileName && !showImage">
+        <label for="mapName" >Map Name</label>
+        <input pInputText
+          type="text"
+          id="mapName"
+          maxlength="250"
+          [(ngModel)]="mapName"
+          placeholder="Enter map name"
+        />
+
+        <label for="siteName">Site Name</label>
+        <input pInputText
+          type="text"
+          id="siteName"
+          [(ngModel)]="siteName"
+          placeholder="Enter site name"
+          maxlength="250"
+          (keyup.enter)="open()"
+        />
+      </div>
+      <div class="separator"></div>
+      <div class="form1-container" *ngIf="fileName && !showImage">
+        <div class="Res">
+          <label for="resolution">Resolution</label>
+          <!-- [(ngModel)]="resolution" -->
+          <div class="Res1">
+            <input pInputText
+              type="number"
+              id="resolution"
+              min="0"
+              #resolutionInput
+              placeholder="Resolution"
+              (keyup.enter)="open()"
+              (input)="onInputResolution($event)"
+            />
+            <p id="or">or</p>
+            <button class="OpenandLocate" (click)="openImagePopup()">
+              Locate
+            </button>
+          </div>
+        </div>
+        <label for="origin">Origin</label>
+        <div
+          class="origin-coor"
+          style="display: flex; align-items: center; gap: 10px"
+        >
+        <input pInputText type="number" id="X" placeholder="X" #originX [(ngModel)]="origin.x" (keyup.enter)="open()" />
+        <input pInputText type="number" id="Y" placeholder="Y" #originY [(ngModel)]="origin.y" (keyup.enter)="open()" />
+        <input pInputText type="number" id="θ" placeholder="θ" #originθ [(ngModel)]="origin.w" (keyup.enter)="open()" />
+        <p id="or">or</p>
+            <button class="OpenandLocate" (click)="openOriginPopup()">
+              Locate
+            </button>
+          <!-- <input
+        type="number"
+        id="θ"
+        placeholder="θ"
+        (keyup.enter)="open()"
+      /> -->
+        </div>
+      </div>
+    </div>
+    <div id="pix_tooltip" #pixTooltip style="position: absolute; top: 1px; left:30px;  color: black;  border: 0px solid #ccc; border-radius: 4px;  z-index: 2;font-size: 10px;"></div>
+
+    <!-- <label for="height">Enter Height (m)</label>
+      <input
+        type="number"
+        id="height"
+        [(ngModel)]="height"
+        placeholder="Enter height"
+        (keyup.enter)="open()"
+      />
+
+      <label for="width">Enter Width (m)</label>
+      <input
+        type="number"
+        id="width"
+        [(ngModel)]="width"
+        placeholder="Enter width"
+        (keyup.enter)="open()"
+      /> -->
+    <!-- Intermediate Nodes Dialog -->
+    <div *ngIf="showImagePopup" class="image-popup-overlay">
+      <div class="image-popup-content">
+        <canvas class="imagePopupCanvas" #imagePopupCanvas></canvas>
+        <button class="close-btn" (click)="closeImagePopup()"> <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg></button>
+        <button
+          *ngIf="isDistanceConfirmed"
+          class="save-btn"
+          (click)="saveCanvas()"
+        >
+          Save
+        </button>
+        <button class="clear-btn" (click)="clearCanvas()" style="margin-right: 2.5rem;">Clear</button>
+
+        <!-- Distance Input Dialog -->
+        <div *ngIf="showDistanceDialog" class="distance-dialog-overlay">
+          <div class="distance-dialog">
+            <h3>Enter Distance Between Points</h3>
+            <input pInputText
+              type="number"
+                min="0"
+
+              [(ngModel)]="distanceBetweenPoints"
+              placeholder="Distance in meters"
+            />
+            <br>
+            <!-- Display error message conditionally -->
+            <div *ngIf="showError" class="distance-error-message">
+              Please enter distance between two points in meters.
+            </div>
+            <button (click)="confirmDistance()">Enter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="showOriginPopup && this.ratio" class="image-popup-overlay">
+      <div class="image-popup-content">
+        <div class="tooltip" #tooltip>(x: 0, y: 0)</div>
+        <canvas class="OriginPopupCanvas" #OriginPopupCanvas></canvas>
+        <button class="close-btn" (click)="closeImagePopup()"> <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg></button>
+        <!-- <button
+          *ngIf="isDistanceConfirmed"
+          class="save-btn"
+          (click)="saveCanvas()"
+        >
+          Save
+        </button>
+        <button class="clear-btn" (click)="clearCanvas()" style="margin-right: 2.5rem;">Clear</button> -->
+
+        <!-- Distance Input Dialog -->
+        <!-- <div *ngIf="showDistanceDialog" class="distance-dialog-overlay">
+          <div class="distance-dialog">
+            <h3>Enter Distance Between Points</h3>
+            <input pInputText
+              type="number"
+                min="0"
+
+              [(ngModel)]="distanceBetweenPoints"
+              placeholder="Distance in meters"
+            />
+            <br>
+            <!-- Display error message conditionally -->
+            <!-- <div *ngIf="showError" class="distance-error-message">
+              Please enter distance between two points in meters.
+            </div>
+            <button (click)="confirmDistance()">Enter</button>
+          </div>
+        </div> --> 
+      </div>
+    </div>
+    <div
+      class="image-container"
+      *ngIf="showImage"
+      [ngStyle]="{ 'pointer-events': showImage ? 'auto' : 'none' }"
+      [ngClass]="{ 'fullscreen': isFullScreen }"
+    >
+      <!-- Full-Screen Toggle Button -->
+  <!-- <button class="fullscreen-btn" (click)="toggleFullScreen()">Toggle Full-Screen</button> -->
+
+      <button
+        class="close-btn"
+        (click)="close()"
+
+      >
+          <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg>
+      </button>
+
+      <canvas class="plottinglayer" #overlayCanvas *ngIf="showImage"></canvas>
+      <div
+        *ngIf="isNodeDetailsPopupVisible"
+        class="nodepopup-overlay"
+      >
+      <div
+        #nodeDetailsPopup
+        class="node-details-popup"
+        [style.display]="isNodeDetailsPopupVisible ? 'block' : 'none'"
+      >
+
+      <div class="sampleCSS">
+        <div class="node_details">
+          <h2>Node Details</h2>
+          <h3>Nodeid:  {{ selectedNode?.nodeId }}</h3>
+          <div class="Nodevalues">
+            <h3 class="q-title">Position</h3>
+          <div class="XY-coor">
+          <div >
+            <label for="X_Co">X</label>
+            <input 
+                pInputText 
+                id="X_Co"
+                #xInput
+                [value]="nodePositionX"
+                aria-describedby="X-Coordinate" 
+                />
+          </div>
+          <div >
+            <label for="Y_Co">Y</label>
+            <input 
+                pInputText 
+                id="Y_Co"
+                #yInput
+                [value]="nodePositionY"
+                aria-describedby="Y-Coordinate" 
+                />
+          </div>  
+          <!-- <div>
+            <label for="Orientation">Angle</label>
+            <input 
+                pInputText
+                id="Orientation" 
+                [value]="orientation"
+                #orientationInput
+                aria-describedby="Orientation" 
+                />
+          </div>    -->
+            
+        </div> 
+        <div class="quaternion-inputs">
+          <h3 class="q-title">Orientation</h3>
+          <div class="quaternion-row">
+            <div>
+              <label for="quaternionX">X:</label>
+              <input
+                pInputText
+                type="number"
+                id="quaternionX"
+                [(ngModel)]="currentQuaternion!.x"
+                placeholder="Enter X"
+                style="width: 100px;"
+              />
+            </div>
+            <div>
+              <label for="quaternionY">Y:</label>
+              <input
+                pInputText
+                type="number"
+                id="quaternionY"
+                [(ngModel)]="currentQuaternion!.y"
+                placeholder="Enter Y"
+                style="width: 100px;"
+              />
+            </div>
+            <div>
+              <label for="quaternionZ">Z:</label>
+              <input
+                pInputText
+                type="number"
+                id="quaternionZ"
+                [(ngModel)]="currentQuaternion!.z"
+                placeholder="Enter Z"
+                style="width: 100px;"
+              />
+            </div>
+            <div>
+              <label for="quaternionW">W:</label>
+              <input
+                pInputText
+                type="number"
+                id="quaternionW"
+                [(ngModel)]="currentQuaternion!.w"
+                placeholder="Enter W"
+                style="width: 100px;"
+              />
+            </div>
+          </div>
+        </div>
+        
+        </div>
+          <div class="action-container">
+            <div class="action" class="display:flex; text-wrap:nowrap; align-items:center ">
+              <label for="nodeAction" class="label" >Add Action:</label>
+              <p-dropdown 
+              appendTo="body"
+              [options]="actionOptions"
+              [(ngModel)]="selectedAction"  
+              (onChange)="onActionChange($event.value)"
+              placeholder="Select Action" 
+              [autoDisplayFirst]="false"
+              styleClass="small-dropdown"
+              [style]="{'width':'143px !important'}"
+          ></p-dropdown>            
+            </div>
+            <!-- <div *ngIf="validationError" class="validation-error">{{ validationError }}</div> -->
+          </div>
+
+          <div *ngIf="actions.length > 0" class="action-div">
+            <p style="font-size: 15px;padding: 0px;margin:0px ;">Actions:</p>
+            <div class="action-buttons">
+              <div *ngFor="let action of actions; let i = index" class="action-item">
+                <button class="action-button" (click)="openActionForm(action)" >
+                  {{ action.actionType }}
+                </button>
+                <span class="delete-icon" (click)="deleteActionFromNode(action)">X</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-group1">
+            <label for="nodeDescription" class="label" >Node Description:</label>
+            <input pInputText
+              type="text"
+              id="nodeDescription"
+              placeholder="Enter Node Description"
+              [(ngModel)]="nodeDetails.description"
+              [style]="{'height':'30px','width':'12.5rem'}"
+            />
+          </div>
+            <div class="input-group">
+              <div class="node-action">
+                <div class="node-row">
+                  <div class="node1">
+                    <label for="nodeTypeDropdown" class="label">Node Type:</label>
+                    <select
+                      id="nodeTypeDropdown"
+                      class="form-control"
+                      [(ngModel)]="selectedNodeType"
+                      (change)="updateNodeType()"
+                    >
+                      <option [value]="'Intermediate'">Intermediate Node</option>
+                      <option [value]="'Waiting'">Waiting Node</option>
+                      <option [value]="'Charge'">Charge Node</option>
+                      <option [value]="'Dock'">Dock Node</option>
+                    </select>
+                  </div>
+                  <div>
+                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock'">
+                    <label for="predockPoseDropdown" class="label">Predock Pose:</label>
+                    <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedPredockPose">
+                      <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
+                        {{ node.nodeId }}
+                      </option>
+                    </select>
+                  </div>
+                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock'">
+                    <label for="predockPoseDropdown" class="label">Undock Pose:</label>
+                    <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedUndockPose">
+                      <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
+                        {{ node.nodeId }}
+                      </option>
+                    </select>
+                  </div>
+                  </div>
+                </div>
+              </div>
+              
+              
+          <div class="Node-btn1">
+            <div *ngIf="validationError" class="node-validation-error">*{{ validationError }}</div>
+          </div>
+          <div class="Node-btn">
+            <button class="Delnode-btn" (click)="deleteSelectedNode()">Delete Node</button>
+            <!-- <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, orientationInput.value)">Save</button> use for later--> 
+            <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, yInput.value)">Save</button>
+            <button class="closenode-btn" (click)="closeNodeDetailsPopup()">Close</button>
+          </div>
+        </div>
+       </div>
+        <div class="action-form">
+          <div *ngIf="selectedAction === 'Move' && isMoveActionFormVisible" class="move-action-form">
+            <p>Move Action Parameters</p>
+            <div class="input-groupg">
+              <label>Max Linear Velocity:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxLinearVelocity" /><br />
+
+              <label>Max Angular Velocity:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxAngularVelocity" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Max Tolerance at Goal X:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxToleranceAtGoalX" /><br />
+
+              <label>Max Tolerance at Goal Y:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxToleranceAtGoalY" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Max Tolerance at Goal Orientation:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxToleranceAtGoalOrientation" /><br />
+
+              <label>End Point Orientation:</label>
+              <input type="checkbox" [(ngModel)]="moveParameters.endPointOrientation" style="height: 20px;" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Auto Robot Operation Mode:</label>
+              <select [(ngModel)]="moveParameters.autoRobotMode" style="margin-right: 20.1rem; padding: 6px; border: 1px solid #ccc;">
+                <option value="mode1">Mode 1</option>
+                <option value="mode2">Mode 2</option>
+              </select><br/>
+            </div>
+              <button class="actionBTN" (click)="addAction()">Add</button>
+              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
+          </div>
+
+
+          <div *ngIf="selectedAction === 'Dock' && isDockActionFormVisible" class="move-action-form">
+            <p>Dock Action Parameters</p>
+            <div class="input-groupg">
+              <label>Max Linear Velocity:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxLinearVelocity" /><br />
+
+              <label>Max Tolerance at Goal X:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxToleranceAtGoalX" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Max Tolerance at Goal Y:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxToleranceAtGoalY" /><br />
+
+              <label>Max Tolerance at Goal Orientation:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxToleranceAtGoalOrientation" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Goal Offset X:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.goalOffsetX" /><br />
+
+              <label>Goal Offset Y:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.goalOffsetY" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Goal Offset Orientation:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.goalOffsetOrientation" /><br />
+
+              <label>End Point Orientation:</label>
+              <input type="checkbox" [(ngModel)]="dockParameters.endPointOrientation" style="height: 20px;" /><br />
+            </div>
+            <!-- <div class="input-groupg">
+              <label for="Waiting_Stn" class="label">Docking Type</label>
+              <p-dropdown appendTo="body"
+                [options]="dockingTypes"
+                [(ngModel)]="dockParameters.dockingType"
+                styleClass="small-dropdown"
+                [autoDisplayFirst]="false"
+                placeholder="Select Docking Type"
+                styleClass="align-dropdown"
+                [style]="{'height':'32px','width':'7rem !important','fontSize':'12px','display':'flex','align-items':'center','marginRight':'19.5rem'}"
+              ></p-dropdown><br />
+            </div> -->
+            <div class="input-groupg">
+              <label>Docking Type:</label>
+              <select [(ngModel)]="dockParameters.dockingType" style="margin-right: 20.2rem; border: 1px solid #ccc;" placeholder="Select Docking Type">
+                <option value="mode1">Mode 1</option>
+                <option value="mode2">Mode 2</option>
+              </select><br/>
+            </div>
+              <button class="actionBTN" (click)="addAction()">Add</button>
+              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
+          </div>
+
+          <div *ngIf="selectedAction === 'Undock' && isUndockActionFormVisible" class="move-action-form">
+            <p>Undock Action Parameters</p>
+            <div class="input-groupg">
+              <label>Max Linear Velocity:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxLinearVelocity" /><br />
+
+              <label>Max Angular Velocity:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxAngularVelocity" /><br />
+            </div>
+            <div class="input-groupg">
+              <label style="margin-right: .8rem;">Max Tolerance at Goal X:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxToleranceAtGoalX" /><br />
+
+              <label>Max Tolerance at Goal Y:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxToleranceAtGoalY" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Max Tolerance at Goal Orientation:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxToleranceAtGoalOrientation" /><br />
+
+              <label>End Point Orientation:</label>
+              <input type="checkbox" [(ngModel)]="undockParameters.endPointOrientation" style="height: 20px;" /><br />
+            </div>
+            <div class="input-groupg">
+              <label>Undocking Distance:</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.undockingDistance" style="margin-right: 20rem;"/><br />
+            </div>
+              <button class="actionBTN" (click)="addAction()">Add</button>
+              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
+          </div>
+
+        </div>
+
+
+      </div>
+
+      </div>
+    </div>
+      <!-- Transparent canvas/ for plotting points -->
+      <canvas class="maplayer" #imageCanvas></canvas>
+
+      <!-- <div
+        class="options-container"
+        *ngIf="!isPlottingEnabled && !isZonePlottingEnabled "
+      >
+        <button (click)="toggleOptionsMenu()" >
+          <img src="../../assets/icons/options-icon.svg" alt="Options" />
+        </button>
+      </div> -->
+      <div class="calibration-layer" *ngIf="!isEdgeDrawingInProgress && !isPlottingEnabled && !isZonePlottingEnabled && !isDeleteModeEnabled && !isPlottingAsset">
+        <div class="dropdown">
+          <button class="c-button">Add Node</button>
+          <div class="dropdown-content">
+            <button (click)="setPlottingMode('single')">Single Node</button>
+            <button (click)="setPlottingMode('multi')">Multi Node</button>
+          </div>
+        </div>
+        <button class="mul-del c-button" (click)="MuldelMode()">Delete Multiple Nodes</button>
+        <div class="dropdown">
+          <button class="">Connectivity</button>
+          <div class="dropdown-content">
+            <button (click)="setDirection('uni')">Uni-Directional</button>
+            <button (click)="setDirection('bi')">Bi-Directional</button>
+          </div>
+        </div>
+        <button (click)="startZonePlotting()">Zones</button>
+
+        <div class="dropdown">
+          <button class="">Add Assets</button>
+          <div class="dropdown-content">
+            <button (click)="selectAssetType('docking')">
+              Docking Station
+            </button>
+            <button (click)="selectAssetType('charging')">
+              Charging Station
+            </button>
+          </div>
+        </div>
+
+        <button (click)="openRobotPopup()">Add Robots</button>
+        <!-- <button (click)="removeRobots()">Remove Robots</button> -->
+        <button (click)="saveOpt()">Save</button>
+        <!-- <button (click)="toggleOptionsMenu()">Back</button> -->
+      </div>
+    </div>
+
+    <!-- <button class="close-button" (click)="close()">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 24 24"
+        width="24"
+        height="24"
+      >
+        <path fill="none" d="M0 0h24v24H0z" />
+        <path
+          d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+        />
+      </svg>
+    </button> -->
+    
+    <div  *ngIf="!showImage">
+      <div *ngIf="validationError" class="newvalidation-message">
+        {{ validationError }}
+      </div>
+      <div class="button-container">
+      <button *ngIf="fileName && !showImage" (click)="open()">Open</button>
+      <button (click)="close()">Close</button>
+    </div>
+    </div>
+  </div>
+</div>
+
+<app-robot-popup
+  [isVisible]="isRobotPopupVisible"
+  [mapName]="this.mapName"
+  [robos]="this.robos"
+  (close)="closeRobotPopup()"
+  (addRobot)="placeRobots($event)"
+></app-robot-popup>
+
+<div *ngIf="isPopupVisible" class="zonepopup-overlay1">
+  <div class="zonepopup-content1">
+    <h4>Select Zone Type</h4>
+    <p-dropdown 
+      [options]="zoneTypeList" 
+      class="zoneTypeList"
+      [(ngModel)]="zoneType" 
+      placeholder="Select Zone Type">
+    </p-dropdown>
+    <div>
+      <button (click)="zoneType !== null ? onZoneTypeSelected(zoneType) : null">Confirm</button>
+      <button *ngIf="isDeleteVisible" (click)="onDeleteZone()">Delete</button>
+      <button (click)="onCancel()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+
+<div *ngIf="showPopup" class="popup-overlay1">
+  <div class="popup-content1">
+    <h2>Edge Details</h2>
+    <div class="flex-items">
+      <div class="first">
+        <!-- <form (ngSubmit)="submitEdgeDetails()"> -->
+        <div class="form-row">
+          <label for="edgeId" style="padding-right: 3rem;">Edge ID:</label>
+          <input pInputText
+            id="edgeId"
+            [(ngModel)]="currentEdge.edgeId"
+            name="edgeId"
+            required
+          />
+        </div>
+        <div class="form-row">
+          <label for="sequenceId" style="padding-right: .7rem;">Sequence ID:</label>
+          <input pInputText
+            id="sequenceId"
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="currentEdge.sequenceId"
+            name="sequenceId"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="edgeDescription" style="padding-right: 1.2rem;">Description:</label>
+          <input pInputText
+            id="edgeDescription"
+            [(ngModel)]="currentEdge.edgeDescription"
+            name="edgeDescription"
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="startNodeId" style="padding-right: .2rem;">Start Node ID:</label>
+          <input pInputText
+            id="startNodeId"
+            [(ngModel)]="currentEdge.startNodeId"
+            name="startNodeId"
+            readonly
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="released" style="padding-right: 5rem;">Released:</label>
+          <input
+            id="released"
+            type="checkbox"
+            [(ngModel)]="currentEdge.released"
+            name="released"
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="rotationAllowed" style="padding-right: 1.3rem;">Rotation Allowed:</label>
+          <input
+            id="rotationAllowed"
+            type="checkbox"
+            [(ngModel)]="currentEdge.rotationAllowed"
+            name="rotationAllowed"
+          />
+        </div>
+      </div>
+      <div class="third">
+        <div class="form-row">
+          <label for="endNodeId" style="padding-right: 2.2rem;">End Node ID:</label>
+          <input pInputText
+            id="endNodeId"
+            [(ngModel)]="currentEdge.endNodeId"
+            name="endNodeId"
+            readonly
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="maxSpeed">Max Speed (m/s):</label>
+          <input pInputText
+            id="maxSpeed"
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="currentEdge.maxSpeed"
+            name="maxSpeed"
+          />
+        </div>
+
+        <div class="form-row">
+          <label for="maxHeight" style="padding-right: .8rem;">Max Height (m):</label>
+          <input pInputText
+            id="maxHeight"
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="currentEdge.maxHeight"
+            name="maxHeight"
+          />
+        </div>
+
+          <div class="form-row1">
+            <label for="minHeight" style="padding-right: 1.2rem;">Min Height (m):</label>
+            <input pInputText
+              id="minHeight"
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="currentEdge.minHeight"
+              name="minHeight"
+            />
+          </div>
+
+          <div class="form-row1">
+            <label for="orientation" style="padding-right: .5rem;">Orientation (rad):</label>
+            <input pInputText
+              id="orientation"
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="currentEdge.orientation"
+              name="orientation"
+            />
+          </div>
+        </div>
+        <div class="second">
+          <div class="form-row1">
+            <label for="orientationType" style="padding-right: 5rem;">Orientation Type:</label>
+            
+            <!-- PrimeNG Dropdown -->
+            <p-dropdown 
+              [options]="orientationTypes" 
+              [(ngModel)]="currentEdge.orientationType" 
+              name="orientationType" 
+              placeholder="Select Orientation Type">
+            </p-dropdown>
+          </div>
+          
+
+          <div class="form-row1">
+            <label for="direction" style="padding-right: 8.5rem;">Direction:</label>
+            <select pInputText
+              id="direction"
+              [(ngModel)]="currentEdge.direction"
+              name="direction"
+            >
+              <option value="UN_DIRECTIONAL">Uni-directional</option>
+              <option value="BI_DIRECTIONAL">Bi-directional</option>
+            </select>
+          </div>
+
+          <div class="form-row1">
+            <label for="maxRotationSpeed" style="margin-right: 3rem;">Max Rotation (rad/s):</label>
+            <input pInputText
+              id="maxRotationSpeed"
+              type="number"
+              min="0"
+              max="100"
+              [(ngModel)]="currentEdge.maxRotationSpeed"
+              name="maxRotationSpeed"
+            />
+          </div>
+
+          <div class="form-row1">
+            <label for="length" style="padding-right: 9.8rem;">Length:</label>
+            <input pInputText
+              id="length"
+              type="number"
+              min="0"
+              max="100"
+              [(ngModel)]="currentEdge.length"
+              name="length"
+              readonly
+            />
+          </div>
+
+          <div class="form-row1">
+            <label for="action" style="padding-right: 9.5rem;">Actions:</label>
+            <input pInputText id="action" [(ngModel)]="currentEdge.action" name="action" />
+          </div>
+
+        </div>
+      </div>
+    <div class="form-buttonss">
+      <div *ngIf="showEdgeError" class="error-message">
+        All required fields must be provided.
+      </div>
+      <button type="submit" id="formBTN" (click)="updateEdge()">Save</button>
+      <button type="button" id="formBTN" (click)="deleteEdge()">Delete</button>
+      <button type="button" id="formBTN" (click)="cancelEdge()">Cancel</button>
+    </div>  
+  </div>
+</div>
+
+<div *ngIf="DockPopup" class="popup-overlay1">
+  <div class="popup-content1">
+    <form>
+      <!-- Validation Message -->
+      <h2>Docking Station Details</h2>
+
+      <div class="UDform">
+        <label for="undockingDistance" style="margin-right: 2rem;">Undocking Distance:</label>
+        <input pInputText
+          type="number"
+          id="undockingDistance"
+          name="undockingDistance"
+          placeholder="Enter undockingDistance"
+          [(ngModel)]="undockingDistance"
+          min="1"
+          max="1000"
+          required
+        />
+      </div>
+
+      <div class="UDform">
+        <label for="description" style="margin-right: 6rem;">Description:</label>
+        <input pInputText
+          type="text"
+          id="description"
+          name="description"
+          placeholder="Enter Docking Description"
+          [(ngModel)]="description"
+          maxlength="300"
+          (ngModelChange)="checkDescriptionLength()"
+          required
+        />
+
+
+      </div>
+      <!-- Display warning if description exceeds 255 characters -->
+      <!-- <div *ngIf="descriptionWarning" class="warning-message">
+        *Description cannot exceed 255 characters.
+      </div> -->
+      <div
+        *ngIf="validationMessage"
+        class="validation-message"
+      >
+        *{{ validationMessage }}
+      </div>
+      <div class="">
+        <button type="button" (click)="deleteSelectedAsset()">Delete</button>
+        <button type="button" (click)="savePopupData()">Save</button>
+        <button type="button" (click)="closePopup1()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="popup-overlay1" *ngIf="showIntermediateNodesDialog">
+  <div class="popup-content1">
+    <div class="flex h-40px">
+    <div>
+    <p>Enter Number of Nodes</p>
+    <input pInputText
+      type="number"
+      [(ngModel)]="numberOfIntermediateNodes"
+      placeholder="Number of nodes"
+      min="0"
+      (ngModelChange)="onInputChanged()"
+      class="InNode"
+    />
+  </div>
+  <div class="node-separator"></div>
+  <div>
+    <p>Select Direction</p>
+    <select class="direction" [(ngModel)]="direction">
+      <option value="" disabled selected>Select a Direction</option>
+      <option value="uni">Uni-Direction</option>
+      <option value="bi">Bi-Direction</option>
+    </select>
+  </div>
+  
+  </div>
+  <div *ngIf="!isDirectionSelected" class="newvalidation-message">
+    <p style="color: red;">Please select a direction.</p>
+  </div>
+    <button *ngIf="isEnterButtonVisible" (click)="plotIntermediateNodes()">
+      Enter
+    </button>
+  </div>
+</div>
+
+
+<div *ngIf="isConfirmationVisible" class="popup-overlay1">
+  <div class="popup-content1">
+    <p>Are you sure you want to Remove?</p>
+    <div>
+      <button type="button" (click)="confirmDelete()">Confirm</button>
+      <button type="button" (click)="cancelDelete()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isRoboConfirmationVisible" class="popup-overlay1">
+  <div class="popup-content1">
+    <!-- Show these buttons initially -->
+    <!-- <div *ngIf="!isConfirmingDelete"> -->
+      <!-- <div>
+        <h5>Set Robot Position at Node</h5>
+        <div>
+          <select [(ngModel)]="selectedNodeId">
+            <option *ngFor="let node of nodes" [value]="node.nodeId">
+              Node: {{ node.nodeId }}
+            </option>
+          </select>
+        <button (click)="setRobotAtNode()">Set</button>
+      </div>
+      </div> -->
+      <!-- <div class="orientation">
+         <h5 style="margin-right:1rem;">Enter Orientation</h5>
+    <div>
+      <input pInputText type="number" min="0" max="360" placeholder="in Deg" class="Orientation_input" [(ngModel)]="inputOrientationAngle">
+
+    </div></div> -->
+      <!-- <button type="button" >Set Orientation</button> -->
+      <!-- <button type="button" (click)="initializeRobot()">Initialize Robot</button>
+
+      <button type="button" (click)="showDeleteConfirmation()">Remove Robot</button>
+
+      <button type="button" (click)="cancelDelete()">Cancel</button>
+    </div> -->
+
+    <!-- Show confirmation message and buttons when 'Remove Robot' is clicked -->
+    <div *ngIf="!isConfirmingDelete">
+      <p>Are you sure you want to Remove?</p>
+      <div>
+        <button type="button" (click)="confirmRoboDelete()">Confirm</button>
+        <button type="button" (click)="cancelDelete()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,9 @@
+<!-- src/assets/svg/robot-b.svg -->
+<svg width="76" height="55" viewBox="0 0 76 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="11.5" y="0.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
+  <rect x="11.5" y="47.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
+  <rect x="52.5" y="47.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
+  <rect x="52.5" y="0.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
+  <path d="M6 4.5H70C73.0376 4.5 75.5 6.96243 75.5 10V45C75.5 48.0376 73.0376 50.5 70 50.5H6C2.96243 50.5 0.5 48.0376 0.5 45V10C0.5 6.96243 2.96243 4.5 6 4.5Z" fill="#A3CFE8" stroke="black"/>
+  <path d="M54.5 27C54.5 35.546 47.3512 42.5 38.5 42.5C29.6488 42.5 22.5 35.546 22.5 27C22.5 18.454 29.6488 11.5 38.5 11.5C47.3512 11.5 54.5 18.454 54.5 27Z" fill="white" stroke="black"/>
+</svg>

@@ -1,0 +1,170 @@
+/* General container styling */
+.container1 {
+  border: 1px solid #000;
+  border-radius: 15px;
+  padding-top: 2%;
+  padding: 20px;
+  /* background-color: #f9f9f9; */
+}
+
+/* Main content area */
+.content-fluid1 {
+  /* display: flex; */
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Form control sections */
+.form-control {
+  /* display: flex; */
+  flex-direction: row;
+  /* width: 100%; */
+  /* margin-bottom: 20px; */
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Flex container for individual form sections */
+.container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+/* Styling for each field within the form */
+
+
+/* Label styling */
+label {
+  /* font-weight: bold; */
+  margin-right: 10px;
+  font-family: "graphik", Arial,  sans-serif;
+}
+
+/* Input styling */
+input[type="text"],
+input[type="number"] {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  /* width: 100%; */
+}
+
+/* Section headings */
+.head1, .head2 {
+  margin-bottom: 20px;
+}
+
+/* Headings within sections */
+h4 {
+  font-size: 1.2rem;
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 10px;
+}
+
+/* Radio button section */
+.radio {
+  margin-top: 20px;
+}
+
+/* Flex container for radio buttons */
+.flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.field, .field2{
+  display: flex;
+}
+
+.field-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+/* Button styling */
+.button {
+  /* width: 70%; */
+  height: 31px;
+  padding: 0.5rem 1rem;
+  margin-top: 20rem;
+  font-size: 0.8rem;
+  font-family: "graphik", Arial,  sans-serif;
+}
+
+/* Button class specific to p-button-danger */
+::ng-deep .p-button.p-button-danger {
+  /* width: 70% !important; */
+  height: 31px !important;
+  margin-top: 2rem;
+}
+
+::ng-deep .p-button {
+  padding: 0.5rem 0.5rem !important;
+  font-size: 0.7rem !important;
+  font-family: "graphik", Arial,  sans-serif;
+}
+.clearbtn{
+  margin-left: 5px;
+}
+.category-container {
+  display: flex;
+  gap: 15px; /* Space between radio buttons */
+  align-items: center; /* Vertically center the items */
+  flex-wrap: wrap; /* Allow wrapping to the next row if necessary */
+}
+
+.field-checkbox {
+  display: flex;
+  align-items: center;
+}
+
+.category-label {
+  margin-left: 8px; /* Space between the radio button and the label */
+  font-size: 1rem;
+  font-family: "graphik", Arial,  sans-serif;
+  color: #4a4a4a;
+}
+
+/* Styling for the radio button */
+p-radioButton {
+  margin-right: 5px;
+}
+
+/* Optional: Add some hover effects or focus styles */
+.category-container .field-checkbox:hover label {
+  color: #007bff; /* Change label color on hover */
+}
+
+.category-container .field-checkbox input:focus-visible {
+  outline: 2px solid #007bff; /* Highlight the radio button when focused */
+}
+
+.text-danger{
+  color: red;
+  font-size: 13px;
+  font-family: "graphik", Arial,  sans-serif;
+  /* margin-left: 7rem; */
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  animation: bounce 1s;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
+}
+
+.head-button{
+  width: 140%;
+  display: flex;
+  justify-content: center;
+}

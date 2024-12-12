@@ -1,0 +1,83 @@
+<div class="contactus">
+  <img src="assets/icons/contact.png" alt="Contact Support" style="max-width: 15%;">
+  <h3>Contact Us</h3>
+  <p>Get in touch with our support team.</p>
+
+              <!-- Button to trigger the popup -->
+      <!-- <button (click)="openPopup()">Contact Us</button> -->
+
+      <!-- Popup modal -->
+      <div id="popup" class="popup-overlay" *ngIf="isPopupOpen">
+        <div class="popup-content">
+            <span class="close" (click)="closePopup()">&times;</span>
+            <h2 style="display:flex">Contact Us</h2>
+            <p>Drop-in your query and we will get back at the drop of a hat with our innovative automation solutions!</p>
+
+            <form class="grid-container">
+              <div class="left">
+                <p class="para">
+                  Motherson supports customers through over 400 facilities in 44 countries across North America,
+                   South America, Europe, Africa, Middle East, Asia Pacific and Australia. In this address directory
+                    you can search all of our addresses by filtering on country, location type, business vertical and company.
+                </p>
+                <div class="address">
+                  <h6>Address:</h6>
+                  <h6>No. 09</h6>
+                  <h6>GST Road, Oorapakkam</h6>
+                  <h6>Kanchipuram</h6>
+                  <h6>Chennai - 603210</h6>
+                  <h6>Tamil Nadu, India</h6>
+              </div>
+              </div>
+              <div class="container">
+                <div class="aligning">
+                  <div class="form-row">
+                    <label for="enquiryReason">Enquiry Reason*</label>
+                    <select id="enquiryReason" required>
+                      <option value="" disabled selected>Select a reason</option>
+                      <option value="General Inquiry">General Inquiry</option>
+                      <option value="Product Info">Product Info</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="aligning">
+                  <div class="form-row">
+                    <label for="fullName">Full Name*</label>
+                    <input type="text" id="fullName" required>
+                  </div>
+                  <div class="form-row">
+                    <label for="emailId">Email Id*</label>
+                    <input type="email" id="emailId" required>
+                  </div>
+                </div>
+                <div class="aligning">
+                  <div class="form-row">
+                    <label for="mobile">Mobile with Country Code*</label>
+                    <input type="tel" id="mobile" required>
+                  </div>
+                  <div class="form-row">
+                    <label for="jobTitle">Job Title*</label>
+                    <input type="text" id="jobTitle" required>
+                  </div>
+                </div>
+                <div class="aligning">
+                  <div class="form-row">
+                    <label for="organization">Organization*</label>
+                    <input type="text" id="organization" required>
+                  </div>
+                  <div class="form-row">
+                    <input type="checkbox" id="privacyPolicy" required>
+                    <label for="privacyPolicy">I agree to the Privacy Policy and Terms of Use</label>
+                  </div>
+                </div>
+                <div class="form-row">
+                  <button type="submit" class="submit-button">Submit</button>
+                </div>
+                
+                
+                
+              </div>
+            </form>
+        </div>
+      </div>
+</div>

@@ -1,0 +1,242 @@
+<!-- <app-loader></app-loader> -->
+<div class="mainContent">
+  <app-loader></app-loader>
+  <!-- Header Section -->
+  <div class="header-section">
+    <h1 class="header-title">FMS Support</h1>
+
+    <div class="subheader-container">
+      <div class="subheader-text">Get the help you need</div>
+      <img src="../../assets/icons/i-icon.svg" alt="Icon" class="subheader-icon" />
+    </div>
+
+    <!-- Export Project button -->
+    <button type="button" class="export-button" (click)="exportProject()">
+      <i class="fas fa-file-export"></i> Export Project
+    </button>
+  </div>
+
+  <!-- Main Content Section -->
+  <div class="content-container">
+
+    <!-- Contact Us Section -->
+    <div class="contact-container">
+      <div class="header">
+        <h3>Contact Us</h3>
+
+        <!-- <div class="contact-address">
+          <h4>Address:</h4>
+          <p>No. 09, GST Road, Oorapakkam</p>
+          <p>Kanchipuram, Chennai - 603210</p>
+          <p>Tamil Nadu, India</p>
+        </div> -->
+
+        <div class="form-container">
+          <div class="container">
+            <!-- Form Rows -->
+            <div class="aligning">
+              <div class="form-row">
+                <label for="enquiryReason">Enquiry Reason*</label>
+                <select id="enquiryReason" required>
+                  <option value="" disabled selected>Select a reason</option>
+                  <option value="General Inquiry">General Inquiry</option>
+                  <option value="Product Info">Product Info</option>
+                </select>
+              </div>
+            </div>
+            <div class="aligning">
+              <div class="form-row">
+                <label for="fullName">Full Name*</label>
+                <input type="text" id="fullName" required>
+              </div>
+              <div class="form-row">
+                <label for="emailId">Email Id*</label>
+                <input type="email" id="emailId" required>
+              </div>
+            </div>
+            <div class="aligning">
+              <div class="form-row">
+                <label for="mobile">Mobile with Country Code*</label>
+                <input type="tel" id="mobile" required>
+              </div>
+              <div class="form-row">
+                <label for="jobTitle">Job Title*</label>
+                <input type="text" id="jobTitle" required>
+              </div>
+            </div>
+            <div class="aligning">
+              <div class="form-row">
+                <label for="organization">Organization*</label>
+                <input type="text" id="organization" required>
+              </div>
+            </div>
+            <!-- Privacy Policy and Terms of Use Agreement -->
+              <!-- <div class="aligning form-row horizontal-row">
+                <input type="checkbox" id="terms-conditions" required>
+                <label for="privacy-policy">
+                  I agree to the <a href="/privacy-policy" target="_blank">Privacy Policy</a> and <a href="/terms-of-use" target="_blank">Terms of Use</a>
+                </label>
+              </div> -->
+              
+              <div class="form-row">
+              <button type="submit" class="submit-button">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Support Sections -->
+    <div class="support-sections">
+      <div class="support-section">
+        <div class="header-image-container">
+          <img src="assets/icons/folder.png" alt="Documentation">
+          <h3>Documentation</h3>
+        </div>
+        <p>Find technical docs and guides.</p>
+        <button class="download-btn pixel-corners" (click)="downloadDocument()">
+          <div class="button-content">
+            <div class="svg-container">
+              <svg class="download-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479 6.908l-4-4h3v-4h2v4h3l-4 4z"></path>
+              </svg>
+            </div>
+            <div class="text-container">
+              <div class="text">Download</div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <div class="support-section">
+        <div class="header-image-container">
+          <img src="assets/icons/training.png" alt="Training Resource">
+          <h3>Training Resource</h3>
+        </div>
+        <p>Explore training materials.</p>
+        <button class="download-btn pixel-corners" (click)="downloadDocument()">
+          <div class="button-content">
+            <div class="svg-container">
+              <svg class="download-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                <path d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479 6.908l-4-4h3v-4h2v4h3l-4 4z"></path>
+              </svg>
+            </div>
+            <div class="text-container">
+              <div class="text">Download</div>
+            </div>
+          </div>
+        </button>
+      </div>
+
+      <div class="support-section">
+        <div class="header-image-container">
+            <img src="assets/icons/faq.png" alt="FAQ">
+            <h3>FAQ</h3>
+        </div>
+        <p>Frequently asked questions.</p>
+        <div class="faq-section" (click)="goToFaq()">
+            <button class="custom-learn-more">
+                <span class="custom-circle" aria-hidden="true">
+                    <span class="custom-icon custom-arrow"></span>
+                </span>
+                <span class="custom-button-text">Learn More</span>
+            </button>
+        </div>
+    </div>
+    
+    <!-- FAQ Popup -->
+<div class="faq-popup" *ngIf="showPopup">
+  <div class="faq-popup-content bg-white shadow-lg rounded-xl p-4 w-screen max-w-none mx-auto">
+    <div class="faq-header-container">
+      <h1 class="faq-header text-2xl font-bold mb-4">
+        Frequently asked
+        <span class="text-red-500">questions</span>
+      </h1>
+      <button class="close-button" (click)="closePopup()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg>
+      </button>
+    </div>
+    <p class="faq-subheader text-gray-500 mb-4">
+      Do you need some help with something or do you have questions on some features?
+    </p>
+
+    <div class="faq-container flex justify-between space-x-4">
+      <!-- Left Column FAQ -->
+      <div class="faq-left w-1/2">
+        <div *ngFor="let question of leftQuestions" class="faq-item mb-2">
+          <h4 (click)="toggleAnswer(question)" class="text-base font-semibold cursor-pointer flex justify-between items-center bg-gray-100 py-2 px-3 rounded-lg">
+            {{ question.question }}
+            <span class="dropdown-icon" [ngClass]="{'rotate': question.showAnswer}">&#9660;</span>
+          </h4>
+          <div class="faq-answer pl-3 pt-1 text-gray-500" *ngIf="question.showAnswer">
+            <p>{{ question.answer }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column FAQ -->
+      <div class="faq-right w-1/2">
+        <div *ngFor="let question of rightQuestions" class="faq-item mb-2">
+          <h4 (click)="toggleAnswer(question)" class="text-base font-semibold cursor-pointer flex justify-between items-center bg-gray-100 py-2 px-3 rounded-lg">
+            {{ question.question }}
+            <span class="dropdown-icon" [ngClass]="{'rotate': question.showAnswer}">&#9660;</span>
+          </h4>
+          <div class="faq-answer pl-3 pt-1 text-gray-500" *ngIf="question.showAnswer">
+            <p>{{ question.answer }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contact Section -->
+    <div class="mt-6 text-center">
+      <h2 class="font-bold mb-1 margin-0" style="font-size: 28px;">Have any other questions?</h2>
+
+      <p class="text-gray-500 mb-3">Don't hesitate to send us an email with your enquiry at:</p>
+      <div class="flex justify-center items-center space-x-2">
+        <span class="bg-gray-100 p-2 rounded-lg text-sm text-gray-700">
+          motherson.com
+        </span>
+      </div>
+    </div>
+
+    <!-- Close Button -->
+    <!-- <button class="close-popup mt-4 text-red-500 underline" (click)="closePopup()">Close</button> -->
+    
+  </div>
+</div>
+
+  
+
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- <div class="social-media-container">
+          <h3>Follow Us</h3>
+          <div class="social-media-icons">
+            <a href="#"><img src="assets/icons/facebook.png" alt="Facebook"></a>
+            <a href="#"><img src="assets/icons/twitter.png" alt="Twitter"></a>
+            <a href="#"><img src="assets/icons/linkedin.png" alt="LinkedIn"></a>
+            <a href="#"><img src="assets/icons/instagram.png" alt="Instagram"></a>
+          </div>
+        </div> -->

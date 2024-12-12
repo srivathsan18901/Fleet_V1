@@ -1,0 +1,809 @@
+#container {
+  display: flex;
+  height: 100vh; /* Ensure the container takes up the full viewport height */
+  width: auto;
+  overflow: hidden;
+  /* margin-left: 5%; */
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+app-sidenavbar{
+  z-index: 12;
+}
+.state-container:hover {
+  background-color: white; /* Change background color to white */
+  transition: background-color 0.3s ease; /* Smooth transition effect */
+}
+
+.mainContent {
+  flex-grow: 1;  
+  /* width: 100%; */
+  position: relative;
+  margin-left: 65px; /* Matches the width of the sidebar */
+  margin-top: 50px; 
+
+  /* border: 10px solid black  ;     Matches the height of the topbar */
+}
+#robo-popup {
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+  z-index: 1000;
+  background-color: rgba(150, 128, 128, 0.241);
+  backdrop-filter: blur(2px); 
+}
+#robo-popup button{
+  height: 100%;
+  width: 100%;
+  color: white;
+  background-color: #ff3333;
+  border: 1px solid white;
+  margin-bottom: 5px;
+  font-size: 15px;
+  font-family: "graphik", Arial,  sans-serif;
+  padding: 5px;
+  border-radius: 10px;
+}
+canvas {
+  display: block;
+  position: absolute;
+  top: 0;
+  height: 800;
+  width: 1350;
+  /* background-color: rgba(212, 125, 125, 0.447); */
+  left: 0;
+}
+/* live button */
+.ONBtn {
+  position: absolute;
+  top: -14px;
+  right: -25px;
+  padding: 20px 30px 0px 0px;
+  filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
+  cursor: pointer;
+  z-index: 13;
+}
+
+.CanvasOptions {
+  position: absolute;
+  bottom: 5px;
+  left: 5px;
+  display: flex;
+  background-color: #fffcfc6c;
+  /* border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px; */
+  border-radius: 10px;
+  /* border: 1px solid #ff7373; */
+  /* justify-content: center; */
+  cursor: pointer;
+  padding: 0;
+  box-shadow: 0 3px 6px #ff7373;
+  z-index: 11;
+  width: 50px; /* Show the icon width initially */
+  overflow: visible; /* Hide the other options */
+  transition: width 0.5s ease-in-out;
+}
+.options{
+  position: absolute;
+  bottom: 10%;
+  left: 1%;
+  display: flex;
+  background-color: transparent;
+  /* border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px; */
+  border-radius: 10px;
+  margin-left: 50px;
+  /* border: 1px solid #ff7373; */
+  /* justify-content: center; */
+  cursor: pointer;
+  padding: 0;
+  /* box-shadow: 0 3px 6px #ff7373; */
+  z-index: 11;
+  /* width: 20px; Show the icon width initially */
+  overflow: visible; /* Hide the other options */
+  transition: width 0.5s ease-in-out;
+}
+
+.empty {
+  background-color: #ff7373;
+  width: 50px;
+  height: 50px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Hide the menu icon and show options on hover */
+.CanvasOptions:hover .menu-icon {
+  display: none;
+}
+
+.CanvasOptions .tooltip {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* .CanvasOptions {
+  width: 450px;
+  background-color: rgb(255, 255, 255);
+  box-shadow: 0 3px 6px #ff7373;
+} */
+
+.tooltip {
+  position: relative;
+  display: flex;
+  align-items: center;
+  transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+  opacity: 0;
+  transform: translateX(-20px);
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: rgba(136, 132, 132, 0.601);
+  color: #ffffff;
+  text-align: center;
+  font-family: "graphik", Arial,  sans-serif;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 100;
+  bottom: 135%;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* Arrow for the tooltip */
+.tooltip .tooltiptext::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  z-index: 12;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: rgba(136, 132, 132, 0.601) transparent transparent transparent;
+}
+
+/* Show tooltip text on hover of the tooltip item */
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+
+.Expand, .Layout, .Save, .Pointer, .Zoom, .ZoomOut, .Capture,.ModelCanvas {
+  padding: 0px 10px;
+  cursor: pointer;
+}
+
+.Expand:hover, .Layout:hover, .Save:hover, .Pointer:hover, .Zoom:hover, .ZoomOut:hover, .Capture:hover, .ModelCanvas:hover {
+  filter: drop-shadow(0 2px 2px #ff0d0d3c);
+}
+
+.FloorSelector select {
+  padding: 5px;
+  font-size: 14px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 30px 150px 0px 0px;
+  padding: 5px 30px;
+  border: none;
+  border-radius: 10px;
+  background-color: rgba(199, 186, 186, 0.303);
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* charts */
+.GraphAndCharts {
+  position: absolute;
+  top: 80px; /* Adjust as needed */
+  right: 20px; /* Adjust as needed */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Adds space between the charts */
+  z-index: 12; /* Ensure it is above the canvas */
+}
+.GraphAndCharts {
+  padding: 10px;
+  /*  */
+  /* From https://css.glass */ 
+  /* background: rgba(255, 255, 255, 0.134);  */
+  border-radius: 16px; 
+  /* box-shadow: 0 4px 30px rgba(226, 114, 114, 0.653);  */
+  backdrop-filter: blur(5px); 
+  -webkit-backdrop-filter: blur(5px); 
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.chart1 p
+{
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 0;
+  text-align: left;
+
+}
+.Chart2 p, .Chart3 p {
+  font-size: 20px;
+  font-weight: bold;
+  color: #333333;
+  
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 0;
+  margin-top: 0;
+  text-align: left;
+}
+
+.Chart1, .Chart2, .Chart3 {  
+  /* background-color: rgb(255, 255, 255); */
+  height: 250px; /* Increased height */
+  width: 430px; /* Increased width */
+  box-shadow: 0 4px 8px rgba(200, 94, 94, 0.6); /* Grey drop shadow */
+  border-radius: 20px;
+  /*  */
+ /* From https://css.glass */ 
+ background: rgba(255, 255, 255, 0.2); 
+ border-radius: 16px; 
+ backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.Chart1:hover, .Chart2:hover, .Chart3:hover {
+  background-color: rgb(255, 255, 255);
+}
+
+.Chart2_Chart3 {
+  display: flex;
+  gap: 20px;
+}
+
+.Chart1 {
+  width: 540px; /* Increased width */
+  padding: 10px 0px 0px 0px;
+}
+.Chart3 {
+  padding: 0px 0px 0px 10px;
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: bold;
+}
+.Chart2{
+  padding: 10px 0px 0px 10px;
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: bold;
+}
+
+.Chart2 {
+  width: 270px; /* Increased width */
+  align-items: center;
+  justify-content: center;
+}
+
+.Chart3 {
+  width: 250px; /* Increased width */
+}
+
+
+
+
+
+
+.chart-label {
+  position: absolute;
+  bottom: 10px; /* Adjust as needed to position the label at the bottom of the chart */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 300px;
+  text-align: center;
+  font-size: 16px;
+  font-family: "graphik", Arial,  sans-serif;
+  color: #333;
+  font-weight: 500;
+}
+
+
+/* new for chart */
+
+.Chart3-container {
+  position: relative; /* Allows positioning of the title */
+  display: flex;
+  flex-direction: column; /* Stack elements vertically */
+  /* align-items: center; Center chart and label */
+  height: 100%;
+}
+
+.chart-title {
+  position: relative; /* Position it freely within the container */
+  left: -83px; /* Align it to the left */
+  margin: 10px; /* Add some spacing */
+  font-size: 20px; /* Adjust font size */
+  font-weight: bold; /* Make it bold for emphasis */
+  color: #333; /* Set the text color */
+}
+
+.Chart3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+
+.R-Chart {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.chart-label {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333;
+  font-family: "graphik", Arial,  sans-serif;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+
+.U-chart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.T-Chart {
+  width: 650px; /* Increased width */
+}
+
+
+
+.Chart2-container, .Chart3-container, .Chart1-container {
+  position: relative;
+}
+
+.chart3-blur-layer, .chart2-blur-layer, .chart1-blur-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+  display: flex;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* Ensure it is on top of the charts */
+}
+
+
+
+  /* Close Button Styles */
+  .close-button {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: white;
+    border: 2px solid red;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 5px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10; /* Ensure it appears above other elements */
+  }
+
+  .close-button svg {
+    width: 20px;
+    height: 20px;
+    fill: red; /* Color for the close icon */
+  }
+
+  .close-button:hover {
+    background-color: #da2127;
+  }
+
+  .close-button:hover svg {
+    fill: white; /* Change color on hover */
+  }
+
+/* .blurred {
+  filter: blur(5px);
+} */
+/* From Uiverse.io by Ali-Tahmazi99 */ 
+.loading {
+  width: 60px;
+  height: 60px;
+  position: relative;
+}
+
+.d1 , .d2 {
+  border: 5px solid #ff7373;
+  border-radius: 50px;
+}
+
+.loading .d1 {
+  width: 55px;
+  height: 55px;
+  position: absolute;
+  border-left-color: transparent;
+  animation: load161 1s linear infinite;
+}
+
+.loading .d2 {
+  width: 40px;
+  height: 40px;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  margin: 7.5px;
+  animation: load2812 1.5s linear infinite;
+}
+
+@keyframes load161 {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes load2812 {
+  0% {
+    transform: rotate(0);
+  }
+
+  100% {
+    transform: rotate(-360deg);
+  }
+}
+
+
+/* no map */
+.no-map-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Fullscreen height */
+  text-align: center;
+}
+
+.no-map-image {
+  max-width: 50%;
+  height: auto;
+}
+
+.no-map-text {
+  margin-top: 20px;
+  font-size: 24px;
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: 550;
+  color: #7B7B7B;
+}
+
+/* enable dropdown */
+.dropdown {
+  position: relative;
+  display: inline-block;
+  width: 180px;
+  margin: 5px;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.dropdown-button:hover{
+  background-color: #ff3333;
+  color: white;
+}
+
+.dropdown-button {
+  width: 100%;
+  background-color: #ff333358;
+  color: rgb(255, 255, 255);
+  padding: 10px 20px;
+  font-size: 16px;
+  font-family: "graphik", Arial,  sans-serif;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dropdown-content {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  background-color: transparent; /* Changed to transparent */
+  width: 100%;
+  background-color: rgb(242, 242, 242);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  z-index: 1;
+  margin-top: 5px;
+  border-radius: 5px;
+}
+
+.dropdown-content:hover{
+  background-color: white;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+}
+
+.enable-button {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.enable-button:hover {
+  background-color: #218838;
+}
+
+.arrow {
+  font-size: 12px;
+  font-family: "graphik", Arial,  sans-serif;
+  margin-left: 10px;
+}
+
+.rotate {
+  transform: rotate(180deg); /* Arrow rotation */
+}
+
+/* toggle for enable robots */
+/* From Uiverse.io by AbanoubMagdy1 */ 
+.switch {
+  --circle-dim: 1em; /* Reduced the circle size */
+  font-size: 14px;   /* Adjusted font-size */
+  font-family: "graphik", Arial,  sans-serif;
+  position: relative;
+  display: inline-block;
+  width: 3.2em;      /* Reduced the width */
+  height: 1.5em;     /* Reduced the height */
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #f5aeae;
+  transition: .4s;
+  border-radius: 30px;
+}
+
+.slider-card {
+  position: absolute;
+  content: "";
+  height: var(--circle-dim);
+  width: var(--circle-dim);
+  border-radius: 20px;
+  left: 0.3em;
+  bottom: 0.3em;
+  transition: .4s;
+  pointer-events: none;
+}
+
+.slider-card-face {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  perspective: 1000px;
+  border-radius: 50%;
+  transition: .4s transform;
+}
+
+.slider-card-front {
+  background-color: #DC3535;
+}
+
+.slider-card-back {
+  background-color: #379237;
+  transform: rotateY(180deg);
+}
+
+input:checked ~ .slider-card .slider-card-back {
+  transform: rotateY(0);
+}
+
+input:checked ~ .slider-card .slider-card-front {
+  transform: rotateY(-180deg);
+}
+
+input:checked ~ .slider-card {
+  transform: translateX(1.5em);
+}
+
+input:checked ~ .slider {
+  background-color: #9ed99c;
+}
+
+.enable-delete-button {
+  background: none;      /* No background */
+  border: none;          /* Remove border */
+  color: rgb(224, 11, 11);          /* Set icon color */
+  cursor: pointer;       /* Pointer on hover */
+  font-size: 18px;       /* Size of the icon */
+  font-family: "graphik", Arial,  sans-serif;
+  padding: 0;            /* Remove padding */
+  transition: color 0.3s ease; /* Smooth transition on hover */
+}
+
+/* Add hover effect */
+.enable-delete-button:hover {
+  color: #ff6666; /* Light red color on hover */
+}
+
+/* fleet and simulation */
+.indication-button {
+  position: absolute;
+  top: 5px;
+  right: 105px; 
+  filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
+  cursor: pointer;
+  z-index: 13;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center; /* Center content horizontally */
+  width: 150px;  /* Fixed width */
+  height: 41px;  /* Fixed height */
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0;  /* Remove padding since we are using fixed size */
+  transition: background-color 0.3s ease;
+}
+
+/* Image inside the button */
+.indication-button img {
+  width: 25px;
+  height: 25px;
+  margin-right: 8px; /* Keep margin for spacing */
+}
+
+/* Text inside the button */
+.indication-button span {
+  font-size: 17px;
+  font-family: "graphik", Arial,  sans-serif;
+  white-space: nowrap; /* Prevent text from wrapping */
+}
+
+/* Background color for Fleet */
+.fleet-background {
+  z-index: auto;
+  background-color: #63b7fc; /* Blue for Fleet */
+  z-index: auto;
+}
+
+/* Background color for Simulation */
+.simulation-background {
+  background-color: #f0453f; /* Red for Simulation */
+
+}
+
+
+.blinking-svg {
+  /* width: 95px;
+  height: 40px; */
+  animation: glow-blink 1.5s infinite ease-in-out;
+}
+
+/* Define the glowing and blinking effect */
+@keyframes glow-blink {
+
+}
+
+/* canvas loader */
+.canvas-loader{
+  position: absolute;
+  top: 50%;
+  z-index: 1;
+  right: 50%;
+}
+
+/* Loader Background to cover full screen */
+.loader-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+  z-index: 9999; /* Ensures the loader is above all other content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Adjust loader bars */
+.middle {
+  display: flex;
+  gap: 5px; /* Adds a small gap between bars */
+}
+
+.bar {
+  width: 10px;
+  height: 70px;
+  display: inline-block;
+  transform-origin: bottom center;
+  border-top-right-radius: 20px;
+  border-top-left-radius: 20px;
+  animation: loader 1.2s linear infinite;
+  background-color: transparent;
+}
+
+.bar1 { animation-delay: 0.1s; }
+.bar2 { animation-delay: 0.2s; }
+.bar3 { animation-delay: 0.3s; }
+.bar4 { animation-delay: 0.4s; }
+.bar5 { animation-delay: 0.5s; }
+.bar6 { animation-delay: 0.6s; }
+.bar7 { animation-delay: 0.7s; }
+.bar8 { animation-delay: 0.8s; }
+
+@keyframes loader {
+  0% {
+    transform: scaleY(0.1);
+    background: transparent;
+  }
+  50% {
+    transform: scaleY(1);
+    background: #ed2c1a; /* Red color */
+  }
+  100% {
+    transform: scaleY(0.1);
+    background: transparent;
+  }
+}
+.sidebar {
+  position: relative; /* Ensure it has a positioning context */
+  z-index: 10000; /* Higher than loader */
+  /* Other styles */
+}
+  

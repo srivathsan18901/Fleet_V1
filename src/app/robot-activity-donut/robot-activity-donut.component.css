@@ -1,0 +1,26 @@
+#chart {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  
+  .apexcharts-legend {
+    text-align: left !important;
+    padding: 10px !important;
+  }
+  
+  .apexcharts-legend-series {
+    display: flex !important;
+    align-items: center;
+    font-size: 14px !important;
+  }
+  
+  .apexcharts-legend-marker {
+    margin-right: 8px !important;
+  }
+  
+  .apexcharts-datalabel {
+    font-size: 1.2em !important;
+  }
+  

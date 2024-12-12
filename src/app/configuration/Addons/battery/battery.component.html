@@ -1,0 +1,109 @@
+<div class="container1">
+  <div class="content-fluid1">
+    <div class="general">
+      <!-- <form> -->
+        <h3 style="margin-left: 1.5rem;font-family: 'graphik', Arial, sans-serif;">Battery Details</h3>
+        <div class="container">
+          <div class="form-control">
+
+            <!-- Battery Fields -->
+            <div class="field">
+              <!-- Minimum Battery -->
+              <label for="minBattery" style="margin-right: 1.5rem;font-family: 'graphik', Arial, sans-serif;">Minimum Battery: </label>
+              <input
+                class="input"
+                type="number"
+                min="0"
+                placeholder="Enter Battery"
+                style="width: 10rem;"
+                [(ngModel)]="batteryForm.minBattery"
+                pInputText
+                required
+              />
+            </div>
+
+            <div class="field">
+              <!-- Maximum Battery -->
+              <label for="maxBattery">Maximum Battery: </label>
+              <input
+                type="number"
+                placeholder="Enter Battery"
+                style="width: 10rem;"
+                [(ngModel)]="batteryForm.maxBattery"
+                pInputText
+              />
+            </div>
+
+            <div class="field">
+              <!-- Warning Battery -->
+              <label for="warningBattery" style="margin-right:2rem">Warning Battery: </label>
+              <input
+                class="input"
+                type="number"
+                placeholder="Enter Battery"
+                min="1000"
+                max="9999"
+                oninput="if(this.value.length > 4) this.value = this.value.slice(0, 4);"
+                style="width: 10rem;"
+                [(ngModel)]="batteryForm.warningBattery"
+                pInputText
+                required
+              />
+            </div>
+
+          </div>
+
+          <!-- Voltage Fields -->
+          <div class="form2">
+            <div class="field">
+              <!-- Warning Voltage -->
+              <label for="warningVoltage" style="margin-right:1.7rem">Warning Voltage: </label>
+              <input
+                type="number"
+                placeholder="Enter Voltage"
+                style="width: 10rem;"
+                [(ngModel)]="batteryForm.warningVoltage"
+                pInputText
+              />
+            </div>
+
+            <div class="field">
+              <!-- Minimum Voltage -->
+              <label for="minimumVoltage">Minimum Voltage: </label><br>
+              <input
+                type="number"
+                placeholder="Enter Voltage"
+                style="width: 10rem;"
+                [(ngModel)]="batteryForm.minimumVoltage"
+                pInputText
+              />
+            </div>
+          </div>
+
+
+
+        </div>
+                  <!-- Submit Button -->
+                  <!-- <div class="form-control"> -->
+                    <div class="field mt-1 centers">
+                      <p-button
+                        label="Submit"
+                        type="submit"
+                        class="block mt-1 pt-2"
+                        styleClass="p-button-danger p-button1"
+                        [disabled]="!batteryForm.minBattery || !batteryForm.warningBattery"
+                        (onClick)="saveBatteryParams()"
+                      ></p-button>
+                      <p-button
+                      label="Clear"
+                      class="clearbtn"
+                      styleClass="p-button-secondary"
+                      (onClick)="clearForm()"
+                    ></p-button>
+                    </div>
+                  <!-- </div> -->
+
+      <!-- </form> -->
+    </div>
+  </div>
+</div>
