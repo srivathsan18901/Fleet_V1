@@ -40,14 +40,6 @@ export class SidenavbarComponent implements OnInit {
 
   processedErrors : Set<string>; // To track processed errors
 
-  // this.notifications = [
-    // {
-    //   label: 'Critical',
-    //   message: 'Battery critically low on Robot A',
-    //   type: 'red',
-    // },
-  // ];
-
   filteredRobotActivities = this.robotActivities;
   filteredNotifications = this.notifications;
   userManagementData:any;
@@ -77,8 +69,10 @@ export class SidenavbarComponent implements OnInit {
     this.selectedMap = this.projectService.getMapData();
     await this.getFleetStatus();
     await this.getRoboStatus();
+    await this.getTaskErrs();
     setInterval(async () => {
       await this.getRoboStatus();
+      await this.getTaskErrs(); // or run in indivdual..
     }, 1000 * 5); // max to 30 or 60 sec
     setInterval(async () => {
       await this.getFleetStatus();
@@ -98,6 +92,7 @@ export class SidenavbarComponent implements OnInit {
     this.projectService.setIsFleetUp(this.isFleetUp)
   }
 
+  // not called anywhere..
   async getFleetLogStatus(){
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
@@ -141,11 +136,6 @@ export class SidenavbarComponent implements OnInit {
         }
       }
     });
-
-    
-
-
-
   }
 
   async getRoboStatus(): Promise<void> {
@@ -168,10 +158,6 @@ export class SidenavbarComponent implements OnInit {
 
     let { robots }: any = this.robotActivities;
     if (!robots.length) return;
-
-    
-
-
 
     robots.forEach((robot: any) => {
       if (robot.robot_errors) {
@@ -203,6 +189,50 @@ export class SidenavbarComponent implements OnInit {
     });
 
     // console.log(this.notifications, this.processedErrors?.values());
+  }
+
+  async getTaskErrs(): Promise<void> {
+    let establishedTime = new Date(this.selectedMap.createdAt);
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.selectedMap.id}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          // mapId: this.selectedMap.id,
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+      }
+    );
+    const data = await response.json();
+    if (!data.map || data.error) return;
+    for(let err of data.taskErr){
+      if(err === null) continue;
+      // let dateCreated = new Date(err.TaskAddTime * 1000);
+      // {
+      //   status: err.task_status.status,
+      //   taskId: err.task_id,
+      //   timestamp: dateCreated.toLocaleString()
+      // }
+      let notificationKey = `${err.task_status.status} on task ID ${err.task_id}`;
+      if (this.processedErrors?.has(notificationKey)) continue;
+      this.processedErrors?.add(notificationKey);
+      let criticality = "Normal";
+
+      if(err.Error_code == "HIGH")
+        criticality = "Critical";
+      // else if(err.Error_code == "")
+      //   criticality = "Warning";
+
+      this.notifications.push({
+        label: `${criticality}`,
+        message: `${err.task_status.status} on task ID ${err.task_id}`,
+        type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+      });
+    }
   }
 
   // Clear all notifications when the button is clicked
@@ -332,5 +362,18 @@ export class SidenavbarComponent implements OnInit {
     this.flagSvg = this.flags[order].flagComp;
     this.flagName = this.flags[order].nameTag;
     this.languageChange();
+  }
+
+  getTimeStampsOfDay(establishedTime: Date) {
+    let currentTime = Math.floor(new Date().getTime() / 1000);
+    let startTimeOfDay = this.getStartOfDay(establishedTime);
+    return {
+      timeStamp1: startTimeOfDay,
+      timeStamp2: currentTime,
+    };
+  }
+
+  getStartOfDay(establishedTime: Date) {
+    return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
 }

@@ -57,8 +57,40 @@ export class TasksComponent implements OnInit, AfterViewInit {
         summary: 'Info',
         detail: 'Task Cancelled',
       });
+      await this.refreshTaskData();
     }
   }
+  async refreshTaskData() {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapId: this.mapData.id,
+          timeStamp1: this.getTimeStampsOfDay(new Date(this.mapData.createdAt)).timeStamp1,
+          timeStamp2: this.getTimeStampsOfDay(new Date(this.mapData.createdAt)).timeStamp2,
+        }),
+      }
+    );
+
+    let data = await response.json();
+
+    if (data.tasks) {
+      const { tasks } = data.tasks;
+      this.tasks = tasks.map((task: any) => ({
+        taskId: task.task_id,
+        taskType: task.sub_task[0]?.task_type || 'N/A',
+        status: task.task_status.status,
+        roboName: task.agent_ID,
+        sourceLocation: task.sub_task[0]?.source_location || 'N/A',
+        destinationLocation: 'N/A',
+      }));
+      this.filteredTaskData = this.tasks;
+      this.updateData(); // Ensure pagination and filtered data are updated
+    }
+}
 
   mapData: any | null = null;
   searchQuery: string = '';
@@ -128,8 +160,6 @@ console.log(data,'task data')
           destinationLocation: 'N/A',
         };
       });
-      console.log(this.filteredTaskData,'filtered data')
-      console.log(this.tasks,'task  sep data')
     this.filteredTaskData = this.tasks;
     // console.log(this.tasks);
     this.setPaginatedData();
@@ -141,6 +171,7 @@ console.log(data,'task data')
   ngAfterViewInit() {
     this.setPaginatedData(); // Set initial paginated data after view is initialized
   }
+
 
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
@@ -158,10 +189,10 @@ console.log(data,'task data')
   setPaginatedData() {
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-      this.paginatedData = this.filteredTaskData.slice(
-        startIndex,
-        startIndex + this.paginator.pageSize
-      );
+      const endIndex = startIndex + this.paginator.pageSize;
+      this.paginatedData = this.filteredTaskData.slice(startIndex, endIndex);
+    } else {
+      this.paginatedData = this.filteredTaskData.slice(0, 5); // Default to first 5 items if paginator is not defined
     }
   }
 

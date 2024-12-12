@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
+import { log } from 'console';
 
 @Component({
   selector: 'app-statistics',
@@ -24,43 +25,8 @@ export class StatisticsComponent {
   // { taskId: 9, taskName: 'AMR-003', task: 'Transporting materials', progress: 90, status: 'Actively Working', },
   // ];
 
-  notifications = [
-    // {
-    //   message: '',
-    //   taskId: '',
-    //   timestamp: '',
-    // },
-    // {
-    //   message: 'Task Assigned ',
-    //   taskId: ' AMR-002',
-    //   timestamp: '17 Nov 2024, 1:54 pm',
-    // },
-    // {
-    //   message: 'Obstacle Detected ',
-    //   taskId: ' AMR-003',
-    //   timestamp: '21 Dec 2024, 10:27 am',
-    // },
-    // {
-    //   message: 'Low Battery',
-    //   taskId: 'AMR-001',
-    //   timestamp: '21 Dec 2024, 10:50 am',
-    // },
-    // {
-    //   message: 'Task Assigned ',
-    //   taskId: ' AMR-002',
-    //   timestamp: '23 Dec 2024, 1:02 pm',
-    // },
-    // {
-    //   message: 'Obstacle Detected ',
-    //   taskId: ' AMR-003',
-    //   timestamp: '23 Dec 2024, 6:02 pm',
-    // },
-    // {
-    //   message: 'Low Battery',
-    //   taskId: 'AMR-001',
-    //   timestamp: '5 Jan 2024, 4:02 pm',
-    // }
-  ];
+  notifications:any[] = [];
+  taskErrNotifications:any[] = [];
 
   statisticsData: any = {
     systemThroughput: 0,
@@ -77,15 +43,12 @@ export class StatisticsComponent {
 
   filteredOperationActivities = this.operationActivities;
   filteredNotifications = this.notifications;
+  filteredTaskNotifications = this.taskErrNotifications;
 
   taskStatus_interval: any | null = null;
   currTaskStatus_interval: any | null = null;
 
-  constructor(
-    private router: Router,
-    private projectService: ProjectService,
-    private cdRef: ChangeDetectorRef
-  ) {
+  constructor( private router: Router, private projectService: ProjectService, private cdRef: ChangeDetectorRef ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
   }
 
@@ -106,8 +69,9 @@ export class StatisticsComponent {
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) return;
-    await this.getGrossStatus();
+    await this.getGrossStatus(); // no need anymore..
     this.operationPie = await this.fetchTasksStatus();
+    await this.getTaskNotifications();
     this.taskStatus_interval = setInterval(async () => {
       this.operationPie = await this.fetchTasksStatus();
     }, 1000 * 10);
@@ -115,13 +79,7 @@ export class StatisticsComponent {
     this.filteredOperationActivities = this.operationActivities;
     this.currTaskStatus_interval = setInterval(async () => {
       let currTasks = await this.fetchCurrTasksStatus();
-      // this.filteredOperationActivities.push(currTasks[0]);
       this.filteredOperationActivities = currTasks;
-      // console.log(this.operationActivities);
-      // this.filteredOperationActivities = [
-      //   ...this.filteredNotifications,
-      //   currTasks[0],
-      // ];
     }, 1000 * 10);
   }
 
@@ -139,7 +97,7 @@ export class StatisticsComponent {
     return await response.json();
   }
 
-//FLEET LOG API FOR DASHBOARD
+  // not called anywhere..
   async getFleetLogStatus(){
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
@@ -172,43 +130,69 @@ export class StatisticsComponent {
             if (this.processedErrors?.has(notificationKey)) continue;
             this.processedErrors?.add(notificationKey);
 
-            // this.notifications.push({
-            //   label: `${criticality}`,
-            //   message: `${error.description} on robot ID ${robot.id}`,
-            //   type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
-            // });
+            this.notifications.push({
+              label: `${criticality}`,
+              message: `${error.description} on robot ID ${robot.id}`,
+              type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+            });
 
             this.cdRef.detectChanges(); // yet to notify..
           }
         }
       }
     });
-
-
-
-
-
   }
 
-  // async to synchronous...
+  async getTaskNotifications(){
+    let establishedTime = new Date(this.selectedMap.createdAt);
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.selectedMap.id}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          // mapId: this.selectedMap.id,
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+      }
+    );
+    const data = await response.json();
+    if (!data.map || data.error) return ;
+    this.taskErrNotifications = data.taskErr.map((err:any)=>{
+      if(!err) return null;
+      let dateCreated = new Date(err.TaskAddTime * 1000);
+      return {
+        status: err.task_status.status,
+        taskId: err.task_id,
+        timestamp: dateCreated.toLocaleString()
+      }
+    }).filter((err:any) => err !== null);
+    this.filteredTaskNotifications = this.taskErrNotifications
+  }
+
   async getGrossStatus() {
     const mapId = this.selectedMap.id;
     const projectId = this.projectService.getSelectedProject()._id;
 
-    let throughputData = await this.fetchFleetStatus('system-throughput', {
-      mapId: mapId,
-    });
+    // let throughputData = await this.fetchFleetStatus('system-throughput', {
+    //   mapId: mapId,
+    // });
     // if (throughputData.systemThroughput)
     //   this.statisticsData.systemThroughput = throughputData.systemThroughput;
+    // console.log("hey",this.statisticsData.systemThroughput);
+    
     let uptime = await this.fetchFleetStatus('system-uptime', { projectId: projectId });
     if (uptime.systemUptime){
       this.statisticsData.systemUptime = uptime.systemUptime;}
     else{
       this.statisticsData.systemUptime = "Loading...";
     }
-    await this.fetchFleetStatus('success-rate', { // yet to take..
-      mapId: mapId,
-    });
+    // await this.fetchFleetStatus('success-rate', { // yet to take..
+    //   mapId: mapId,
+    // });
     // yet to uncomment..
     // if (successRate.successRate)
     //   this.statisticsData.successRate = successRate.successRate;
@@ -256,7 +240,8 @@ export class StatisticsComponent {
       let fleet_tasks = tasks.map((task: any) => {
         if(task.TaskAssignTime>=task.TaskAddTime){
         tot_responsiveness += task.TaskAssignTime - task.TaskAddTime
-        console.log("tot_responsiveness",tot_responsiveness );}
+        // console.log("tot_responsiveness",tot_responsiveness );
+      }
 
         return {
           taskId: task.task_id,
@@ -269,8 +254,8 @@ export class StatisticsComponent {
       });
       let average_responsiveness = (tot_responsiveness / tasks.length) * 1000;
       this.statisticsData.responsiveness = `${
-        Math.round(average_responsiveness)
-      } ms`;
+        Math.round(average_responsiveness/1000)
+      } s`;
       console.log("Responsiveness",Math.round(average_responsiveness));
 
       return fleet_tasks;
@@ -364,13 +349,13 @@ export class StatisticsComponent {
     );
   }
 
-  // onSearchNotifications(event: Event): void {
-  //   const input = event.target as HTMLInputElement;
-  //   const query = input.value.toLowerCase();
-  //   this.filteredNotifications = this.notifications.filter((notification) =>
-  //     // notification.message.toLowerCase().includes(query)
-  //   );
-  // }
+  onSearchNotifications(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const query = input.value.toLowerCase();
+    this.filteredNotifications = this.notifications.filter((notification) =>
+      notification.message.toLowerCase().includes(query)
+    );
+  }
 
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
@@ -386,9 +371,11 @@ export class StatisticsComponent {
   }
 
   updateSysThroughput(data: any) {
+    // console.log("nan tha",data[data.length - 1]);
     if (data.length)
       this.statisticsData.systemThroughput = data[data.length - 1];
-    else this.statisticsData.systemThroughput = 0;
+    else this.statisticsData.systemThroughput = "Loading...";
+    
   }
 
   /* ngOnDestroy() {

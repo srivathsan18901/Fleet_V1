@@ -83,14 +83,14 @@
           <!-- Table container without scroll -->
           <div class="table-responsive">
             <table class="table">
-              <thead>
+              <thead >
                 <tr>
                   <th>S.no</th>
                   <th>Task ID</th>
                   <th>Task Type</th>
                   <th>Status</th>
                   <th>Robot Name</th>
-                  <th>Source</th>
+                  <!-- <th>Source</th> -->
                   <th>Destination</th>
                   <th>Actions</th>
                 </tr>
@@ -98,7 +98,7 @@
               <tbody>
 
                 <!-- Show No Data Row with image and message -->
-               <tr *ngIf="filteredTaskData.length === 0">
+               <tr *ngIf="paginatedData.length === 0">
                 <td colspan="8" class="no-data">
                   <div class="no-data-container">
                     <img src="../assets/no-data.png" alt="No Data" class="no-data-image">
@@ -107,17 +107,17 @@
                 </td>
               </tr>
                <!-- Display table rows when data exists -->
-                <tr *ngIf="filteredTaskData.length === 0">
+                <tr *ngIf="paginatedData.length === 0">
                   <!-- <td colspan="6" class="iconTable">No data found</td> -->
                 </tr>
-                <tr *ngFor="let item of filteredTaskData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
-                  <td>{{ i + 1 + (paginator?.pageIndex ?? 0) * (paginator?.pageSize ?? 10) }}</td>
+                <tr *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
+                  <td>{{ i + 1 }}</td>
                   <td>{{ item.taskId }}</td>
                   <td>{{ item.taskType }}</td>
                   <td>{{ item.status }}</td>
                   <td>{{ item.roboName }}</td>
                   <td>{{ item.sourceLocation }}</td>
-                  <td>{{ item.destinationLocation }}</td>
+                  <!-- <td>{{ item.destinationLocation }}</td> -->
                   <td>
                     <!-- Switch Container -->
                     <div class="switch-container">
@@ -138,7 +138,7 @@
 
                       <!-- Cancel Button -->
                       <button 
-                      *ngIf="item.status !== 'COMPLETED' && item.status !== 'CANCELLED'" 
+                      *ngIf="item.status !== 'COMPLETED' && item.status !== 'CANCELLED' && item.status !== 'FAILED'" 
                        class="btn-common btn-cancel" 
                       (click)="onCancel(item)">
                       Cancel
@@ -158,17 +158,13 @@
     <div  class="paginator-container" *ngIf="filteredTaskData.length > 0" >
       <mat-paginator
         [length]="filteredTaskData.length"
-        [pageSize]="10"
+        [pageSize]="5"
         [pageSizeOptions]="[5, 10]"
         (page)="onPageChange($event)"
         showFirstLastButtons
       >
       </mat-paginator>
     </div>
-
-
-
-
 
       <!-- Export -->
       <!-- Export -->

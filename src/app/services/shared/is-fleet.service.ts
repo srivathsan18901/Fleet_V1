@@ -11,6 +11,4 @@ export class IsFleetService {
   setIsFleet(value: boolean) {
     this.isFleetSubject.next(value);
   }
-
-  
 }

@@ -33,7 +33,7 @@
         <!-- Stat card 1 -->
         <div class="stat-card stat-card-1">
           <div class="stat-value">System throughput</div>
-          <h2>{{ statisticsData.systemThroughput || 'Loading...'}}</h2>
+          <h2>{{ statisticsData.systemThroughput }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.systemThroughputChange }}% <span>&uarr;</span> -->
           </div>
@@ -234,7 +234,7 @@
             <tbody>
 
               <!-- Show No Data Row with image and message -->
-              <tr *ngIf="filteredNotifications.length === 0">
+              <tr *ngIf="filteredTaskNotifications.length === 0">
                 <td colspan="3" class="no-data">
                   <div class="no-data-container">
                     <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
@@ -243,11 +243,10 @@
                 </td>
               </tr>
 
-              <tr *ngFor="let notification of filteredNotifications | slice:0:10">
-                <!-- <td>{{ notification.message }}</td>
+              <tr *ngFor="let notification of filteredTaskNotifications | slice:0:10">
+                <td>{{ notification.status }}</td>
                 <td>{{ notification.taskId }}</td>
-                <td>{{ notification.timestamp }}</td> -->
-                <!-- <td>{{ notification.taskId }}</td> -->
+                <td>{{ notification.timestamp }}</td>
               </tr>
             </tbody>
           </table>

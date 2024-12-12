@@ -76,7 +76,7 @@
     <div class="battery-container">
       <div class="battery">
         <div class="battery-level"
-             [ngStyle]="{'height': data.batteryPercentage + '%'}"
+             [ngStyle]="{'height': data.batteryPercentage | number:'1.2-2' + '%'}"
              [ngClass]="getBatteryColor(data.batteryPercentage)">
         </div>
         <!-- Charging icon will only show if charging is true -->
@@ -91,15 +91,20 @@
     <!-- Battery Details -->
       <div class="battery-details">
         <div class="average-discharge">
-          <span class="discharge-distance">{{ data.averagedischarge }} m</span>
+          <span 
+            class="discharge-distance"
+            [title]="data.averagedischarge"> 
+            {{ truncateNumber(data.averagedischarge) }} m
+          </span>
           <span class="discharge-label">Average Discharge</span>
         </div>
+        
         <div class="battery-status-container">
-          <span class="battery-percentage">{{ data.batteryPercentage }} %</span>
+          <span class="battery-percentage">{{ data.batteryPercentage| number:'1.2-2' }} %</span>
           <span class="battery-label">Battery</span>
         </div>
         <div class="average-charging-time">
-          <span class="charging-time">{{ data.averageChargingTime }} m</span>
+          <span class="charging-time">{{ data.averageChargingTime | number:'1.2-2' }} m</span>
           <span class="charging-time-label">Average Charging Time</span>
         </div>
       </div>
@@ -112,7 +117,7 @@
     <div class="current-speed-container">
       <span class="label">Current speed</span>
       <div class="speed-value-container">
-        <span class="speed-value">{{ data.currentspeed }}</span>
+        <span class="speed-value">{{ data.currentspeed | number:'1.2-2' }}</span>
         <span class="unit">m/s</span>
       </div>
     </div>
@@ -120,7 +125,7 @@
     <div class="speed-details-container">
       <div class="average-speed-container">
         <div class="speed-value-container">
-          <span class="speed-value">{{ data.averagespeed }}</span>
+          <span class="speed-value">{{ data.averagespeed | number:'1.2-2' }}</span>
           <span class="unit">m/s</span>
         </div>
         <span class="label">Average speed</span>
@@ -128,7 +133,7 @@
         <!-- Added Average Transfer Time -->
         <div class="transfer-time-container">
           <div class="transfer-value-container">
-            <span class="time-value">{{ data.averagetransfertime }}</span>
+            <span class="time-value">{{ data.averagetransfertime| number:'1.2-2' }}</span>
             <span class="unit">min</span>
           </div>
           <span class="label">Average Transfer Time</span>
@@ -137,7 +142,7 @@
 
       <div class="maximum-speed-container">
         <div class="speed-value-container">
-          <span class="speed-value">{{ data.maximumspeed }}</span>
+          <span class="speed-value">{{ data.maximumspeed | number:'1.2-2' }}</span>
           <span class="unit">m/s</span>
         </div>
         <span class="label">Maximum speed</span>
@@ -145,7 +150,7 @@
         <!-- Added Average Docking Time -->
         <div class="docking-time-container">
           <div class="docking-value-container">
-            <span class="time-value">{{ data.averagedockingtime }}</span>
+            <span class="time-value">{{ data.averagedockingtime | number:'1.2-2' }}</span>
             <span class="unit">min</span>
           </div>
           <span class="label">Average Docking Time</span>
@@ -207,7 +212,7 @@
     </div>
     <span class="pick-drop-label">Total Pick / Drop</span>
   </div>
-  <span class="pick-drop-values">{{ data.totalPicks }} / {{ data.totalDrops }}</span>
+  <span class="pick-drop-values">{{ data.PickCount }} / {{ data.DropCount }}</span>
 </div>
 
 
@@ -254,7 +259,7 @@
       </div>
       <span class="networkstrength-label">Network Strength</span>
     </div>
-    <span class="networkstrength-value">{{ data.networkstrength }}</span>
+    <span class="networkstrength-value">{{data.networkstrength||0}}dBm</span>
   </div>
 </div>
 
@@ -304,7 +309,7 @@
       </div>
       <span class="robottemperature-label">CPU Temperature</span>
     </div>
-    <span class="robottemperature-value">{{ data.temperature }} °C</span>
+    <span class="robottemperature-value">{{ data.temperature | number:'1.2-2'}} °C</span>
   </div>
 </div>
 
@@ -347,7 +352,7 @@
       </div>
       <span class="robot-utilization-label">Total Distance</span>
     </div>
-    <span class="robot-utilization-value">{{ data.distance }} m</span>
+    <span class="robot-utilization-value">{{ data.distance| number:'1.2-2' }} m</span>
   </div>
 </div>
 
@@ -396,7 +401,7 @@
           </div>
           <span class="memory-text">Memory</span>
     </div>
-    <span class="memory-value">{{ data.memory }} %</span>
+    <span class="memory-value">{{ data.memory| number:'1.2-2' }} %</span>
       </div>
     </div>
 
@@ -444,7 +449,11 @@
       </div>
       <span class="cpu-utilization-text">CPU Utilization</span>
     </div>
-    <span class="cpu-utilization-value">{{ data.cpuutilization }} %</span>
+    <span 
+    class="cpu-utilization-value" 
+    [title]="data.cpuutilization">
+    {{ truncateNumber(data.cpuutilization)}} %
+  </span>
   </div>
 </div>
 

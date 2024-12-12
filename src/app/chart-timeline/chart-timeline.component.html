@@ -19,13 +19,13 @@
       <!-- Scope Options -->
       <div class="submenu">
         <div class="submenu-item " id="overall">
-          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection('Overall')">Overall</a>
+          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection('Overall',null)">Overall</a>
         </div>
         <div
           class="submenu-item"
           *ngFor="let robo of roboNames"
         >
-          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection(robo)">{{ robo }}</a>
+          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection(robo.roboName,robo)">{{ robo.roboName }}</a>
         </div>
       </div>
     </div>

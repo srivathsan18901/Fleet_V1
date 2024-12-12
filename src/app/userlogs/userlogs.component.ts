@@ -67,7 +67,6 @@ export class Userlogscomponent {
     }
     this.getTaskLogs();
     const apoi = this.getTaskLogs();
-    console.log(apoi,"===========sfkjvbsfj========")
     this.modeService.currentMode$.subscribe((mode) => {
       this.currentMode = mode; // React to mode updates
       // console.log(this.currentMode,"dkjnonvofpsp")
@@ -123,13 +122,11 @@ export class Userlogscomponent {
     this.mapData = this.projectService.getMapData();
     let establishedTime = new Date(this.mapData.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-    console.log(timeStamp1,'t-1')
-    console.log(timeStamp2,'t-2')
     let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
       {
           method: 'POST',
-          credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
           body: JSON.stringify({
             timeStamp1: timeStamp1,
             timeStamp2: timeStamp2,
@@ -137,15 +134,16 @@ export class Userlogscomponent {
         }
       )
     let data = await response.json();
-    console.log(data,"==============data=============")
-    const { taskLogs } = data;
-    this.taskData = data.map((taskErr: any) => {
-      const date = new Date();
-      const formattedDateTime = `${date.toLocaleDateString('en-IN', {
+    const { taskErr } = data;
+    this.taskData = data.taskErr.map((taskErr: any) => {  
+      if(taskErr===null)return null;
+
+      let dateCreated = new Date(taskErr.TaskAddTime * 1000);
+      const formattedDateTime = `${dateCreated.toLocaleDateString('en-IN', {
         day: '2-digit',
         month: 'short',
         year: 'numeric',
-      })}, ${date.toLocaleTimeString('en-IN', {
+      })}, ${dateCreated.toLocaleTimeString('en-IN', {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true,
@@ -153,17 +151,13 @@ export class Userlogscomponent {
       return {
         dateTime: formattedDateTime,
         taskId: taskErr.task_id,
-        taskName: taskErr.sub_task[0]?.task_type
-        ? taskErr.sub_task[0]?.task_type
-        : 'N/A',
+        taskName: taskErr.task_id,
         errCode: "Err001",
-        criticality: taskErr.criticality,
+        criticality: taskErr.Error_code,
         desc: "Robot is in Error State",
       };
-    });
-    console.log("jusghowhtiwo")
-    this.filteredTaskData = this.taskData;
-    console.log("94u350803485-43")
+    }).filter((Err:any)=> Err!==null)
+    this.filteredTaskData = this.taskData;    
     this.setPaginatedData();
   }
 // async getTaskLogs() {

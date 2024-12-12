@@ -25,7 +25,7 @@
     <span
       class="w-full h-[55px] text-[14px] text-black font-semibold rounded-[6px] bg-[#ffcdcd] flex items-center justify-between px-4">
       <span class="w-[30%] text-[14px] h-[55px] flex items-center justify-between">
-        <p class=" text-[14px] flex items-center h-full justify-start w-full ">Name</p>
+        <p class="w-full text-[14px] flex items-center h-full pl-3 justify-start ">Name</p>
       </span>
       <span class="flex text-[14px] h-[40px] w-[80%] items-center justify-between">
         <p class="w-full text-[14px] flex items-center h-full pl-3 justify-start ">User Type</p>
@@ -342,13 +342,13 @@
   class="relative overflow-y-auto flex items-center justify-center w-screen h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50 box-border">
 
   <div
-    class="w-[70%] h-[70%] relative overflow-y-auto scrollCSS MinimalScrollCSS py-10 bg-[#D9D9D9] rounded-[20px] px-10 flex flex-col gap-5">
+    class="w-[70%] h-[70%] relative overflow-y-auto scrollCSS MinimalScrollCSS py-10 bg-[#FFFFFF] rounded-[20px] px-10 flex flex-col gap-5">
 
     <!-- Title and Close Button -->
     <div class="flex items-center justify-between w-full">
       <div class="flex flex-col items-start gap-2.5">
-        <p class="text-[38px] text-[#DA2127] font-bold">User Permissions</p>
-        <p class="text-[14px] text-[#7B7B7B] font-medium">Select a category to manage permissions</p>
+        <p class="text-[36px] text-[#DA2127] font-bold">User Permissions</p>
+        <p class="text-[16px] text-[#7B7B7B] ">Select a category to manage permissions</p>
       </div>
       <button class="close-button" (click)="userPermissionPopUpClose()">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
@@ -374,11 +374,11 @@
         @for (page of pages; track page) {
         <span (click)=changePage(page.order)
           class="flex z-40 items-center justify-center text-black w-[180px] cursor-pointer h-[50px]">
-          <p [ngClass]="{'text-white font-bold duration-300 ': page.isOpen}">{{page.nameTag}}</p>
+          <p [ngClass]="{'text-white  duration-300 ': page.isOpen}">{{page.nameTag}}</p>
         </span>
         }
       </div>
-      <button class="px-8 py-3 bg-[#D30000] rounded-md text-white font-semibold text-[14px]"
+      <button class="px-8 py-3 bg-[#D30000] rounded-md text-white text-[14px]"
         (click)="saveEditPermission()">UPDATE</button>
     </div>
 
@@ -391,17 +391,17 @@
           <div *ngFor="let permission of generalPermissions">
             <!-- Card -->
             <div
-              class="bg-white p-5 w-full h-[200px] gap-3 rounded-[15px] shadow-lg hover:shadow-xl hover:scale-[1.02] transition transform duration-300 ease-in-out relative flex flex-col">
+              class="p-5 w-full h-[200px] gap-3 rounded-[15px] bg-[#d9d9d9] shadow-inner hover:shadow-lg hover:scale-[1.02] transition transform duration-300 ease-in-out relative flex flex-col">
               <div class="flex items-center justify-start gap-3">
                 <!-- Icon -->
-                <div class="bg-[#FF3333] rounded-md size-[50px] flex items-center justify-center">
+                <div class="bg-[#FF3333] rounded-md size-[50px] shadow-lg flex items-center justify-center">
                   <img [src]="permission.icon" alt="{{ permission.nameTag }} icon" class="size-[60%]" />
                 </div>
                 <!-- Title -->
-                <p class="text-[26px] font-black pt-1  text-black">{{ permission.nameTag }}</p>
+                <p class="text-[24px] font-black pt-1 font-bold text-black">{{ permission.nameTag }}</p>
               </div>
               <!-- Description -->
-              <p class="text-[16px] text-[#7B7B7B] text-wrap text-justify leading-5 indent-4 tracking-wide flex-grow">
+              <p class="text-[14px] text-[#7B7B7B] text-wrap text-justify leading-5 indent-4 tracking-wide flex-grow">
                  {{ permission.description }}
               </p>
               <!-- Toggle Switch -->
@@ -430,8 +430,8 @@
             <!-- Card -->
             <div class="flex items-center justify-between mb-3">
               <div>
-                <p class="text-[24px] sm:text-[20px] lg:text-[28px] font-semibold text-black">{{ config.title }}</p>
-                <p class="text-[13px] sm:text-[14px] lg:text-[18px] text-[#7B7B7B] max-w-[140px]">{{ config.description }}</p>
+                <p class="text-[26px] sm:text-[20px] lg:text-[28px]  text-black">{{ config.title }}</p>
+                <p class="text-[10px] sm:text-[10px] lg:text-[10px] text-[#7B7B7B] max-w-[140px]">{{ config.description }}</p>
 
               </div>
               <label class="switch">
@@ -453,7 +453,7 @@
 
                   <!-- Toggle Switch -->
                   <label class="switch">
-                    <input type="checkbox" [disabled]="!config.enabled" [(ngModel)]="subOption.enabled"
+                    <input type="checkbox" *ngIf="config.enabled" [disabled]="!config.enabled" [(ngModel)]="subOption.enabled"
                       class="sr-only peer" />
                     <span class="slider"></span>
                   </label>

@@ -43,6 +43,7 @@ export class ProjectGuard implements CanActivate {
   }
 
   checkPermissions(url: string): boolean{
+    // console.log('----general permissions', this.userPermissionService.getPermissions())
     let {generalPermissions} = this.userPermissionService.getPermissions()
     if(url==='/dashboard' && generalPermissions.dashboard) {
       this.router.navigate([url])
@@ -60,15 +61,15 @@ export class ProjectGuard implements CanActivate {
       this.router.navigate([url])
       return true;
     }
-    if(url==='/Reports')  {
+    if(url==='/Reports' && generalPermissions.errors)  {
       // this.router.navigate([url])
       this.router.navigate([url])
-      return false;
+      return true;
     }
-    // if(url==='/usermanagement' && generalPermissions.userManagement)  {
-    //   // this.router.navigate([url])
-    //   return true;
-    // }
+    if(url==='/usermanagement' && generalPermissions.userManagement)  {
+      this.router.navigate([url])
+      return true;
+    }
     this.router.navigate(['/dashboard'])
     return false
   }

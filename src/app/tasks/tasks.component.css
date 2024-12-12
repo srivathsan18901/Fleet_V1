@@ -420,7 +420,10 @@
 .switch-container {
   order: 2; /* Place this below the top bar */
 }
-
+.headtest{
+  position: fixed;
+  
+}
 .switch-container {
   display: flex;
   align-items: center; /* Vertical alignment */

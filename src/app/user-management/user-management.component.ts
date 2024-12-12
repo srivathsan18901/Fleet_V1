@@ -151,7 +151,7 @@ export class UserManagementComponent implements OnInit {
     { order: 2, nameTag: 'ROBOTS', icon: '../../assets/icons/Statistics_icon.svg', enabled: false, description: "Grant control over robot monitoring and performance tracking." },
     { order: 3, nameTag: 'ERRORS', icon: '../../assets/icons/Logs_icons.svg', enabled: false, description: "Manage permissions to view and resolve error logs and issues."},
     { order: 4, nameTag: 'TASKS', icon: '../../assets/icons/Tasks_icons.svg', enabled: false, description: "Control user access to create, edit, and view tasks." },
-    { order: 5, nameTag: 'USER MANAGEMENT', icon: '../../assets/icons/Usermanagement_icons.svg', enabled: false, description:  "Administer user roles and permissions within the system."  },
+    { order: 5, nameTag: 'USER MANAGEMENT', icon: '../../assets/icons/Usermanagement_icons.svg', enabled: false, description:  "Administrator user roles and permissions within the system."  },
 ];
 
 
@@ -189,7 +189,7 @@ export class UserManagementComponent implements OnInit {
         { label: 'Create', enabled: false },
         { label: 'Edit', enabled: false },
         { label: 'Delete', enabled: false },
-        { label: 'View', enabled: false },
+        // { label: 'View', enabled: false },
       ],
     },
     {
@@ -200,7 +200,7 @@ export class UserManagementComponent implements OnInit {
         { label: 'Create', enabled: false },
         { label: 'Edit', enabled: false },
         { label: 'Delete', enabled: false },
-        { label: 'View', enabled: false },
+        // { label: 'View', enabled: false },
       ],
     },
     {
@@ -208,10 +208,10 @@ export class UserManagementComponent implements OnInit {
       description: 'Fleet configurations.',
       enabled: false,
       subOptions: [
-        { label: 'Create', enabled: false },
-        { label: 'Edit', enabled: false },
-        { label: 'Delete', enabled: false },
-        { label: 'View', enabled: false },
+        // { label: 'Create', enabled: false },
+        // { label: 'Edit', enabled: false },
+        // { label: 'Delete', enabled: false },
+        // { label: 'View', enabled: false },
       ],
     },
   ];
@@ -633,7 +633,7 @@ export class UserManagementComponent implements OnInit {
         return response.json();
       })
       .then((data) => {
-        console.log(data,'permission -----------');
+        console.log(data.permissions,'permission -----------');
         // Update the local permission state
 
         let {generalPermissions, configurationPermissions} = data.permissions
@@ -649,24 +649,23 @@ export class UserManagementComponent implements OnInit {
         this.configurationSettings[0].subOptions[0].enabled = configurationPermissions.environment.create
         this.configurationSettings[0].subOptions[1].enabled = configurationPermissions.environment.edit
         this.configurationSettings[0].subOptions[2].enabled = configurationPermissions.environment.delete
-        this.configurationSettings[0].subOptions[3].enabled = configurationPermissions.environment.view
+        // this.configurationSettings[0].subOptions[3].enabled = configurationPermissions.environment.view
 
 
         this.configurationSettings[1].enabled = configurationPermissions.robot.enabled
         this.configurationSettings[1].subOptions[0].enabled = configurationPermissions.robot.create
         this.configurationSettings[1].subOptions[1].enabled = configurationPermissions.robot.edit
         this.configurationSettings[1].subOptions[2].enabled = configurationPermissions.robot.delete
-        this.configurationSettings[1].subOptions[3].enabled = configurationPermissions.robot.view
+        // this.configurationSettings[1].subOptions[3].enabled = configurationPermissions.robot.view
 
 
 
 
         this.configurationSettings[2].enabled = configurationPermissions.fleet.enabled
-        this.configurationSettings[2].subOptions[0].enabled = configurationPermissions.fleet.create
-        this.configurationSettings[2].subOptions[1].enabled = configurationPermissions.fleet.edit
-        this.configurationSettings[2].subOptions[2].enabled = configurationPermissions.fleet.delete
-        this.configurationSettings[2].subOptions[3].enabled = configurationPermissions.fleet.view
-
+        // this.configurationSettings[2].subOptions[0].enabled = configurationPermissions.fleet.create
+        // this.configurationSettings[2].subOptions[1].enabled = configurationPermissions.fleet.edit
+        // this.configurationSettings[2].subOptions[2].enabled = configurationPermissions.fleet.delete
+        // this.configurationSettings[2].subOptions[3].enabled = configurationPermissions.fleet.view
 
       })
       .catch((error) => {
@@ -785,7 +784,7 @@ export class UserManagementComponent implements OnInit {
           create: this.configurationSettings[0].subOptions[0].enabled,
           edit: this.configurationSettings[0].subOptions[1].enabled,
           delete: this.configurationSettings[0].subOptions[2].enabled,
-          view: this.configurationSettings[0].subOptions[3].enabled
+          // view: this.configurationSettings[0].subOptions[3].enabled
 
 
         },
@@ -794,15 +793,15 @@ export class UserManagementComponent implements OnInit {
           create: this.configurationSettings[1].subOptions[0].enabled,
           edit: this.configurationSettings[1].subOptions[1].enabled,
           delete: this.configurationSettings[1].subOptions[2].enabled,
-          view: this.configurationSettings[1].subOptions[3].enabled
+          // view: this.configurationSettings[1].subOptions[3].enabled
 
         },
         fleet: {
           enabled: this.configurationSettings[2].enabled,
-          create: this.configurationSettings[2].subOptions[0].enabled,
-          edit: this.configurationSettings[2].subOptions[1].enabled,
-          delete: this.configurationSettings[2].subOptions[2].enabled,
-          view: this.configurationSettings[2].subOptions[3].enabled
+          // create: this.configurationSettings[2].subOptions[0].enabled,
+          // edit: this.configurationSettings[2].subOptions[1].enabled,
+          // delete: this.configurationSettings[2].subOptions[2].enabled,
+          // view: this.configurationSettings[2].subOptions[3].enabled
 
         }
       }

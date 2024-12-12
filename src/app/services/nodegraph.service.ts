@@ -10,7 +10,9 @@ export class NodeGraphService {
   private zones: any[] = [];
   private simMode: any[] = [];
   private robos: any[] = [];
-
+  private zoomLevel:number=1.0;
+  private offsetX:number=0;
+  private offsetY:number=0;
   showModelCanvas: boolean = false;
 
   constructor() {}
@@ -72,5 +74,23 @@ export class NodeGraphService {
   getRobos() {
     return this.robos;
   }
-
+  
+  setZoomLevel(zoomLevel:number){
+    this.zoomLevel = zoomLevel;
+  }
+  getZoomLevel(){
+    return this.zoomLevel;
+  }
+  setOffsetX(offsetX:number){
+    this.offsetX = offsetX;
+  }
+  getOffsetX(){
+    return this.offsetX;
+  }
+  setOffsetY(offsetY:number){
+    this.offsetY = offsetY;
+  }
+  getOffsetY(){
+    return this.offsetY;
+  }
 }

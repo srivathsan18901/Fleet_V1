@@ -26,10 +26,10 @@ export interface Robot {
   temperature: string;
   networkstrength: string;
   robotutilization: string;
-  cpuutilization: string;
+  cpuutilization: number;
   memory: string;
-  totalPicks: string;
-  totalDrops: string;
+  PickCount: string;
+  DropCount: string;
   SignalStrength: string;
   error: number;
   batteryPercentage: number;
@@ -68,7 +68,7 @@ export class RobotDetailPopupComponent {
   toggleConnection() {
     console.log('toggle is clicked')
     this.data.isConnected=!this.data.isConnected;
-    console.log(this.data);
+    // console.log(this.data);
     this.isConnected = !this.isConnected;
   }
 // active & Inactive
@@ -87,7 +87,15 @@ export class RobotDetailPopupComponent {
   onEmergencyStop() {
     alert('Emergency Stop Pressed!');
   }
-
+  truncateValue(value: number): string {
+    const valueString = value.toString(); // Convert number to string
+    if (valueString.length > 3) {
+      return valueString.slice(0, 3) + '...'; // Truncate and append '...'
+    }
+    return valueString; // Return the whole string if 3 or fewer digits
+  }
+  
+  
   getClassForCircle(percentage: number, threshold: number): string {
     return percentage >= threshold ? 'filled' : '';
   }
@@ -132,16 +140,16 @@ export class RobotDetailPopupComponent {
     this.pick = this.fetchChartData();
     this.specific = this.robotDetails();
     this.distance = this.fetchDistance();
-    console.log(this.specific,"=======================specific======================");
-    console.log(this.pick,"==========================pick===================");
-    console.log(this.distance,"======================distance=======================");
+    // console.log(this.specific,"=======================specific======================");
+    // console.log(this.pick,"==========================pick===================");
+    // console.log(this.distance,"======================distance=======================");
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     this.setSignalStrength(this.data.SignalStrength);
-    console.log(this.data,'data=========================')
+    // console.log(this.data,'data=========================')
     this.mapId = this.selectedMap.id;
-    console.log("dolu", this.mapId)
+    // console.log("dolu", this.mapId)
     this.populatedRobo();
-    console.log(this.populatedRobo)
+    // console.log(this.populatedRobo)
     this.fetchLiveRobosData();
     this.projectService.getRobotUtilization(this.mapId, timeStamp1, timeStamp2).subscribe(
       (data) => {
@@ -153,9 +161,14 @@ export class RobotDetailPopupComponent {
         console.error('Error fetching robot utilization:', error);
       }
     );
-    console.log(this.robotUtilization,"---------------robot utilization ------------");
+    // console.log(this.robotUtilization,"---------------robot utilization ------------");
    }
-
+   truncateNumber(value: number): string {
+    const numberString = value.toString();
+    // Limit visible characters, truncate after a few digits and add '...'
+    return numberString.length > 5 ? numberString.substring(0, 4) + '..' : numberString;
+    }
+  
    fetchChartData(): Promise<any> {
     const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     // console.log(timeSpan, 'time span robot');
