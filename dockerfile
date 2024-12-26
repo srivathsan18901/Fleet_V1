@@ -1,5 +1,5 @@
-# Step 1: Build the Angular application
-FROM node:18 AS build
+# Use the official Node.js image
+FROM node:18
 
 # Set the working directory
 WORKDIR /app
@@ -10,23 +10,11 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Install Angular CLI globally
-RUN npm install -g @angular/cli
-
-# Copy the rest of the application files
+# Copy the rest of your application code
 COPY . .
 
-# Build the Angular application
-RUN npm run build --prod
+# Expose the port your app runs on
+EXPOSE 3000
 
-# Step 2: Serve the application using Nginx
-FROM nginx:alpine
-
-# Copy the built application from the previous stage
-COPY --from=build /app/dist/fleet-ui/browser /usr/share/nginx/html
-
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+# Command to run your application
+CMD ["node", "server.js"]
