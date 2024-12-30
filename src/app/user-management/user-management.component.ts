@@ -14,7 +14,6 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
   styleUrl: './user-management.component.css',
 })
 export class UserManagementComponent implements OnInit {
-
   filteredTaskData: any;
   constructor(
     private authService: AuthService,
@@ -22,7 +21,7 @@ export class UserManagementComponent implements OnInit {
     private projectService: ProjectService
   ) {}
 
-  @ViewChild(MatPaginator) paginator!: MatPaginator ;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   selectedProject: any | null = null;
   userId = 0;
   userName = '';
@@ -39,16 +38,16 @@ export class UserManagementComponent implements OnInit {
   userCreatePopUp = false;
   deleteUserOCstate = false;
   userCredentialsTemplate: any = {};
-  filteredData:any[] = [];
-  paginatedData:any[] = [];
+  filteredData: any[] = [];
+  paginatedData: any[] = [];
   user: any;
   currUserName: string | null = null;
   deleteUserName = '';
   passwordView = 'SHOW';
   confrimPasswordView = 'SHOW';
   deleteUserRole = '';
-  pageSize:any = 0
-  pageNumber:any = 0
+  pageSize: any = 0;
+  pageNumber: any = 0;
   activeTab: string = 'General'; // Default tab
 
   ngOnInit(): void {
@@ -66,7 +65,6 @@ export class UserManagementComponent implements OnInit {
     this.fetchUsers();
     this.setPaginatedData();
   }
-
 
   userPermissionState = [
     [
@@ -113,54 +111,86 @@ export class UserManagementComponent implements OnInit {
     ],
   ];
 
-
-
-
-  pages:any = [
+  pages: any = [
     {
       order: 0,
-      nameTag: "GENERAL",
-      isOpen:true,
-      general: "General"
+      nameTag: 'GENERAL',
+      isOpen: true,
+      general: 'General',
     },
     {
-      order:1,
-      nameTag: "CONFIGURATION",
+      order: 1,
+      nameTag: 'CONFIGURATION',
       isOpen: false,
-      general: "Configuration"
-    }
-  ]
+      general: 'Configuration',
+    },
+  ];
 
-
-  changePage(order:any) {
+  changePage(order: any) {
     // alert(order)
-    this.pages.map((page:any)=> {
-      page.isOpen = false
-    })
+    this.pages.map((page: any) => {
+      page.isOpen = false;
+    });
 
-    this.pages[order].isOpen = true
-    this.activeTab = this.pages[order].general
+    this.pages[order].isOpen = true;
+    this.activeTab = this.pages[order].general;
     // alert(this.activeTab)
-
   }
 
-
   generalPermissions = [
-    { order: 0, nameTag: 'DASHBOARD', icon: '../../assets/icons/dashboard_icon copy.svg', enabled: false, description: "Control user access to dashboard data and performance insights." },
-    { order: 1, nameTag: 'STATISTICS', icon: '../../assets/icons/Statistics.svg', enabled: false, description: "Manage access to statistical data and analytical reports." },
-    { order: 2, nameTag: 'ROBOTS', icon: '../../assets/icons/Statistics_icon.svg', enabled: false, description: "Grant control over robot monitoring and performance tracking." },
-    { order: 3, nameTag: 'ERRORS', icon: '../../assets/icons/Logs_icons.svg', enabled: false, description: "Manage permissions to view and resolve error logs and issues."},
-    { order: 4, nameTag: 'TASKS', icon: '../../assets/icons/Tasks_icons.svg', enabled: false, description: "Control user access to create, edit, and view tasks." },
-    { order: 5, nameTag: 'USER MANAGEMENT', icon: '../../assets/icons/Usermanagement_icons.svg', enabled: false, description:  "Administrator user roles and permissions within the system."  },
-];
-
+    {
+      order: 0,
+      nameTag: 'DASHBOARD',
+      icon: '../../assets/icons/dashboard_icon copy.svg',
+      enabled: false,
+      description:
+        'Control user access to dashboard data and performance insights.',
+    },
+    {
+      order: 1,
+      nameTag: 'STATISTICS',
+      icon: '../../assets/icons/Statistics.svg',
+      enabled: false,
+      description: 'Manage access to statistical data and analytical reports.',
+    },
+    {
+      order: 2,
+      nameTag: 'ROBOTS',
+      icon: '../../assets/icons/Statistics_icon.svg',
+      enabled: false,
+      description:
+        'Grant control over robot monitoring and performance tracking.',
+    },
+    {
+      order: 3,
+      nameTag: 'ERRORS',
+      icon: '../../assets/icons/Logs_icons.svg',
+      enabled: false,
+      description:
+        'Manage permissions to view and resolve error logs and issues.',
+    },
+    {
+      order: 4,
+      nameTag: 'TASKS',
+      icon: '../../assets/icons/Tasks_icons.svg',
+      enabled: false,
+      description: 'Control user access to create, edit, and view tasks.',
+    },
+    {
+      order: 5,
+      nameTag: 'USER MANAGEMENT',
+      icon: '../../assets/icons/Usermanagement_icons.svg',
+      enabled: false,
+      description:
+        'Administrator user roles and permissions within the system.',
+    },
+  ];
 
   configurationPermissions = [
     { order: 3, nameTag: 'CONFIGURATION' },
     { order: 4, nameTag: 'ERROR LOGS' },
     { order: 5, nameTag: 'TASKS' },
   ];
-
 
   userRoleCredentials = [
     {
@@ -215,8 +245,7 @@ export class UserManagementComponent implements OnInit {
       ],
     },
   ];
-  
-  
+
   // Triggered when a main toggle is switched
   onToggleMain(config: any): void {
     if (!config.enabled) {
@@ -225,12 +254,13 @@ export class UserManagementComponent implements OnInit {
       });
     }
   }
-  
+
   // Triggered when a sub-option is toggled
   onToggleSub(config: any, subOption: any): void {
-    console.log(`Sub-option ${subOption.label} for ${config.title} is now ${subOption.enabled}`);
+    console.log(
+      `Sub-option ${subOption.label} for ${config.title} is now ${subOption.enabled}`
+    );
   }
-  
 
   setActiveTab(tab: string): void {
     this.activeTab = tab;
@@ -269,7 +299,7 @@ export class UserManagementComponent implements OnInit {
             month: 'short',
             year: 'numeric',
           });
-        
+
           // Format the time in "11:34 PM" format (12-hour format with AM/PM)
           let createdTime = dateString.toLocaleTimeString('en-IN', {
             hour: '2-digit',
@@ -316,28 +346,28 @@ export class UserManagementComponent implements OnInit {
     return '';
   }
 
-  setPaginatedData(){
-    const pageSize1 = this.paginator?.pageSize || 5;  // Default pageSize to 5 if paginator is not yet available
+  setPaginatedData() {
+    const pageSize1 = this.paginator?.pageSize || 5; // Default pageSize to 5 if paginator is not yet available
     let pageIndex1 = this.paginator?.pageIndex || 0; // Default pageIndex to 0 (first page)
-  
+
     // Ensure that we reset to the first page if the page becomes empty after deletion
     const totalItems = this.filteredData.length;
     const totalPages = Math.ceil(totalItems / pageSize1);
-  
+
     // If the current page index exceeds the total number of pages after deletion, reset to page 1
     if (pageIndex1 >= totalPages) {
       pageIndex1 = 0;
       this.paginator.pageIndex = pageIndex1;
     }
-  
+
     // Paginate the data based on the current page and page size
     const startIndex = pageIndex1 * pageSize1;
     const endIndex = startIndex + pageSize1;
-  
+
     // Update the paginated data with the sliced portion of the data array
     this.paginatedData = this.filteredData.slice(startIndex, endIndex);
     // console.log(this.filteredRobotData);
-  
+
     // Ensure the paginator reflects the correct page size and total data length
     if (this.paginator) {
       this.paginator.length = this.filteredData.length;
@@ -345,18 +375,14 @@ export class UserManagementComponent implements OnInit {
     }
     //  this.fetchUsers();
   }
-   
 
-
-    // Ensure pagination is triggered on page change
-    onPageChange(event: PageEvent) {
-      this.pageNumber = event.pageIndex
-      this.paginator.pageSize = event.pageSize;
-      this.pageSize = event.pageSize
-      this.setPaginatedData();  // Update paginated data on page change
-    }
-
-
+  // Ensure pagination is triggered on page change
+  onPageChange(event: PageEvent) {
+    this.pageNumber = event.pageIndex;
+    this.paginator.pageSize = event.pageSize;
+    this.pageSize = event.pageSize;
+    this.setPaginatedData(); // Update paginated data on page change
+  }
 
   trackByTaskId(index: number, user: any): number {
     return user.userId; // or any unique identifier like taskId
@@ -622,7 +648,7 @@ export class UserManagementComponent implements OnInit {
 
   // fetch user permission..
   fetchUserPermissions(userId: string) {
-    console.log(userId,'---------------userId')
+    console.log(userId, '---------------userId');
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/auth/get-permissions/${userId}`
     )
@@ -633,40 +659,43 @@ export class UserManagementComponent implements OnInit {
         return response.json();
       })
       .then((data) => {
-        console.log(data.permissions,'permission -----------');
+        console.log(data.permissions, 'permission -----------');
         // Update the local permission state
 
-        let {generalPermissions, configurationPermissions} = data.permissions
+        let { generalPermissions, configurationPermissions } = data.permissions;
         this.generalPermissions[0].enabled = generalPermissions.dashboard;
         this.generalPermissions[1].enabled = generalPermissions.statistics;
         this.generalPermissions[2].enabled = generalPermissions.robots;
         this.generalPermissions[3].enabled = generalPermissions.errors;
         this.generalPermissions[4].enabled = generalPermissions.tasks;
         this.generalPermissions[5].enabled = generalPermissions.userManagement;
-        
 
-        this.configurationSettings[0].enabled = configurationPermissions.environment.enabled
-        this.configurationSettings[0].subOptions[0].enabled = configurationPermissions.environment.create
-        this.configurationSettings[0].subOptions[1].enabled = configurationPermissions.environment.edit
-        this.configurationSettings[0].subOptions[2].enabled = configurationPermissions.environment.delete
+        this.configurationSettings[0].enabled =
+          configurationPermissions.environment.enabled;
+        this.configurationSettings[0].subOptions[0].enabled =
+          configurationPermissions.environment.create;
+        this.configurationSettings[0].subOptions[1].enabled =
+          configurationPermissions.environment.edit;
+        this.configurationSettings[0].subOptions[2].enabled =
+          configurationPermissions.environment.delete;
         // this.configurationSettings[0].subOptions[3].enabled = configurationPermissions.environment.view
 
-
-        this.configurationSettings[1].enabled = configurationPermissions.robot.enabled
-        this.configurationSettings[1].subOptions[0].enabled = configurationPermissions.robot.create
-        this.configurationSettings[1].subOptions[1].enabled = configurationPermissions.robot.edit
-        this.configurationSettings[1].subOptions[2].enabled = configurationPermissions.robot.delete
+        this.configurationSettings[1].enabled =
+          configurationPermissions.robot.enabled;
+        this.configurationSettings[1].subOptions[0].enabled =
+          configurationPermissions.robot.create;
+        this.configurationSettings[1].subOptions[1].enabled =
+          configurationPermissions.robot.edit;
+        this.configurationSettings[1].subOptions[2].enabled =
+          configurationPermissions.robot.delete;
         // this.configurationSettings[1].subOptions[3].enabled = configurationPermissions.robot.view
 
-
-
-
-        this.configurationSettings[2].enabled = configurationPermissions.fleet.enabled
+        this.configurationSettings[2].enabled =
+          configurationPermissions.fleet.enabled;
         // this.configurationSettings[2].subOptions[0].enabled = configurationPermissions.fleet.create
         // this.configurationSettings[2].subOptions[1].enabled = configurationPermissions.fleet.edit
         // this.configurationSettings[2].subOptions[2].enabled = configurationPermissions.fleet.delete
         // this.configurationSettings[2].subOptions[3].enabled = configurationPermissions.fleet.view
-
       })
       .catch((error) => {
         console.error('Error fetching user permissions:', error);
@@ -717,58 +746,8 @@ export class UserManagementComponent implements OnInit {
       return;
     }
 
-    // Prepare the permissions object to send to the backend
-    // const updatedPermissions = {
-    //   dashboard: {
-    //     enable: this.userPermissionState[0][0],
-    //     create: this.userPermissionState[0][1],
-    //     edit: this.userPermissionState[0][2],
-    //     delete: this.userPermissionState[0][3],
-    //     view: this.userPermissionState[0][4],
-    //   },
-    //   statistics: {
-    //     enable: this.userPermissionState[1][0],
-    //     create: this.userPermissionState[1][1],
-    //     edit: this.userPermissionState[1][2],
-    //     delete: this.userPermissionState[1][3],
-    //     view: this.userPermissionState[1][4],
-    //   },
-    //   robots: {
-    //     enable: this.userPermissionState[2][0],
-    //     create: this.userPermissionState[2][1],
-    //     edit: this.userPermissionState[2][2],
-    //     delete: this.userPermissionState[2][3],
-    //     view: this.userPermissionState[2][4],
-    //   },
-    //   configuration: {
-    //     enable: this.userPermissionState[3][0],
-    //     create: this.userPermissionState[3][1],
-    //     edit: this.userPermissionState[3][2],
-    //     delete: this.userPermissionState[3][3],
-    //     view: this.userPermissionState[3][4],
-    //   },
-    //   errLogs: {
-    //     enable: this.userPermissionState[4][0],
-    //     create: this.userPermissionState[4][1],
-    //     edit: this.userPermissionState[4][2],
-    //     delete: this.userPermissionState[4][3],
-    //     view: this.userPermissionState[4][4],
-    //   },
-    //   tasks: {
-    //     enable: this.userPermissionState[5][0],
-    //     create: this.userPermissionState[5][1],
-    //     edit: this.userPermissionState[5][2],
-    //     delete: this.userPermissionState[5][3],
-    //     view: this.userPermissionState[5][4],
-    //   },
-    // };
-
-
-
-
     //NEW UI BACKEND SCHEMA
     const updatedPermissions = {
-
       generalPermissions: {
         dashboard: this.generalPermissions[0].enabled,
         statistics: this.generalPermissions[1].enabled,
@@ -785,8 +764,6 @@ export class UserManagementComponent implements OnInit {
           edit: this.configurationSettings[0].subOptions[1].enabled,
           delete: this.configurationSettings[0].subOptions[2].enabled,
           // view: this.configurationSettings[0].subOptions[3].enabled
-
-
         },
         robot: {
           enabled: this.configurationSettings[1].enabled,
@@ -794,7 +771,6 @@ export class UserManagementComponent implements OnInit {
           edit: this.configurationSettings[1].subOptions[1].enabled,
           delete: this.configurationSettings[1].subOptions[2].enabled,
           // view: this.configurationSettings[1].subOptions[3].enabled
-
         },
         fleet: {
           enabled: this.configurationSettings[2].enabled,
@@ -802,13 +778,11 @@ export class UserManagementComponent implements OnInit {
           // edit: this.configurationSettings[2].subOptions[1].enabled,
           // delete: this.configurationSettings[2].subOptions[2].enabled,
           // view: this.configurationSettings[2].subOptions[3].enabled
-
-        }
-      }
-    }
+        },
+      },
+    };
 
     // console.log(updatedPermissions)
-    
 
     // Send the PUT request to update the user permissions
     fetch(
@@ -862,4 +836,3 @@ export class UserManagementComponent implements OnInit {
     this.deleteUserOCstate = !this.deleteUserOCstate;
   }
 }
-

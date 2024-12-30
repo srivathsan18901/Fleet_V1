@@ -74,6 +74,7 @@ import { GeneralComponent } from './configuration/Addons/general/general.compone
 import { PlannerComponent } from './configuration/Addons/planner/planner.component';
 import { CommunicationComponent } from './configuration/Addons/communication/communication.component';
 import { TaskComponent } from './configuration/Addons/task/task.component';
+import { HeatmapComponent } from './heatmap/heatmap.component';
 // import { NotAuthorizedComponent } from './guards/not-authorized/not-authorized.component';
 
 
@@ -123,6 +124,7 @@ import { TaskComponent } from './configuration/Addons/task/task.component';
     PlannerComponent,
     CommunicationComponent,
     TaskComponent,
+    HeatmapComponent,
 
 
   ],

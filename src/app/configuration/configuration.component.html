@@ -156,7 +156,7 @@
        <div class="button-container">
         <div class="button-frame">
           <div class="">
-            <button *ngIf="userManagementData?.permissions?.configurationPermissions?.environment?.enabled"
+            <button *ngIf="userManagementData?.configurationPermissions?.environment?.enabled"
               class="button" [ngClass]="{
                 'active-button': activeButton === 'Environment',
                 'transition-active': isTransitioning
@@ -165,7 +165,7 @@
             </button>
 
 
-            <button *ngIf="userManagementData?.permissions?.configurationPermissions?.robot?.enabled" class="button"
+            <button *ngIf="userManagementData?.configurationPermissions?.robot?.enabled" class="button"
               [ngClass]="{
                 'active-button': activeButton === 'robot',
                 'transition-active': isTransitioning
@@ -174,7 +174,7 @@
             </button>
 
 
-            <button *ngIf="userManagementData?.permissions?.configurationPermissions?.fleet?.enabled" class="button"
+            <button *ngIf="userManagementData?.configurationPermissions?.fleet?.enabled" class="button"
               [ngClass]="{
                 'active-button': activeButton === 'fleet',
                 'transition-active': isTransitioning
@@ -565,7 +565,7 @@
               >
                 General
               </li>
-              <!-- <li
+              <li
                   [class.active]="fleetTab === 'planner'"
                   (click)="setFleetTab('planner')"
                 >
@@ -588,36 +588,41 @@
                   (click)="setFleetTab('communication')"
                 >
                 Communication
-              </li> -->
+              </li>
             </ul>
 
             <div *ngIf="fleetTab === 'general'">
-              <!-- <h2>Edit the Fleet Parameters</h2> -->
-              <!-- Add content for the General tab -->
+              <h2>Edit the Fleet Parameters</h2>
+              Add content for the General tab
               <app-general></app-general>
             </div>
-            <!-- <div *ngIf="fleetTab === 'planner'"> -->
-            <!-- <h2>Planner Settings</h2> -->
-            <!-- Add content for the Planner tab -->
-            <!-- <app-planner></app-planner> -->
-            <!-- </div> -->
-            <!-- <div *ngIf="fleetTab === 'task'"> -->
-            <!-- <h2>Task Management</h2> -->
-            <!-- Add content for the Task tab -->
-            <!-- <app-task></app-task> -->
-            <!-- </div> -->
-            <!-- <div *ngIf="fleetTab === 'battery'"> -->
-            <!-- <h2>Battery Information</h2> -->
-            <!-- Add content for the Battery tab -->
-            <!-- <app-battery></app-battery> -->
-            <!-- </div> -->
-            <!-- <div *ngIf="fleetTab === 'communication'"> -->
-            <!-- <h2>Communication Settings</h2> -->
-            <!-- <app-communication></app-communication> -->
-            <!-- </div> -->
+            <div *ngIf="fleetTab === 'planner'">
+              <h2>Planner Settings</h2>
+              Add content for the Planner tab
+              <app-planner></app-planner>
+            </div>
+            <div *ngIf="fleetTab === 'task'">
+              <h2>Task Management</h2>
+              Add content for the Task tab
+              <app-task></app-task>
+            </div>
+            <div *ngIf="fleetTab === 'battery'">
+              <h2>Battery Information</h2>
+              Add content for the Battery tab
+              <app-battery></app-battery>
+            </div>
+              <div *ngIf="fleetTab === 'communication'">
+              <h2>Communication Settings</h2>
+              <app-communication></app-communication>
+            </div>
           </div>
 
-          <div class="Create-button-container" *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.create== true">
+          <div class="Create-button-container" *ngIf="userManagementData?.configurationPermissions?.environment?.enabled == true">
+
+
+            <!-- *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.create== true" -->
+
+
             <button
               class="Create-button"
               *ngIf="activeButton === 'Environment'"

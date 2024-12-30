@@ -24,16 +24,16 @@
       class="Nlogo"
     />
 
-    <div class="language-selector">
+    <!-- <div class="language-selector">
       <div class="language-toggle" (click)="languageChange()">
         <span class="language-info">
-          <div [(innerHTML)]="flagSvg" class="flag-icon"></div>
-          <p class="flag-name">{{flagName}}</p>
-        </span>
+          <!-- <div [(innerHTML)]="flagSvg" class="flag-icon"></div>
+          <p class="flag-name">{{flagName}}</p> -->
+        <!-- </span>
         <svg [ngClass]="{'rotate': languageArrowState}" class="arrow-icon" width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M5.75505 8.33739L0 2.58245L1.91834 0.664062L5.75505 4.50076L9.59169 0.664062L11.51 2.58245L5.75505 8.33739Z" fill="black"/>
         </svg>
-      </div>
+      </div> -->
       <!-- language dropdown -->
 
 
@@ -45,7 +45,7 @@
           </span>
         </div>
       </div> -->
-    </div>
+    <!-- </div>  -->
 
 
 
@@ -76,40 +76,41 @@
     </div>
 
     <div class="icons">
-      <div *ngIf="userManagementData.permissions.generalPermissions.dashboard" class="icon1" routerLink="/dashboard" routerLinkActive="active">
+      <div *ngIf="userManagementData.generalPermissions.dashboard" class="icon1" routerLink="/dashboard" routerLinkActive="active">
         <img src="../../assets/icons/dashboard_icon copy.svg" alt="" class="Dlogo" />
         <span class="label">Dashboard</span>
       </div>
 
-      <div *ngIf="userManagementData.permissions.generalPermissions.statistics" class="icon2" routerLink="/statistics" routerLinkActive="active">
+      <div *ngIf="userManagementData.generalPermissions.statistics" class="icon2" routerLink="/statistics" routerLinkActive="active">
         <img src="../../assets/icons/Statistics.svg" alt="" class="Slogo" />
         <span class="label">Statistics</span>
       </div>
 
-      <div *ngIf="userManagementData.permissions.generalPermissions.robots" class="icon3" routerLink="/robots" routerLinkActive="active">
+      <div *ngIf="userManagementData.generalPermissions.robots" class="icon3" routerLink="/robots" routerLinkActive="active">
         <img src="../../assets/icons/Statistics_icon.svg" alt="" class="Slogo" />
         <span class="label">Robots</span>
       </div>
 
-      @if (cookieValue.role !== "User" ) {
+      <!-- cookieValue.role !== "User" -->
+      @if (cookieValue.role) {
       <div  class="icon4" routerLink="/configuration" routerLinkActive="active">
         <img src="../../assets/icons/Configuration_icons.svg" alt="" class="Clogo" />
         <span class="label">Configuration</span>
       </div>
     }
 
-      
-      <div *ngIf="userManagementData.permissions.generalPermissions.errors" class="icon5" routerLink="/Reports" routerLinkActive="active">
+      <div *ngIf="userManagementData.generalPermissions.errors" class="icon5" routerLink="/Reports" routerLinkActive="active">
         <img src="../../assets/icons/Logs_icons.svg" alt="" class="Llogo" />
         <span class="label">Error logs</span>
       </div>
-      <div *ngIf="userManagementData.permissions.generalPermissions.tasks" class="icon6" routerLink="/tasks" routerLinkActive="active">
+      <div *ngIf="userManagementData.generalPermissions.tasks" class="icon6" routerLink="/tasks" routerLinkActive="active">
         <img src="../../assets/icons/Tasks_icons.svg" alt="" class="Llogo" />
         <span class="label">Tasks</span>
       </div>
 
-      @if (cookieValue.role === "Administrator") {
-        <div *ngIf="userManagementData.permissions.generalPermissions.userManagement" class="icon7" routerLink="/usermanagement" routerLinkActive="active">
+      <!-- (cookieValue.role === "Administrator") -->
+      @if (cookieValue.role) { 
+        <div *ngIf="userManagementData.generalPermissions.userManagement" class="icon7" routerLink="/usermanagement" routerLinkActive="active">
           <img src="../../assets/icons/Usermanagement_icons.svg" alt="" class="Llogo" />
           <span class="label">User Management</span>
         </div>

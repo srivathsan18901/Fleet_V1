@@ -1,4 +1,3 @@
-
 import { environment } from '../../environments/environment.development';
 import { ExportService } from '../export.service';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
@@ -40,8 +39,8 @@ export class Userlogscomponent {
   // Your task data
   taskData: any[] = [];
   filteredRobots: any[] = []; // To store filtered robots
-  roboerrors: any[]=[];
-  roboErr:any[]=[];
+  roboerrors: any[] = [];
+  roboErr: any[] = [];
   // Your robot data
   robotData: any[] = [];
 
@@ -49,7 +48,7 @@ export class Userlogscomponent {
   fleetData: any[] = [];
   isFleet: boolean = false; // Store the emitted value
   private subscriptions: Subscription[] = [];
-  
+
   constructor(
     private exportService: ExportService,
     private projectService: ProjectService,
@@ -76,26 +75,26 @@ export class Userlogscomponent {
     if (savedIsFleet !== null) {
       this.isFleet = savedIsFleet === 'true'; // Convert string to boolean
       this.isFleetService.setIsFleet(this.isFleet); // Sync the state with the service
-        }
-      
+    }
+
     this.onModeChange(this.currentMode);
     await this.fetchRobos();
     // data rendering
     await this.getRoboLogs();
-    setInterval(async() => {
+    setInterval(async () => {
       await this.getRoboLogs();
-    }, 1000*3);
+    }, 1000 * 3);
     await this.getTaskLogs();
-    setInterval(async() => {
+    setInterval(async () => {
       await this.getTaskLogs();
-    }, 1000*3);
+    }, 1000 * 3);
     this.getFleetLogs();
-    setInterval(async() => {
+    setInterval(async () => {
       await this.getFleetLogs();
-    }, 1000*3);
+    }, 1000 * 3);
   }
 
-  async ngAfterViewInit(){
+  async ngAfterViewInit() {
     this.setPaginatedData();
   }
 
@@ -105,7 +104,6 @@ export class Userlogscomponent {
   }
 
   getTimeStampsOfDay(establishedTime: Date) {
-
     let currentTime = Math.floor(new Date().getTime() / 1000);
     let startTimeOfDay = this.getStartOfDay(establishedTime);
     return {
@@ -118,96 +116,53 @@ export class Userlogscomponent {
     return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
 
- async getTaskLogs() {
+  async getTaskLogs() {
     this.mapData = this.projectService.getMapData();
     let establishedTime = new Date(this.mapData.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-    let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
       {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            timeStamp1: timeStamp1,
-            timeStamp2: timeStamp2,
-          }),
-        }
-      )
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+      }
+    );
     let data = await response.json();
     const { taskErr } = data;
-    this.taskData = data.taskErr.map((taskErr: any) => {  
-      if(taskErr===null)return null;
+    this.taskData = data.taskErr
+      .map((taskErr: any) => {
+        if (taskErr === null) return null;
 
-      let dateCreated = new Date(taskErr.TaskAddTime * 1000);
-      const formattedDateTime = `${dateCreated.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric',
-      })}, ${dateCreated.toLocaleTimeString('en-IN', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: true,
-      })}`;
-      return {
-        dateTime: formattedDateTime,
-        taskId: taskErr.task_id,
-        taskName: taskErr.task_id,
-        errCode: "Err001",
-        criticality: taskErr.Error_code,
-        desc: "Robot is in Error State",
-      };
-    }).filter((Err:any)=> Err!==null)
-    this.filteredTaskData = this.taskData;    
+        let dateCreated = new Date(taskErr.TaskAddTime * 1000);
+        const formattedDateTime = `${dateCreated.toLocaleDateString('en-IN', {
+          day: '2-digit',
+          month: 'short',
+          year: 'numeric',
+        })}, ${dateCreated.toLocaleTimeString('en-IN', {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+        })}`;
+        return {
+          dateTime: formattedDateTime,
+          taskId: taskErr.task_id,
+          taskName: taskErr.task_id,
+          errCode: 'Err001',
+          criticality: taskErr.Error_code,
+          desc: 'Robot is in Error State',
+        };
+      })
+      .filter((Err: any) => Err !== null);
+    this.filteredTaskData = this.taskData;
     this.setPaginatedData();
   }
-// async getTaskLogs() {
-//   this.mapData = this.projectService.getMapData();
-//   let establishedTime = new Date(this.mapData.createdAt);
-//   let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
 
-//   let response = await fetch(
-//     `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
-//     {
-//       method: 'POST',
-//       credentials: 'include',
-//       headers: { 'Content-Type': 'application/json' },
-//       body: JSON.stringify({
-//         timeStamp1: timeStamp1,
-//         timeStamp2: timeStamp2,
-//       }),
-//     }
-//   );
-//   let data = await response.json();
-//   let { taskLogs } = data;
-
-//   this.taskData = taskLogs.notifications.map((taskErr: any) => {
-//     const date = new Date();
-//     const formattedDateTime = `${date.toLocaleDateString('en-IN', {
-//       day: '2-digit',
-//       month: 'short',
-//       year: 'numeric',
-//     })}, ${date.toLocaleTimeString('en-IN', {
-//       hour: '2-digit',
-//       minute: '2-digit',
-//       hour12: true,
-//     })}`;
-//     return {
-//       dateTime: formattedDateTime,
-//       taskId: taskErr.task_id,
-//       taskName: taskErr.sub_task[0]?.task_type || 'N/A',
-//       errCode: 'Err001',
-//       criticality: taskErr.criticality,
-//       desc: 'Robot is in Error State',
-//     };
-//   });
-//   console.log(this.taskData,"==32=r4=2=42=34=24=")
-//   this.filteredTaskData = this.taskData;
-//   this.setPaginatedData();
-// }
-
-
-
-  async fetchRobos(){
+  async fetchRobos() {
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.mapData.mapName}`,
       {
@@ -223,15 +178,17 @@ export class Userlogscomponent {
         const { map } = data;
 
         // Check if the image URL is accessible
-        this.robots= map.roboPos
-      })
-
+        this.robots = map.roboPos;
+      });
   }
   async getLiveRoboInfo(): Promise<any[]> {
-    const response = await fetch(`http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`, {
-      method: 'GET',
-      credentials: 'include'
-    });
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
 
     const data = await response.json();
     if (!data.map || data.error) return [];
@@ -247,139 +204,123 @@ export class Userlogscomponent {
       return;
     }
 
-//Robotstatus
+    //Robotstatus
 
     let { robots }: any = this.liveRobos;
     if (!robots.length) this.robots = this.initialRoboInfos;
     this.robots = this.robots.map((robo) => {
       robots.forEach((liveRobo: any) => {
         if (robo.roboDet.id == liveRobo.id) {
-          robo.errors=liveRobo.robot_errors;
+          robo.errors = liveRobo.robot_errors;
         }
       });
       return robo;
     });
     this.filteredRobots = this.robots;
     this.setPaginatedData();
-    this.roboerrors=this.robots.map((robo)=>
-      {
-        return{
-          name:robo.roboDet.roboName,
-          error:robo.errors,
-          id:robo.roboDet.id
-        }
-      })
+    this.roboerrors = this.robots.map((robo) => {
+      return {
+        name: robo.roboDet.roboName,
+        error: robo.errors,
+        id: robo.roboDet.id,
+      };
+    });
   }
 
   async getRoboLogs() {
     this.liveRobos = await this.getLiveRoboInfo();
     this.updateLiveRoboInfo();
     // this.roboErr=[];
-    this.roboerrors.forEach((robo)=>{
-    // console.log(robo.error);
-    let date = new Date();
-    let createdAt = date.toLocaleString('en-IN', {
-      month: 'short',
-      year: 'numeric',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: 'numeric',
+    this.roboerrors.forEach((robo) => {
+      // console.log(robo.error);
+      let date = new Date();
+      let createdAt = date.toLocaleString('en-IN', {
+        month: 'short',
+        year: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      });
+      if (robo.error['EMERGENCY STOP'].length) {
+        robo.error['EMERGENCY STOP'].forEach((error: any) => {
+          this.roboErr.push({
+            name: robo.name,
+            error: error.name,
+            description: error.description,
+            id: robo.id,
+            dateTime: createdAt,
+          });
+        });
+      }
+      if (robo.error['MANUAL MODE'].length) {
+        robo.error['MANUAL MODE'].forEach((error: any) => {
+          this.roboErr.push({
+            name: robo.name,
+            error: error.name,
+            description: error.description,
+            id: robo.id,
+            dateTime: createdAt,
+          });
+        });
+      }
+      if (robo.error['LIDAR_ERROR'].length) {
+        robo.error['LIDAR_ERROR'].forEach((error: any) => {
+          this.roboErr.push({
+            name: robo.name,
+            error: error.name,
+            description: error.description,
+            id: robo.id,
+            dateTime: createdAt,
+          });
+        });
+      }
+      if (robo.error['WAIT FOR ACK'].length) {
+        robo.error['WAIT FOR ACK'].forEach((error: any) => {
+          this.roboErr.push({
+            name: robo.name,
+            error: error.name,
+            description: error.description,
+            id: robo.id,
+            dateTime: createdAt,
+          });
+        });
+      }
+      if (robo.error['Dock Failed'].length) {
+        robo.error['Dock Failed'].forEach((error: any) => {
+          this.roboErr.push({
+            name: robo.name,
+            error: error.name,
+            description: error.description,
+            id: robo.id,
+            dateTime: createdAt,
+          });
+        });
+      }
+      if (robo.error['Trolley Detection'].length) {
+        robo.error['Trolley Detection'].forEach((error: any) => {
+          this.roboErr.push({
+            name: robo.name,
+            error: error.name,
+            description: error.description,
+            id: robo.id,
+            dateTime: createdAt,
+          });
+        });
+      }
+      if (robo.error['Docking Complete'].length) {
+        robo.error['Docking Complete'].forEach((error: any) => {
+          this.roboErr.push({
+            name: robo.name,
+            error: error.name,
+            description: error.description,
+            id: robo.id,
+            dateTime: createdAt,
+          });
+        });
+      }
     });
-    if(robo.error['EMERGENCY STOP'].length){
-      robo.error['EMERGENCY STOP'].forEach((error:any) => {
-        this.roboErr.push({
-          name:robo.name,
-          error:error.name,
-          description:error.description,
-          id:robo.id,
-          dateTime:createdAt
-        })
-      });
-    }
-    if(robo.error['MANUAL MODE'].length){
-      robo.error['MANUAL MODE'].forEach((error:any) => {
-        this.roboErr.push({
-          name:robo.name,
-          error:error.name,
-          description:error.description,
-          id:robo.id,
-          dateTime:createdAt
-        })
-      });
-    }
-    if(robo.error['LIDAR_ERROR'].length){
-      robo.error['LIDAR_ERROR'].forEach((error:any) => {
-        this.roboErr.push({
-          name:robo.name,
-          error:error.name,
-          description:error.description,
-          id:robo.id,
-          dateTime:createdAt
-        })
-      });
-    }
-    if(robo.error['WAIT FOR ACK'].length){
-      robo.error['WAIT FOR ACK'].forEach((error:any) => {
-        this.roboErr.push({
-          name:robo.name,
-          error:error.name,
-          description:error.description,
-          id:robo.id,
-          dateTime:createdAt
-        })
-      });
-    }
-    if(robo.error['Dock Failed'].length){
-      robo.error['Dock Failed'].forEach((error:any) => {
-        this.roboErr.push({
-          name:robo.name,
-          error:error.name,
-          description:error.description,
-          id:robo.id,
-          dateTime:createdAt
-        })
-      });
-    }
-    if(robo.error['Trolley Detection'].length){
-      robo.error['Trolley Detection'].forEach((error:any) => {
-        this.roboErr.push({
-          name:robo.name,
-          error:error.name,
-          description:error.description,
-          id:robo.id,
-          dateTime:createdAt
-        })
-      });
-    }
-    if(robo.error['Docking Complete'].length){
-      robo.error['Docking Complete'].forEach((error:any) => {
-        this.roboErr.push({
-          name:robo.name,
-          error:error.name,
-          description:error.description,
-          id:robo.id,
-          dateTime:createdAt
-        })
-      });
-    }
-  })
-  // console.log(this.roboErr);
-  this.paginatedData1=this.roboErr;
-  // this.roboerrors=[];//later to be removed if needed
-    // console.log(this.liveRobos,this.robots);
-
-    // fetch(
-    //   `http://${environment.API_URL}:${environment.PORT}/err-logs/robo-logs/${this.mapData.id}`,
-    //   {
-    //     method: 'POST',
-    //     credentials: 'include',
-    //     body: JSON.stringify({
-    //       timeStamp1: '',
-    //       timeStamp2: '',
-    //     }),
-    //   }
-    // )
-
+    // console.log(this.roboErr);
+    this.paginatedData1 = this.roboErr;
   }
 
   getFleetLogs() {
@@ -488,7 +429,7 @@ export class Userlogscomponent {
   // Function to clear the search input when the page changes
   onPageChange(): void {
     this.searchInput = ''; // Clear the search input
-    this.resetSearch();    // Reset the data
+    this.resetSearch(); // Reset the data
     this.setPaginatedData(); // Update paginated data
   }
 
@@ -540,7 +481,7 @@ export class Userlogscomponent {
 
   showTable(table: string) {
     this.currentTable = table;
-    console.log("clicked")
+    console.log('clicked');
     this.setPaginatedData();
   }
 
@@ -564,28 +505,36 @@ export class Userlogscomponent {
   exportData(format: string) {
     const data = this.getCurrentTableData();
     // let csvHeader:any={};
-    let excelHeader:any={}
+    let excelHeader: any = {};
     switch (format) {
       case 'csv':
-        let csvHeader:{[k:string]:any}={}
-          if(data.length==0){
-             csvHeader['status']=true;
-             csvHeader['structure']=this.structuredFormatter(this.currentTable)[0]
-          }
-          csvHeader['length']=this.structuredFormatter(this.currentTable)[1]
-        this.exportService.exportToCSV(data, `${this.currentTable}DataExport`,csvHeader);
+        let csvHeader: { [k: string]: any } = {};
+        if (data.length == 0) {
+          csvHeader['status'] = true;
+          csvHeader['structure'] = this.structuredFormatter(
+            this.currentTable
+          )[0];
+        }
+        csvHeader['length'] = this.structuredFormatter(this.currentTable)[1];
+        this.exportService.exportToCSV(
+          data,
+          `${this.currentTable}DataExport`,
+          csvHeader
+        );
         break;
       case 'excel':
-        let excelHeader:{[k:string]:any}={}
-          if(data.length==0){
-            excelHeader['status']=true,
-            excelHeader['structure']=this.structuredFormatter(this.currentTable)[0]
-         }
-         excelHeader['length']=this.structuredFormatter(this.currentTable)[1]
+        let excelHeader: { [k: string]: any } = {};
+        if (data.length == 0) {
+          (excelHeader['status'] = true),
+            (excelHeader['structure'] = this.structuredFormatter(
+              this.currentTable
+            )[0]);
+        }
+        excelHeader['length'] = this.structuredFormatter(this.currentTable)[1];
         this.exportService.exportToExcel(
           data,
           `${this.currentTable}DataExport`,
-         excelHeader
+          excelHeader
         );
         break;
       case 'pdf':
@@ -596,38 +545,51 @@ export class Userlogscomponent {
     }
   }
 
-  structuredFormatter(type:any):any{
+  structuredFormatter(type: any): any {
     switch (type) {
       case 'task':
-        return [[{
-            dateTime: '',
-            taskId: '',
-            taskName: '',
-            errCode: '',
-            criticality: '',
-            desc: '',
-        }],6];
+        return [
+          [
+            {
+              dateTime: '',
+              taskId: '',
+              taskName: '',
+              errCode: '',
+              criticality: '',
+              desc: '',
+            },
+          ],
+          6,
+        ];
       case 'robot':
-        return [[{
-            dateTime: '',
-            robotId: '',
-            robotName: '',
-            errCode: '',
-            criticality: '',
-            desc: '',
-        }],6];
+        return [
+          [
+            {
+              dateTime: '',
+              robotId: '',
+              robotName: '',
+              errCode: '',
+              criticality: '',
+              desc: '',
+            },
+          ],
+          6,
+        ];
       case 'fleet':
-        return [[{
-          dateTime: '',
-          moduleName: '',
-          errCode: '',
-          criticality: '',
-          desc: '',
-        }],5];
+        return [
+          [
+            {
+              dateTime: '',
+              moduleName: '',
+              errCode: '',
+              criticality: '',
+              desc: '',
+            },
+          ],
+          5,
+        ];
       default:
-        return {
-
-        };
+        return {};
     }
   }
 

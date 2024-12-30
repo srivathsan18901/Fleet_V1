@@ -15,14 +15,18 @@ import { UserPermissionService } from '../services/user-permission.service';
 })
 export class ProjectGuard implements CanActivate {
   constructor(private projectService: ProjectService, private router: Router, private userPermissionService: UserPermissionService) {}
+  routes:string[] = ['/dashboard', '/statistics', '/robots', '/Reports', '/tasks', '/usermanagement']
 
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
     const url: string = state.url;
-    return this.checkProjectExist(url);
-    // return this.checkProjectExist(url) && this.checkPermissions(url)
+
+    //PROTECTED ROUTING HERE
+
+    // return this.checkProjectExist(url);
+    return this.checkProjectExist(url) && this.checkPermissions(url)
   }
 
   checkProjectExist(url: string): boolean {
@@ -42,35 +46,51 @@ export class ProjectGuard implements CanActivate {
     return true;
   }
 
-  checkPermissions(url: string): boolean{
-    // console.log('----general permissions', this.userPermissionService.getPermissions())
-    let {generalPermissions} = this.userPermissionService.getPermissions()
-    if(url==='/dashboard' && generalPermissions.dashboard) {
-      this.router.navigate([url])
+  checkPermissions(url: string): boolean {
+
+    
+    // console.log(this.userPermissionService.getPermissions())
+    const { generalPermissions } = this.userPermissionService.getPermissions();
+    if (url == '/project_setup' || url === '/configuration') return true; // check later fr sure..
+  
+    // Check permissions for each route
+    if (url === '/dashboard' && generalPermissions.dashboard) {
+      // this.router.navigate([url]);
       return true;
     }
-    if(url==='/statistics' && generalPermissions.statistics)  {
-      this.router.navigate([url])
+    if (url === '/statistics' && generalPermissions.statistics) {
+      // this.router.navigate([url]);
       return true;
     }
-    if(url==='/robots' && generalPermissions.robots)  {
-      this.router.navigate([url])
+    if (url === '/robots' && generalPermissions.robots) {
+      // this.router.navigate([url]);
       return true;
     }
-    if(url==='/tasks' && generalPermissions.tasks)  {
-      this.router.navigate([url])
+    if (url === '/Reports' && generalPermissions.errors) {
+      // this.router.navigate([url]);
       return true;
     }
-    if(url==='/Reports' && generalPermissions.errors)  {
-      // this.router.navigate([url])
-      this.router.navigate([url])
+    if (url === '/tasks' && generalPermissions.tasks) {
+      // this.router.navigate([url]);
       return true;
     }
-    if(url==='/usermanagement' && generalPermissions.userManagement)  {
-      this.router.navigate([url])
+    if (url === '/usermanagement' && generalPermissions.userManagement) {
+      // this.router.navigate([url]);
       return true;
     }
-    this.router.navigate(['/dashboard'])
-    return false
+
+    let i = 0;
+    for(let page of Object.keys(generalPermissions)){
+      if(generalPermissions[page]){
+        this.router.navigate([this.routes[i]]);
+        return true;
+      }
+      i += 1;
+    }
+  
+    // Deny navigation and prevent route change
+    return false;
   }
+  
+  
 }

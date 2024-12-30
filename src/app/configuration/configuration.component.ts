@@ -13,16 +13,16 @@ import { formatDate } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { RobotParametersPopupComponent } from '../robot-parameters-popup/robot-parameters-popup.component';
 import { environment } from '../../environments/environment.development';
-import { ProjectService } from '../services/project.service';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { EnvmapComponent } from '../envmap/envmap.component';
 import { MessageService } from 'primeng/api';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormBuilder } from '@angular/forms';
-import { v4 as uuid } from 'uuid';
 import { CookieService } from 'ngx-cookie-service';
 import { AuthService } from '../auth.service';
 import { SessionService } from '../services/session.service';
+import { ProjectService } from '../services/project.service';
+import { UserPermissionService } from '../services/user-permission.service';
 
 interface Poll {
   ip: string;
@@ -76,12 +76,11 @@ export class ConfigurationComponent implements AfterViewInit {
   filteredEnvData: any[] = [];
   filteredipData: any[] = [];
   filteredRobotData: any[] = [];
-  tableLoader:any;
+  tableLoader: any;
   cookieValue: any;
-  userManagementData:any;
+  userManagementData: any;
   username: string | null = null;
-  userrole                                                : string | null = null;
-
+  userrole: string | null = null;
 
   // formData: any;
   isPopupOpen: boolean = false;
@@ -127,9 +126,9 @@ export class ConfigurationComponent implements AfterViewInit {
   simRobos: any;
 
   // loader
-  editLoader:boolean=false;
+  editLoader: boolean = false;
   configurationPermissions: any;
-  environmentPermissions: { read: any; view: any; edit: any; } | undefined;
+  environmentPermissions: { read: any; view: any; edit: any } | undefined;
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -139,6 +138,7 @@ export class ConfigurationComponent implements AfterViewInit {
     private sessionService: SessionService,
     private authService: AuthService,
     private cookieService: CookieService,
+    private userPermissionService: UserPermissionService
   ) {
     this.filteredEnvData = [...this.EnvData];
     // this.filteredRobotData = [...this.robotData];
@@ -146,47 +146,37 @@ export class ConfigurationComponent implements AfterViewInit {
   }
 
   async ngOnInit() {
-    console.log('ngon init triggered');
-    this.userManagementData=JSON.parse(this.projectService.userManagementSericeGet());
-    console.log(this.userManagementData.permissions.configurationPermissions,'--configuration permissions')
+    // const rawData = this.projectService.userManagementServiceGet();
 
-    if(this.userManagementData?.permissions?.configuraionPermissions){
-      this.configurationPermissions = this.userManagementData.permissions.configurationPermissions;
-      console.log('Config Permissions --', this.userManagementData.configuraionPermissions)
-    }else {
-      console.error('Configuration permissions not found in response');
-      this.configurationPermissions = null; // Fallback for safety
+    this.userManagementData = this.userPermissionService.getPermissions();
+
+    if (this.userManagementData?.configurationPermissions) {
+      this.configurationPermissions =
+        this.userManagementData.configurationPermissions;
+      let tabs = ['environment', 'robot', 'fleet'];
+      let UITabs = ['Environment', 'Robot', 'Fleet'];
+      let activeButtons = ['Environment', 'robot', 'fleet'];
+      let i = 0;
+      for (let tab of tabs) {
+        // console.log(this.configurationPermissions[tab].enabled);
+        if (this.configurationPermissions[tab].enabled) {
+          this.activeHeader = UITabs[i];
+          this.setActiveButton(activeButtons[i]);
+          break;
+        }
+        i++;
+      }
     }
+    // console.log(this.userManagementData.configurationPermissions)
 
-    if (this.userManagementData?.permissions?.configurationPermissions) {
-      this.configurationPermissions = this.userManagementData.permissions.configurationPermissions;
-    
-      // Extract specific states for "Environment"
-      this.environmentPermissions = {
-        read: this.configurationPermissions.environment.read ?? false,
-        view: this.configurationPermissions.environment.view ?? false,
-        edit: this.configurationPermissions.environment.edit ?? false,
-      };
-    
-      console.log('Environment Permissions:', this.environmentPermissions);
-    } else {
-      console.error('Configuration permissions not found in response');
-      this.configurationPermissions = null; // Fallback for safety
-      this.environmentPermissions = { read: false, view: false, edit: false }; // Default permissions
-
-    }
+    // Extract specific states for "Environment"
+    this.environmentPermissions = {
+      read: this.configurationPermissions.environment.read ?? false,
+      view: this.configurationPermissions.environment.view ?? false,
+      edit: this.configurationPermissions.environment.edit ?? false,
+    };
 
     // this.initializeDefaultButton()
-
-
-    
-
-    
-
-    
-
-
-
 
     const user = this.authService.getUser();
     if (user) {
@@ -221,14 +211,14 @@ export class ConfigurationComponent implements AfterViewInit {
 
       this.mapData = this.projectService.getSelectedProject(); // _id
       if (!this.mapData) return;
-      this.tableLoader=true;
+      this.tableLoader = true;
       let response = await fetch(
         `http://${environment.API_URL}:${environment.PORT}/fleet-project/${this.mapData._id}`,
         { credentials: 'include' }
       );
       if (!response.ok) throw new Error(`Error code of ${response.status}`);
       let data = await response.json();
-      this.tableLoader=false
+      this.tableLoader = false;
       const { sites } = data.project;
       this.EnvData = sites
         .flatMap((sites: any) => {
@@ -260,21 +250,6 @@ export class ConfigurationComponent implements AfterViewInit {
       this.filteredEnvData = [...this.EnvData];
       this.setPaginatedData();
       this.cdRef.detectChanges();
-      // console.log(this.projectService.getIsMapSet(), this.projectService.getMapData(), this.EnvData[0]);
-      // if (!this.projectService.getIsMapSet()) {
-      //   console.log(this.projectService.getIsMapSet(), 'map set');
-      //   console.log('line 201');
-      //   this.selectedMap = this.EnvData[0];
-      //   let imgUrl = '';
-      //   if (this.EnvData[0]) {
-      //     imgUrl = await this.getMapImgUrl(this.selectedMap);
-      //     this.projectService.setMapData({
-      //       ...this.EnvData[0],
-      //       imgUrl: imgUrl,
-      //     });
-      //     this.projectService.setIsMapSet(true);
-      //   }
-      // }
       if (this.sessionService.isMapInEdit()) {
         this.onMapEdit = true;
         this.showImageUploadPopup = true;
@@ -291,20 +266,6 @@ export class ConfigurationComponent implements AfterViewInit {
     this.searchTerm = '';
     this.searchTermChanged();
   }
-
-  // initializeDefaultButton() {
-  //   const permissions = this.userManagementData?.permissions?.configurationPermissions;
-
-  //   if (permissions?.robot?.enabled) {
-  //     this.setActiveButton('robot', 'Robot')
-  //   } else if (permissions?.environment?.enabled) {
-  //     this.setActiveButton('environment', 'Environment')
-  //   } else if (permissions?.fleet?.enabled) {
-  //     this.setActiveButton('fleet', 'Fleet')
-  //   }
-  // }
-
-
 
   reloadTable() {
     this.loadData(); // Ensure data is reloaded properly
@@ -423,15 +384,6 @@ export class ConfigurationComponent implements AfterViewInit {
       }
       let data = await response.json();
 
-      // console.log(data);
-      // this.filteredRobotData = data.populatedRobos;
-      // this.messageService.add({
-      //   severity: 'success',
-      //   summary: 'Success',
-      //   detail: 'Robots Fetched Successfully',
-      //   life: 4000,
-      // });
-
       if (data.error) return;
       if (data.populatedRobos) this.robotData = data.populatedRobos;
       this.filteredRobotData = this.robotData;
@@ -509,53 +461,6 @@ export class ConfigurationComponent implements AfterViewInit {
     this.ngOnInit();
   }
 
-  // deleteRobo(robo: any) {
-  //   let project = this.projectService.getSelectedProject();
-  //   let map = this.projectService.getMapData();
-  //   let roboInfo = {
-  //     roboId: robo._id,
-  //     projectName: project.projectName,
-  //     mapName: map.mapName,
-  //   };
-
-  //   fetch(
-  //     `http://${environment.API_URL}:${environment.PORT}/robo-configuration`,
-  //     {
-  //       method: 'DELETE',
-  //       credentials: 'include',
-  //       headers: { 'Content-Type': 'application/json' },
-  //       body: JSON.stringify(roboInfo),
-  //     }
-  //   )
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       if (data.isRoboExists) {
-  //         this.messageService.add({
-  //           severity: 'success',
-  //           summary: 'Success',
-  //           detail: 'Robot deleted successfully!',
-  //         });
-  //         this.fetchRobos();
-  //         this.setPaginatedData1();
-  //         this.cdRef.detectChanges();
-  //         this.ngOnInit();
-  //       } else {
-  //         this.messageService.add({
-  //           severity: 'error',
-  //           summary: 'Error',
-  //           detail: 'Failed to delete the robot.',
-  //         });
-  //       }
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //       this.messageService.add({
-  //         severity: 'error',
-  //         summary: 'Error',
-  //         detail: 'An error occurred while deleting the robot.',
-  //       });
-  //     });
-  // }
   deleteRobo(robo: any) {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent); // Open confirmation dialog
 
@@ -630,7 +535,7 @@ export class ConfigurationComponent implements AfterViewInit {
   }
 
   setPaginatedData() {
-    console.log('paginated data called');
+    // console.log('paginated data called');
     if (this.currentTable === 'Environment') {
       const pageSize = this.paginator?.pageSize || 5; // Default pageSize to 5 if paginator is not yet available
       const pageIndex = this.paginator?.pageIndex || 0; // Default pageIndex to 0 (first page)
@@ -731,6 +636,7 @@ export class ConfigurationComponent implements AfterViewInit {
     // Deselect if the same map is clicked again
     if (this.selectedMap?.id === map.id) {
       this.projectService.clearMapData();
+      this.projectService.setInitializeMapSelected(false); // confirm it..
       this.projectService.setIsMapSet(false);
       if (!this.EnvData.length) return;
       this.selectedMap = this.EnvData[0];
@@ -741,7 +647,6 @@ export class ConfigurationComponent implements AfterViewInit {
         console.error('Error while fetching map data : ', response.status);
       let data = await response.json();
       // let { map } = data;
-      // console.log('line 656');
       await this.ngOnInit();
 
       // if (this.projectService.getIsMapSet()) return; // yet to uncomment..
@@ -787,62 +692,6 @@ export class ConfigurationComponent implements AfterViewInit {
       this.selectMap(this.EnvData[0]);
     }
   }
-  //   async selectMap(map: any) {
-  //     if (this.selectedMap?.id === map.id) {
-  //         // Deselect if the same map is clicked again
-  //         this.projectService.clearMapData();
-  //         this.projectService.setIsMapSet(false);
-  //         if (!this.EnvData.length) return;
-
-  //         // Automatically select the first item after deselection
-  //         this.selectedMap = this.EnvData[0];
-  //         const response = await fetch(
-  //           `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.EnvData[0]?.mapName}`
-  //         );
-  //         if (!response.ok)
-  //             console.error('Error while fetching map data : ', response.status);
-
-  //         let data = await response.json();
-  //         this.projectService.setMapData({
-  //             ...this.EnvData[0],
-  //             imgUrl: data.map.imgUrl,
-  //         });
-
-  //         this.projectService.setIsMapSet(true);
-  //         return;
-  //     }
-
-  //     // Select a new map
-  //     this.selectedMap = map;
-  //     if (!this.EnvData.length) return;
-  //     this.projectService.clearMapData();
-  //     const response = await fetch(
-  //       `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${map?.mapName}`
-  //     );
-  //     if (!response.ok)
-  //         console.error('Error while fetching map data : ', response.status);
-
-  //     let data = await response.json();
-  //     this.projectService.setMapData({
-  //         ...map,
-  //         imgUrl: data.map.imgUrl,
-  //     });
-
-  //     this.projectService.setIsMapSet(true);
-  // }
-
-  // // This method can be called when the component is initialized or when a new map is created
-  // private selectFirstMapIfNoneSelected() {
-  //     if (!this.selectedMap && this.EnvData.length > 0) {
-  //         this.selectMap(this.EnvData[0]);
-  //     }
-  // }
-
-  // // Call this method in ngOnInit to ensure the first map is selected when the component is initialized
-  // // ngOnInit() {
-  // //     this.selectFirstMapIfNoneSelected();
-  // //     // Other initialization logic
-  // // }
 
   async getMapImgUrl(map: any): Promise<any> {
     const response = await fetch(
@@ -869,50 +718,6 @@ export class ConfigurationComponent implements AfterViewInit {
   isLoadSpecificationFormVisible = false;
   isLocalizationParametersFormVisible = false;
 
-  // toggleTypeSpecificationForm($event:any) {
-  //   // this.resetFormVisibility();
-  //   this.isTypeSpecificationFormVisible = !this.isTypeSpecificationFormVisible;
-  // }
-
-  // toggleProtocolLimitsForm($event:any) {
-  //   // this.resetFormVisibility();
-  //   this.isProtocolLimitsFormVisible = !this.isProtocolLimitsFormVisible;
-  // }
-
-  // toggleProtocolFeaturesForm($event:any) {
-  //   // this.resetFormVisibility();
-  //   this.isProtocolFeaturesFormVisible = !this.isProtocolFeaturesFormVisible;
-  // }
-
-  // toggleAGVGeometryForm($event:any) {
-  //   // this.resetFormVisibility();
-  //   this.isAGVGeometryFormVisible = !this.isAGVGeometryFormVisible;
-  // }
-
-  // toggleLoadSpecificationForm($event:any) {
-  //   // this.resetFormVisibility();
-  //   this.isLoadSpecificationFormVisible = !this.isLoadSpecificationFormVisible;
-  // }
-
-  // toggleLocalizationParametersForm($event:any) {
-  //   // this.resetFormVisibility();
-  //   this.isLocalizationParametersFormVisible = !this.isLocalizationParametersFormVisible;
-  // }
-
-  // // Resets all form visibility to false (hide all forms)
-  // resetFormVisibility() {
-  //   this.isTypeSpecificationFormVisible = false;
-  //   this.isProtocolLimitsFormVisible = false;
-  //   this.isProtocolFeaturesFormVisible = false;
-  //   this.isAGVGeometryFormVisible = false;
-  //   this.isLoadSpecificationFormVisible = false;
-  //   this.isLocalizationParametersFormVisible = false;
-  // }
-
-  // Utility function to remove the time part of a date
-  // normalizeDate(date: Date): Date {
-  //   return new Date(date.getFullYear(), date.getMonth(), date.getDate());
-  // }
   normalizeDate(date: Date): string {
     return this.formatDate(date); // Strips time information, returns 'YYYY-MM-DD'
   }
@@ -977,7 +782,7 @@ export class ConfigurationComponent implements AfterViewInit {
     }
 
     if (this.startIP === '' || this.EndIP === '') {
-      this.setPaginatedData() 
+      this.setPaginatedData();
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -1275,11 +1080,6 @@ export class ConfigurationComponent implements AfterViewInit {
     this.filteredEnvData = [...this.EnvData]; // Reset environment data filter
     this.filteredRobotData = [...this.robotData]; // Reset robot data filter
   }
-  // onDateFilterChange(event: Event): void {
-  //   const selectElement = event.target as HTMLSelectElement;
-  //   const filter = selectElement?.value || '';
-  //   // Implement your date filter logic here
-  // }
 
   // Function to format date to 'YYYY-MM-DD' format for input type="date"
   formatDate(date: Date): string {
@@ -1288,19 +1088,7 @@ export class ConfigurationComponent implements AfterViewInit {
     const day = date.getDate().toString().padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
-  // onDateChange(event: any) { old
-  //   const input = event.target as HTMLInputElement;
-  //   const id = input.id;
-  //   const value = input.value;
 
-  //   if (id === 'start-date' ) {
-  //     this.startDate = value ? new Date(value) : null;
-  //   } else if (id === 'end-date') {
-  //     this.endDate = value ? new Date(value) : null;
-  //   }
-
-  //   this.filterData(); // Apply filters whenever the date changes
-  // }
   onDateChange(value: string, field: 'start' | 'end') {
     //new
     if (field === 'start') {
@@ -1311,15 +1099,6 @@ export class ConfigurationComponent implements AfterViewInit {
     this.filterData(); // Call filter logic after date change
   }
 
-  // onDateChange(event: any) {  //recent
-  //   const selectedDate = event.target.value;  // This is in 'YYYY-MM-DD' format
-  //   if (event.target.id === 'start-date') {
-  //     this.startDate = selectedDate;
-  //   } else if (event.target.id === 'end-date') {
-  //     this.endDate = selectedDate;
-  //   }
-  //   this.filterData();  // Call your filter function after setting the date
-  // }
   setCurrentTable(table: string) {
     this.currentTable = table;
   }
@@ -1352,12 +1131,11 @@ export class ConfigurationComponent implements AfterViewInit {
     this.isPopupVisible = true;
   }
 
-
   onCurrEditMapChange(currEditMap: boolean) {
     this.currEditMap = currEditMap;
   }
   editItem(item: any) {
-    this.editLoader=true;
+    this.editLoader = true;
     if (this.currEditMap) {
       this.currEditMap = true;
     }
@@ -1368,11 +1146,9 @@ export class ConfigurationComponent implements AfterViewInit {
         credentials: 'include',
       }
     )
-      .then((response) =>
-        { 
-          return response.json()
-        }
-      )
+      .then((response) => {
+        return response.json();
+      })
       .then((data) => {
         if (!data.map) {
           this.messageService.add({
@@ -1393,11 +1169,12 @@ export class ConfigurationComponent implements AfterViewInit {
         }
 
         const { map } = data;
-        const mapImgUrl = `http://${map.imgUrl}`;
+        const mapImgUrl = `http://${environment.API_URL}:${environment.PORT}/${map.imgUrl}`;
 
         // Check if the image URL is accessible
         this.checkImageLoading(mapImgUrl)
           .then(() => {
+
             // Proceed only if the image loads successfully
             this.currEditMapDet = {
               mapName: map.mapName,
@@ -1413,7 +1190,7 @@ export class ConfigurationComponent implements AfterViewInit {
             };
             this.currEditMap = true;
             this.showImageUploadPopup = true;
-            this.editLoader=false
+            this.editLoader = false;
 
             this.messageService.add({
               severity: 'success',
@@ -1511,9 +1288,10 @@ export class ConfigurationComponent implements AfterViewInit {
     this.deleteMap(item).then((result) => {
       isDeleted = result;
       if (isDeleted) {
-        if (item.id === this.projectService.getMapData().id) {
+        if (this.projectService.getMapData() && item.id === this.projectService.getMapData().id) {
           this.projectService.setIsMapSet(false);
           this.projectService.clearMapData();
+          this.projectService.setInitializeMapSelected(false); // confirm it.
         }
 
         if (this.currentTable === 'Environment') {
@@ -1530,7 +1308,7 @@ export class ConfigurationComponent implements AfterViewInit {
         // console.log('line 1438');
         this.ngOnInit();
         this.reloadTable();
-        console.log(this.paginatedData, 'page data');
+        // console.log(this.paginatedData, 'page data');
         if (this.paginatedData.length == 0) {
           this.projectService.setInitializeMapSelected(false);
         }
@@ -1912,7 +1690,7 @@ export class ConfigurationComponent implements AfterViewInit {
   // simulation robots
 
   isMapAvailable(): boolean {
-    return this.selectedMap != null && this.selectedMap.mapName != null ;
+    return this.selectedMap != null && this.selectedMap.mapName != null;
   }
 
   async togglePopup() {
@@ -1950,9 +1728,9 @@ export class ConfigurationComponent implements AfterViewInit {
     this.imageHeight = 0;
     this.imageWidth = 0;
     this.robotCountError = false;
-    this.robotCount=0;
+    this.robotCount = 0;
   }
-  
+
   robotCountError: boolean = false;
   async addRobot() {
     // Check for valid robot count
@@ -1969,7 +1747,7 @@ export class ConfigurationComponent implements AfterViewInit {
         detail: 'Total robots cannot exceed 10.',
         life: 4000,
       });
-      
+
       return;
     }
 
@@ -2002,7 +1780,7 @@ export class ConfigurationComponent implements AfterViewInit {
         life: 4000,
       });
     }
-        
+
     this.robotCountError = false;
     // Update the totalRobots count to reflect all robots now in sim mode
     this.totalRobots = updatedSimRobos.length;
@@ -2029,7 +1807,7 @@ export class ConfigurationComponent implements AfterViewInit {
       // Update the backend with the empty list of robots
       let result = await this.updateSimInMap(updatedSimRobos);
       if (result) {
-          this.messageService.add({
+        this.messageService.add({
           severity: 'info',
           summary: 'Info',
           detail: 'All robots deleted!',
@@ -2071,7 +1849,9 @@ export class ConfigurationComponent implements AfterViewInit {
       }
 
       // Filter out the robot to be deleted
-      const updatedSimRobos = existingSimRobos.filter((robot: { amrId: number; }) => robot.amrId !== amrId);  
+      const updatedSimRobos = existingSimRobos.filter(
+        (robot: { amrId: number }) => robot.amrId !== amrId
+      );
       // Update the backend with the updated list of robots
       let result = await this.updateSimInMap(updatedSimRobos);
       if (result) {

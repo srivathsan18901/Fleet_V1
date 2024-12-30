@@ -13,24 +13,33 @@ import { LoaderService } from './loader.service';
   providedIn: 'root',
 })
 export class AuthGuard implements CanActivate {
-  constructor(private authService: AuthService, private router: Router, private loaderService: LoaderService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private loaderService: LoaderService
+  ) {}
 
-  canActivate( next: ActivatedRouteSnapshot, state: RouterStateSnapshot ): Observable<boolean> | Promise<boolean> | boolean {
+  canActivate(
+    next: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Observable<boolean> | Promise<boolean> | boolean {
     const url: string = state.url;
-    return this.checkLogin(url);
 
+    // Show loader
     this.loaderService.show();
-    
-    // Simulate a delay for demonstration
-    setTimeout(() => {
-      this.loaderService.hide();
-    }, 2000); // Replace with actual logic
 
-    return true; // or false based on your authentication logic
+    // Check login status
+    const isLoggedIn = this.checkLogin(url);
+
+    // Hide loader
+    this.loaderService.hide();
+
+    return isLoggedIn;
   }
 
-  checkLogin(url: string): boolean {
+  private checkLogin(url: string): boolean {
     if (this.authService.isLoggedIn()) {
+      // Redirect to /project_setup if logged in and accessing root
       if (url === '/') {
         this.router.navigate(['/project_setup']);
         return false;
@@ -38,6 +47,7 @@ export class AuthGuard implements CanActivate {
       return true;
     }
 
+    // Redirect to login page if not logged in
     if (url !== '/') {
       this.router.navigate(['/']);
       return false;
@@ -45,6 +55,4 @@ export class AuthGuard implements CanActivate {
 
     return true;
   }
-
-
 }

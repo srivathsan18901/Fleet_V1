@@ -21,12 +21,8 @@ export class StatisticsComponent {
   selectedMap: any | null = null;
   operationActivities: any[] = [];
 
-  // this.operationActivities = [
-  // { taskId: 9, taskName: 'AMR-003', task: 'Transporting materials', progress: 90, status: 'Actively Working', },
-  // ];
-
-  notifications:any[] = [];
-  taskErrNotifications:any[] = [];
+  notifications: any[] = [];
+  taskErrNotifications: any[] = [];
 
   statisticsData: any = {
     systemThroughput: 0,
@@ -48,7 +44,11 @@ export class StatisticsComponent {
   taskStatus_interval: any | null = null;
   currTaskStatus_interval: any | null = null;
 
-  constructor( private router: Router, private projectService: ProjectService, private cdRef: ChangeDetectorRef ) {
+  constructor(
+    private router: Router,
+    private projectService: ProjectService,
+    private cdRef: ChangeDetectorRef
+  ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
   }
 
@@ -69,7 +69,7 @@ export class StatisticsComponent {
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) return;
-    await this.getGrossStatus(); // no need anymore..
+    await this.getGrossStatus();
     this.operationPie = await this.fetchTasksStatus();
     await this.getTaskNotifications();
     this.taskStatus_interval = setInterval(async () => {
@@ -98,7 +98,7 @@ export class StatisticsComponent {
   }
 
   // not called anywhere..
-  async getFleetLogStatus(){
+  async getFleetLogStatus() {
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
       {
@@ -107,24 +107,37 @@ export class StatisticsComponent {
       }
     );
     const data = await response.json();
-    if (!data.map || data.error) return ;
+    if (!data.map || data.error) return;
     this.fleetActivities = data.objs;
-    if(!('objects' in this.fleetActivities)) return;
+    if (!('objects' in this.fleetActivities)) return;
     let { objs }: any = this.fleetActivities;
     if (!objs.length) return;
 
     objs.forEach((robot: any) => {
       if (robot.fleet_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) { // [errorType, errors] => [key, value]
+        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
+          // [errorType, errors] => [key, value]
           // if (errorType === "NO ERROR") continue;
-          for (let error of (errors as any[])) {
-            let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "DOCKING ERROR", "LOADING ERROR", "NO ERROR"]; //Robot Errors List from RabbitMQ
-            let criticality = "Normal";
+          for (let error of errors as any[]) {
+            let err_type = [
+              'EMERGENCY STOP',
+              'LIDAR_ERROR',
+              'DOCKING ERROR',
+              'LOADING ERROR',
+              'NO ERROR',
+            ]; //Robot Errors List from RabbitMQ
+            let criticality = 'Normal';
 
-            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3]))
-              criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
-            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2]))
-              criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
+            if (
+              err_type.includes(err_type[0]) ||
+              err_type.includes(err_type[3])
+            )
+              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
+            else if (
+              err_type.includes(err_type[1]) ||
+              err_type.includes(err_type[2])
+            )
+              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
 
             let notificationKey = `${error.description} on robot ID ${robot.id}`;
             if (this.processedErrors?.has(notificationKey)) continue;
@@ -133,7 +146,12 @@ export class StatisticsComponent {
             this.notifications.push({
               label: `${criticality}`,
               message: `${error.description} on robot ID ${robot.id}`,
-              type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+              type:
+                criticality === 'Critical'
+                  ? 'red'
+                  : criticality === 'Warning'
+                  ? 'yellow'
+                  : 'green',
             });
 
             this.cdRef.detectChanges(); // yet to notify..
@@ -143,7 +161,7 @@ export class StatisticsComponent {
     });
   }
 
-  async getTaskNotifications(){
+  async getTaskNotifications() {
     let establishedTime = new Date(this.selectedMap.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     const response = await fetch(
@@ -160,35 +178,32 @@ export class StatisticsComponent {
       }
     );
     const data = await response.json();
-    if (!data.map || data.error) return ;
-    this.taskErrNotifications = data.taskErr.map((err:any)=>{
-      if(!err) return null;
-      let dateCreated = new Date(err.TaskAddTime * 1000);
-      return {
-        status: err.task_status.status,
-        taskId: err.task_id,
-        timestamp: dateCreated.toLocaleString()
-      }
-    }).filter((err:any) => err !== null);
-    this.filteredTaskNotifications = this.taskErrNotifications
+    if (!data.map || data.error) return;
+    this.taskErrNotifications = data.taskErr
+      .map((err: any) => {
+        if (!err) return null;
+        let dateCreated = new Date(err.TaskAddTime * 1000);
+        return {
+          status: err.task_status.status,
+          taskId: err.task_id,
+          timestamp: dateCreated.toLocaleString(),
+        };
+      })
+      .filter((err: any) => err !== null);
+    this.filteredTaskNotifications = this.taskErrNotifications;
   }
 
   async getGrossStatus() {
     const mapId = this.selectedMap.id;
     const projectId = this.projectService.getSelectedProject()._id;
 
-    // let throughputData = await this.fetchFleetStatus('system-throughput', {
-    //   mapId: mapId,
-    // });
-    // if (throughputData.systemThroughput)
-    //   this.statisticsData.systemThroughput = throughputData.systemThroughput;
-    // console.log("hey",this.statisticsData.systemThroughput);
-    
-    let uptime = await this.fetchFleetStatus('system-uptime', { projectId: projectId });
-    if (uptime.systemUptime){
-      this.statisticsData.systemUptime = uptime.systemUptime;}
-    else{
-      this.statisticsData.systemUptime = "Loading...";
+    let uptime = await this.fetchFleetStatus('system-uptime', {
+      projectId: projectId,
+    });
+    if (uptime.systemUptime) {
+      this.statisticsData.systemUptime = uptime.systemUptime;
+    } else {
+      this.statisticsData.systemUptime = 'Loading...';
     }
     // await this.fetchFleetStatus('success-rate', { // yet to take..
     //   mapId: mapId,
@@ -238,10 +253,10 @@ export class StatisticsComponent {
       let tot_responsiveness = 0;
 
       let fleet_tasks = tasks.map((task: any) => {
-        if(task.TaskAssignTime>=task.TaskAddTime){
-        tot_responsiveness += task.TaskAssignTime - task.TaskAddTime
-        // console.log("tot_responsiveness",tot_responsiveness );
-      }
+        if (task.TaskAssignTime >= task.TaskAddTime) {
+          tot_responsiveness += task.TaskAssignTime - task.TaskAddTime;
+          // console.log("tot_responsiveness",tot_responsiveness );
+        }
 
         return {
           taskId: task.task_id,
@@ -253,10 +268,10 @@ export class StatisticsComponent {
         };
       });
       let average_responsiveness = (tot_responsiveness / tasks.length) * 1000;
-      this.statisticsData.responsiveness = `${
-        Math.round(average_responsiveness/1000)
-      } s`;
-      console.log("Responsiveness",Math.round(average_responsiveness));
+      this.statisticsData.responsiveness = `${Math.round(
+        average_responsiveness / 1000
+      )} s`;
+      console.log('Responsiveness', Math.round(average_responsiveness));
 
       return fleet_tasks;
     }
@@ -328,8 +343,7 @@ export class StatisticsComponent {
         this.statisticsData.successRate = 'Loading...';
       } else {
         this.statisticsData.successRate = (
-          ((completedTasks / (completedTasks + errorTasks)) *
-            100) || 0
+          (completedTasks / (completedTasks + errorTasks)) * 100 || 0
         ).toFixed(2);
       }
       return tasksStatus;
@@ -374,8 +388,7 @@ export class StatisticsComponent {
     // console.log("nan tha",data[data.length - 1]);
     if (data.length)
       this.statisticsData.systemThroughput = data[data.length - 1];
-    else this.statisticsData.systemThroughput = "Loading...";
-    
+    else this.statisticsData.systemThroughput = 'Loading...';
   }
 
   /* ngOnDestroy() {

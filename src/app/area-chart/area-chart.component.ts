@@ -1,4 +1,12 @@
-import { ChangeDetectorRef, Component, Input, Output, EventEmitter, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   ApexAxisChartSeries,
   ApexChart,
@@ -30,7 +38,6 @@ export type ChartOptions = {
   selector: 'app-area-chart',
   templateUrl: './area-chart.component.html',
   styleUrls: ['./area-chart.component.css'],
-  
 })
 export class AreaChartComponent implements OnInit {
   currentFilter: string = 'today'; // To track the selected filter
@@ -58,8 +65,8 @@ export class AreaChartComponent implements OnInit {
   starvationTimeInterval: any | null = null;
   pickAccTimeInterval: any | null = null;
   errRateTimeInterval: any | null = null;
-  // 
-  @Input() taskData:any[]=[]
+  //
+  @Input() taskData: any[] = [];
 
   constructor(
     private projectService: ProjectService,
@@ -200,10 +207,15 @@ export class AreaChartComponent implements OnInit {
     );
   }
 
-  async fetchChartData( endpoint: string, timeSpan: string, startTime: string, endTime: string ) {
+  async fetchChartData(
+    endpoint: string,
+    timeSpan: string,
+    startTime: string,
+    endTime: string
+  ) {
     // alter to date..
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    // console.log(timeStamp1,"start date") 
+    // console.log(timeStamp1,"start date")
     // console.log(timeStamp2,'end date')
     // console.log(timeSpan,'time span')
     const response = await fetch(
@@ -231,22 +243,39 @@ export class AreaChartComponent implements OnInit {
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.throuputTimeInterval);
       this.throuputTimeInterval = 0;
-      const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
+      const data = await this.fetchChartData(
+        'throughput',
+        this.currentFilter,
+        '',
+        ''
+      );
       // console.log(data,'data')
       if (data.throughput) {
-        this.throughputArr = data.throughput.Stat.map((stat: any) => stat.TotalThroughPutPerHour);
+        this.throughputArr = data.throughput.Stat.map(
+          (stat: any) => stat.TotalThroughPutPerHour
+        );
         this.throughputXaxisSeries = data.throughput.Stat.map(
-          (stat: any,index:any) => ++index
+          (stat: any, index: any) => ++index
         );
       }
       // console.log('line 245')
-      this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries, 30 );
+      this.plotChart(
+        'Throughput',
+        this.throughputArr,
+        this.throughputXaxisSeries,
+        30
+      );
       return;
     }
 
     if (this.throuputTimeInterval) return;
 
-    const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
+    const data = await this.fetchChartData(
+      'throughput',
+      this.currentFilter,
+      '',
+      ''
+    );
     let { Stat } = data.throughput;
     // console.log(Stat);
     // console.log(data,'data from line 256')
@@ -255,27 +284,42 @@ export class AreaChartComponent implements OnInit {
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
       this.throughputXaxisSeries = Stat.map(
         // (stat: any) => stat.time
-        (stat: any,index:any) => ++index 
-          // new Date().toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        (stat: any, index: any) => ++index
+        // new Date().toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
       );
       this.systemThroughputEvent.emit(this.throughputArr);
     }
     // console.log('line 265')
-    this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries ); // this.selectedMetric..
+    this.plotChart(
+      'Throughput',
+      this.throughputArr,
+      this.throughputXaxisSeries
+    ); // this.selectedMetric..
 
     this.throuputTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
+      const data = await this.fetchChartData(
+        'throughput',
+        this.currentFilter,
+        '',
+        ''
+      );
       let { Stat } = data.throughput;
-      
+
       if (data.throughput) {
-        this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
+        this.throughputArr = Stat.map(
+          (stat: any) => stat.TotalThroughPutPerHour
+        );
         this.throughputXaxisSeries = Stat.map(
-          (stat: any,index:number) => ++index 
+          (stat: any, index: number) => ++index
         );
         this.systemThroughputEvent.emit(this.throughputArr);
       }
       // console.log('line 278')
-      this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries );
+      this.plotChart(
+        'Throughput',
+        this.throughputArr,
+        this.throughputXaxisSeries
+      );
     }, 1000 * 2); // 60 * 60
     // console.log('chart fn')
   }
@@ -287,7 +331,7 @@ export class AreaChartComponent implements OnInit {
     endTime: string
   ) {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    
+
     // Fetch data from the API
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
@@ -296,78 +340,112 @@ export class AreaChartComponent implements OnInit {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          timeSpan: timeSpan, 
+          timeSpan: timeSpan,
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
       }
     );
-  
+
     const data = await response.json();
-    
+
     // Assuming data contains a list of tasks
     if (data && data.tasks) {
       const totalTasks = data.tasks.length;
       const notAssignedCount = data.tasks.filter(
         (task: any) => task.TaskStatus_Names === 'NOTASSIGNED'
       ).length;
-  
+
       const notAssignedPercentage = (notAssignedCount / totalTasks) * 100;
-  
+
       // Return the data with the calculated NOTASSIGNED percentage
       return { tasks: data.tasks, notAssignedPercentage };
     }
-  
+
     return { tasks: [], notAssignedPercentage: 0 };
   }
-  
+
   async updateStarvationRate() {
     this.clearAllIntervals(this.starvationTimeInterval);
-    
+
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.starvationTimeInterval);
       this.starvationTimeInterval = 0;
-      const data = await this.fetchChartData( 'starvationrate', this.currentFilter, '', '' );
-      console.log(data,'data starvation')
+      const data = await this.fetchChartData(
+        'starvationrate',
+        this.currentFilter,
+        '',
+        ''
+      );
+      console.log(data, 'data starvation');
 
       if (data.starvation) {
-        this.starvationArr = data.starvation.map((stat: any) => { return Math.round(stat.starvationRate) });
-        this.starvationXaxisSeries = data.starvation.map( (stat: any, index: any) => ++index );
+        this.starvationArr = data.starvation.map((stat: any) => {
+          return Math.round(stat.starvationRate);
+        });
+        this.starvationXaxisSeries = data.starvation.map(
+          (stat: any, index: any) => ++index
+        );
       }
-      this.plotChart( 'Starvation rate', this.starvationArr, this.starvationXaxisSeries, 30 );
+      this.plotChart(
+        'Starvation rate',
+        this.starvationArr,
+        this.starvationXaxisSeries,
+        30
+      );
       return;
     }
-  
+
     if (this.starvationTimeInterval) return;
-  
-    const data = await this.fetchChartData( 'starvationrate', this.currentFilter, '', '' );
+
+    const data = await this.fetchChartData(
+      'starvationrate',
+      this.currentFilter,
+      '',
+      ''
+    );
 
     if (data.starvation) {
-      this.starvationArr = data.starvation.map((stat: any) => { return Math.round(stat.starvationRate) });
-      this.starvationXaxisSeries = data.starvation.map((stat: any, index: any) => ++index);
+      this.starvationArr = data.starvation.map((stat: any) => {
+        return Math.round(stat.starvationRate);
+      });
+      this.starvationXaxisSeries = data.starvation.map(
+        (stat: any, index: any) => ++index
+      );
     }
-    // if (data.tasks && data.notAssignedPercentage !== undefined) {
-    //   this.starvationArr = data.tasks.map((task: any) => task.rate); // Assuming tasks contain the rate field
-    //   this.starvationXaxisSeries = data.tasks.map((task: any) => task.time);
-      
-    //   // Plot the NOTASSIGNED percentage in the chart
-    //   // this.plotNotAssignedPercentage(data.notAssignedPercentage);
-    // }
-  
-    this.plotChart( 'Starvation rate', this.starvationArr, this.starvationXaxisSeries );
-  
-    this.starvationTimeInterval = setInterval(async () => { const data = await this.fetchChartData( 'starvationrate', this.currentFilter, '', '' );
+
+    this.plotChart(
+      'Starvation rate',
+      this.starvationArr,
+      this.starvationXaxisSeries
+    );
+
+    this.starvationTimeInterval = setInterval(async () => {
+      const data = await this.fetchChartData(
+        'starvationrate',
+        this.currentFilter,
+        '',
+        ''
+      );
       if (data.starvation) {
-        this.starvationArr = data.starvation.map((stat: any) => { return Math.round(stat.starvationRate) });
-        this.starvationXaxisSeries = data.starvation.map( (stat: any, index: any) => ++index );
+        this.starvationArr = data.starvation.map((stat: any) => {
+          return Math.round(stat.starvationRate);
+        });
+        this.starvationXaxisSeries = data.starvation.map(
+          (stat: any, index: any) => ++index
+        );
       }
       //   // Plot the NOTASSIGNED percentage in the chart
       //   this.plotNotAssignedPercentage(data.notAssignedPercentage);
       // }
-      this.plotChart( 'Starvation rate', this.starvationArr, this.starvationXaxisSeries );
+      this.plotChart(
+        'Starvation rate',
+        this.starvationArr,
+        this.starvationXaxisSeries
+      );
     }, 1000 * 2);
   }
-  
+
   // Function to plot NOTASSIGNED percentage in the graph
   plotNotAssignedPercentage(percentage: number) {
     // Assuming you want to plot this value as a separate series in the chart
@@ -382,7 +460,6 @@ export class AreaChartComponent implements OnInit {
       this.starvationXaxisSeries
     );
   }
-  
 
   async fetchPickAccuracyData(
     endpoint: string,
@@ -391,7 +468,7 @@ export class AreaChartComponent implements OnInit {
     endTime: string
   ) {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    
+
     // Fetch data from the API
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
@@ -400,60 +477,57 @@ export class AreaChartComponent implements OnInit {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          timeSpan: timeSpan, 
+          timeSpan: timeSpan,
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
       }
     );
-  
+
     const data = await response.json();
-  
+
     // Assuming data contains a list of tasks
     if (data && data.tasks) {
       const totalTasks = data.tasks.length;
       const completedCount = data.tasks.filter(
         (task: any) => task.TaskStatus_Names === 'COMPLETED'
       ).length;
-  
+
       const completedPercentage = (completedCount / totalTasks) * 100;
-  
+
       // Return the data with the calculated COMPLETED percentage
       return { tasks: data.tasks, completedPercentage };
     }
-  
+
     return { tasks: [], completedPercentage: 0 };
   }
-  
+
   async updatePickAccuracy() {
     let startTime = new Date().setHours(0, 0, 0, 0); // Set current time to starting time of the current day..
     let endTime = new Date().setMilliseconds(0); // Time in milliseconds..
-  
+
     this.clearAllIntervals(this.pickAccTimeInterval);
-  
+
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.pickAccTimeInterval);
       this.pickAccTimeInterval = 0;
-      console.log('pick')
+      console.log('pick');
       const data = await this.fetchChartData(
         'pickaccuracy',
         this.currentFilter,
         '',
         ''
       );
-      // console.log(data,'pick acc')
+
       if (data.throughput) {
-        this.pickAccuracyArr = data.throughput.Stat.map((stat: any) => stat.pickAccuracy);
+        this.pickAccuracyArr = data.throughput.Stat.map(
+          (stat: any) => stat.pickAccuracy
+        );
         this.pickAccXaxisSeries = data.throughput.Stat.map(
-          (stat: any,index:any) => ++index
+          (stat: any, index: any) => ++index
         );
       }
-      // if (data.pickAccuracy) {
-      //   this.pickAccuracyArr = data.pickAccuracy.map((stat: any) => stat.rate);
-      //   this.pickAccXaxisSeries = data.pickAccuracy.map(
-      //     (stat: any) => stat.time
-      //   );
-      // }
+
       this.plotChart(
         'Pick accuracy',
         this.pickAccuracyArr,
@@ -462,9 +536,9 @@ export class AreaChartComponent implements OnInit {
       );
       return;
     }
-  
+
     if (this.pickAccTimeInterval) return;
-  
+
     // Fetch the data and calculate the COMPLETED percentage
     const data = await this.fetchChartData(
       'pickaccuracy',
@@ -473,25 +547,20 @@ export class AreaChartComponent implements OnInit {
       ''
     );
     if (data.throughput) {
-      this.pickAccuracyArr = data.throughput.Stat.map((stat: any) => stat.pickAccuracy);
+      this.pickAccuracyArr = data.throughput.Stat.map(
+        (stat: any) => stat.pickAccuracy
+      );
       this.pickAccXaxisSeries = data.throughput.Stat.map(
-        (stat: any,index:any) => ++index
+        (stat: any, index: any) => ++index
       );
     }
-    // if (data.tasks && data.completedPercentage !== undefined) {
-    //   this.pickAccuracyArr = data.tasks.map((task: any) => task.rate); // Assuming tasks contain the rate field
-    //   this.pickAccXaxisSeries = data.tasks.map((task: any) => task.time);
-      
-    //   // Plot the COMPLETED percentage in the chart
-    //   this.plotCompletedPercentage(data.completedPercentage);
-    // }
-  
+
     this.plotChart(
       'Pick accuracy',
       this.pickAccuracyArr,
       this.pickAccXaxisSeries
     );
-  
+
     this.pickAccTimeInterval = setInterval(async () => {
       const data = await this.fetchChartData(
         'pickaccuracy',
@@ -499,51 +568,25 @@ export class AreaChartComponent implements OnInit {
         '',
         ''
       );
-      console.log(data,'pick acc')
+      console.log(data, 'pick acc');
       if (data.throughput) {
-        this.pickAccuracyArr = data.throughput.Stat.map((stat: any) => stat.pickAccuracy);
+        this.pickAccuracyArr = data.throughput.Stat.map(
+          (stat: any) => stat.pickAccuracy
+        );
         this.pickAccXaxisSeries = data.throughput.Stat.map(
-          (stat: any,index:any) => ++index
+          (stat: any, index: any) => ++index
         );
       }
-      // if (data.pickAccuracy) {
-      //   this.pickAccuracyArr = data.pickAccuracy.map((stat: any) => stat.rate);
-      //   this.pickAccXaxisSeries = data.pickAccuracy.map(
-      //     (stat: any) => stat.time
-      //   );
-      // }
+
       this.plotChart(
         'Pick accuracy',
         this.pickAccuracyArr,
         this.pickAccXaxisSeries,
         12
       );
-      // start
-      // const data = await this.fetchPickAccuracyData(
-      //   'pickaccuracy',
-      //   this.currentFilter,
-      //   '',
-      //   ''
-      // );
-      // if (data.tasks && data.completedPercentage !== undefined) {
-      //   this.pickAccuracyArr = data.tasks.map((task: any) => task.rate);
-      //   this.pickAccXaxisSeries = data.tasks.map((task: any) => task.time);
-        
-      //   // Plot the COMPLETED percentage in the chart
-      //   this.plotCompletedPercentage(data.completedPercentage);
-      // }
-
-      
-      // console.log('line 537')
-      // this.plotChart(
-      //   'Pick accuracy',
-      //   this.pickAccuracyArr,
-      //   this.pickAccXaxisSeries
-      // );
-      // end
     }, 1000 * 2);
   }
-  
+
   // Function to plot COMPLETED percentage in the graph
   plotCompletedPercentage(percentage: number) {
     // Assuming you want to plot this value as a separate series in the chart
@@ -558,7 +601,6 @@ export class AreaChartComponent implements OnInit {
       this.pickAccXaxisSeries
     );
   }
-  
 
   async fetchErrorRateData(
     endpoint: string,
@@ -567,7 +609,7 @@ export class AreaChartComponent implements OnInit {
     endTime: string
   ) {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    
+
     // Fetch data from the API
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
@@ -576,19 +618,19 @@ export class AreaChartComponent implements OnInit {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          timeSpan: timeSpan, 
+          timeSpan: timeSpan,
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
       }
     );
-  
+
     const data = await response.json();
-  
+
     // Assuming data contains a list of tasks
     if (data && data.tasks) {
       const totalTasks = data.tasks.length;
-  
+
       // Count the number of tasks with "FAILED", "CANCELLED", and "REJECTED" statuses
       const failedCount = data.tasks.filter(
         (task: any) => task.TaskStatus_Names === 'FAILED'
@@ -599,68 +641,84 @@ export class AreaChartComponent implements OnInit {
       const rejectedCount = data.tasks.filter(
         (task: any) => task.TaskStatus_Names === 'REJECTED'
       ).length;
-  
+
       // Calculate the error rate
-      const errorRate = ((totalTasks - (failedCount + cancelledCount + rejectedCount)) / totalTasks) * 100;
-  
+      const errorRate =
+        ((totalTasks - (failedCount + cancelledCount + rejectedCount)) /
+          totalTasks) *
+        100;
+
       // Return the data with the calculated error rate
       return { tasks: data.tasks, errorRate };
     }
-  
+
     return { tasks: [], errorRate: 0 };
   }
-  
+
   async updateErrorRate() {
     this.clearAllIntervals(this.errRateTimeInterval);
-  
+
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.errRateTimeInterval);
       this.errRateTimeInterval = 0;
-      
-      const data = await this.fetchChartData( 'err-rate', this.currentFilter, '', '' );
+
+      const data = await this.fetchChartData(
+        'err-rate',
+        this.currentFilter,
+        '',
+        ''
+      );
       if (data.errRate) {
         this.errRateArr = data.errRate.map((stat: any) => stat.errorRate);
-        this.errRateXaxisSeries = data.errRate.map( (stat: any,index:any) => ++index );
+        this.errRateXaxisSeries = data.errRate.map(
+          (stat: any, index: any) => ++index
+        );
       }
-      this.plotChart( 'Error rate', this.errRateArr, this.errRateXaxisSeries, 30 );
+      this.plotChart(
+        'Error rate',
+        this.errRateArr,
+        this.errRateXaxisSeries,
+        30
+      );
       return;
     }
-  
+
     if (this.errRateTimeInterval) return;
-  
+
     // Fetch the data and calculate the error rate
-    const data = await this.fetchChartData( 'err-rate', this.currentFilter, '', '' );
+    const data = await this.fetchChartData(
+      'err-rate',
+      this.currentFilter,
+      '',
+      ''
+    );
     if (data.errRate) {
       this.errRateArr = data.errRate.map((stat: any) => stat.errorRate);
-      this.errRateXaxisSeries = data.errRate.map( (stat: any,index:any) => ++index );
+      this.errRateXaxisSeries = data.errRate.map(
+        (stat: any, index: any) => ++index
+      );
     }
-    // if (data.tasks && data.errorRate !== undefined) {
-    //   this.errRateArr = data.tasks.map((task: any) => task.rate); // Assuming tasks contain the rate field
-    //   this.errRateXaxisSeries = data.tasks.map((task: any) => task.time);
-      
-    //   // Plot the error rate percentage in the chart
-    //   this.plotErrorRate(data.errorRate);
-    // }
-  
-    this.plotChart( 'Error rate', this.errRateArr, this.errRateXaxisSeries );
-  
+
+    this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries);
+
     this.errRateTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData( 'err-rate', this.currentFilter, '', '' );
+      const data = await this.fetchChartData(
+        'err-rate',
+        this.currentFilter,
+        '',
+        ''
+      );
       if (data.errRate) {
         this.errRateArr = data.errRate.map((stat: any) => stat.errorRate);
-        this.errRateXaxisSeries = data.errRate.map( (stat: any,index:any) => ++index );
+        this.errRateXaxisSeries = data.errRate.map(
+          (stat: any, index: any) => ++index
+        );
       }
-      // if (data.tasks && data.errorRate !== undefined) {
-      //   this.errRateArr = data.tasks.map((task: any) => task.rate);
-      //   this.errRateXaxisSeries = data.tasks.map((task: any) => task.time);
-        
-      //   // Plot the error rate percentage in the chart
-      //   this.plotErrorRate(data.errorRate);
-      // }
-      this.plotChart( 'Error rate', this.errRateArr, this.errRateXaxisSeries );
+
+      this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries);
     }, 1000 * 2);
   }
-  
+
   // Function to plot error rate in the graph
   plotErrorRate(errorRate: number) {
     // Assuming you want to plot this value as a separate series in the chart
@@ -669,13 +727,8 @@ export class AreaChartComponent implements OnInit {
       name: 'Error Rate',
       data: [errorRate], // You can adjust this to fit the timeline if needed
     });
-    this.plotChart(
-      'Error rate',
-      this.errRateArr,
-      this.errRateXaxisSeries
-    );
+    this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries);
   }
-  
 
   clearAllIntervals(currInterval: number) {
     if (currInterval !== this.throuputTimeInterval) {
@@ -699,16 +752,14 @@ export class AreaChartComponent implements OnInit {
   getTimeStampsOfDay() {
     let currentTime = Math.floor(new Date().getTime() / 1000);
     let startTimeOfDay;
-    if(this.currentFilter == 'week'){
-       startTimeOfDay = this.weekStartOfDay()
+    if (this.currentFilter == 'week') {
+      startTimeOfDay = this.weekStartOfDay();
+    } else if (this.currentFilter == 'month') {
+      startTimeOfDay = this.monthStartOfDay();
+    } else {
+      startTimeOfDay = this.getStartOfDay();
     }
-    else if(this.currentFilter == 'month'){
-      startTimeOfDay = this.monthStartOfDay()
-    }
-    else{
-      startTimeOfDay= this.getStartOfDay()
-    }
-    
+
     return {
       timeStamp1: startTimeOfDay,
       timeStamp2: currentTime,
@@ -719,24 +770,23 @@ export class AreaChartComponent implements OnInit {
     return Math.floor(new Date().setHours(0, 0, 0) / 1000);
   }
 
-  weekStartOfDay(){
-
+  weekStartOfDay() {
     let currentDate = new Date();
 
     // Subtract 7 days (last week) from the current date
     let lastWeekDate = new Date();
     lastWeekDate.setDate(currentDate.getDate() - 7);
 
-    return(Math.floor(new Date(lastWeekDate).setHours(0,0,0)/1000))
+    return Math.floor(new Date(lastWeekDate).setHours(0, 0, 0) / 1000);
   }
 
-  monthStartOfDay(){
+  monthStartOfDay() {
     // Get the current date
     let currentDate = new Date();
 
     // Subtract 1 month from the current date
     let lastMonthDate = new Date();
     lastMonthDate.setMonth(currentDate.getMonth() - 1);
-    return(Math.floor(new Date(lastMonthDate).setHours(0,0,0)/1000))
+    return Math.floor(new Date(lastMonthDate).setHours(0, 0, 0) / 1000);
   }
 }

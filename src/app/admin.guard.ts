@@ -20,7 +20,7 @@ export class AdminGuard implements CanActivate {
   }
  
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    if (this.cookieValue?.role === "Administrator" || this.cookieValue?.role === "Maintainer") {
+    if (this.cookieValue?.role === "Administrator" || this.cookieValue?.role === "Maintainer" || this.cookieValue?.role === "User") { // for temp..
       return true;
     } else {
       // this.router.navigateByUrl("")

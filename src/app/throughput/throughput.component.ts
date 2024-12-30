@@ -40,7 +40,7 @@ export class ThroughputComponent {
 
   seriesData: any[] = [];
   currentFilter: string = 'today';
-  isInLive : boolean = false;
+  isInLive: boolean = false;
 
   selectedMap: any | null = null;
   throughputArr: number[] = [0];
@@ -54,7 +54,7 @@ export class ThroughputComponent {
   ) {
     const seriesData = {
       hourlyDataSeries1: {
-        picks: [0 , 110, 91, 55, 101, 129, 122, 69, 91, 148],
+        picks: [0, 110, 91, 55, 101, 129, 122, 69, 91, 148],
         datestime: [],
       },
     };
@@ -132,7 +132,7 @@ export class ThroughputComponent {
   async ngOnInit() {
     this.selectedMap = this.projectService.getMapData();
     this.isInLive = this.projectService.getInLive();
-    if(!this.isInLive) return;
+    if (!this.isInLive) return;
     await this.updateThroughput();
   }
 
@@ -159,30 +159,27 @@ export class ThroughputComponent {
     // this.getThroughPut();
   }
 
-  plotChart(seriesName: string, data: any[], time: any[], limit: number = 5) { // limit: number = 12
+  plotChart(seriesName: string, data: any[], time: any[], limit: number = 5) {
+    // limit: number = 12
     const limitedData = data.length > limit ? data.slice(-limit) : data;
     const limitedTime = time.length > limit ? time.slice(-limit) : time;
 
-    /* this.chart.updateOptions(
-      {
-        series: [{ name: seriesName, data: limitedData }],
-        xaxis: { categories: limitedTime },
-      },
-      false, // Don't replot the entire chart
-      true // Smooth transitions
-    ); */
-
     this.chartOptions = {
       ...this.chartOptions,
-      series: [ { name: 'Throughput', data: limitedData, color: '#ff7373', }, ],
+      series: [{ name: 'Throughput', data: limitedData, color: '#ff7373' }],
       xaxis: {
         // ...this.chartOptions.xaxis, // only if needed..
         categories: limitedTime,
-      }
-    }
+      },
+    };
   }
 
-  async fetchChartData( endpoint: string, timeSpan: string, startTime: string, endTime: string ) {
+  async fetchChartData(
+    endpoint: string,
+    timeSpan: string,
+    startTime: string,
+    endTime: string
+  ) {
     // alter to date..
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     const response = await fetch(
@@ -207,8 +204,13 @@ export class ThroughputComponent {
 
     if (this.throuputTimeInterval) return;
 
-    const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
-    
+    const data = await this.fetchChartData(
+      'throughput',
+      this.currentFilter,
+      '',
+      ''
+    );
+
     let { Stat } = data.throughput;
     // console.log(Stat);
 
@@ -226,14 +228,25 @@ export class ThroughputComponent {
           })
       );
     }
-    this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries ); // this.selectedMetric..
+    this.plotChart(
+      'Throughput',
+      this.throughputArr,
+      this.throughputXaxisSeries
+    ); // this.selectedMetric..
 
     this.throuputTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData( 'throughput', this.currentFilter, '', '' );
+      const data = await this.fetchChartData(
+        'throughput',
+        this.currentFilter,
+        '',
+        ''
+      );
       let { Stat } = data.throughput;
 
       if (data.throughput) {
-        this.throughputArr = Stat.map( (stat: any) => stat.TotalThroughPutPerHour );
+        this.throughputArr = Stat.map(
+          (stat: any) => stat.TotalThroughPutPerHour
+        );
         this.throughputXaxisSeries = Stat.map((stat: any) =>
           new Date().toLocaleString('en-IN', {
             // month: 'short',
@@ -244,7 +257,11 @@ export class ThroughputComponent {
         );
       }
 
-      this.plotChart( 'Throughput', this.throughputArr, this.throughputXaxisSeries );
+      this.plotChart(
+        'Throughput',
+        this.throughputArr,
+        this.throughputXaxisSeries
+      );
     }, 1000 * 60); // 60 * 60
   }
 

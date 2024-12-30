@@ -1,8 +1,8 @@
-<div class="popup-overlay">
+<div class="popup-overlay" [ngStyle]="{ 'pointer-events': isNodeDetailsPopupVisible ? 'none' : 'auto' }">
   <div
     class="popup-content"
     [ngClass]="{ 'fixed-size': showImage, 'dynamic-size': !showImage }"
-    [ngStyle]="{ 'pointer-events': showImage ? 'none' : 'auto' }"
+    [ngStyle]="{ 'pointer-events': isNodeDetailsPopupVisible ? 'auto' : 'auto' }"
   >
 
     <h3 *ngIf="!showImage">Select and insert Map file</h3>
@@ -12,7 +12,7 @@
       <input
         type="file"
         id="fileInput"
-        accept="image/png, image/jpeg"
+        accept="image/png, image/jpeg, image/pgm"
         (change)="onFileSelected($event)"
         hidden
       />
@@ -103,7 +103,7 @@
         (keyup.enter)="open()"
       /> -->
     <!-- Intermediate Nodes Dialog -->
-    <div *ngIf="showImagePopup" class="image-popup-overlay">
+    <div *ngIf="showImagePopup" class="image-popup-overlay" >
       <div class="image-popup-content">
         <canvas class="imagePopupCanvas" #imagePopupCanvas></canvas>
         <button class="close-btn" (click)="closeImagePopup()"> <svg
@@ -147,10 +147,61 @@
         </div>
       </div>
     </div>
-    <div *ngIf="showOriginPopup && this.ratio" class="image-popup-overlay">
+
+    <div *ngIf="showOriginPopup && this.ratio" class="image-popup-overlay" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }">
       <div class="image-popup-content">
-        <div class="tooltip" #tooltip>(x: 0, y: 0)</div>
-        <canvas class="OriginPopupCanvas" #OriginPopupCanvas></canvas>
+
+        <div class="origin-fileupload" *ngIf="!this.showOriginCanvas">
+          <h3 *ngIf="showOriginPopup && this.ratio">Select Nav image</h3>
+          
+          <label for="anotherFileInput" class="upload-image">
+            <img src="../../assets/icons/arrow-down-circle.svg" alt="Upload" />
+            <input
+              type="file"
+              id="anotherFileInput"
+              accept="image/png, image/jpeg, image/pgm"
+              (change)="handleAnotherFileUpload($event)"
+              hidden
+            />
+          </label>
+          <div>
+            
+          </div>
+          
+          <p *ngIf="anotherFileName" class="file-name">{{ anotherFileName }}</p>
+
+          <!-- <div *ngIf="anotherFileName" class="coordinate-inputs">
+            <label for="xCoordinate">X:</label>
+            <input
+              id="xCoordinate"
+              type="number"
+              placeholder="Enter X"
+              [(ngModel)]="inputX"
+            />
+            <label for="yCoordinate">Y:</label>
+            <input
+              id="yCoordinate"
+              type="number"
+              placeholder="Enter Y"
+              [(ngModel)]="inputY"
+            />
+          </div> -->
+          <button (click)="openOrigin()" class="originBTN" *ngIf="anotherFileName">Open</button>
+        </div>
+        
+
+        <div class="originCanvas" >
+        <div class="tooltip" #tooltip *ngIf="this.showOriginCanvas">(x: 0, y: 0)</div>
+        <canvas class="OriginPopupCanvas" #OriginPopupCanvas *ngIf="this.showOriginCanvas"></canvas>
+        <canvas class="OriginOverlayCanvas" #OriginOverlayCanvas *ngIf="this.showOriginCanvas" style="position: absolute;top: 0;z-index: -1;"></canvas>
+        </div>
+        <div class="toolbar" *ngIf="this.showOriginCanvas">
+          <button (click)="zoomIn()">Zoom In</button>
+          <button (click)="zoomOut()">Zoom Out</button>
+          <button (click)="togglePanMode()" *ngIf="!isRotating">{{ isPanning ? 'Disable Pan' : 'Enable Pan' }}</button>
+          <button (click)="toggleRotateMode()" *ngIf="!isPanning">{{ isRotating ? 'Disable Rotate' : 'Enable Rotate' }}</button>
+          <!-- <button (click)="enablePlotOrigin()">{{ plotOrigin ? 'Disable Plot Origin' : 'Plot Origin' }}</button> -->
+        </div>
         <button class="close-btn" (click)="closeImagePopup()"> <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
@@ -219,15 +270,14 @@
         </svg>
       </button>
 
-      <canvas class="plottinglayer" #overlayCanvas *ngIf="showImage"></canvas>
+      <canvas class="plottinglayer" #overlayCanvas *ngIf="showImage" ></canvas>
       <div
         *ngIf="isNodeDetailsPopupVisible"
         class="nodepopup-overlay"
       >
       <div
         #nodeDetailsPopup
-        class="node-details-popup"
-        [style.display]="isNodeDetailsPopupVisible ? 'block' : 'none'"
+        class="node-details-popup"        
       >
 
       <div class="sampleCSS">
@@ -377,7 +427,15 @@
                     </select>
                   </div>
                   <div>
-                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock'">
+                    <div class="node2-sub" *ngIf="selectedNodeType === 'Intermediate' || selectedNodeType === 'Waiting'">
+                      <label for="predockPoseDropdown" class="label">Dock Pose:</label>
+                      <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedDockPose">
+                        <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
+                          {{ node.nodeId }}
+                        </option>
+                      </select>
+                    </div>
+                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
                     <label for="predockPoseDropdown" class="label">Predock Pose:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedPredockPose">
                       <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
@@ -385,7 +443,7 @@
                       </option>
                     </select>
                   </div>
-                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock'">
+                  <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
                     <label for="predockPoseDropdown" class="label">Undock Pose:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedUndockPose">
                       <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
@@ -528,16 +586,12 @@
               <button class="actionBTN" (click)="addAction()">Add</button>
               <button class="actionBTN" (click)="cancelAction()">Cancel</button>
           </div>
-
         </div>
-
-
       </div>
-
       </div>
     </div>
       <!-- Transparent canvas/ for plotting points -->
-      <canvas class="maplayer" #imageCanvas></canvas>
+      <canvas class="maplayer" #imageCanvas ></canvas>
 
       <!-- <div
         class="options-container"
@@ -583,7 +637,6 @@
         <!-- <button (click)="toggleOptionsMenu()">Back</button> -->
       </div>
     </div>
-
     <!-- <button class="close-button" (click)="close()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -824,8 +877,8 @@
       <div *ngIf="showEdgeError" class="error-message">
         All required fields must be provided.
       </div>
-      <button type="submit" id="formBTN" (click)="updateEdge()">Save</button>
       <button type="button" id="formBTN" (click)="deleteEdge()">Delete</button>
+      <button type="submit" id="formBTN" (click)="updateEdge()">Save</button>
       <button type="button" id="formBTN" (click)="cancelEdge()">Cancel</button>
     </div>  
   </div>

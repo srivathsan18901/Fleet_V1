@@ -1,9 +1,26 @@
 <!-- src/assets/svg/robot-b.svg -->
-<svg width="76" height="55" viewBox="0 0 76 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- <svg width="76" height="55" viewBox="0 0 76 55" fill="none" xmlns="http://www.w3.org/2000/svg">
   <rect x="11.5" y="0.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
   <rect x="11.5" y="47.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
   <rect x="52.5" y="47.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
   <rect x="52.5" y="0.5" width="14" height="7" rx="1.5" fill="#747070" stroke="black"/>
   <path d="M6 4.5H70C73.0376 4.5 75.5 6.96243 75.5 10V45C75.5 48.0376 73.0376 50.5 70 50.5H6C2.96243 50.5 0.5 48.0376 0.5 45V10C0.5 6.96243 2.96243 4.5 6 4.5Z" fill="#F5ADAE" stroke="black"/>
   <path d="M54.5 27C54.5 35.546 47.3512 42.5 38.5 42.5C29.6488 42.5 22.5 35.546 22.5 27C22.5 18.454 29.6488 11.5 38.5 11.5C47.3512 11.5 54.5 18.454 54.5 27Z" fill="white" stroke="black"/>
+</svg> -->
+<svg width="76" height="61" viewBox="0 0 76 61" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_0_1)">
+<path d="M24 3.5H13C12.1716 3.5 11.5 4.17157 11.5 5V9C11.5 9.82843 12.1716 10.5 13 10.5H24C24.8284 10.5 25.5 9.82843 25.5 9V5C25.5 4.17157 24.8284 3.5 24 3.5Z" fill="#747070" stroke="black"/>
+<path d="M24 50.5H13C12.1716 50.5 11.5 51.1716 11.5 52V56C11.5 56.8284 12.1716 57.5 13 57.5H24C24.8284 57.5 25.5 56.8284 25.5 56V52C25.5 51.1716 24.8284 50.5 24 50.5Z" fill="#747070" stroke="black"/>
+<path d="M65 50.5H54C53.1716 50.5 52.5 51.1716 52.5 52V56C52.5 56.8284 53.1716 57.5 54 57.5H65C65.8284 57.5 66.5 56.8284 66.5 56V52C66.5 51.1716 65.8284 50.5 65 50.5Z" fill="#747070" stroke="black"/>
+<path d="M65 3.5H54C53.1716 3.5 52.5 4.17157 52.5 5V9C52.5 9.82843 53.1716 10.5 54 10.5H65C65.8284 10.5 66.5 9.82843 66.5 9V5C66.5 4.17157 65.8284 3.5 65 3.5Z" fill="#747070" stroke="black"/>
+<path d="M6 7.5H70C73.0376 7.5 75.5 9.96243 75.5 13V48C75.5 51.0376 73.0376 53.5 70 53.5H6C2.96243 53.5 0.5 51.0376 0.5 48V13C0.5 9.96243 2.96243 7.5 6 7.5Z" fill="#F5ADAE" stroke="black"/>
+<path d="M54.5 30C54.5 38.546 47.3512 45.5 38.5 45.5C29.6488 45.5 22.5 38.546 22.5 30C22.5 21.454 29.6488 14.5 38.5 14.5C47.3512 14.5 54.5 21.454 54.5 30Z" fill="white" stroke="black"/>
+</g>
+<rect x="3" width="70" height="61" rx="3" fill="#4C61C2" fill-opacity="0.68"/>
+<defs>
+<clipPath id="clip0_0_1">
+<rect width="76" height="55" fill="white" transform="translate(0 3)"/>
+</clipPath>
+</defs>
 </svg>
+

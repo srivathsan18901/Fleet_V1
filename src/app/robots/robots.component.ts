@@ -1,4 +1,3 @@
-
 import {
   Component,
   OnInit,
@@ -49,7 +48,7 @@ export interface Robot {
   maximumspeed: string;
   averagetransfertime: string;
   averagedockingtime: string;
-  distance:number;
+  distance: number;
 }
 
 @Component({
@@ -80,7 +79,6 @@ export class RobotsComponent implements OnInit {
   isFleet: boolean = false; // Store the emitted value
   private subscriptions: Subscription[] = [];
 
-
   private routerSubscription: Subscription | undefined; // Subscription to track navigation changes
 
   constructor(
@@ -101,15 +99,16 @@ export class RobotsComponent implements OnInit {
       if (robo.networkstrength < 20) robo.SignalStrength = 'Weak';
       else if (robo.networkstrength < 40) robo.SignalStrength = 'Medium';
       else if (robo.networkstrength < 80) robo.SignalStrength = 'Full';
-      robo.networkstrength = robo.networkstrength.toString() ;
+      robo.networkstrength = robo.networkstrength.toString();
       return robo;
     });
 
     // Subscribe to the isFleet$ observable
-    const fleetSub = this.isFleetService.isFleet$.subscribe((status: boolean) => {
-      this.isFleet = status; // Update the value whenever it changes
-      console.log('Received fleet statekjxhvjldlvkdlvk:', this.isFleet); // For debugging
-    });
+    const fleetSub = this.isFleetService.isFleet$.subscribe(
+      (status: boolean) => {
+        this.isFleet = status; // Update the value whenever it changes
+      }
+    );
 
     this.subscriptions.push(fleetSub);
 
@@ -123,7 +122,7 @@ export class RobotsComponent implements OnInit {
     }, 1000 * 5);
 
     // Subscribe to route changes to close popup on navigation
-    this.routerSubscription = this.router.events.subscribe(event => {
+    this.routerSubscription = this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.dialog.closeAll(); // Close all open dialogs when navigation starts
       }
@@ -134,7 +133,7 @@ export class RobotsComponent implements OnInit {
     if (savedIsFleet !== null) {
       this.isFleet = savedIsFleet === 'true'; // Convert string to boolean
       this.isFleetService.setIsFleet(this.isFleet); // Sync the state with the service
-        }
+    }
   }
 
   ngOnDestroy(): void {
@@ -146,22 +145,28 @@ export class RobotsComponent implements OnInit {
 
   // Fetch robots from the API
   async fetchAllRobos(): Promise<any[]> {
-    const response = await fetch(`http://${environment.API_URL}:${environment.PORT}/stream-data/get-fms-amrs`, {
-      method: 'POST',
-      credentials: 'include',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ mapId: this.mapDetails.id })
-    });
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-fms-amrs`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mapId: this.mapDetails.id }),
+      }
+    );
 
     const data = await response.json();
     return data.robots || [];
   }
 
   async getLiveRoboInfo(): Promise<any[]> {
-    const response = await fetch(`http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapDetails.id}`, {
-      method: 'GET',
-      credentials: 'include'
-    });
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapDetails.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
 
     const data = await response.json();
     if (!data.map || data.error) return [];
@@ -174,7 +179,7 @@ export class RobotsComponent implements OnInit {
       return;
     }
 
-//Robotstatus
+    //Robotstatus
 
     let { robots }: any = this.liveRobos;
     if (!robots.length) this.robots = this.initialRoboInfos;
@@ -192,22 +197,15 @@ export class RobotsComponent implements OnInit {
           robo.networkstrength = liveRobo.NetworkSpeed;
           robo.memory = liveRobo.Memory;
           robo.PickCount = liveRobo.PickCount;
-          robo.cpuutilization=liveRobo.CPU_Utilization;
-          robo.DropCount= liveRobo.DropCount;
+          robo.cpuutilization = liveRobo.CPU_Utilization;
+          robo.DropCount = liveRobo.DropCount;
           // robo.error = liveRobo.robotError;
-          robo.currentspeed = liveRobo["Robot Speed"];
-          robo.averagespeed = liveRobo["Robot Speed"];
-
-
-          // if ('EMERGENCY STOP' in liveRobo.robot_errors)
-          //   robo.error += liveRobo.robot_errors['EMERGENCY STOP'].length;
-          // if ('LIDAR_ERROR' in liveRobo.robot_errors)
-          //   robo.error += liveRobo.robot_errors['LIDAR_ERROR'].length;
+          robo.currentspeed = liveRobo['Robot Speed'];
+          robo.averagespeed = liveRobo['Robot Speed'];
         }
       });
       return robo;
     });
-    console.log(this.robots,'=================Robot======================')
 
     this.filteredRobots = this.robots;
   }
@@ -224,7 +222,9 @@ export class RobotsComponent implements OnInit {
 
     this.filteredRobots = this.robots.filter((robot) => {
       const idMatch = robot.id.toString().includes(query);
-      const serialNumberMatch = robot.serialNumber.toLowerCase().includes(query);
+      const serialNumberMatch = robot.serialNumber
+        .toLowerCase()
+        .includes(query);
       const nameMatch = robot.name.toLowerCase().includes(query);
 
       return idMatch || serialNumberMatch || nameMatch;
@@ -255,17 +255,6 @@ export class RobotsComponent implements OnInit {
   trackByIndex(index: number, obj: any): any {
     return index;
   }
-
-
-
-  // fetchSignalStrength(): void {
-  //   // Replace with your API endpoint
-  //   const apiUrl = 'https://api.example.com/signal-strength';
-
-  //   this.http.get<{ signal: string }>(apiUrl).subscribe(response => {
-  //     this.currentSignalClass = this.mapSignalToClass(response.signal);
-  //   });
-  // }
 
   setSignalStrength(signal: string): void {
     this.currentSignalClass = this.mapSignalToClass(signal);

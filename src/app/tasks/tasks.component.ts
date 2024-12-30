@@ -13,12 +13,6 @@ import { MessageService } from 'primeng/api';
 export class TasksComponent implements OnInit, AfterViewInit {
   i: any;
 
-  // activeButton: number | null = null;
-
-  // handleClick(index: number): void {
-  //   this.activeButton = index;
-
-  // }
   trackByTaskId(index: number, item: any): number {
     return item.taskId; // or any unique identifier like taskId
   }
@@ -31,7 +25,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     console.log(`${action} task: ${item.taskId}`);
   }
 
-  async onCancel(item: any) {    
+  async onCancel(item: any) {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/cancel-task`,
       {
@@ -40,18 +34,18 @@ export class TasksComponent implements OnInit, AfterViewInit {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mapId: this.mapData.id,
-          taskId:item.taskId
+          taskId: item.taskId,
         }),
       }
     );
-    let data=await response.json();
+    let data = await response.json();
     console.log(item);
-    
-    if(!data.isTaskCancelled) {
-      alert(data.response || data.msg)
-      return
+
+    if (!data.isTaskCancelled) {
+      alert(data.response || data.msg);
+      return;
     }
-    if(data.isTaskCancelled){
+    if (data.isTaskCancelled) {
       this.messageService.add({
         severity: 'info',
         summary: 'Info',
@@ -69,8 +63,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           mapId: this.mapData.id,
-          timeStamp1: this.getTimeStampsOfDay(new Date(this.mapData.createdAt)).timeStamp1,
-          timeStamp2: this.getTimeStampsOfDay(new Date(this.mapData.createdAt)).timeStamp2,
+          timeStamp1: this.getTimeStampsOfDay(new Date(this.mapData.createdAt))
+            .timeStamp1,
+          timeStamp2: this.getTimeStampsOfDay(new Date(this.mapData.createdAt))
+            .timeStamp2,
         }),
       }
     );
@@ -90,7 +86,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.filteredTaskData = this.tasks;
       this.updateData(); // Ensure pagination and filtered data are updated
     }
-}
+  }
 
   mapData: any | null = null;
   searchQuery: string = '';
@@ -133,7 +129,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // if (!response.ok)
     //   throw new Error(`Error with status code of : ${response.status}`);
     let data = await response.json();
-console.log(data,'task data')
+    console.log(data, 'task data');
     if (!data.tasks) return;
     const { tasks } = data.tasks;
     if (!('tasks' in data.tasks)) {
@@ -171,7 +167,6 @@ console.log(data,'task data')
   ngAfterViewInit() {
     this.setPaginatedData(); // Set initial paginated data after view is initialized
   }
-
 
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
@@ -240,21 +235,23 @@ console.log(data,'task data')
     try {
       switch (format) {
         case 'csv':
-           let csvHeader:{[k:string]:any}={}
-          if(data.length==0){
-            csvHeader['status']=true
-            csvHeader['structure']=[{
-              taskId:'',
-              taskType:'',
-              status:'',
-              roboName:'',
-              sourceLocation:'',
-              destinationLocation:''
-            }]
+          let csvHeader: { [k: string]: any } = {};
+          if (data.length == 0) {
+            csvHeader['status'] = true;
+            csvHeader['structure'] = [
+              {
+                taskId: '',
+                taskType: '',
+                status: '',
+                roboName: '',
+                sourceLocation: '',
+                destinationLocation: '',
+              },
+            ];
           }
-          csvHeader['length']=6;
+          csvHeader['length'] = 6;
           // console.log(data,'excel task cmptdata')
-          this.exportService.exportToCSV(data, 'TaskDataExport',csvHeader);
+          this.exportService.exportToCSV(data, 'TaskDataExport', csvHeader);
           this.messageService.add({
             severity: 'success',
             summary: 'Export Successful',
@@ -263,20 +260,22 @@ console.log(data,'task data')
           });
           break;
         case 'excel':
-          let excelHeader:{[k:string]:any}={}
-          if(data.length==0){
-            excelHeader['status']=true
-            excelHeader['structure']=[{
-              taskId:'',
-              taskType:'',
-              status:'',
-              roboName:'',
-              sourceLocation:'',
-              destinationLocation:''
-            }]
-         }
-         excelHeader['length']=6;
-          this.exportService.exportToExcel(data, 'TaskDataExport',excelHeader);
+          let excelHeader: { [k: string]: any } = {};
+          if (data.length == 0) {
+            excelHeader['status'] = true;
+            excelHeader['structure'] = [
+              {
+                taskId: '',
+                taskType: '',
+                status: '',
+                roboName: '',
+                sourceLocation: '',
+                destinationLocation: '',
+              },
+            ];
+          }
+          excelHeader['length'] = 6;
+          this.exportService.exportToExcel(data, 'TaskDataExport', excelHeader);
           this.messageService.add({
             severity: 'success',
             summary: 'Export Successful',

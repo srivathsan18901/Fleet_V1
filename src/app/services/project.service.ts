@@ -153,12 +153,10 @@ export class ProjectService {
   userManagementService(userData:any){
     console.log(userData,'from service call')
     
-    this.cookieService.set('userManagementData',JSON.stringify(userData))
+    // this.cookieService.set('userManagementData',JSON.stringify(userData))
   }
 
-  userManagementSericeGet(){
-    console.log('get fn called')
-    console.log(this.cookieService.get('userManagementData'))
+  userManagementServiceGet(){
     return this.cookieService.get('userManagementData');
   }
 }

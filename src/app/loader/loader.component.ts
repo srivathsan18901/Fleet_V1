@@ -14,7 +14,7 @@ export class LoaderComponent {
     // Simulate some delay, such as an API call
     setTimeout(() => {
       this.isLoading = false; // Hide loader after the delay
-    }, 1000); // Delay of 3 seconds
+    }, 500); // Delay of 3 seconds
   }
 
 }

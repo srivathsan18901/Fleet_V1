@@ -272,15 +272,21 @@
       (mousedown)="panStart($event)"
       (mouseleave)="onMouseLeave()"
     ></canvas>
+    <app-heatmap
+    *ngIf="showHeatMap"
+    [mapImageHeight]="mapImageHeight"
+    [mapImageWidth]="mapImageWidth"     
+    [style.position]="'relative'"
+    [style.top.px]="heatmapY"
+    [style.left.px]="heatmapX"
+  ></app-heatmap>
+  
     <!-- <canvas *ngIf="showModelCanvas" #modelCanvas id="modelCanvas" ></canvas> -->
 
     <!-- enable robots dropdown -->
     <div class="dropdown">
       <!-- Dropdown Button with Arrow -->
-      <button
-        class="dropdown-button"
-        (click)="toggleDropdown()"
-      >
+      <button class="dropdown-button" (click)="toggleDropdown()">
         Enable Robot
         <svg
           [ngClass]="{ rotate: isDropdownOpen }"
@@ -349,7 +355,10 @@
                 [(ngModel)]="robot.isActive"
                 (change)="activateRobot(robot)"
                 [disabled]="!isFleetUp"
-                [ngClass]="{'active': robot.isActive, 'inactive': !robot.isActive}"
+                [ngClass]="{
+                  active: robot.isActive,
+                  inactive: !robot.isActive
+                }"
               />
               <div class="slider"></div>
               <div class="slider-card">
@@ -359,7 +368,10 @@
             </label>
 
             <!-- Delete icon with click event -->
-            <button class="enable-delete-button" (click)="deleteRobot(robot ,i)">
+            <button
+              class="enable-delete-button"
+              (click)="deleteRobot(robot, i)"
+            >
               <svg
                 width="25"
                 height="25"
@@ -476,6 +488,22 @@
         <!-- Model Canvas -->
         <div class="tooltip">
           <img
+            src="../../assets/CanvasOptions/Showpath.svg"
+            class="ModelCanvas"
+            (click)="toggleShowPath()"
+          />
+          <span class="tooltiptext">Show Path</span>
+        </div>
+        <div class="tooltip">
+          <img
+            src="../../assets/CanvasOptions/Heatmap.svg"
+            class="ModelCanvas"
+            (click)="toggleHeatmap()"
+          />
+          <span class="tooltiptext">Heat Map</span>
+        </div>
+        <div class="tooltip">
+          <img
             src="../../assets/CanvasOptions/Model.svg"
             class="ModelCanvas"
             (click)="toggleModelCanvas()"
@@ -543,5 +571,6 @@
   <button (click)="initializeRobo()">
     {{ updatedrobo?.isInitialized ? "Release Robot" : "Initialize Robot" }}
   </button>
+  <button (click)="toggleShowRoboPath()">Show Path</button>
   <button (click)="cancelAction()">Cancel</button>
 </div>
