@@ -37,6 +37,7 @@ export class GradientDonutComponent implements OnInit {
   @Input() series: ApexNonAxisChartSeries = [];
   @Input() labels: string[] = []; // Labels for each segment
   @Input() chartWidth: number = 400;
+  @Input() chartHeight: number = 334;
   @Input() startAngle: number = -90;
   @Input() endAngle: number = 270;
   @Input() dataLabelsEnabled: boolean = false;
@@ -76,6 +77,7 @@ export class GradientDonutComponent implements OnInit {
       chart: {
         type: 'donut',
         width: this.chartWidth,
+        height: this.chartHeight,
       },
       plotOptions: {
         pie: {
@@ -135,7 +137,7 @@ export class GradientDonutComponent implements OnInit {
         },
         labels: {
           colors: ['#000000'], // Adjust color as needed
-          style: { fontFamily: '"Graphik", Arial, sans-serif' },
+          style: { fontFamily: '"Graphik", Arial, sans-serif'},
         },
       },
       labels: this.labels,

@@ -17,7 +17,7 @@ export class StatisticsComponent {
     throw new Error('Method not implemented.');
   }
   currentView: string = 'operation'; // Default to 'operation'
-  operationPie: number[] = [0, 0, 0, 0, 0];
+  operationPie: number[] = [0, 0, 0, 0, 0, 0];
   selectedMap: any | null = null;
   operationActivities: any[] = [];
 
@@ -283,7 +283,6 @@ export class StatisticsComponent {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime); // yet to take, in seri..
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
-
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
       {
@@ -302,38 +301,32 @@ export class StatisticsComponent {
 
     if (data.error) {
       console.log('Err occured while getting tasks status : ', data.error);
-      return [0, 0, 0, 0, 0];
+      return [0, 0, 0, 0, 0, 0];
     }
-    if (!data.tasks?.tasks) return [0, 0, 0, 0, 0];
+    if (!data.tasks?.tasks) return [0, 0, 0, 0, 0, 0];
     const { tasks } = data.tasks;
-
     // if (data.tasksStatus) return data.tasksStatus;
     // ["completed", "In-progress", "todo", "err", "cancelled"];
-    let tasksStatus = [0, 0, 0, 0, 0];
+    let tasksStatus = [0, 0, 0, 0, 0, 0];
     let tot_tasks = 0;
     if (tasks) {
       let tasksStatusArr = tasks.map((task: any) => {
         return task.task_status.status;
       });
       for (let task of tasksStatusArr) {
-        if (task === 'PICKED' || task === 'DROPPED' || task === 'COMPLETED')
-          tasksStatus[0] += 1;
-        else if (
-          task === 'INPROGRESS' ||
-          task === 'COMPLETED' ||
-          task === 'ACCEPTED'
-        )
-          tasksStatus[1] += 1;
-        else if (task === 'NOTASSIGNED') tasksStatus[2] += 1;
-        else if (task === 'FAILED' || task === 'REJECTED') tasksStatus[3] += 1;
-        else if (task === 'CANCELLED') tasksStatus[4] += 1;
+        if (task === 'COMPLETED')   tasksStatus[0] += 1;
+        else if ( task === 'ACCEPTED') tasksStatus[1]+=1;
+        else if ( task === 'INPROGRESS' || task === 'DROPPED'|| task === 'PICKED' ) tasksStatus[2] += 1;
+        else if (task === 'NOTASSIGNED') tasksStatus[3] += 1;
+        else if (task === 'FAILED' || task === 'REJECTED') tasksStatus[4] += 1;
+        else if (task === 'CANCELLED') tasksStatus[5] += 1;
       }
       for (let taskStatus of tasksStatus) {
         tot_tasks += taskStatus;
       }
       let completedTasks = tasksStatus[0];
-      let errorTasks = tasksStatus[3];
-      let cancelledTasks = tasksStatus[4];
+      let errorTasks = tasksStatus[4];
+      let cancelledTasks = tasksStatus[5];
       if (
         completedTasks === 0 ||
         isNaN(completedTasks) ||
@@ -348,7 +341,7 @@ export class StatisticsComponent {
       }
       return tasksStatus;
     }
-    return [0, 0, 0, 0, 0];
+    return [0, 0, 0, 0, 0, 0];
   }
 
   onSearch(event: Event): void {

@@ -149,10 +149,11 @@
       <div class="donut-chart-container">
         <app-gradient-donut
           [series]="operationPie"
-          [labels]="['Completed', 'In-Progress', 'ToDo', 'Error', 'Cancelled']"
+          [labels]="['Completed', 'Assigned', 'In-Progress', 'ToDo', 'Error', 'Cancelled']"
           [legendFontSize]="'14px'"
           [dataLabelFontSize]="'14px'"
           [chartWidth]="495"
+          [chartHeight]="334"
           [fillType]="'gradient'"
           [titleText]="'Operations'"
           [legendFontSize]="'16px'"
@@ -160,6 +161,7 @@
         >
         </app-gradient-donut>
       </div>
+      
     </div>
 
     <div class="dashboard-container">

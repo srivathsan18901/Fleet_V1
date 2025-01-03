@@ -3,7 +3,23 @@
 
 /* styles.css or styles.scss */
 
-
+.status-dot {
+  width: 12px; /* Size of the dot */
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 8px; /* Space between the dot and the text */
+}
+.dot-green {
+  background-color: green;
+}
+.fleet-status {
+  display: flex;
+  align-items: center;
+  font-size: 18px; /* Adjust as per your design */
+}
+.dot-red {
+  background-color: red;
+}
 .sidebar {
     position: fixed; /* or relative based on your layout */
     height: 100%;
@@ -50,10 +66,10 @@
 
 
   .fleet-status {
-    display: inline-block; /* Make it a block-level element */
+    display: flex; /* Make it a block-level element */
     padding: 5px 10px; /* Add padding for a button-like appearance */
     border-radius: 5px; /* Rounded corners */
-    font-size: 1rem; /* Font size */
+    font-size: 1.2rem; /* Font size */
     font-weight: bold; /* Bold text for visibility */
     font-family: "graphik", Arial,  sans-serif;
     margin-right: 2rem; /* Space between status and other elements */
@@ -63,14 +79,14 @@
   }
 
   .fleet-up {
-    background-color: rgba(0, 255, 0, 0.2); /* Light green background for Fleet Up */
+    /* background-color: rgba(0, 255, 0, 0.2); */
     color: rgb(5, 206, 5); /* Green text color */
   }
 
   .fleet-down {
-    background-color: rgba(249, 111, 111, 0.2); /* Light gray background for Fleet Down */
+    /* background-color: rgba(249, 111, 111, 0.2);  */
     color: rgb(236, 6, 6); /* Gray text color */
-    box-shadow: 0 0 5px rgba(255, 35, 35, 0.5); /* Heavy box shadow */
+    /* box-shadow: 0 0 5px rgba(255, 35, 35, 0.5);  */
   }
 
 
@@ -507,12 +523,10 @@ app-fullscreen-button{
     font-family: "graphik", Arial,  sans-serif;
     padding: 5px 10px;
     border-radius: 5px;
-    margin-right: 2rem;
-
+    margin-right: -0.5rem;
     display: flex;
     justify-content: center; /* Center horizontally */
     align-items: center; /* Center vertically */
-
     text-align: center; /* Center text */
   }
 

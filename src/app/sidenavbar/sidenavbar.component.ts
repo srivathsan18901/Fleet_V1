@@ -34,15 +34,16 @@ export class SidenavbarComponent implements OnInit {
   isNotificationVisible = false;
   languageArrowState = false;
   isFleetUp: boolean = false; // Set to true or false based on your logic
+  isAmqpUp: boolean = false;
 
   private autoCloseTimeout: any;
   notifications: any[] = [];
 
-  processedErrors : Set<string>; // To track processed errors
+  processedErrors: Set<string>; // To track processed errors
 
   filteredRobotActivities = this.robotActivities;
   filteredNotifications = this.notifications;
-  userManagementData:any;
+  userManagementData: any;
 
   constructor(
     private authService: AuthService,
@@ -53,7 +54,7 @@ export class SidenavbarComponent implements OnInit {
     private cookieService: CookieService,
     private cdRef: ChangeDetectorRef
   ) {
-    this.userManagementData= this.userPermissionService.getPermissions();
+    this.userManagementData = this.userPermissionService.getPermissions();
     this.processedErrors = new Set<string>(); // yet to noify later..
   }
 
@@ -70,7 +71,7 @@ export class SidenavbarComponent implements OnInit {
     setInterval(async () => {
       await this.getFleetStatus();
     }, 1000 * 2); // max to 30 or 60 sec
-    if(!this.selectedMap) return;
+    if (!this.selectedMap) return;
     await this.getRoboStatus();
     await this.getTaskErrs();
     setInterval(async () => {
@@ -78,7 +79,6 @@ export class SidenavbarComponent implements OnInit {
       await this.getTaskErrs(); // or run in indivdual..
     }, 1000 * 5); // max to 30 or 60 sec
   }
-  
 
   async getFleetStatus() {
     let response = await fetch(
@@ -87,13 +87,24 @@ export class SidenavbarComponent implements OnInit {
     let data = await response.json();
     // console.log(data.fleetUp);
     this.isFleetUp = data.fleetUp ? true : false;
+    let project = this.projectService.getSelectedProject();
+    if (project && project._id) {
+      let rabbitResponse = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/stream-data/rabbitmq-status/${project._id}`
+      );
+
+      let rabbitData = await rabbitResponse.json();
+
+      this.isAmqpUp = rabbitData.rabbitmqStatus ? true : false;
+    }
+
     let prevFleetStatus = this.projectService.getIsFleetUp();
-    if(prevFleetStatus === this.isFleetUp) return;
-    this.projectService.setIsFleetUp(this.isFleetUp)
+    if (prevFleetStatus === (this.isFleetUp && this.isAmqpUp)) return;
+    this.projectService.setIsFleetUp(this.isFleetUp && this.isAmqpUp);
   }
 
   // not called anywhere..
-  async getFleetLogStatus(){
+  async getFleetLogStatus() {
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
       {
@@ -102,24 +113,37 @@ export class SidenavbarComponent implements OnInit {
       }
     );
     const data = await response.json();
-    if (!data.map || data.error) return ;
+    if (!data.map || data.error) return;
     this.fleetActivities = data.objs;
-    if(!('objects' in this.fleetActivities)) return;
+    if (!('objects' in this.fleetActivities)) return;
     let { objs }: any = this.fleetActivities;
     if (!objs.length) return;
 
     objs.forEach((robot: any) => {
       if (robot.fleet_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) { // [errorType, errors] => [key, value]
+        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
+          // [errorType, errors] => [key, value]
           // if (errorType === "NO ERROR") continue;
-          for (let error of (errors as any[])) {
-            let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "DOCKING ERROR", "LOADING ERROR", "NO ERROR"]; //Robot Errors List from RabbitMQ
-            let criticality = "Normal";
+          for (let error of errors as any[]) {
+            let err_type = [
+              'EMERGENCY STOP',
+              'LIDAR_ERROR',
+              'DOCKING ERROR',
+              'LOADING ERROR',
+              'NO ERROR',
+            ]; //Robot Errors List from RabbitMQ
+            let criticality = 'Normal';
 
-            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3])) 
-              criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
-            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2])) 
-              criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
+            if (
+              err_type.includes(err_type[0]) ||
+              err_type.includes(err_type[3])
+            )
+              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
+            else if (
+              err_type.includes(err_type[1]) ||
+              err_type.includes(err_type[2])
+            )
+              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
 
             let notificationKey = `${error.description} on robot ID ${robot.id}`;
             if (this.processedErrors?.has(notificationKey)) continue;
@@ -128,7 +152,12 @@ export class SidenavbarComponent implements OnInit {
             this.notifications.push({
               label: `${criticality}`,
               message: `${error.description} on robot ID ${robot.id}`,
-              type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+              type:
+                criticality === 'Critical'
+                  ? 'red'
+                  : criticality === 'Warning'
+                  ? 'yellow'
+                  : 'green',
             });
 
             this.cdRef.detectChanges(); // yet to notify..
@@ -149,28 +178,39 @@ export class SidenavbarComponent implements OnInit {
 
     const data = await response.json();
     // console.log(data);
-    if (!data.map || data.error) return ;
+    if (!data.map || data.error) return;
     this.robotActivities = data.robos;
-    
 
     if (!('robots' in this.robotActivities)) return;
-    
 
     let { robots }: any = this.robotActivities;
     if (!robots.length) return;
 
     robots.forEach((robot: any) => {
       if (robot.robot_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) { // [errorType, errors] => [key, value]
+        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
+          // [errorType, errors] => [key, value]
           // if (errorType === "NO ERROR") continue;
-          for (let error of (errors as any[])) {
-            let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "DOCKING ERROR", "LOADING ERROR", "NO ERROR"]; //Robot Errors List from RabbitMQ
-            let criticality = "Normal";
+          for (let error of errors as any[]) {
+            let err_type = [
+              'EMERGENCY STOP',
+              'LIDAR_ERROR',
+              'DOCKING ERROR',
+              'LOADING ERROR',
+              'NO ERROR',
+            ]; //Robot Errors List from RabbitMQ
+            let criticality = 'Normal';
 
-            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3]))
-              criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
-            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2]))
-              criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
+            if (
+              err_type.includes(err_type[0]) ||
+              err_type.includes(err_type[3])
+            )
+              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
+            else if (
+              err_type.includes(err_type[1]) ||
+              err_type.includes(err_type[2])
+            )
+              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
 
             let notificationKey = `${error.description} on robot ID ${robot.id}`;
             if (this.processedErrors?.has(notificationKey)) continue;
@@ -179,7 +219,12 @@ export class SidenavbarComponent implements OnInit {
             this.notifications.push({
               label: `${criticality}`,
               message: `${error.description} on robot ID ${robot.id}`,
-              type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+              type:
+                criticality === 'Critical'
+                  ? 'red'
+                  : criticality === 'Warning'
+                  ? 'yellow'
+                  : 'green',
             });
 
             this.cdRef.detectChanges(); // yet to notify..
@@ -209,8 +254,8 @@ export class SidenavbarComponent implements OnInit {
     );
     const data = await response.json();
     if (!data.map || data.error) return;
-    for(let err of data.taskErr){
-      if(err === null) continue;
+    for (let err of data.taskErr) {
+      if (err === null) continue;
       // let dateCreated = new Date(err.TaskAddTime * 1000);
       // {
       //   status: err.task_status.status,
@@ -220,17 +265,21 @@ export class SidenavbarComponent implements OnInit {
       let notificationKey = `${err.task_status.status} on task ID ${err.task_id}`;
       if (this.processedErrors?.has(notificationKey)) continue;
       this.processedErrors?.add(notificationKey);
-      let criticality = "Normal";
+      let criticality = 'Normal';
 
-      if(err.Error_code == "HIGH")
-        criticality = "Critical";
+      if (err.Error_code == 'HIGH') criticality = 'Critical';
       // else if(err.Error_code == "")
       //   criticality = "Warning";
 
       this.notifications.push({
         label: `${criticality}`,
         message: `${err.task_status.status} on task ID ${err.task_id}`,
-        type: criticality === "Critical" ? 'red' : criticality === "Warning" ? 'yellow' : 'green',
+        type:
+          criticality === 'Critical'
+            ? 'red'
+            : criticality === 'Warning'
+            ? 'yellow'
+            : 'green',
       });
     }
   }
@@ -329,7 +378,7 @@ export class SidenavbarComponent implements OnInit {
           this.projectService.clearMapData();
           this.projectService.clearIsMapSet();
           this.authService.logout();
-          this.userPermissionService.deletePermissions()
+          this.userPermissionService.deletePermissions();
           this.router.navigate(['/']);
         }
       })
@@ -337,9 +386,7 @@ export class SidenavbarComponent implements OnInit {
   }
 
   // language
-  flags = [
-    
-  ];
+  flags = [];
 
   trackFlag(index: number, flag: any): number {
     return flag.order; // Use the unique identifier for tracking

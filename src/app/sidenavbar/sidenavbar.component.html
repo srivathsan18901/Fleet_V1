@@ -6,14 +6,11 @@
     </div>
 
     <!-- Fleet Status Indicator -->
-    <div class="fleet-status" [ngClass]="{'fleet-up': isFleetUp, 'fleet-down': !isFleetUp}">
-      <i class="wifi-icon" [ngClass]="{'wifi-up': isFleetUp, 'wifi-down': !isFleetUp}"></i>
-      {{ isFleetUp ? 'Fleet Engaged' : 'Fleet Halted' }}
+    <div class="fleet-status" [ngClass]="{'fleet-up': (isFleetUp && isAmqpUp), 'fleet-down': !(isFleetUp && isAmqpUp)}">
+      <img [src]="(isFleetUp && isAmqpUp) ? '../../assets/Liveoff.svg' : '../../assets/Liveon.svg'">
+      {{ isFleetUp ? 'LIVE' : 'LIVE' }}
     </div>
-
-
-
-
+    
     <app-fullscreen-button></app-fullscreen-button>
     <img alt=""
       src="../../assets/icons/Notification_icon.svg"

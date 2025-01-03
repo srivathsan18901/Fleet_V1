@@ -560,8 +560,7 @@ h2 {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   border-radius: 8px;
   padding: 1%;
-  height: auto; /* Height will adjust based on content */
-  min-height: 270px; /* Ensures a minimum height for smaller screens */
+  min-height: 332px; /* Ensures a minimum height for smaller screens */
 }
 
 
@@ -573,7 +572,6 @@ h2 {
   .area-chart-container,
   .donut-chart-container {
     width: 100%; /* Full width for both charts */
-
   }
 }
 

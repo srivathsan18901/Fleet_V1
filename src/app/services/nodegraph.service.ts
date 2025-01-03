@@ -10,14 +10,15 @@ export class NodeGraphService {
   private zones: any[] = [];
   private simMode: any[] = [];
   private robos: any[] = [];
-  private zoomLevel:number=1.0;
-  private offsetX:number=0;
-  private offsetY:number=0;
+  private zoomLevel: number = 1.0;
+  private offsetX: number = 0;
+  private offsetY: number = 0;
   private isShowPath: boolean = false;
   private isShowRoboPath: number = 0;
+  private draggingRobo: any = null;
   roboIDColor: Map<number, string> = new Map<number, string>(); // check...
-
   showModelCanvas: boolean = false;
+  assignTask:boolean=false;
 
   constructor() {}
 
@@ -58,8 +59,16 @@ export class NodeGraphService {
     this.showModelCanvas = state;
   }
 
-  getShowModelCanvas():boolean{
+  getShowModelCanvas(): boolean {
     return this.showModelCanvas;
+  }
+
+  setAssignTask(state: boolean) {
+    this.assignTask = state;
+  }
+
+  getAssignTask(): boolean {
+    return this.assignTask;
   }
 
   setsimMode(simMode: any[]) {
@@ -71,7 +80,7 @@ export class NodeGraphService {
     return this.simMode;
   }
 
-  setRoboIdClr(roboIDColor: Map<number, string>){
+  setRoboIdClr(roboIDColor: Map<number, string>) {
     this.roboIDColor = roboIDColor;
   }
 
@@ -86,42 +95,49 @@ export class NodeGraphService {
   getRobos() {
     return this.robos;
   }
-  
-  setZoomLevel(zoomLevel:number){
+
+  setZoomLevel(zoomLevel: number) {
     this.zoomLevel = zoomLevel;
   }
 
-  getZoomLevel(){
+  getZoomLevel() {
     return this.zoomLevel;
   }
 
-  setOffsetX(offsetX:number){
+  setOffsetX(offsetX: number) {
     this.offsetX = offsetX;
   }
 
-  getOffsetX(){
+  getOffsetX() {
     return this.offsetX;
   }
 
-  setOffsetY(offsetY:number){
+  setOffsetY(offsetY: number) {
     this.offsetY = offsetY;
   }
 
-  getOffsetY(){
+  getOffsetY() {
     return this.offsetY;
   }
 
-  setIsShowPath(isShowPath: boolean){
+  setIsShowPath(isShowPath: boolean) {
     this.isShowPath = isShowPath;
   }
-  getIsShowPath(){
+  getIsShowPath() {
     return this.isShowPath;
   }
-  setIsShowRoboPath(isShowRoboPath: number){
+  setIsShowRoboPath(isShowRoboPath: number) {
     this.isShowRoboPath = isShowRoboPath;
   }
-  getIsShowRoboPath(): number{
+  getIsShowRoboPath(): number {
     return this.isShowRoboPath;
   }
-  
+
+  setDraggingRobo(draggingRobo: any) {
+    this.draggingRobo = draggingRobo;
+  }
+
+  getDraggingRobo() {
+    return this.draggingRobo;
+  }
 }

@@ -192,14 +192,14 @@
 
         <div class="originCanvas" >
         <div class="tooltip" #tooltip *ngIf="this.showOriginCanvas">(x: 0, y: 0)</div>
-        <canvas class="OriginPopupCanvas" #OriginPopupCanvas *ngIf="this.showOriginCanvas"></canvas>
+        <canvas class="OriginPopupCanvas" #OriginPopupCanvas *ngIf="this.showOriginCanvas" ></canvas>
         <canvas class="OriginOverlayCanvas" #OriginOverlayCanvas *ngIf="this.showOriginCanvas" style="position: absolute;top: 0;z-index: -1;"></canvas>
         </div>
         <div class="toolbar" *ngIf="this.showOriginCanvas">
           <button (click)="zoomIn()">Zoom In</button>
           <button (click)="zoomOut()">Zoom Out</button>
-          <button (click)="togglePanMode()" *ngIf="!isRotating">{{ isPanning ? 'Disable Pan' : 'Enable Pan' }}</button>
-          <button (click)="toggleRotateMode()" *ngIf="!isPanning">{{ isRotating ? 'Disable Rotate' : 'Enable Rotate' }}</button>
+          <button (click)="togglePanMode()" [ngStyle]="{ 'pointer-events': this.isRotating ? 'none' : 'auto', 'filter': isRotating ? 'blur(2px)' : 'none' }">{{ isPanning ? 'Disable Pan' : 'Enable Pan' }}</button>
+          <button (click)="toggleRotateMode()" [ngStyle]="{ 'pointer-events': this.isPanning ? 'none' : 'auto', 'filter': isPanning ? 'blur(2px)' : 'none' }">{{ isRotating ? 'Disable Rotate' : 'Enable Rotate' }}</button>
           <!-- <button (click)="enablePlotOrigin()">{{ plotOrigin ? 'Disable Plot Origin' : 'Plot Origin' }}</button> -->
         </div>
         <button class="close-btn" (click)="closeImagePopup()"> <svg
@@ -656,8 +656,8 @@
         {{ validationError }}
       </div>
       <div class="button-container">
-      <button *ngIf="fileName && !showImage" (click)="open()">Open</button>
-      <button (click)="close()">Close</button>
+      <button *ngIf="fileName && !showImage" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }" (click)="open()">Open</button>
+      <button (click)="close()" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }">Close</button>
     </div>
     </div>
   </div>

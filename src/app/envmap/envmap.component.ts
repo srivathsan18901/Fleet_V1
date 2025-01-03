@@ -704,25 +704,6 @@ export class EnvmapComponent implements AfterViewInit {
     // Hide confirmation dialog without deleting
     // this.isDeleteModeEnabled = false;
   }
-
-  closeImagePopup(): void {
-    if ((this.showOriginPopup = true)) {
-      this.showOriginPopup = false;
-      this.showOriginCanvas = false;
-      this.anotherFileName = '';
-    }
-    this.showImagePopup = false;
-    this.points = [];
-    this.showDistanceDialog = false;
-    this.distanceBetweenPoints = null; // Reset distance if applicable
-    this.isDistanceConfirmed = false;
-    if (this.resolutionInput && this.showOriginPopup) {
-      this.resolutionInput.nativeElement.value = ''; // Reset the input field
-    }
-    this.validationError = null;
-    this.resetZoom();
-  }
-
   selectedNodeType: string = '';
 
   updateNodeType(): void {
@@ -1237,6 +1218,8 @@ export class EnvmapComponent implements AfterViewInit {
   
     if (this.imageSrc) {
       this.showOriginPopup = true;
+      this.isPanning=!this.isPanning;
+      this.isRotating=!this.isRotating;
       this.cdRef.detectChanges();
   
       const originCanvas = this.OriginPopupCanvas?.nativeElement;
@@ -1296,26 +1279,48 @@ export class EnvmapComponent implements AfterViewInit {
   enablePlotOrigin(){
     this.plotOrigin = !this.plotOrigin;
   }
-  private getMapImageBounds(ctx: CanvasRenderingContext2D): { x: number; y: number; width: number; height: number } {
+  private getMapImageOBB(
+    ctx: CanvasRenderingContext2D,
+    mouseX: number,
+    mouseY: number
+  ): { inside: boolean; relativeX: number; relativeY: number } {
     const img = new Image();
     img.src = this.imageSrc!;
   
     const scaleX = this.zoomLevel;
     const scaleY = this.zoomLevel;
   
-    const canvasWidth = ctx.canvas.width;
-    const canvasHeight = ctx.canvas.height;
-  
-    // Calculate image width and height based on zoom level
     const imageWidth = img.width * scaleX;
     const imageHeight = img.height * scaleY;
   
-    // Calculate the image's position on the canvas considering pan offsets
-    const x = (canvasWidth - imageWidth) / 2 + this.panOffset.x;  // Adjust by pan offset
-    const y = (canvasHeight - imageHeight) / 2 + this.panOffset.y; // Adjust by pan offset
+    const angle = this.rotationAngle * (Math.PI / 180);
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
   
-    return { x, y, width: imageWidth, height: imageHeight };
-  }   
+    // Calculate center of the image on the canvas
+    const canvasWidth = ctx.canvas.width;
+    const canvasHeight = ctx.canvas.height;
+  
+    const centerX = canvasWidth / 2 + this.panOffset.x;
+    const centerY = canvasHeight / 2 + this.panOffset.y;
+  
+    // Translate mouse coordinates to the image's rotated coordinate space
+    const dx = mouseX - centerX;
+    const dy = mouseY - centerY;
+  
+    const rotatedX = dx * cosAngle + dy * sinAngle;
+    const rotatedY = -dx * sinAngle + dy * cosAngle;
+  
+    // Check if the mouse is within the original (unrotated) image bounds
+    const inside =
+      Math.abs(rotatedX) <= imageWidth / 2 && Math.abs(rotatedY) <= imageHeight / 2;
+  
+    // Calculate relative coordinates in the original image space
+    const relativeX = (rotatedX + imageWidth / 2) / this.zoomLevel;
+    const relativeY = (imageHeight / 2 - rotatedY) / this.zoomLevel;
+  
+    return { inside, relativeX, relativeY };
+  }
   private onCanvasMouseDown(event: MouseEvent): void {
     const canvas = this.OriginPopupCanvas.nativeElement;
     const rect = canvas.getBoundingClientRect();
@@ -1325,32 +1330,19 @@ export class EnvmapComponent implements AfterViewInit {
     }
     if (this.isPanning) {
       this.panStart = { x: event.clientX, y: event.clientY };
-    } else { // if(this.plotOrigin)
+    } else { 
       let x = (event.clientX - rect.left) * (canvas.width / rect.width);
       let y = (event.clientY - rect.top) * (canvas.height / rect.height);
       const ctx = canvas.getContext('2d');
-      const mapImageBounds = this.getMapImageBounds(ctx!);
-      if (
-        x >= mapImageBounds.x &&
-        x <= mapImageBounds.x + mapImageBounds.width &&
-        y >= mapImageBounds.y &&
-        y <= mapImageBounds.y + mapImageBounds.height
-      ) {
-        // Transform coordinates relative to the `mapimage`
-        const relativeX = (x - mapImageBounds.x) / this.zoomLevel;
-        const relativeY = (mapImageBounds.height - (y - mapImageBounds.y)) / this.zoomLevel;
-    
-        // Update the tooltip
-        const transY = mapImageBounds.height - relativeY; // Flip Y-axis
-        const tooltip = this.tooltip.nativeElement;
-        this.origin.x = parseFloat((relativeX * this.ratio!).toFixed(2));
-        this.origin.y = parseFloat((relativeY * this.ratio!).toFixed(2));
-        tooltip.textContent = `(x: ${(relativeX * this.ratio!).toFixed(2)}, y: ${(relativeY * this.ratio!).toFixed(2)})`;
-      } 
+      const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width);
+      const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
+      const mapImageBounds = this.getMapImageOBB(ctx!, mouseX, mouseY);
+      if (mapImageBounds.inside) {
+        this.origin.x = parseFloat((mapImageBounds.relativeX * this.ratio!).toFixed(2));
+        this.origin.y = parseFloat((mapImageBounds.relativeY * this.ratio!).toFixed(2));
+      }
       this.startPoint = { x, y };
       this.isDrawing = true;
-  
-      // const ctx = canvas.getContext('2d');
       ctx!.beginPath();
       ctx!.arc(x, y, 5, 0, 2 * Math.PI);
       ctx!.fillStyle = 'red';
@@ -1362,35 +1354,17 @@ export class EnvmapComponent implements AfterViewInit {
     const rect = canvas.getBoundingClientRect();
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    // Calculate mouse coordinates relative to the canvas
-    // const mouseX = (event.clientX - rect.left - this.panOffset.x) / this.zoomLevel * (canvas.width / rect.width); // use in ploting origin node
-    // const mouseY = (event.clientY - rect.top - this.panOffset.y) / this.zoomLevel * (canvas.height / rect.height);
-
     const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width);
     const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
-    const mapImageBounds = this.getMapImageBounds(ctx);
-    if (
-      mouseX >= mapImageBounds.x &&
-      mouseX <= mapImageBounds.x + mapImageBounds.width &&
-      mouseY >= mapImageBounds.y &&
-      mouseY <= mapImageBounds.y + mapImageBounds.height
-    ) {
-      // Transform coordinates relative to the `mapimage`
-      const relativeX = (mouseX - mapImageBounds.x) / this.zoomLevel;
-      const relativeY = (mapImageBounds.height - (mouseY - mapImageBounds.y)) / this.zoomLevel;
-  
-      // Update the tooltip
-      const transY = mapImageBounds.height - relativeY; // Flip Y-axis
-      const tooltip = this.tooltip.nativeElement;
-      tooltip.textContent = `(x: ${(relativeX * this.ratio!).toFixed(2)}, y: ${(relativeY * this.ratio!).toFixed(2)})`;
-    } 
-    // else {
-    //   // Hide the tooltip if outside `mapimage`
-    //   const tooltip = this.tooltip.nativeElement;
-    //   tooltip.style.display = "none";
-    // }
-  
     
+    const mapImageBounds = this.getMapImageOBB(ctx, mouseX, mouseY);
+    if (mapImageBounds.inside) {
+      const tooltip = this.tooltip.nativeElement;
+      tooltip.textContent = `(x: ${(mapImageBounds.relativeX * this.ratio!).toFixed(
+        2
+      )}, y: ${(mapImageBounds.relativeY * this.ratio!).toFixed(2)})`;
+    }
+
     if (this.isRotating && this.rotationStart !== null) {
       const currentAngle = Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2);
       const deltaAngle = currentAngle - this.rotationStart;
@@ -1411,15 +1385,11 @@ export class EnvmapComponent implements AfterViewInit {
     }
 
     if (!this.startPoint) return;
-    // const currentX = ((event.clientX - rect.left - this.panOffset.x) / this.zoomLevel) * (canvas.width / rect.width);
-    // const currentY = ((event.clientY - rect.top - this.panOffset.y) / this.zoomLevel) * (canvas.height / rect.height);
 
     this.renderCanvas();
     const img = new Image();
     img.src = this.imageSrc!;
     img.onload = () => {
-      // ctx!.clearRect(0, 0, canvas.width, canvas.height);
-      // ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
       
       ctx!.beginPath();
       ctx!.arc(this.startPoint!.x, this.startPoint!.y, 6, 0, 2 * Math.PI);
@@ -1434,7 +1404,7 @@ export class EnvmapComponent implements AfterViewInit {
       return;
     }
     if (this.isRotating) {
-      this.rotationStart = null;
+      this.rotationStart = null;      
       return;
     }
     // if(this.plotOrigin){
@@ -1467,8 +1437,31 @@ export class EnvmapComponent implements AfterViewInit {
     this.isPanning = false;
     // this.plotOrigin = false; // yet to note..
     this.panStart = null;
+    this.rotationStart = null;
     this.resetZoom();
     this.rotationAngle=0;
+  }  
+  closeImagePopup(): void {
+    if ((this.showOriginPopup = true)) {
+      this.showOriginPopup = false;
+      this.showOriginCanvas = false;
+      this.anotherFileName = '';
+      this.rotationAngle=0;  
+      this.panStart = null;
+      this.rotationStart = null;
+      this.isPanning=false;
+      this.isRotating=false;
+    }
+    this.showImagePopup = false;
+    this.points = [];
+    this.showDistanceDialog = false;
+    this.distanceBetweenPoints = null; // Reset distance if applicable
+    this.isDistanceConfirmed = false;
+    if (this.resolutionInput && this.showOriginPopup) {
+      this.resolutionInput.nativeElement.value = ''; // Reset the input field
+    }
+    this.validationError = null;
+    this.resetZoom();
   }
   private renderCanvas(): void {
     const originCanvas = this.OriginPopupCanvas.nativeElement;
@@ -1496,7 +1489,6 @@ export class EnvmapComponent implements AfterViewInit {
       // Draw image and overlay content
       ctx.drawImage(img, 0, 0, originCanvas.width, originCanvas.height);
       this.redrawCanvasContent(ctx);
-  
       ctx.restore();
     };
   }
@@ -1551,7 +1543,6 @@ export class EnvmapComponent implements AfterViewInit {
     ctx.fill();
   }
   //---------------------------------------------origin-------------------------------------------------
-
   openImagePopup(): void {
     if (this.imageSrc) {
       this.showImagePopup = true;

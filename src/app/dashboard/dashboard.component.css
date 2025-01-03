@@ -55,6 +55,43 @@ canvas {
   left: 0;
 }
 /* live button */
+.AT-btn{
+  border-radius: 8px;
+  padding: 7.8px 10px ;
+  height: 41px;
+  background-color: #f0453f;
+  color: #ffffff;
+  filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
+}
+.sendATbtn,.cancelATbtn{
+  margin: 0px 5px;
+  background-color: #f0453f;
+  border-radius: 8px;
+  padding:5px ;
+  color: #ffffff;
+}
+.idDD{
+  width: 80px;
+  border-bottom: 1px solid rgb(255, 255, 255);
+  border-radius: 5px;
+  margin: 0px 5px;
+  background: transparent;
+  color: #ffffff;
+}
+.idDD option{
+  background-color: #333;
+}
+.idlabel{
+  color: #ffffff;
+  font-weight: bold;
+  margin: 5px;
+}
+.ATbtn-set{
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .ONBtn {
   position: absolute;
   top: -14px;
@@ -680,7 +717,7 @@ input:checked ~ .slider {
 .indication-button {
   position: absolute;
   top: 5px;
-  right: 105px; 
+  right: 120px; 
   filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
   cursor: pointer;
   z-index: auto;
