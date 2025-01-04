@@ -520,8 +520,8 @@ export class AreaChartComponent implements OnInit {
       );
 
       if (data.throughput) {
-        this.pickAccuracyArr = data.throughput.Stat.map(
-          (stat: any) => stat.pickAccuracy
+        this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
+          Math.round(stat.pickAccuracy)
         );
         this.pickAccXaxisSeries = data.throughput.Stat.map(
           (stat: any, index: any) => ++index
@@ -547,8 +547,8 @@ export class AreaChartComponent implements OnInit {
       ''
     );
     if (data.throughput) {
-      this.pickAccuracyArr = data.throughput.Stat.map(
-        (stat: any) => stat.pickAccuracy
+      this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
+        Math.round(stat.pickAccuracy)
       );
       this.pickAccXaxisSeries = data.throughput.Stat.map(
         (stat: any, index: any) => ++index
@@ -788,5 +788,12 @@ export class AreaChartComponent implements OnInit {
     let lastMonthDate = new Date();
     lastMonthDate.setMonth(currentDate.getMonth() - 1);
     return Math.floor(new Date(lastMonthDate).setHours(0, 0, 0) / 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.throuputTimeInterval) clearInterval(this.throuputTimeInterval);
+    if (this.starvationTimeInterval) clearInterval(this.starvationTimeInterval);
+    if (this.pickAccTimeInterval) clearInterval(this.pickAccTimeInterval);
+    if (this.errRateTimeInterval) clearInterval(this.errRateTimeInterval);
   }
 }

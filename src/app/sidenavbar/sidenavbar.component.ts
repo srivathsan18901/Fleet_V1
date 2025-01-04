@@ -45,6 +45,9 @@ export class SidenavbarComponent implements OnInit {
   filteredNotifications = this.notifications;
   userManagementData: any;
 
+  fleetStatusInterval: ReturnType<typeof setInterval> | null = null;
+  notificationInterval: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -68,13 +71,13 @@ export class SidenavbarComponent implements OnInit {
     this.cookieValue = JSON.parse(this.cookieService.get('_user'));
     this.selectedMap = this.projectService.getMapData();
     await this.getFleetStatus();
-    setInterval(async () => {
+    this.fleetStatusInterval = setInterval(async () => {
       await this.getFleetStatus();
     }, 1000 * 2); // max to 30 or 60 sec
     if (!this.selectedMap) return;
     await this.getRoboStatus();
     await this.getTaskErrs();
-    setInterval(async () => {
+    this.notificationInterval = setInterval(async () => {
       await this.getRoboStatus();
       await this.getTaskErrs(); // or run in indivdual..
     }, 1000 * 5); // max to 30 or 60 sec
@@ -418,5 +421,10 @@ export class SidenavbarComponent implements OnInit {
 
   getStartOfDay(establishedTime: Date) {
     return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
+  }
+
+  ngOnDestroy() {
+    if (this.notificationInterval) clearInterval(this.notificationInterval);
+    if (this.fleetStatusInterval) clearInterval(this.fleetStatusInterval);
   }
 }

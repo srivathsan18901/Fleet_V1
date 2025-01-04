@@ -67,11 +67,11 @@ canvas {
   margin: 0px 5px;
   background-color: #f0453f;
   border-radius: 8px;
-  padding:5px ;
+  padding:7px ;
   color: #ffffff;
 }
 .idDD{
-  width: 80px;
+  width: 65px;
   border-bottom: 1px solid rgb(255, 255, 255);
   border-radius: 5px;
   margin: 0px 5px;
@@ -83,14 +83,17 @@ canvas {
 }
 .idlabel{
   color: #ffffff;
-  font-weight: bold;
   margin: 5px;
 }
 .ATbtn-set{
-  margin: 5px;
+  margin:7px 5px;
   display: flex;
   justify-content: center;
   align-items: center;
+}
+.ATactions{
+  display: grid;
+  row-gap: 10px;
 }
 .ONBtn {
   position: absolute;

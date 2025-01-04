@@ -31,6 +31,7 @@
     "express": "^4.18.2",
     "file-saver": "^2.0.5",
     "fleet-ui": "file:",
+    "heatmap-ts": "^0.0.5",
     "highcharts": "^11.4.8",
     "highcharts-angular": "^4.0.1",
     "html-to-image": "^1.11.11",
@@ -47,6 +48,7 @@
     "uuid": "^10.0.0",
     "videojs-record": "^4.8.0",
     "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0",
     "xml-js": "^1.6.11",
     "zone.js": "~0.14.3"
   },

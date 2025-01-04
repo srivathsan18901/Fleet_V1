@@ -1,11 +1,17 @@
-import { Component, OnInit,Input,ViewChild,EventEmitter} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  ViewChild,
+  EventEmitter,
+} from '@angular/core';
 import {
   ApexNonAxisChartSeries,
   ApexChart,
   ApexPlotOptions,
   ApexFill, // Import ApexFill for colors
   ApexStroke, // Import ApexStroke for stroke customization
-  ChartComponent
+  ChartComponent,
 } from 'ng-apexcharts';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
@@ -26,18 +32,20 @@ export type ChartOptions = {
   styleUrls: ['./radial-chart.component.css'],
 })
 export class RadialChartComponent implements OnInit {
-  @ViewChild("chart") chart!: ChartComponent;
-  @Input() isFleet!:boolean;
+  @ViewChild('chart') chart!: ChartComponent;
+  @Input() isFleet!: boolean;
 
-  mapData:any|null=null;
+  mapData: any | null = null;
   robos: any[] = [];
-  simMode:any[]=[];
+  simMode: any[] = [];
 
   public chartOptions!: Partial<ChartOptions>;
   roboStatePie: number[] = [0, 0, 0];
   selectedMap: any | null = null;
   currentFilter: string = 'today'; // To track the selected filter
   totCount: string = '0';
+
+  roboStatusInterval: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private projectService: ProjectService,
@@ -95,7 +103,7 @@ export class RadialChartComponent implements OnInit {
     this.roboStatePie = await this.getRobosStates();
     this.chartOptions.series = [...this.roboStatePie]; // Update series with data
 
-    setInterval(async () => {
+    this.roboStatusInterval = setInterval(async () => {
       this.roboStatePie = await this.getRobosStates();
       this.chartOptions.series = [...this.roboStatePie];
     }, 1000 * 2); // Update every 5 seconds
@@ -122,12 +130,11 @@ export class RadialChartComponent implements OnInit {
     let mapDet = data.map;
 
     this.robos = mapDet.roboPos;
-    this.simMode = mapDet.simMode;  // Assuming this is also required for other parts of your logic
+    this.simMode = mapDet.simMode; // Assuming this is also required for other parts of your logic
 
     this.totalRobots = this.isFleet ? this.robos.length : this.simMode.length;
     this.totCount = this.totalRobots.toString();
   }
-
 
   applyFilter(filter: string) {
     this.currentFilter = filter;
@@ -144,7 +151,7 @@ export class RadialChartComponent implements OnInit {
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`,
       {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       }
     );
 
@@ -158,9 +165,8 @@ export class RadialChartComponent implements OnInit {
     let active_robos = 0;
     let err_robos = 0;
 
-    if(!robots.robots) return [0, 0, 0];
+    if (!robots.robots) return [0, 0, 0];
     robots.robots.forEach((robo: any) => {
-      
       active_robos += robo.enableRobot;
 
       if (robo.robotError != 0) err_robos += 1;
@@ -168,7 +174,10 @@ export class RadialChartComponent implements OnInit {
     });
 
     // console.log("tot robos : ", [active_robos , this.totalRobots-active_robos , err_robos]);
-    return [active_robos , this.totalRobots-active_robos , err_robos];
+    return [active_robos, this.totalRobots - active_robos, err_robos];
   }
 
+  ngOnDestroy() {
+    if (this.roboStatusInterval) clearInterval(this.roboStatusInterval);
+  }
 }

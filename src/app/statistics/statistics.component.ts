@@ -314,9 +314,14 @@ export class StatisticsComponent {
         return task.task_status.status;
       });
       for (let task of tasksStatusArr) {
-        if (task === 'COMPLETED')   tasksStatus[0] += 1;
-        else if ( task === 'ACCEPTED') tasksStatus[1]+=1;
-        else if ( task === 'INPROGRESS' || task === 'DROPPED'|| task === 'PICKED' ) tasksStatus[2] += 1;
+        if (task === 'COMPLETED') tasksStatus[0] += 1;
+        else if (task === 'ACCEPTED') tasksStatus[1] += 1;
+        else if (
+          task === 'INPROGRESS' ||
+          task === 'DROPPED' ||
+          task === 'PICKED'
+        )
+          tasksStatus[2] += 1;
         else if (task === 'NOTASSIGNED') tasksStatus[3] += 1;
         else if (task === 'FAILED' || task === 'REJECTED') tasksStatus[4] += 1;
         else if (task === 'CANCELLED') tasksStatus[5] += 1;
@@ -384,9 +389,9 @@ export class StatisticsComponent {
     else this.statisticsData.systemThroughput = 'Loading...';
   }
 
-  /* ngOnDestroy() {
+  ngOnDestroy() {
     if (this.taskStatus_interval) clearInterval(this.taskStatus_interval);
     if (this.currTaskStatus_interval)
       clearInterval(this.currTaskStatus_interval);
-  } */
+  }
 }

@@ -212,11 +212,12 @@ export class ChartTimelineComponent implements OnInit {
     this.currentFilter = 'today';
     this.updateChart('data1', 'CPU Utilization');
     this.getLiveRoboInfo();
-    console.log(this.getLiveRoboInfo);
+    // console.log(this.getLiveRoboInfo);
   }
 
   // Fetch Robo Names from API
   async getLiveRoboInfo(): Promise<string[]> {
+    if(!this.selectedMap) return [];
     try {
       const response = await fetch(
         `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
@@ -1000,5 +1001,15 @@ export class ChartTimelineComponent implements OnInit {
       clearInterval(this.errTimeInterval);
       this.errTimeInterval = 0;
     }
+  }
+
+  ngOnDestroy() {
+    if (this.cpuUtilTimeInterval) clearInterval(this.cpuUtilTimeInterval);
+    if (this.roboUtilTimeInterval) clearInterval(this.roboUtilTimeInterval);
+    if (this.batteryTimeInterval) clearInterval(this.batteryTimeInterval);
+    if (this.memoryTimeInterval) clearInterval(this.memoryTimeInterval);
+    if (this.networkTimeInterval) clearInterval(this.networkTimeInterval);
+    if (this.idleTimeInterval) clearInterval(this.idleTimeInterval);
+    if (this.errTimeInterval) clearInterval(this.errTimeInterval);
   }
 }

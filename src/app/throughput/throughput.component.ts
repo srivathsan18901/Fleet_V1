@@ -282,4 +282,8 @@ export class ThroughputComponent {
     clearInterval(this.throuputTimeInterval);
     this.throuputTimeInterval = 0;
   }
+
+  ngOnDestroy() {
+    if (this.throuputTimeInterval) clearInterval(this.throuputTimeInterval);
+  }
 }

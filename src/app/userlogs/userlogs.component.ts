@@ -8,6 +8,7 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { ModeService } from '../dashboard/mode.service';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
+// import { clearInterval } from 'timers';
 
 @Component({
   selector: 'app-userlogs',
@@ -49,6 +50,10 @@ export class Userlogscomponent {
   isFleet: boolean = false; // Store the emitted value
   private subscriptions: Subscription[] = [];
 
+  robotLogInterval: ReturnType<typeof setInterval> | null = null;
+  taskLogInterval: ReturnType<typeof setInterval> | null = null;
+  fleetLogInterval: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     private exportService: ExportService,
     private projectService: ProjectService,
@@ -81,15 +86,15 @@ export class Userlogscomponent {
     await this.fetchRobos();
     // data rendering
     await this.getRoboLogs();
-    setInterval(async () => {
+    this.robotLogInterval = setInterval(async () => {
       await this.getRoboLogs();
     }, 1000 * 3);
     await this.getTaskLogs();
-    setInterval(async () => {
+    this.taskLogInterval = setInterval(async () => {
       await this.getTaskLogs();
     }, 1000 * 3);
     this.getFleetLogs();
-    setInterval(async () => {
+    this.fleetLogInterval = setInterval(async () => {
       await this.getFleetLogs();
     }, 1000 * 3);
   }
@@ -643,5 +648,11 @@ export class Userlogscomponent {
     console.log(startDate, endDate);
 
     // Implement your date range filtering logic here
+  }
+
+  ngOnDestroy() {
+    if (this.robotLogInterval) clearInterval(this.robotLogInterval);
+    if (this.taskLogInterval) clearInterval(this.taskLogInterval);
+    if (this.fleetLogInterval) clearInterval(this.fleetLogInterval);
   }
 }

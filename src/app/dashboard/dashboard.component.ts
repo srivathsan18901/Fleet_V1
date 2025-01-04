@@ -7,7 +7,7 @@ import {
   EventEmitter,
   Output,
   OnDestroy,
-  HostListener
+  HostListener,
 } from '@angular/core';
 import RecordRTC from 'recordrtc';
 import { ProjectService } from '../services/project.service';
@@ -125,6 +125,10 @@ export class DashboardComponent implements AfterViewInit {
   mapImageY: number = 0; // To store the Y position of the map image
   draggingRobo: any = null; // Holds the robot being dragged
   selectedRobo: any = null;
+  taskAction: string = 'MOVE';
+  roboToAssign: string | null = '-99';
+  sourceLocation: any | null = null;
+  currentRoboList: any[] | null = null;
   placeOffset: number = 50;
   robotToInitialize: any = null;
   isInLive: boolean = false;
@@ -485,7 +489,9 @@ export class DashboardComponent implements AfterViewInit {
   async initializeRobot(): Promise<void> {
     // console.log(this.robotToInitialize, this.ratio);
     let mapImg = new Image();
-    mapImg.src = `http://${environment.API_URL}:${environment.PORT}/${this.projectService.getMapData().imgUrl}`;
+    mapImg.src = `http://${environment.API_URL}:${environment.PORT}/${
+      this.projectService.getMapData().imgUrl
+    }`;
 
     let ratio = this.ratio ? this.ratio : 1;
     let quaternion = { x: 0, y: 0, z: 0, w: 1 };
@@ -647,11 +653,9 @@ export class DashboardComponent implements AfterViewInit {
       console.error('Error updating map:', error);
     }
   }
-  async toggleAssignTask(){
+  async toggleAssignTask() {
     this.nodeGraphService.setShowModelCanvas(false);
-    this.nodeGraphService.setAssignTask(
-      !this.nodeGraphService.getAssignTask()
-    );
+    this.nodeGraphService.setAssignTask(!this.nodeGraphService.getAssignTask());
     if (this.isInLive) {
       await this.getLivePos();
     }
@@ -665,6 +669,11 @@ export class DashboardComponent implements AfterViewInit {
     }
 
     this.loadCanvas(); // Redraw the canvas based on the updated state
+    if (!this.isFleet) {
+      this.currentRoboList = this.simMode.map((robo) => robo.amrId);
+      return;
+    }
+    this.currentRoboList = this.robos.map((robo) => robo.roboDet.amrid);
   }
   async toggleModelCanvas() {
     this.nodeGraphService.setAssignTask(false);
@@ -698,7 +707,9 @@ export class DashboardComponent implements AfterViewInit {
         // Load the background image
         this.isImage = true;
         const img = new Image();
-        img.src = `http://${environment.API_URL}:${environment.PORT}/${this.projectService.getMapData().imgUrl}`;
+        img.src = `http://${environment.API_URL}:${environment.PORT}/${
+          this.projectService.getMapData().imgUrl
+        }`;
 
         img.onload = () => {
           // Draw the image and other elements
@@ -732,8 +743,10 @@ export class DashboardComponent implements AfterViewInit {
           this.offsetY = this.nodeGraphService.getOffsetY();
 
           // Center the image on the canvas
-          this.mapImageX = (canvas.width - this.mapImageWidth) / 2 + this.offsetX;
-          this.mapImageY = (canvas.height - this.mapImageHeight) / 2 + this.offsetY;
+          this.mapImageX =
+            (canvas.width - this.mapImageWidth) / 2 + this.offsetX;
+          this.mapImageY =
+            (canvas.height - this.mapImageHeight) / 2 + this.offsetY;
 
           // Draw the image and other elements
           this.draw(ctx, img);
@@ -763,8 +776,8 @@ export class DashboardComponent implements AfterViewInit {
     ctx.scale(this.zoomLevel, this.zoomLevel);
     this.heatmapX = centerX;
     this.heatmapY = centerY;
-    this.heatmapWidth= imgWidth;
-    this.heatmapHeight= imgHeight;
+    this.heatmapWidth = imgWidth;
+    this.heatmapHeight = imgHeight;
 
     ctx.drawImage(img, 0, 0);
     this.canvasNoImage = false;
@@ -812,37 +825,15 @@ export class DashboardComponent implements AfterViewInit {
       );
     });
 
-    if (this.nodeGraphService.getAssignTask() ) {        
-    this.nodes.forEach((node) => {
-      const transformedY = img.height - node.nodePosition.y;
-      this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
-    });
-
-    // this.edges.forEach((edge) => {
-    //   const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
-    //   const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
-    //   if (startNode && endNode) {
-    //     const startPos = {
-    //       x: startNode.nodePosition.x,
-    //       y: startNode.nodePosition.y,
-    //     };
-    //     const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
-    //     const transformedStartY = img.height - startPos.y;
-    //     const transformedEndY = img.height - endPos.y;
-    //     this.drawEdge(
-    //       ctx,
-    //       { x: startPos.x, y: transformedStartY },
-    //       { x: endPos.x, y: transformedEndY },
-    //       edge.direction,
-    //       edge.startNodeId,
-    //       edge.endNodeId
-    //     );
-    //   }
-    // });
+    if (this.nodeGraphService.getAssignTask()) {
+      this.nodes.forEach((node) => {
+        const transformedY = img.height - node.nodePosition.y;
+        this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
+      });
       ctx.restore();
       // return;
     }
-    if (!this.nodeGraphService.getShowModelCanvas() ) {  
+    if (!this.nodeGraphService.getShowModelCanvas()) {
       ctx.restore();
       return;
     }
@@ -927,6 +918,64 @@ export class DashboardComponent implements AfterViewInit {
     // console.log(distance, imageSize*1.5);
     return distance <= imageSize * 1.5; // Adjust this based on the robot's size
   }
+  showATPopup(x: number, y: number) {
+    const popup = document.getElementById('assignTask-popup');
+    if (popup) {
+      popup.style.display = 'block';
+      popup.style.left = `${x}px`;
+      popup.style.top = `${y}px`;
+    }
+  }
+  async sendAction() {
+    if (!this.taskAction || !this.roboToAssign || !this.sourceLocation || this.roboToAssign === '-99') {
+      this.messageService.add({
+        severity: 'error',
+        summary: `Data not sent`,
+        detail: 'data not sufficient!',
+        life: 4000,
+      });
+      return;
+    }
+
+    let taskData = {
+      taskId: `t${this.sourceLocation}`,
+      agentId: this.roboToAssign,
+      Priority: 1,
+      sourceLocation: this.sourceLocation,
+      taskType: this.taskAction,
+    };
+
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/send-task/${this.selectedMap.id}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(taskData),
+      }
+    );
+
+    let data = await response.json();
+    this.hideATPopup();
+    this.messageService.add({
+      severity: 'info',
+      summary: `${data.msg}`,
+      detail: 'Task has been assigned',
+      life: 4000,
+    });
+  }
+
+  cancelATAction() {
+    this.hideATPopup();
+  }
+
+  hideATPopup() {
+    const popup = document.getElementById('assignTask-popup');
+    if (popup) {
+      popup.style.display = 'none';
+    }
+  }
+  
   addRightClickListener(canvas: HTMLCanvasElement) {
     canvas.addEventListener('contextmenu', (event) => {
       event.preventDefault(); // Prevent the default context menu
@@ -938,32 +987,9 @@ export class DashboardComponent implements AfterViewInit {
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
       const transY = canvas.height - mouseY;
-      const imgX =
-        (mouseX - this.mapImageX + this.offsetX) / this.zoomLevel -
-        this.offsetX;
-      const imgY =
-        (transY - this.mapImageY + this.offsetY) / this.zoomLevel +
-        this.offsetY;
-        if (assignTask) {
-          for (let node of this.nodes) {
-            const nodeX = node.nodePosition.x;
-            const nodeY =  node.nodePosition.y;
-            const nodeRadius = 15; // Define a radius to detect clicks near the node (adjust as needed)
-            console.log("nodepos",nodeX,nodeY);
-            console.log("mousepos",imgX,imgY);
-            
-            
-            if (
-              imgX >= nodeX - nodeRadius &&
-              imgX <= nodeX + nodeRadius &&
-              imgY >= nodeY - nodeRadius &&
-              imgY <= nodeY + nodeRadius
-            ) {
-              this.showATPopup(event.clientX, event.clientY);
-              return;
-            }
-          }
-        }
+      const imgX = ((mouseX - this.mapImageX + this.offsetX) - this.offsetX)/ this.zoomLevel;
+      const imgY = ((transY - this.mapImageY + this.offsetY)+ this.offsetY) / this.zoomLevel;
+
       for (let robo of this.simMode) {
         const roboX = robo.pos.x;
         const roboY = this.mapImageHeight / this.zoomLevel - robo.pos.y;
@@ -980,42 +1006,15 @@ export class DashboardComponent implements AfterViewInit {
           return;
         }
       }
-      
     });
-  }
-
-  showATPopup(x: number, y: number) {
-    const popup = document.getElementById('assignTask-popup');
-    if (popup) {
-      popup.style.display = 'block';
-      popup.style.left = `${x}px`;
-      popup.style.top = `${y}px`;
-    }
-  }
-  sendAction() {
-    const selectedRobotId = (document.getElementById('robot-select') as HTMLSelectElement).value;
-    console.log('Send action for robot ID:', selectedRobotId);
-    this.hidePopup();
-  }
-
-  cancelATAction() {
-    this.hideATPopup();
-  }
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent) {
-    const popup = document.getElementById('assignTask-popup');
-    if (popup && !popup.contains(event.target as Node)) {
-      this.hideATPopup();
-    }
-  }
-  hideATPopup() {
-    const popup = document.getElementById('assignTask-popup');
-    if (popup) {
-      popup.style.display = 'none';
-    }
   }
   addMouseDownListener(canvas: HTMLCanvasElement) {
     canvas.addEventListener('mousedown', (event) => {
+      if (event.button === 2) {
+        return;
+      }
+  
+      const assignTask = this.nodeGraphService.getAssignTask();
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
@@ -1024,13 +1023,35 @@ export class DashboardComponent implements AfterViewInit {
       this.offsetY = this.nodeGraphService.getOffsetY();
       this.zoomLevel = this.nodeGraphService.getZoomLevel();
       // Adjust for zoom and pan
-      const imgX =
-        (mouseX - this.mapImageX + this.offsetX) / this.zoomLevel -
-        this.offsetX;
-      const imgY =
-        (transY - this.mapImageY + this.offsetY) / this.zoomLevel +
-        this.offsetY;
+      // const imgX =
+      //   (mouseX - this.mapImageX + this.offsetX) / this.zoomLevel -
+      //   this.offsetX;
+      // const imgY =
+      //   (transY - this.mapImageY + this.offsetY) / this.zoomLevel +
+      //   this.offsetY;
+      const imgX = ((mouseX - this.mapImageX + this.offsetX) - this.offsetX)/ this.zoomLevel;
+      const imgY = ((transY - this.mapImageY + this.offsetY)+ this.offsetY) / this.zoomLevel;
+      if (assignTask) {
+        for (let node of this.nodes) {
+          const nodeX = node.nodePosition.x;
+          const nodeY = node.nodePosition.y;
+          const nodeRadius = 15; // Define a radius to detect clicks near the node (adjust as needed)
+          console.log('offset', this.offsetX, this.offsetY);
+          console.log('nodepos', nodeX, nodeY);
+          console.log('mousepos', imgX, imgY);
 
+          if (
+            imgX >= nodeX - nodeRadius &&
+            imgX <= nodeX + nodeRadius &&
+            imgY >= nodeY - nodeRadius &&
+            imgY <= nodeY + nodeRadius
+          ) {
+            this.showATPopup(event.clientX, event.clientY);
+            this.sourceLocation = node.nodeId;
+            return;
+          }
+        }
+      }
       for (let robo of this.simMode) {
         // console.log(this.zoomLevel);
         const roboX = robo.pos.x;
@@ -1141,10 +1162,14 @@ export class DashboardComponent implements AfterViewInit {
       this.offsetY = this.nodeGraphService.getOffsetY();
       this.zoomLevel = this.nodeGraphService.getZoomLevel();
       // Adjust for zoom and pan
-      const imgX = (mouseX - this.mapImageX + this.offsetX) / this.zoomLevel - this.offsetX;
-      const imgY = (transY - this.mapImageY + this.offsetY) / this.zoomLevel + this.offsetY;
+      const imgX = ((mouseX - this.mapImageX + this.offsetX) - this.offsetX)/ this.zoomLevel;
+      const imgY = ((transY - this.mapImageY + this.offsetY)+ this.offsetY) / this.zoomLevel;
       this.draggingRobo = this.nodeGraphService.getDraggingRobo();
-      if ( this.draggingRobo && this.isDragging && !this.draggingRobo.isInitialized ) {
+      if (
+        this.draggingRobo &&
+        this.isDragging &&
+        !this.draggingRobo.isInitialized
+      ) {
         // this.draggingRobo.pos.x = this.draggingRobo.pos.x;
         // this.draggingRobo.pos.y = (this.mapImageHeight/ this.zoomLevel ) - this.draggingRobo.pos.y;
         let newX = (mouseX - this.mapImageX) / this.zoomLevel;
@@ -1183,8 +1208,10 @@ export class DashboardComponent implements AfterViewInit {
             robotId = robo.amrId;
 
             // Position the robot tooltip above the robot
-            const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
-            const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
+            const robotScreenX =
+              roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
+            const robotScreenY =
+              (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
 
             robottooltip.style.left = `${robotScreenX - 30}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${robotScreenY - 45}px`; // Above the robot's Y position
@@ -1430,8 +1457,11 @@ export class DashboardComponent implements AfterViewInit {
       ctx.scale(this.zoomLevel, this.zoomLevel);
       ctx.restore(); // Reset transformation after drawing
 
-      if (this.nodeGraphService.getShowModelCanvas() || !this.nodeGraphService.getAssignTask()) {
-        // this.showModelCanvas        
+      if (
+        this.nodeGraphService.getShowModelCanvas() ||
+        !this.nodeGraphService.getAssignTask()
+      ) {
+        // this.showModelCanvas
         this.redrawOtherElements(ctx, mapImage); // Pass the mapImage for transformations
       }
       // Draw the map image
@@ -1643,7 +1673,7 @@ export class DashboardComponent implements AfterViewInit {
               yaw: yaw,
               state: robot.robot_state,
               path: robot.agentPath,
-              payload:robot.payload_status,
+              payload: robot.payload_status,
             }; // here we go...
 
             // console.log(robot.id, robot.pose.position.x, robot.pose.position.y);
@@ -1784,7 +1814,8 @@ export class DashboardComponent implements AfterViewInit {
       ctx.beginPath();
       ctx.arc(0, 0, circleRadius, 0, Math.PI * 2); // Circle at the center
       ctx.fillStyle = circleColor; // Set the circle color
-      ctx.fill();ctx.lineWidth = borderThickness-0.2; // Set the circle border thickness
+      ctx.fill();
+      ctx.lineWidth = borderThickness - 0.2; // Set the circle border thickness
       ctx.strokeStyle = borderColor; // Set the circle border color
       ctx.stroke();
       ctx.closePath();
@@ -1831,26 +1862,32 @@ export class DashboardComponent implements AfterViewInit {
     ctx.restore(); // Reset transformation after drawing the map
 
     for (let [index, robotId] of Object.keys(robotsData).entries()) {
-      const { posX, posY, yaw, state, path,payload } = robotsData[robotId];
+      const { posX, posY, yaw, state, path, payload } = robotsData[robotId];
 
       // Scale position and apply spacing offset
       const scaledPosX = posX;
       const scaledPosY = posY;
-      
+
       // Flip Y-axis for canvas and calculate actual canvas positions
       const transformedPosY = !this.simMode
-      ? this.mapImageHeight - scaledPosY // Non-simulation mode
-      : imgHeight / this.zoomLevel - scaledPosY;
+        ? this.mapImageHeight - scaledPosY // Non-simulation mode
+        : imgHeight / this.zoomLevel - scaledPosY;
       const robotCanvasX = scaledPosX;
       const robotCanvasY = transformedPosY;
       this.setPaths(path, imgHeight, centerX, centerY, parseInt(robotId));
-      
-      if (this.nodeGraphService.getShowModelCanvas() || this.nodeGraphService.getAssignTask()) {
+
+      if (
+        this.nodeGraphService.getShowModelCanvas()
+      ) {
         this.nodes = this.nodeGraphService.getNodes();
         this.edges = this.nodeGraphService.getEdges();
         this.zones = this.nodeGraphService.getZones();
         this.assets = this.nodeGraphService.getAssets();
         this.drawNodesAndEdges(ctx, mapImage, centerX, centerY, this.zoomLevel);
+      }
+      if(this.nodeGraphService.getAssignTask()){
+        this.nodes = this.nodeGraphService.getNodes();
+        this.drawnodesonAT(ctx, mapImage, centerX, centerY, this.zoomLevel);
       }
       if (this.isFleet) {
         this.robos = this.robos.map((robo) => {
@@ -1859,12 +1896,12 @@ export class DashboardComponent implements AfterViewInit {
             robo.pos.y = robotCanvasY;
             robo.pos.orientation = -yaw;
             robo.imgState = state;
-            robo.payload=payload;
+            robo.payload = payload;
           }
           return robo;
         });
       }
-      
+
       this.simMode = this.simMode.map((robo) => {
         this.draggingRobo = this.nodeGraphService.getDraggingRobo();
         let draggingRoboId = this.draggingRobo ? this.draggingRobo.amrId : null;
@@ -1873,7 +1910,7 @@ export class DashboardComponent implements AfterViewInit {
           robo.pos.y = robotCanvasY;
           robo.pos.orientation = -yaw;
           robo.imgState = state;
-          robo.payload=payload;
+          robo.payload = payload;
           if (state !== 'INITSTATE') {
             robo.isActive = true;
             // this.cdRef.detectChanges();//yet to review and remove
@@ -1881,7 +1918,7 @@ export class DashboardComponent implements AfterViewInit {
         }
         return robo;
       });
-      
+
       //..
       //..
     }
@@ -1898,7 +1935,11 @@ export class DashboardComponent implements AfterViewInit {
         // Draw the robot on the canvas with updated positions and orientation
         let clr = this.roboIDColor.get(robo.amrId) || 'white';
         this.plotRobo(ctx, robotPosX, robotPosY, yaw, robo.imgState, clr);
-        if (robo.imgState === 'LOADSTATE' || robo.imgState === 'UNLOADSTATE' ||robo.payload) {
+        if (
+          robo.imgState === 'LOADSTATE' ||
+          robo.imgState === 'UNLOADSTATE' ||
+          robo.payload
+        ) {
           this.plotRack(
             ctx,
             robotPosX - (this.rackSize * this.zoomLevel) / 2,
@@ -1920,7 +1961,6 @@ export class DashboardComponent implements AfterViewInit {
         let clr = this.roboIDColor.get(robo.amrId) || 'white';
         this.plotRobo(ctx, robotPosX, robotPosY, yaw, robo.imgState, clr);
       });
-
 
     this.racks.forEach((rack) => {
       const robotPosX = centerX + rack.x * this.zoomLevel;
@@ -2035,7 +2075,7 @@ export class DashboardComponent implements AfterViewInit {
     ctx.fillRect(x, y, size, size);
 
     ctx.fillStyle = '#420D09';
-    ctx.fillRect(x, y,size, Math.round(size / 3) / 3);
+    ctx.fillRect(x, y, size, Math.round(size / 3) / 3);
 
     ctx.fillStyle = '#ff1f1f';
     ctx.fillRect(
@@ -2049,7 +2089,23 @@ export class DashboardComponent implements AfterViewInit {
     ctx.globalAlpha = 1;
     ctx.restore();
   }
-
+  drawnodesonAT(    
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    centerX: number,
+    centerY: number,
+    zoomLevel: number){
+      
+    this.offsetX = this.nodeGraphService.getOffsetX();
+    this.offsetY = this.nodeGraphService.getOffsetY();
+    this.zoomLevel = this.nodeGraphService.getZoomLevel();
+    // Plot nodes with scaling and centering
+    this.nodes.forEach((node) => {
+      const scaledX = node.nodePosition.x * zoomLevel;
+      const scaledY = (img.height - node.nodePosition.y) * zoomLevel; // Flip Y-axis and scale
+      this.drawNode(ctx, centerX + scaledX, centerY + scaledY, node.nodeId);
+    });
+    }
   drawNodesAndEdges(
     ctx: CanvasRenderingContext2D,
     img: HTMLImageElement,
@@ -2325,7 +2381,7 @@ export class DashboardComponent implements AfterViewInit {
 
   drawNode(ctx: CanvasRenderingContext2D, x: number, y: number, label: string) {
     const isAssignTask = this.nodeGraphService.getAssignTask();
-  
+
     // Set node size and color conditionally
     const nodeColor = isAssignTask ? '#f00' : '#00f'; // Red for Assign Task, Blue otherwise
     const nodeRadius = isAssignTask ? 6 : 4; // Larger radius for Assign Task, default otherwise
@@ -2336,7 +2392,7 @@ export class DashboardComponent implements AfterViewInit {
       ctx.strokeStyle = '#ff7373'; // Color for the outer circle (can be customized)
       ctx.lineWidth = 2; // Thickness of the outer circle's border
       ctx.stroke();
-  }
+    }
     ctx.beginPath();
     ctx.arc(x, y, nodeRadius, 0, 2 * Math.PI); // Draw circle with the specified radius
     ctx.fillStyle = nodeColor; // Use the determined color

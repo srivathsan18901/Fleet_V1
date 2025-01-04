@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { interval } from 'rxjs';
-import { log } from 'node:console';
 
 @Component({
   selector: 'app-robot-dashboard',
@@ -16,7 +15,7 @@ export class RobotDashboardComponent implements OnInit {
   robotActivities: any[] = [];
   liveRobos: any[] = [];
 
-  processedErrors : Set<string>;
+  processedErrors: Set<string>;
 
   statisticsData: any = {
     averageSpeed: 0,
@@ -29,12 +28,18 @@ export class RobotDashboardComponent implements OnInit {
     networkConnectionChange: 5.2,
   }; // Initialize the array with mock data
 
-  notifications :any[] = [];
+  notifications: any[] = [];
 
   filteredRobotActivities = this.robotActivities;
   filteredNotifications = this.notifications;
 
-  constructor(private router: Router, private projectService: ProjectService, private cdRef: ChangeDetectorRef) {
+  roboDetInterval: ReturnType<typeof setInterval> | null = null;
+
+  constructor(
+    private router: Router,
+    private projectService: ProjectService,
+    private cdRef: ChangeDetectorRef
+  ) {
     this.processedErrors = new Set<string>();
   }
 
@@ -47,11 +52,13 @@ export class RobotDashboardComponent implements OnInit {
     this.updateLiveRoboInfo();
     this.filteredRobotActivities = this.robotActivities;
     // this.getFleetGrossStatus();
-    setInterval(async () => {
+    this.roboDetInterval = setInterval(async () => {
       this.robotActivities = await this.getLiveRoboInfo();
       this.getRoboStatus(); // update only err, warning..
       this.updateLiveRoboInfo();
       this.filteredRobotActivities = this.robotActivities;
+      // console.log(this.filteredRobotActivities);
+
       // this.filteredRobotActivities = this.robotActivities.flat(); // flat() to convert nested of nested array to single array..
     }, 1000 * 5);
   }
@@ -89,24 +96,37 @@ export class RobotDashboardComponent implements OnInit {
     return data.robos;
   }
 
-  getRoboStatus(): void{
+  getRoboStatus(): void {
     if (!('robots' in this.robotActivities)) return;
 
     let { robots }: any = this.robotActivities;
     if (!robots.length) return;
 
-   robots.forEach((robot: any) => {
+    robots.forEach((robot: any) => {
       if (robot.robot_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) { // [errorType, errors] => [key, value]
+        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
+          // [errorType, errors] => [key, value]
           // if (errorType === "NO ERROR") continue;
-          for (let error of (errors as any[])) {
-            let err_type = ["EMERGENCY STOP", "LIDAR_ERROR", "MANUAL MODE", "DOCKING", "NO ERROR"]; //Robot Errors List from RabbitMQ
-            let criticality = "Normal";
+          for (let error of errors as any[]) {
+            let err_type = [
+              'EMERGENCY STOP',
+              'LIDAR_ERROR',
+              'MANUAL MODE',
+              'DOCKING',
+              'NO ERROR',
+            ]; //Robot Errors List from RabbitMQ
+            let criticality = 'Normal';
 
-            if(err_type.includes(err_type[0]) || err_type.includes(err_type[3]))
-              criticality = "Critical"; // "EMERGENCY STOP", "DOCKING"
-            else if(err_type.includes(err_type[1]) || err_type.includes(err_type[2]))
-              criticality = "Warning"; // "LIDAR_ERROR", "MANUAL MODE"
+            if (
+              err_type.includes(err_type[0]) ||
+              err_type.includes(err_type[3])
+            )
+              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
+            else if (
+              err_type.includes(err_type[1]) ||
+              err_type.includes(err_type[2])
+            )
+              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
 
             let notificationKey = `${error.description} on robot ID ${robot.id}`;
             if (this.processedErrors?.has(notificationKey)) continue;
@@ -122,9 +142,9 @@ export class RobotDashboardComponent implements OnInit {
           }
         }
       }
-   });
+    });
 
-  //  console.log(this.notifications);
+    //  console.log(this.notifications);
   }
 
   // Clear all notifications when the button is clicked
@@ -148,7 +168,13 @@ export class RobotDashboardComponent implements OnInit {
     let tot_Dis = 0;
     let tot_Network = 0;
     let tot_speed = 0;
-    let roboNotIdle = ["MOVESTATE", "DOCKSTATE", "UNDOCKSTATE", "LOADSTATE", "UNLOADSTATE"]
+    let roboNotIdle = [
+      'MOVESTATE',
+      'DOCKSTATE',
+      'UNDOCKSTATE',
+      'LOADSTATE',
+      'UNLOADSTATE',
+    ];
 
     this.robotActivities = robots.map((robo: any) => {
       if (roboNotIdle.includes(robo.robot_state)) tot_robotUtilization += 1;
@@ -163,28 +189,36 @@ export class RobotDashboardComponent implements OnInit {
         criticality: robo.Criticality,
       };
     });
-    this.statisticsData.robotUtilization = `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %`;
-      // tot_robotUtilization && robots.length
-      // ? `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %`
-      // : "Loading...";
+    this.statisticsData.robotUtilization = `${(
+      (tot_robotUtilization / robots.length) *
+      100
+    ).toFixed(2)} %`;
+    // tot_robotUtilization && robots.length
+    // ? `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %`
+    // : "Loading...";
 
-    this.statisticsData.totalDistance = `${(tot_Dis / robots.length).toFixed(2)} m`
-        // tot_Dis && robots.length
-        // ? `${(tot_Dis / robots.length).toFixed(2)} m`
-        // : "Loading...";
+    this.statisticsData.totalDistance = `${(tot_Dis / robots.length).toFixed(
+      2
+    )} m`;
+    // tot_Dis && robots.length
+    // ? `${(tot_Dis / robots.length).toFixed(2)} m`
+    // : "Loading...";
 
-    this.statisticsData.networkConnection = `${(tot_Network / robots.length).toFixed(2)} dBm`;
-        // tot_Network && robots.length
-        // ? `${(tot_Network / robots.length).toFixed(2)} dBm`
-        // : "Loading...";
+    this.statisticsData.networkConnection = `${(
+      tot_Network / robots.length
+    ).toFixed(2)} dBm`;
+    // tot_Network && robots.length
+    // ? `${(tot_Network / robots.length).toFixed(2)} dBm`
+    // : "Loading...";
 
-    this.statisticsData.averageSpeed = `${(tot_speed / robots.length).toFixed(2)} m/s`;
-        // tot_speed && robots.length
-        // ? `${(tot_speed / robots.length).toFixed(2)} m/s`
-        // : "Loading...";
+    this.statisticsData.averageSpeed = `${(tot_speed / robots.length).toFixed(
+      2
+    )} m/s`;
+    // tot_speed && robots.length
+    // ? `${(tot_speed / robots.length).toFixed(2)} m/s`
+    // : "Loading...";
 
-    this.filteredRobotActivities = this.robotActivities;
-
+    // this.filteredRobotActivities = this.robotActivities; // yet to uncomment if not workin case..
   }
 
   updateRoboActivities() {} // yet to use.. in case of dynamic update
@@ -221,10 +255,14 @@ export class RobotDashboardComponent implements OnInit {
     this.router.navigate(['/robot logs']); // Navigate to the tasks page
   }
 
-  ngAfterViewInit(){
-      // let reloadData=interval(2000).subscribe(()=>{
-      //   this.getFleetGrossStatus()
-      // })
+  ngAfterViewInit() {
+    // let reloadData=interval(2000).subscribe(()=>{
+    //   this.getFleetGrossStatus()
+    // })
+  }
+
+  ngOnDestroy() {
+    if (this.roboDetInterval) clearInterval(this.roboDetInterval);
   }
 
   // getTotDistance(): string{
@@ -254,5 +292,3 @@ export class RobotDashboardComponent implements OnInit {
   //   return `${tot_Network/robots.length} dB`;
   // }
 }
-
-

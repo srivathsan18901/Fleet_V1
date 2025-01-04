@@ -578,18 +578,26 @@
 </div>
 
 <div id="assignTask-popup" style="position: absolute; display: none; padding: 10px; background: #72a9eb62;backdrop-filter: blur(5px); border: 1px solid #ccc; border-radius: 8px;filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404)); z-index: 1000;">
+  <div class="ATactions">
+  <div>
   <label class="idlabel" for="robot-select">Robot ID:</label>
-  <select class="idDD" id="robot-select">
-    <option></option>
+  <select class="idDD" id="robot-select" [(ngModel)]="roboToAssign">
+    <option [value]="'-99'" disabled>-99</option>
+    <option *ngFor="let robo of currentRoboList" [value]="robo">
+      {{robo}}
+    </option>
   </select>
-  
+  </div>
+  <div>
   <label class="idlabel" for="robot-select">Action:</label>
-  <select class="idDD" id="robot-select">
-    <option>Pick</option>
-    <option>Drop</option>
-    <option>Move</option>
+  <select class="idDD" id="robot-select" [(ngModel)]="taskAction">
+    <option value="MOVE">Move</option>
+    <option value="PICK">Pick</option>
+    <option value="DROP">Drop</option>
   </select>
-  <br>
+  </div>
+</div>
+
   <div class="ATbtn-set">
   <button class="sendATbtn" (click)="sendAction()">Send</button>
   <button class="cancelATbtn" (click)="cancelATAction()">Cancel</button>

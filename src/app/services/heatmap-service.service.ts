@@ -111,6 +111,7 @@ export class HeatmapService {
   accumulateCoors(coors: Coor) {
     // console.log(coors);
 
+    if (coors.x == null || coors.y == null) return;
     this.accumulatedData.push(coors);
 
     if (this.accumulatedData.length >= 5) {

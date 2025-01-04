@@ -28,15 +28,18 @@ export class ChartComponent {
   public chartOptions: Partial<ChartOptions>;
   @Input() ONBtn!: boolean;
 
-  selectedProj :any | null = null;
+  selectedProj: any | null = null;
   mapData: any | null = null;
   activeRobots: number = 0;
   totalRobots: number = 0;
 
   liveRobos: any[] = [];
+  liveRoboInterval: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private projectService: ProjectService,private cdRef:ChangeDetectorRef) {
-    
+  constructor(
+    private projectService: ProjectService,
+    private cdRef: ChangeDetectorRef
+  ) {
     this.chartOptions = {
       series: [(this.activeRobots / this.totalRobots) * 100], // normalized value..
       chart: {
@@ -120,22 +123,25 @@ export class ChartComponent {
     await this.fetchTotRobos();
     this.liveRobos = await this.getLiveRoboInfo();
     this.updateLiveRoboInfo();
-    setInterval(async () => {
+    this.liveRoboInterval = setInterval(async () => {
       this.liveRobos = await this.getLiveRoboInfo();
       this.updateLiveRoboInfo();
     }, 1000 * 3); // yet to max the interval time..
   }
 
-  async fetchTotRobos(){
-    if(!this.selectedProj || !this.mapData) return
-    let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.mapData.id}`,{
-      method : 'GET',
-      credentials :'include'
-    })
+  async fetchTotRobos() {
+    if (!this.selectedProj || !this.mapData) return;
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.mapData.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
     let data = await response.json();
     const { populatedRobos } = data;
     // console.log(data);
-    
+
     this.totalRobots = populatedRobos.length;
     this.cdRef.detectChanges();
   }
@@ -157,7 +163,7 @@ export class ChartComponent {
 
   updateLiveRoboInfo() {
     // console.log(this.liveRobos);
-    
+
     if (!('robots' in this.liveRobos)) {
       this.activeRobots = 0;
       return;
@@ -169,5 +175,9 @@ export class ChartComponent {
 
   currentActiveRobots(): string {
     return `${this.activeRobots}/${this.totalRobots}`;
+  }
+
+  ngOnDestroy() {
+    if (this.liveRoboInterval) clearInterval(this.liveRoboInterval);
   }
 }

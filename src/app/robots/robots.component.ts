@@ -81,6 +81,8 @@ export class RobotsComponent implements OnInit {
 
   private routerSubscription: Subscription | undefined; // Subscription to track navigation changes
 
+  liveRoboInterval: ReturnType<typeof setInterval> | null = null;
+
   constructor(
     public dialog: MatDialog,
     private projectService: ProjectService,
@@ -116,7 +118,7 @@ export class RobotsComponent implements OnInit {
     this.initialRoboInfos = this.robots;
     this.liveRobos = await this.getLiveRoboInfo();
     this.updateLiveRoboInfo();
-    setInterval(async () => {
+    this.liveRoboInterval = setInterval(async () => {
       this.liveRobos = await this.getLiveRoboInfo();
       this.updateLiveRoboInfo();
     }, 1000 * 5);
@@ -133,13 +135,6 @@ export class RobotsComponent implements OnInit {
     if (savedIsFleet !== null) {
       this.isFleet = savedIsFleet === 'true'; // Convert string to boolean
       this.isFleetService.setIsFleet(this.isFleet); // Sync the state with the service
-    }
-  }
-
-  ngOnDestroy(): void {
-    // Unsubscribe from router events to prevent memory leaks
-    if (this.routerSubscription) {
-      this.routerSubscription.unsubscribe();
     }
   }
 
@@ -286,5 +281,13 @@ export class RobotsComponent implements OnInit {
     } else {
       return 'low'; // Red for low battery
     }
+  }
+
+  ngOnDestroy(): void {
+    // Unsubscribe from router events to prevent memory leaks
+    if (this.routerSubscription) {
+      this.routerSubscription.unsubscribe();
+    }
+    if (this.liveRoboInterval) clearInterval(this.liveRoboInterval);
   }
 }

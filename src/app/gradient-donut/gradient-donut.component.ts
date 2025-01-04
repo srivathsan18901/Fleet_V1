@@ -101,7 +101,7 @@ export class GradientDonutComponent implements OnInit {
                 fontWeight: 'bold',
                 color: '#121212',
                 offsetY: 6,
-                formatter: (val: any) => `${val}%`, // Formatting the value to show percentage
+                formatter: (val: any) => `${val}`, // Formatting the value to show percentage
                 style: { fontFamily: '"Graphik", Arial, sans-serif' },
               },
               total: {
