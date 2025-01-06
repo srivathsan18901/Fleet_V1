@@ -14,9 +14,9 @@
             class="subheader-icon"
           />
         </div>
-        <div class="search-filter-container">
+        <div class="search-filter-container" *ngIf="this.isFleet === true">
           <!-- Search Bar -->
-          <div class="search-box">
+          <div class="search-box" >
             <input type="text" placeholder="Search For Something..." [(ngModel)]="searchQuery" (input)="filterRobots()" />
             <button class="search-btn">
               <img src="../../assets/icons/download-removebg-preview.png" alt="Search" />
@@ -1820,7 +1820,8 @@
               </svg>
 
               </span>
-              <p class="py-4 font-bold text-[24px] text-[#00000050]"> - No Robots Found -</p>
+              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === false"> - Sim Mode has been Enabled -</p>
+              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === true"> - No Robots Found -</p>
             </span>
 
             <div *ngIf="this.isFleet === true">

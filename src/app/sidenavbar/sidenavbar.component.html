@@ -47,25 +47,31 @@
 
 
 
-    <div class="Profile">
+    <div class="Profile" (click)="toggleProfilePopup()">
       <img
         src="../../assets/icons/profile.png"
         alt="profile pic"
         routerLink="/profile"
-        class="PPicon"
-        (click)="toggleProfilePopup()"
+        class="PPicon"        
       />
       <div class="profile-info">
         <p class="username">{{ username }}</p>
         <p class="userrole">{{ userrole }}</p>
       </div>
     </div>
-
   </div>
 </div>
-
+<div class="Profile-popup" *ngIf="showProfilePopup" > 
+  <div>
+  <p class="msg">Hello, {{ username }}</p>
+  </div>
+  <div class="logoutIcon" (click)="showLogoutConfirmation = true">
+    <img src="../../assets/icons/Logout.svg " alt="" class="Outlogo" />
+    <span class="logoutlabel">Logout</span>
+  </div>
+</div>
 <!-- side bar -->
-<div class="sidebar">
+<div class="Sidenav">
   <div class="sidebar">
     <div class="logo-container">
       <img src="../../assets/Motherson_full_logo.jpeg" alt="" class="Logo" />
@@ -118,18 +124,10 @@
         <span class="label">Support</span>
       </div> -->
     </div>
-      <!-- <div class="icon5" routerLink="/usermanagement">
-      <img
-        src="../../assets/icons/Usermanagement_icons.svg"
-        routerLink="/usermanagement"
-        class="Ulogo"
-      />
-      <span class="label">User Management</span>
-    </div> -->
-    <div class="icons logout-icon" (click)="logout()">
+
+    <div class="icons logout-icon" (click)="showLogoutConfirmation = true">
       <img src="../../assets/icons/Logout_icon.svg " alt="" class="Outlogo" />
       <span class="label">Logout</span>
-
     </div>
   </div>
 </div>
@@ -239,9 +237,17 @@
   </ng-template>
 </div>
 
-
-
-<!-- <div class="Profile-popup" *ngIf="showProfilePopup"> -->
-
-  <!-- <p>Hi,{{ username }}</p> -->
-<!-- </div> -->
+<div *ngIf="showLogoutConfirmation" class="confirmation-popup-overlay">
+  <div class="confirmation-popup">
+    <div class="Img">
+    <img class="WarningImg" src="../../assets/Warning.svg">
+    <!-- <img class="SWImg" src="../../assets/shared image.jpeg"> -->
+   </div>
+    <p class="P1">Are you sure?</p>
+    <p class="P2">Are you sure do you want to logout?</p>
+    <div class="button-container">
+      <button class="confirm-btn" (click)="logout()">Confirm</button>
+      <button class="cancel-btn" (click)="showLogoutConfirmation = false">Cancel</button>
+    </div>
+  </div>
+</div>

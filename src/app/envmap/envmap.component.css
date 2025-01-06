@@ -317,9 +317,25 @@ h2 {
   height: 30px;
   cursor: pointer;
 } */
+.nodeform-control {
+  height: 30px;
+  border-radius: 5px;
+  background-color: #FFFFFF;
+  width: 150px;
+  font-size: 12px;
+  font-family: 'graphik', Arial, sans-serif;
+  color: #6c7381;
+  border: 0.5px solid #9ca1aa;
+}
 .form-control {
   height: 30px;
   border-radius: 5px;
+  background-color: #FFFFFF;
+  width: 55px;
+  font-size: 12px;
+  font-family: 'graphik', Arial, sans-serif;
+  color: #6c7381;
+  border: 0.5px solid #9ca1aa;
 }
 .form-control option{
   font-size: 10px;

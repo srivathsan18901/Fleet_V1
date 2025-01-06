@@ -167,7 +167,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.setPaginatedData(); // Set initial paginated data after view is initialized
   }
-
+  isDisabled(status: string): boolean {
+    return status === 'COMPLETED' || status === 'CANCELLED' || status === 'FAILED';
+  }
+  
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
     let startTimeOfDay = this.getStartOfDay(establishedTime);
@@ -206,7 +209,39 @@ export class TasksComponent implements OnInit, AfterViewInit {
   onPageChange(event: PageEvent) {
     this.setPaginatedData();
   }
+  selectedStatus: string = ''; // New variable
 
+  onStatusFilter(event: Event): void {
+    const selectedValue = (event.target as HTMLSelectElement).value;
+
+    this.selectedStatus = selectedValue; // Store selected status
+    this.filterTasks(); // Filter tasks based on selected status
+  }
+
+  filterTasks(): void {
+    // Filter by search query
+    this.filteredTaskData = this.tasks.filter((task) => {
+      const matchesSearchQuery =
+        this.searchQuery.trim().length === 0 ||
+        Object.values(task).some((val) =>
+          String(val).toLowerCase().includes(this.searchQuery.toLowerCase())
+        );
+
+      // Filter by selected status if any
+      const matchesStatus =
+        this.selectedStatus.trim().length === 0 ||
+        task.status === this.selectedStatus;
+
+      return matchesSearchQuery && matchesStatus;
+    });
+
+    // Reset the paginator and update paginated data
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+
+    this.setPaginatedData();
+  }
   // Search method
   onSearch(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value.toLowerCase();

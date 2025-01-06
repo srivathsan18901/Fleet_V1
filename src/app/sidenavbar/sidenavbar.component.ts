@@ -7,6 +7,7 @@ import {
   OnDestroy,
   ChangeDetectorRef,
 } from '@angular/core';
+
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ProjectService } from '../services/project.service';
@@ -369,7 +370,7 @@ export class SidenavbarComponent implements OnInit {
   toggleSidebar(isEnlarged: boolean) {
     this.isSidebarEnlarged = isEnlarged;
   }
-
+  showLogoutConfirmation = false;
   logout() {
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',

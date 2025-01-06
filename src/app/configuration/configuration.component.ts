@@ -453,12 +453,13 @@ export class ConfigurationComponent implements AfterViewInit {
         detail: 'Robo Details Udated Successfully',
         life: 4000,
       });
+      this.fetchRobos();
       // return;
     }
     this.setPaginatedData1();
     this.closeroboPopup();
     // console.log('line 425');
-    this.ngOnInit();
+    // this.ngOnInit();
   }
 
   deleteRobo(robo: any) {
@@ -498,7 +499,7 @@ export class ConfigurationComponent implements AfterViewInit {
               this.setPaginatedData1(); // Update the paginator data
               this.cdRef.detectChanges(); // Trigger change detection
               // console.log('line 510');
-              this.ngOnInit(); // Re-initialize the component if needed
+              // this.ngOnInit(); // Re-initialize the component if needed
             } else {
               this.messageService.add({
                 severity: 'error',
@@ -565,7 +566,7 @@ export class ConfigurationComponent implements AfterViewInit {
       const totalPages = Math.ceil(totalItems / pageSize1);
 
       // If the current page index exceeds the total number of pages after deletion, reset to page 1
-      if (pageIndex1 >= totalPages) {
+      if (this.paginator && pageIndex1 >= totalPages) {
         pageIndex1 = 0;
         this.paginator.pageIndex = pageIndex1;
       }
@@ -1174,7 +1175,6 @@ export class ConfigurationComponent implements AfterViewInit {
         // Check if the image URL is accessible
         this.checkImageLoading(mapImgUrl)
           .then(() => {
-
             // Proceed only if the image loads successfully
             this.currEditMapDet = {
               mapName: map.mapName,
@@ -1288,7 +1288,10 @@ export class ConfigurationComponent implements AfterViewInit {
     this.deleteMap(item).then((result) => {
       isDeleted = result;
       if (isDeleted) {
-        if (this.projectService.getMapData() && item.id === this.projectService.getMapData().id) {
+        if (
+          this.projectService.getMapData() &&
+          item.id === this.projectService.getMapData().id
+        ) {
           this.projectService.setIsMapSet(false);
           this.projectService.clearMapData();
           this.projectService.setInitializeMapSelected(false); // confirm it.
@@ -1573,7 +1576,7 @@ export class ConfigurationComponent implements AfterViewInit {
   }
 
   // handle the data here..
-  saveRoboInfo(): void {
+  async saveRoboInfo(): Promise<void> {
     // roboName | serial Number, ip add, mac add, grossInfo
     let project = this.projectService.getSelectedProject();
     let currMap = this.projectService.getMapData();
@@ -1607,55 +1610,52 @@ export class ConfigurationComponent implements AfterViewInit {
       alert('Manufacturer or roboname should be there');
       return;
     }
-    fetch(
-      `http://${environment.API_URL}:${environment.PORT}/robo-configuration`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(roboDetails),
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/robo-configuration`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(roboDetails),
+        }
+      );
+      this.isPopupOpen = false;
+      if (response.status === 422)
+        console.log(
+          'Error while inserting reference Id in server, unprocessable entity'
+        );
+      // if (!response.ok)
+      //   throw new Error(`Err with status code of ${response.status}`);
+      let data = await response.json();
+      if (data.error) return;
+      else if (data.isIpMacExists) {
+        console.log(data.msg);
+        alert('Ip | Mac seems already exists!');
+        return;
+      } else if (data.exists) {
+        alert('Robo Name already exists');
+        return;
       }
-    )
-      .then((response) => {
-        if (response.status === 422)
-          console.log(
-            'Error while inserting reference Id in server, unprocessable entity'
-          );
-        // if (!response.ok)
-        //   throw new Error(`Err with status code of ${response.status}`);
-        return response.json();
-      })
-      .then((data) => {
-        // console.log(data);
-        if (data.error) return;
-        else if (data.isIpMacExists) {
-          console.log(data.msg);
-          alert('Ip | Mac seems already exists!');
-          return;
-        } else if (data.exists) {
-          alert('Robo Name already exists');
-          return;
-        }
-        if (data.robo) {
-          this.robotData = [...this.robotData, data.robo];
-          // console.log('line 1768');
-          this.ngOnInit();
-          // this.filteredRobotData = [...this.robotData];
-          // this.cdRef.detectChanges();
-          // alert('robo Added to db');
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Success',
-            detail: 'Robo Added to Database Successfully!.',
-          });
-          return;
-        }
-      });
+      if (data.robo) {
+        this.fetchRobos();
+        // this.robotData = [...this.robotData, data.robo];
+        // this.filteredRobotData = [...this.robotData];
+        // this.setPaginatedData1();
+        this.cdRef.detectChanges();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Robo Added to Database Successfully!.',
+        });
+        return;
+      }
+    } catch (error) {
+      console.log(error);
+    }
 
     this.isPopupOpen = false;
-    // console.log('line 1783');
-    this.ngOnInit();
-    this.cdRef.detectChanges();
+    // this.cdRef.detectChanges();
   }
 
   closeroboPopup(): void {

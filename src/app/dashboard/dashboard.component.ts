@@ -126,7 +126,7 @@ export class DashboardComponent implements AfterViewInit {
   draggingRobo: any = null; // Holds the robot being dragged
   selectedRobo: any = null;
   taskAction: string = 'MOVE';
-  roboToAssign: string | null = '-99';
+  roboToAssign: string | null = 'Default';
   sourceLocation: any | null = null;
   currentRoboList: any[] | null = null;
   placeOffset: number = 50;
@@ -927,7 +927,7 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
   async sendAction() {
-    if (!this.taskAction || !this.roboToAssign || !this.sourceLocation || this.roboToAssign === '-99') {
+    if (!this.taskAction || !this.roboToAssign || !this.sourceLocation ) {
       this.messageService.add({
         severity: 'error',
         summary: `Data not sent`,
@@ -936,9 +936,13 @@ export class DashboardComponent implements AfterViewInit {
       });
       return;
     }
+    // Handle default robo assignment
+    const DEFAULT_AGENT_ID = '-99';
+    this.roboToAssign = this.roboToAssign === 'Default' ? DEFAULT_AGENT_ID : this.roboToAssign;
+    const genId = Date.now().toString(16);
 
     let taskData = {
-      taskId: `t${this.sourceLocation}`,
+      taskId: 't' + genId,
       agentId: this.roboToAssign,
       Priority: 1,
       sourceLocation: this.sourceLocation,
@@ -966,6 +970,8 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   cancelATAction() {
+    this.roboToAssign = 'Select'; // Reset the dropdown to default value
+    this.taskAction = 'MOVE';
     this.hideATPopup();
   }
 
@@ -1767,11 +1773,13 @@ export class DashboardComponent implements AfterViewInit {
     const rectangleColor = this.stateColorMap[state] || '#ff7373';
     const borderColor = '#000000'; // Define the border color
     const borderThickness = 0.8; // Define the border thickness
+    const triangleSize = circleRadius / 1.15; // Define the triangle size
+  
     if (ctx) {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate((orientation * Math.PI) / 180);
-
+  
       // Draw the rounded rectangle (manually if roundRect is unsupported)
       ctx.beginPath();
       ctx.moveTo(-width / 2 + borderRadius, -height / 2);
@@ -1804,12 +1812,13 @@ export class DashboardComponent implements AfterViewInit {
         -height / 2
       );
       ctx.closePath();
-
+  
       ctx.fillStyle = rectangleColor; // Set the rectangle color
       ctx.fill();
       ctx.lineWidth = borderThickness;
       ctx.strokeStyle = borderColor;
       ctx.stroke();
+  
       // Draw the circle inside the rounded rectangle
       ctx.beginPath();
       ctx.arc(0, 0, circleRadius, 0, Math.PI * 2); // Circle at the center
@@ -1819,9 +1828,24 @@ export class DashboardComponent implements AfterViewInit {
       ctx.strokeStyle = borderColor; // Set the circle border color
       ctx.stroke();
       ctx.closePath();
+  
+      // Draw the triangle pointing to the front
+      ctx.beginPath();
+      ctx.moveTo(-circleRadius - triangleSize, 0); // Left of the circle
+      ctx.lineTo(-circleRadius, -triangleSize / 2); // Top corner
+      ctx.lineTo(-circleRadius, triangleSize / 2); // Bottom corner
+      ctx.closePath();
+  
+      ctx.fillStyle = circleColor; // Same color as the circle
+      ctx.fill();
+      ctx.lineWidth = borderThickness - 0.2; // Triangle border thickness
+      ctx.strokeStyle = borderColor; // Triangle border color
+      ctx.stroke();
+  
       ctx.restore();
     }
   }
+  
 
   isOptionsExpanded: boolean = false;
 

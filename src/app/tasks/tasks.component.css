@@ -432,26 +432,39 @@
   width: 100%; /* Ensures container spans the full width of the table cell */
   
 }
-.btn-cancel {
-  background-color: #f44336; /* Red for cancel */
-  color: white;
-  position: relative;
+.btn-common {
   display: inline-block;
   width: 80px;
   height: 30px;
-  border: 2px solid #dcdcdc;
-  /* background: #e0e0e0; */
-  /* box-shadow: 7px 7px 23px #bebebe, -7px -7px 23px #ffffff; */
+  border: 1px solid #f44336;
   overflow: hidden;
   border-radius: 20px;
   text-align: center;
-  margin-right: 10px; /* Space between buttons */
-  position: relative; /* Remove z-index to avoid stacking issues */
+  margin-right: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.btn-cancel {
+  background-color: #f44336; /* Red for cancel */
+  color: white;
 }
 
 .btn-cancel:hover {
   background-color: #d32f2f;
 }
+.status-filter{
+  display: flex;
+  justify-content: flex-end;
+}
+.btn-disabled {
+  background: #f09e98; /* Red for cancel */
+  color: white; /* Light grey for text */
+  backdrop-filter: blur(10px);
+  cursor: not-allowed;
+  border: 2px solid #f09e98; /* Slightly darker grey border */
+}
+
 
 /*
 new button */

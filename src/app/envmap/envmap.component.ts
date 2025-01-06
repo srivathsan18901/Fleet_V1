@@ -365,6 +365,8 @@ export class EnvmapComponent implements AfterViewInit {
     private sessionService: SessionService // private nodeGraphService:NodeGraphService
   ) {
     if (this.currEditMap) this.showImage = true;
+    this.robotImages['robotB'] = new Image();
+    this.robotImages['robotB'].src = 'assets/CanvasRobo/robotB.svg';
   }
 
   ngOnInit() {
@@ -532,6 +534,9 @@ export class EnvmapComponent implements AfterViewInit {
     if (ctx) {
       this.robotImages['robotA'] = new Image();
       this.robotImages['robotA'].src = 'assets/CanvasRobo/robotA.svg';
+
+      this.robotImages['robotB'] = new Image();
+      this.robotImages['robotB'].src = 'assets/CanvasRobo/robotB.svg';
 
       this.robotImages['robot0'] = new Image();
       this.robotImages['robot0'].src = 'assets/CanvasRobo/Robot/Robo0.svg';
@@ -1771,18 +1776,6 @@ export class EnvmapComponent implements AfterViewInit {
         this.nodes[0].nodePosition.orientation
       );
 
-    let roboInit = {
-      id: 0,
-      pose: {
-        position: {
-          x: this.nodes[0].nodePosition.x,
-          y: this.nodes[0].nodePosition.y,
-          z: this.nodes[0].nodePosition.orientation,
-        },
-        orientation: orientation,
-      },
-    };
-
     this.form = new FormData();
     const mapData = {
       projectName: this.projData.projectName,
@@ -2539,7 +2532,6 @@ export class EnvmapComponent implements AfterViewInit {
   placeRobots(selectedRobots: any[]): void {
     if (!this.overlayCanvas) return;
     const canvas = this.overlayCanvas.nativeElement;
-    console.log(selectedRobots, 'hey');
 
     selectedRobots.forEach((robot) => {
       let x = 0 + this.roboInitOffset;

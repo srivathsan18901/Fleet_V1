@@ -33,6 +33,7 @@
           </button>
         </div>
 
+        
         <!-- Options Container -->
         <!-- <div class="options-container">
           <div class="filter-options">
@@ -75,7 +76,16 @@
           </div>
         </div> -->
       </div>
-
+      <div class="status-filter">
+        <label for="status-filter">Filter by Status:</label>
+        <select id="status-filter" (change)="onStatusFilter($event)">
+          <option value="">All</option>
+          <option value="COMPLETED">Completed</option>
+          <option value="IN_PROGRESS">In Progress</option>
+          <option value="CANCELLED">Cancelled</option>
+          <option value="FAILED">Failed</option>
+        </select>
+      </div>
       <!-- Table -->
       <div class="table-container">
         <div class="table-wrapper">
@@ -137,12 +147,14 @@
 
 
                       <!-- Cancel Button -->
-                      <button 
-                      *ngIf="item.status !== 'COMPLETED' && item.status !== 'CANCELLED' && item.status !== 'FAILED'" 
-                       class="btn-common btn-cancel" 
-                      (click)="onCancel(item)">
+                      <button
+                      [ngClass]="{'btn-disabled': isDisabled(item.status), 'btn-cancel': !isDisabled(item.status)}"
+                      [disabled]="isDisabled(item.status)"
+                      class="btn-common"
+                      (click)="!isDisabled(item.status) && onCancel(item)">
                       Cancel
                     </button>
+                    
                    </div>
                   </td>
                 </tr>
