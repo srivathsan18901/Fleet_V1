@@ -3,7 +3,7 @@ name: Deploy Angular App to Docker
 on:
   push:
     branches:
-      - FleetUI_FE_Development  # branch
+      -  FleetUI_FE_Development_V2 # Branch to trigger the workflow
 
 jobs:
   build-and-deploy:
@@ -21,32 +21,14 @@ jobs:
 
     - name: Build Docker image
       run: |
-        docker build -t my-fleetfeapp-repo:latest .
+        docker build -t fleetui:latest .
 
     - name: List Docker images
       run: docker images
 
-    - name: Log in to Amazon ECR
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        AWS_REGION: ap-south-1  # Change to your actual region if needed
+    - name: Save Docker image as .tar file
       run: |
-        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com
-
-    - name: Tag Docker image
-      run: |
-        echo "Tagging image with repository: 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest"
-        docker tag my-fleetfeapp-repo:latest "207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest"
-
-    - name: Push Docker image to ECR
-      run: |
-        echo "Pushing image to ECR repository"
-        docker push "207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/my-fleetfeapp-repo:latest"
-
-    - name: Save Docker image
-      run: |
-        docker save my-fleetfeapp-repo -o my-fleetfeapp-repo.tar
+        docker save fleetui:latest -o fleetui.tar
 
     - name: Deploy to EC2
       env:
@@ -54,12 +36,18 @@ jobs:
         HOST: ${{ secrets.EC2_HOST }}
         USER: ${{ secrets.EC2_USER }}
       run: |
+        # Save the private key for SSH access to EC2
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
         
-        scp -o StrictHostKeyChecking=no -i private_key.pem my-fleetfeapp-repo.tar "$USER@$HOST:~/my-fleetfeapp-repo.tar"
+        # SCP the Docker image file to EC2
+        scp -o StrictHostKeyChecking=no -i private_key.pem fleetui.tar "$USER@$HOST:~/my-fleetfeapp-repo.tar"
 
+        # SSH into the EC2 instance and deploy the Docker container
         ssh -o StrictHostKeyChecking=no -i private_key.pem "$USER@$HOST" << EOF
-        docker load -i ~/my-fleetfeapp-repo.tar
-        docker run -d -p 80:80 --name fleet_container my-fleetfeapp-repo
+        # Load the Docker image from the tar file
+        docker load -i ~/fleetui.tar
+
+        # Run the Docker container
+        docker run -d -p 80:80 --name fleet_container fleetui:latest
         EOF
