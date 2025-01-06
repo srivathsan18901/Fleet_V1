@@ -41,13 +41,13 @@ jobs:
         chmod 600 private_key.pem
         
         # SCP the Docker image file to EC2
-        scp -o StrictHostKeyChecking=no -i private_key.pem fleetui.tar "$USER@$HOST:~/my-fleetfeapp-repo.tar"
+        scp -o StrictHostKeyChecking=no -i private_key.pem fleetui.tar "$USER@$HOST:~/fleetui.tar"
 
         # SSH into the EC2 instance and deploy the Docker container
         ssh -o StrictHostKeyChecking=no -i private_key.pem "$USER@$HOST" << EOF
         # Load the Docker image from the tar file
-        docker load -i ~/fleetui.tar
+        sudo docker load -i ~/fleetui.tar
 
         # Run the Docker container
-        docker run -d -p 80:80 --name fleet_container fleetui:latest
+        sudo docker run -d -p 80:80 --name fleet_container fleetui:latest
         EOF
