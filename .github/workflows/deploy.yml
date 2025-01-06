@@ -45,6 +45,14 @@ jobs:
 
         # SSH into the EC2 instance and deploy the Docker container
         ssh -o StrictHostKeyChecking=no -i private_key.pem "$USER@$HOST" << EOF
+
+         # Check for existing container and remove if it exists
+        if [ "\$(sudo docker ps -aq -f name=fleet_container)" ]; then
+          echo "Stopping and removing existing container..."
+          sudo docker stop fleet_container || true
+          sudo docker rm fleet_container || true
+        fi
+
         # Load the Docker image from the tar file
         sudo docker load -i ~/fleetui.tar
 
