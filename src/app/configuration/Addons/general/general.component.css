@@ -4,6 +4,13 @@
   width: 30%;
   margin-right: 20px;
 }
+/* Custom style for disabled fields */
+input:disabled, 
+select:disabled,
+textarea:disabled { 
+  cursor: not-allowed; /* Change cursor to indicate that it's not interactable */
+}
+
 
 .container {
   display: flex;

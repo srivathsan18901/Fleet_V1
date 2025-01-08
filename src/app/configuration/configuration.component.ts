@@ -443,7 +443,12 @@ export class ConfigurationComponent implements AfterViewInit {
     let data = await response.json();
     console.log(data);
     if (data.roboExists === true) {
-      alert('robo with this name already exists!');
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Already exists!',
+        detail: 'robo with this name already exists!',
+        life: 4000,
+      });
       // return;
     } else if (data.updatedData) {
       // alert('robo updated');

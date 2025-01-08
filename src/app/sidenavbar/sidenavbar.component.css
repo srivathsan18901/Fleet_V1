@@ -38,14 +38,63 @@
   .active {
     background-color: #e0d6d672; /* Optional: Add background color if needed */
     border-radius: 20px;
-
     color: white; /* Change the text color to white */
   }
-
+  .indication-button {
+    /* position: absolute; */
+    /* top: 7px;
+    right: 600px; */
+    /* filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404)); */
+    cursor: default;
+    z-index: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 110px;
+    height: 35px;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    transition: background-color 0.3s ease;
+  }
+  
+  /* Image inside the button */
+  .indication-button img {
+    width: 25px;
+    height: 25px;
+    margin-right: 8px; /* Keep margin for spacing */
+  }
+  
+  /* Text inside the button */
+  .indication-button span {
+    font-size: 17px;
+    font-family: "graphik", Arial,  sans-serif;
+    white-space: nowrap; /* Prevent text from wrapping */
+  }
+  .fleet-background {
+    z-index: auto;
+    /* background-color: #63b7fc;  */
+    /* Blue for Fleet */
+    color:#63b7fc ;
+    font-family: "graphik", Arial,  sans-serif;
+    font-weight: bold;
+    /* margin-right: 25px; */
+  }
+  
+  .simulation-background {
+    /* background-color: #f0453f;  */
+    /* Red for Simulation */
+    color: #ff3333;
+    font-family: "graphik", Arial,  sans-serif;
+    font-weight: bold;
+    /* margin-right: 25px; */
+  }
   /* Style the label inside the active tab */
   .active .label {
     color: white;
     padding: 0px 15px 0px 18px; /* Keep your desired padding */
+    font-family: "graphik", Arial,  sans-serif;
     display: block;
     width: 130%; /* Increase the width as needed */
     margin-left: -10%; /* Center it by shifting left if necessary */
@@ -72,7 +121,7 @@
     font-size: 1.2rem; /* Font size */
     font-weight: bold; /* Bold text for visibility */
     font-family: "graphik", Arial,  sans-serif;
-    margin-right: 2rem; /* Space between status and other elements */
+    /* margin-right: 2rem;  */
     cursor: default; /* Change cursor to indicate non-clickable */
     text-align: center; /* Center align the text */
 
@@ -95,21 +144,19 @@
 
   .notification-popup {
     position: absolute;
-    top: 52px;
-
+    top: 50px;
     right: 10px;
     background-color: rgba(243, 243, 243, 0.301);
     backdrop-filter: blur(10px);
+    box-shadow: 0px 6px 6px -5px #FF7373, -6px 0px 6px -5px #FF7373, 6px 0px 6px -3px #FF7373;
     border: 1px solid #ffffff;
-    background-color: rgba(243, 243, 243, 0.301);
-    backdrop-filter: blur(10px);
-    padding: 5px;
-    border-radius: 10px;
+    padding: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
     font-family: Arial, sans-serif;
     z-index: 1000;
-    width: 600px;
+    width: auto;
     height: auto;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3); /* Heavy box shadow */
     display: none; /* Hidden by default */
     opacity: 0;
     transform: translateY(-10px);
@@ -147,13 +194,19 @@
         left: 2.5%;
     }
 }
-
-.notification-header {
-    display: flex;
-    justify-content: space-between; /* Align items to the start and end */
-    align-items: center; /* Center vertically */
+.Clr-BTN{
+  display: flex;
+  justify-content: end;
 }
-
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+}
+.no-notifications h2{
+  font-size: 12px;
+  font-family: "graphik", Arial,  sans-serif;
+  color: #ff7373;
+}
 .scrollable-container {
   max-height: 500px; /* Set a maximum height for the scrollable area */
   overflow-y: auto;  /* Allows scrolling within this container */
@@ -179,9 +232,9 @@
     background-color: #ff3333;
     color: white;
     border: none;
-    font-size: 14px;
+    font-size: 10px;
     font-family: "graphik", Arial,  sans-serif;
-    padding: 4px 18px;
+    padding: 5px;
     border-radius: 0.25rem;
     cursor: pointer;
     transition: background-color 0.3s ease;
@@ -194,13 +247,13 @@
 /* Close Button Styles */
 .close-button {
     background-color: white;
-    border: 2px solid red;
+    border: 1px solid red;
     border-radius: 50%;
     cursor: pointer;
     margin-top: 0px;
-    padding: 5px;
-    width: 40px;
-    height: 40px;
+    padding: 0px;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -227,10 +280,10 @@
 }
 
 .notification-popup h3 {
-    font-size: 28px;
-    font-weight: 600;
-    font-family: "graphik", Arial,  sans-serif;
-    color: #f10909;
+  font-size: 20px;
+  font-weight: 600;
+  font-family: "graphik", Arial, sans-serif;
+  color: #f10909;
 }
 
 .notification-popup ul {
@@ -320,6 +373,7 @@
     justify-content: center;
     align-items: center;
     height: auto;
+    width: 300px;
     text-align: center;
     flex-direction: column;
   }
@@ -328,12 +382,6 @@
     width: 100px;
     height: 100px;
     margin-bottom: 10px;
-  }
-
-  .no-notifications span {
-    font-size: 20px;
-    font-family: "graphik", Arial,  sans-serif;
-    color: #2b2828;
   }
 
   .topbar {
@@ -357,6 +405,7 @@
   .TopbarContents {
     display: flex;
     align-items: center;
+    gap: 10px;
   }
 
   .username {
@@ -364,10 +413,7 @@
     font-weight: bold;
   }
 
-  .topbar img {
-    margin: 0 10px;
-    /* filter: drop-shadow(20px 5px 5px 5px 5px rgba(52, 49, 49, 0.308)); */
-  }
+
 
   .Profile {
     display: flex;
@@ -455,9 +501,7 @@
     transition: margin-left 0.3s ease;
     cursor: pointer;
   }
-app-fullscreen-button{
-    margin-right: 20px;
-  }
+
   .icon1:hover, .icon2:hover, .icon3:hover, .icon4:hover, .icon5:hover, .icon6:hover, .icon7:hover, .icon8:hover {
     border-bottom: 1px solid white;
     border-radius: 10px;
@@ -474,6 +518,7 @@ app-fullscreen-button{
   .icons .label {
     display: none;
     white-space: nowrap; /* Prevents text from wrapping */
+    font-family: "graphik", Arial,  sans-serif;
     transition: opacity 0.3s ease;
     opacity: 0;
   }
@@ -490,11 +535,6 @@ app-fullscreen-button{
   .Outlogo {
     margin: 0;
   }
-
-  .Nlogo {
-    margin: 10px 5px 5px 1200px; /* Adjust margin as needed */
-  }
-
   .logout-icon {
     margin: auto 0 20px 10px; /* Center vertically and add bottom margin */
     display: flex;
@@ -519,10 +559,23 @@ app-fullscreen-button{
       font-family: "graphik", Arial,  sans-serif;
   }
 
-  .timer {
-    background-color: rgb(160, 160, 160); /* Grey background */
-    color: white; /* White font color */
+  /* .timer {
+    background-color: rgb(160, 160, 160); 
+    color: white;
     font-family: "graphik", Arial,  sans-serif;
+    padding: 5px 10px;
+    border-radius: 5px;
+    margin-right: -0.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  } */
+  .timer {
+    /* background-color: rgb(160, 160, 160);  */
+    color: #ff3333; /* White font color */
+    font-family: "graphik", Arial,  sans-serif;
+    font-size: small;
     padding: 5px 10px;
     border-radius: 5px;
     margin-right: -0.5rem;
@@ -567,9 +620,11 @@ app-fullscreen-button{
 .Profile-popup {
   position: absolute;
   top: 50px;
-  right: 0px;
+  right: 3px;
   width: 200px;
-  background: white;
+  background-color: rgba(243, 243, 243, 0.301);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3); /* Heavy box shadow */
   box-shadow: 0px 6px 6px -5px #FF7373, -6px 0px 6px -5px #FF7373, 6px 0px 6px -3px #FF7373;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -759,9 +814,11 @@ app-fullscreen-button{
 
 .button-container {
   display: flex;
-  justify-content: space-evenly;
-  margin-top: 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
+
 .WarningImg{
   height: 50px;
   width: 150px;

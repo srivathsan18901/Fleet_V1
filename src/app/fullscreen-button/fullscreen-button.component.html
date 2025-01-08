@@ -1,12 +1,17 @@
 <div class="fullscreen-button-container">
     <label class="container">
       <input checked="checked" type="checkbox" (click)="toggleFullscreen()">
-      <svg viewBox="0 0 448 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="expand">
-        <path d="M32 32C14.3 32 0 46.3 0 64v96c0 17.7 14.3 32 32 32s32-14.3 32-32V96h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H32zM64 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H64V352zM320 32c-17.7 0-32 14.3-32 32s14.3 32 32 32h64v64c0 17.7 14.3 32 32 32s32-14.3 32-32V64c0-17.7-14.3-32-32-32H320zM448 352c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H320c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V352z"></path>
-      </svg>
-      <svg viewBox="0 0 448 512" height="1em" xmlns="http://www.w3.org/2000/svg" class="compress">
-        <path d="M160 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v64H32c-17.7 0-32 14.3-32 32s14.3 32 32 32h96c17.7 0 32-14.3 32-32V64zM32 320c-17.7 0-32 14.3-32 32s14.3 32 32 32H96v64c0 17.7 14.3 32 32 32s32-14.3 32-32V352c0-17.7-14.3-32-32-32H32zM352 64c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7 14.3 32 32 32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32H352V64zM320 320c-17.7 0-32 14.3-32 32v96c0 17.7 14.3 32 32 32s32-14.3 32-32V384h64c17.7 0 32-14.3 32-32s-14.3-32-32-32H320z"></path>
-      </svg>
+
+      <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <rect width="30" height="30" fill="url(#pattern0_2660_1776)"/>
+        <defs>
+        <pattern id="pattern0_2660_1776" patternContentUnits="objectBoundingBox" width="1" height="1">
+        <use xlink:href="#image0_2660_1776" transform="scale(0.01)"/>
+        </pattern>
+        <image id="image0_2660_1776" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAAEW0lEQVR4nO2dzU4UQRDHh5MeQYVEfQROgheDL+DHG4jEg1HEbJipmk32omgM8aDylU3Eg3jnHUSeAfAh/DgBHoTEMj2zkXV2lp2Zrd7tHf6/pG+kq6r/09NNT2215wEAAAAAAAAAAKBkyMLCeSG6K8yBEC0J84eCbU2Y56RWG7HucxBcEKKnDZtF/X0Xxcx8x4yBbZ+zBHU1cozoUJhFsf2QMJyy5jfRTSH6qezzgTCvS7V6xZbfnYJ6IES/lIOSpvZd5ueHLc0MbTFOmnk4g2BG2+/Tg2J+YVEIaWqzFnyf64nvRAvavrefGekO/Baiz0K00cU7eS/R74q6/8wrCRt7hf2NY92KYk8bE9szxbwfU15Tf6KFvFa72HX/zPVE33Udz+3aMLEL0XI0FsnXl801pfFkJMW4p9h/fRAF+dd3EEy3iMK8rtV/69Y23kk0PwFLqjZ4sAWJ+idaTfR/YGVLHO21k2uGwmuqhIJcEuajhI1bmjZiQ8ycMLJlwUZ90AVp2NhOPLykbcMo/zYRyMcOTo0J82TOttkHQTYL+DnWYaw2EjbeeP18soT5dcri5sReXnT+hzKxLWqMVTeBZDLSmBndi8HRDu6ahTgm1fyrVEa7GaveCOL74wrBivYOrsNOqFjz/fFuxmoQBDkS5h0heqgeQLOPnjckzI+EaDdlR1R+QbySIBDELSCIY0AQx4AgjgFBHAOCOAYEcQwI4hgQxDFcEyRrckDyCP3IKwlCdJyIbbNfyRrGmScFz3x2vJIgrQOdrQXBY31narWRKKMw/6mt1YPCXmIGtkD832wk/MUOheFUDlHi9CDPG/JKgsSnxCuZv6cYMcLwhl2n5ueHTUZhhyTl5zY+LrmCVKsT5mvmKQl05nvLrLWZAQAAAAAAAAAAAAAAAAAAAAAAAAC1Smzmp8eTZR1P8f3rjRj7WxkvdyU2k31RvjSgNScq4xWuxGYja69PFMzetFIZr3glNqJdryQI0VdXKuMh2dpzLdkav1P3Wp58FA7oLxDEMSCIY0AQx4AgjgFBHAOCOAYEcQwI4hilESTHuddxdOxgfu1q8ZQ4OrU1B4XmbKr1OCR7K70gbPn85ySWPEfoAy6IZpnYanXC0sclOTNlYht/u+hsIWWilypiEL3SGKvelRqvVEZLW2q8kj4zel1q/P9i/ERfLNiol7IYP3Ng4xPu7YQguK6ir9dVpF/osqxqgwd/hrTs4Ij2pVI5p2mj2dh6y+IWBNOK/dcHWRBhvp9yD9V7rf7bXQp2mLLjWDVT9awKIuY1FRecSe4sD8T3L+t43s54EMy02QoemYVemD+dmWvzOIp1u21Bf8W3x+lBxaWJxHoL9HO6uqiMl68RPdP2vfNM0b8DV2xXYitcGS/f1au9mRmpa0q80B+oixHaq8SWszJeVp/3zQJufc3IvCWO/08JGldaF73KdLVXldgyVsbrfH13GPrm/wxrW1sAAAAAAAAAAAB4/eMv2PnxaDZQNYoAAAAASUVORK5CYII="/>
+        </defs>
+        </svg>
+        
     </label>
   </div>
   

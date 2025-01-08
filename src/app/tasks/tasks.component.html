@@ -1,12 +1,8 @@
 <div class="layout-container">
-  <!-- <app-sidenavbar></app-sidenavbar> -->
   <app-fullscreen-button></app-fullscreen-button>
   <app-loader></app-loader>
   <div class="content-container">
     <div class="main-content">
-
-
-
       <!-- Header section -->
       <div class="header-section">
         <h1 class="header-title">Tasks</h1>
@@ -19,9 +15,8 @@
           />
         </div>
       </div>
-
       <!-- search container -->
-      <div class="search-filter-container">
+      <div class="search-filter-container" *ngIf="paginatedData.length !== 0">
         <!-- Search Bar -->
         <div class="search-box">
           <input type="text" (input)="onSearch($event)" placeholder="Search For Tasks..." />
@@ -32,8 +27,6 @@
             />
           </button>
         </div>
-
-        
         <!-- Options Container -->
         <!-- <div class="options-container">
           <div class="filter-options">
@@ -76,20 +69,35 @@
           </div>
         </div> -->
       </div>
+      <div class="filter">
+        <img src="../../assets/filter.svg" class="filter-img">
       <div class="status-filter">
-        <label for="status-filter">Filter by Status:</label>
+        <label for="status-filter">Status:</label>
         <select id="status-filter" (change)="onStatusFilter($event)">
           <option value="">All</option>
           <option value="COMPLETED">Completed</option>
           <option value="IN_PROGRESS">In Progress</option>
           <option value="CANCELLED">Cancelled</option>
           <option value="FAILED">Failed</option>
+          <option value="NOTASSIGNED">Not Assigned</option>
         </select>
       </div>
+      
+      <!-- <div class="robot-filter">
+        <label for="robot-filter">Robot:</label>
+        <select id="robot-filter" (change)="onRobotFilter($event)">
+          <option value="">All</option>
+          <option *ngFor="let robot of uniqueRobotNames" [value]="robot">{{ robot }}</option>
+        </select>
+      </div> -->
+      
+      <!-- Clear Filters Button -->
+      <button (click)="clearFilters()" class="clr-btn">Clear</button>
+      </div>
+
       <!-- Table -->
       <div class="table-container">
         <div class="table-wrapper">
-
           <!-- Table container without scroll -->
           <div class="table-responsive">
             <table class="table">
@@ -106,7 +114,6 @@
                 </tr>
               </thead>
               <tbody>
-
                 <!-- Show No Data Row with image and message -->
                <tr *ngIf="paginatedData.length === 0">
                 <td colspan="8" class="no-data">
@@ -144,8 +151,6 @@
                         <div class="slider slider--2"></div>
                         <div class="slider slider--3"> Activate</div>
                       </label> -->
-
-
                       <!-- Cancel Button -->
                       <button
                       [ngClass]="{'btn-disabled': isDisabled(item.status), 'btn-cancel': !isDisabled(item.status)}"
@@ -163,9 +168,6 @@
           </div>
         </div>
       </div>
-
-
-
         <!-- Paginator -->
     <div  class="paginator-container" *ngIf="filteredTaskData.length > 0" >
       <mat-paginator
@@ -177,15 +179,11 @@
       >
       </mat-paginator>
     </div>
-
-      <!-- Export -->
       <!-- Export -->
       <div class="export-button-container">
         <button class="export-button" (click)="showPopup()">Export</button>
         <div *ngIf="isPopupVisible" class="export-popup">
           <div class="popup-content">
-
-            
             <button class="close-button" (click)="onClose()">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -211,5 +209,3 @@
     </div>
   </div>
 </div>
-
-

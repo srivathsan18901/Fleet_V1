@@ -571,7 +571,7 @@ export class AreaChartComponent implements OnInit {
       console.log(data, 'pick acc');
       if (data.throughput) {
         this.pickAccuracyArr = data.throughput.Stat.map(
-          (stat: any) => stat.pickAccuracy
+          (stat: any) => Math.round(stat.pickAccuracy)
         );
         this.pickAccXaxisSeries = data.throughput.Stat.map(
           (stat: any, index: any) => ++index
@@ -669,7 +669,7 @@ export class AreaChartComponent implements OnInit {
         ''
       );
       if (data.errRate) {
-        this.errRateArr = data.errRate.map((stat: any) => stat.errorRate);
+        this.errRateArr = data.errRate.map((stat: any) => Math.round(stat.errorRate));
         this.errRateXaxisSeries = data.errRate.map(
           (stat: any, index: any) => ++index
         );
@@ -693,7 +693,7 @@ export class AreaChartComponent implements OnInit {
       ''
     );
     if (data.errRate) {
-      this.errRateArr = data.errRate.map((stat: any) => stat.errorRate);
+      this.errRateArr = data.errRate.map((stat: any) => Math.round(stat.errorRate));
       this.errRateXaxisSeries = data.errRate.map(
         (stat: any, index: any) => ++index
       );
@@ -709,7 +709,7 @@ export class AreaChartComponent implements OnInit {
         ''
       );
       if (data.errRate) {
-        this.errRateArr = data.errRate.map((stat: any) => stat.errorRate);
+        this.errRateArr = data.errRate.map((stat: any) => Math.round(stat.errorRate));
         this.errRateXaxisSeries = data.errRate.map(
           (stat: any, index: any) => ++index
         );

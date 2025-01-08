@@ -2,31 +2,28 @@
   <div class="content-fluid1">
     <div class="general">
       <form #generalForm="ngForm" novalidate>
+
         <div class="container">
           <!-- Fleet Server Mode -->
           <div class="form-control">
             <div class="validate">
               <div class="field">
                 <label for="fleetServerMode">Fleet Server Mode :  </label>
-                <input
-                  class="input"
-                  type="number"
-                  min="0"
-                  size="1"
-                  maxlength="1"
-                  max="4"
-                  placeholder="Enter"
-                  style="width: 10rem;"
-                  [(ngModel)]="formData.fleetServerMode"
-                  name="fleetServerMode"
-                  pInputText
-                  required
-                />
+                <p-dropdown
+                [options]="fleetModes"
+                [(ngModel)]="formData.fleetServerMode"
+                name="fleetServerMode"
+                optionLabel="name"
+                placeholder="Select Mode"
+                (onChange)="onFleetModeChange()"
+                required
+              ></p-dropdown>
               </div>
               <div *ngIf=" generalForm.controls['fleetServerMode'].invalid && generalForm.controls['fleetServerMode'].touched">
                 <small class="text-danger"> *Fleet Server Mode is required</small>
               </div>
             </div>
+
             <!-- Server IP -->
             <div class="validate">
               <div class="field">
@@ -43,10 +40,11 @@
                   required
                   pattern="^([0-9]{1,3}\.){3}[0-9]{1,3}$"
                   #serverIPInput="ngModel"
+                  [disabled]="disableOtherFields"
                 />
               </div>
               
-              <div *ngIf="serverIPInput.invalid && serverIPInput.touched && generalForm.controls['serverIP'].invalid && generalForm.controls['serverIP'].touched">
+              <div *ngIf="!disableOtherFields && serverIPInput.invalid && serverIPInput.touched && generalForm.controls['serverIP'].invalid && generalForm.controls['serverIP'].touched">
                 <small class="text-danger"> *Valid Server IP is required</small>
               </div>
             </div>    
@@ -65,9 +63,10 @@
                   name="serverPort"
                   pInputText
                   required
+                  [disabled]="disableOtherFields"
                 />
               </div>
-              <div *ngIf="generalForm.controls['serverPort'].invalid && generalForm.controls['serverPort'].touched">
+              <div *ngIf=" !disableOtherFields && generalForm.controls['serverPort'].invalid && generalForm.controls['serverPort'].touched">
                 <small class="text-danger"> *Server Port is required.</small>
               </div>
             </div>
@@ -91,9 +90,10 @@
                   pInputText
                   required
                   pattern="^mongodb:\/\/([a-zA-Z0-9._-]+|\[[a-zA-Z0-9:]+\])(:[0-9]+)?$" 
+                  [disabled]="disableOtherFields"
                 />
               </div>
-              <div *ngIf="databaseIpInput.invalid && databaseIpInput.touched && generalForm.controls['databaseIp'].invalid && generalForm.controls['databaseIp'].touched">
+              <div *ngIf=" !disableOtherFields && databaseIpInput.invalid && databaseIpInput.touched && generalForm.controls['databaseIp'].invalid && generalForm.controls['databaseIp'].touched">
                 <small class="text-danger">
                   *A valid Database IP is required
                 </small>
@@ -112,9 +112,10 @@
                   optionLabel="name"
                   placeholder="Select"
                   required
+                  [disabled]="disableOtherFields"
                 ></p-dropdown>
               </div>
-              <div *ngIf="generalForm.submitted && !selectedDb && generalForm.touched">
+              <div *ngIf="!disableOtherFields && generalForm.submitted && !selectedDb && generalForm.touched">
                 <small class="text-danger"> *Database Type is required.</small>
               </div>
             </div>
@@ -133,11 +134,12 @@
                   name="databaseName"
                   pInputText
                   required
+                  [disabled]="disableOtherFields"
                 />
               </div>
               <!-- <div *ngIf="generalForm.controls['databaseName'].invalid && generalForm.controls['databaseName'].touched"> -->
 
-              <div *ngIf="generalForm.controls['databaseName'].invalid && generalForm.controls['databaseName'].touched">
+              <div *ngIf="!disableOtherFields && generalForm.controls['databaseName'].invalid && generalForm.controls['databaseName'].touched">
                 <small class="text-danger"> *Database Name is required.</small>
               </div>
             </div>
@@ -154,9 +156,10 @@
                   optionLabel="name"
                   placeholder="Select"
                   required
+                  [disabled]="disableOtherFields"
                 ></p-dropdown>
               </div>
-              <div *ngIf="generalForm.submitted && !selectedRoboManagerType && generalForm.touched">
+              <div *ngIf="!disableOtherFields && generalForm.submitted && !selectedRoboManagerType && generalForm.touched">
                 <small class="text-danger"> *Robot Manager Type is required.</small>
               </div>
             </div>

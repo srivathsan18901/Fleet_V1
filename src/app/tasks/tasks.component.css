@@ -56,7 +56,7 @@
   .table-container {
     width: 102%;
     border-radius: 10px;
-    margin-top: 20px;
+    margin-top: 60px;
     max-height: 29rem;
     overflow-y: auto;
   }
@@ -449,13 +449,43 @@
   background-color: #f44336; /* Red for cancel */
   color: white;
 }
-
 .btn-cancel:hover {
   background-color: #d32f2f;
 }
-.status-filter{
+.filter-img{
+  margin-right: 10px;
+}
+.filter{
   display: flex;
-  justify-content: flex-end;
+  position: absolute;
+  top: 132px;
+  right: 25px;
+  justify-content: end;
+  background-color: #f7f7f7;
+  padding:10px 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.status-filter{
+  margin-right: 15px;
+}
+.status-filter label{
+  font-family: 'graphik', Arial, sans-serif;
+}
+.filter select{
+  background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.355);
+  margin-left: 10px;
+  border-radius: 5px;
+}
+.robot-filter{
+  margin-right: 10px;
+}
+.clr-btn{
+  background: #ff5c5c;
+  color: white;
+  padding: 0px 5px;
+  border-radius: 10px;
 }
 .btn-disabled {
   background: #f09e98; /* Red for cancel */
@@ -464,10 +494,6 @@
   cursor: not-allowed;
   border: 2px solid #f09e98; /* Slightly darker grey border */
 }
-
-
-/*
-new button */
 
 .switch {
   position: relative;

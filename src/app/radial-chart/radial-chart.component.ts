@@ -93,7 +93,7 @@ export class RadialChartComponent implements OnInit {
     //   this.isFleet = value; // React to changes
     //   console.log('isFleet in RadialChartComponent:', this.isFleet);
     // });
-    this.isFleet = sessionStorage.getItem('isFleet') ? true : false;
+    this.isFleet = sessionStorage.getItem('isFleet') == 'true' ? true : false;
 
     await this.getMapDetails();
 

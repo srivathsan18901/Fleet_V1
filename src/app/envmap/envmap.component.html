@@ -275,19 +275,15 @@
         *ngIf="isNodeDetailsPopupVisible"
         class="nodepopup-overlay"
       >
-      <div
-        #nodeDetailsPopup
-        class="node-details-popup"        
-      >
-
+      <div #nodeDetailsPopup class="node-details-popup" >
       <div class="sampleCSS">
         <div class="node_details">
-          <h2>Node Details</h2>
-          <h3>Nodeid:  {{ selectedNode?.nodeId }}</h3>
+          <h2>Details for Node ID : {{ selectedNode?.nodeId }} </h2>
+          <!-- <h2 class="Label">Node ID:  {{ selectedNode?.nodeId }}</h2> -->
           <div class="Nodevalues">
-            <h3 class="q-title">Position</h3>
-          <div class="XY-coor">
-          <div >
+            <div class="XY-coor">
+            <h3 class="Label">Position</h3>
+          <div class="displayXY">
             <label for="X_Co">X</label>
             <input 
                 pInputText 
@@ -297,7 +293,7 @@
                 aria-describedby="X-Coordinate" 
                 />
           </div>
-          <div >
+          <div class="displayXY1">
             <label for="Y_Co">Y</label>
             <input 
                 pInputText 
@@ -320,10 +316,11 @@
             
         </div> 
         <div class="quaternion-inputs">
-          <h3 class="q-title">Orientation</h3>
           <div class="quaternion-row">
+            <h3 class="Label">Orientation</h3>
             <div>
-              <label for="quaternionX">X:</label>
+            <div class="displayXYWZ">
+              <label for="quaternionX">X</label>
               <input
                 pInputText
                 type="number"
@@ -333,19 +330,8 @@
                 style="width: 100px;"
               />
             </div>
-            <div>
-              <label for="quaternionY">Y:</label>
-              <input
-                pInputText
-                type="number"
-                id="quaternionY"
-                [(ngModel)]="currentQuaternion!.y"
-                placeholder="Enter Y"
-                style="width: 100px;"
-              />
-            </div>
-            <div>
-              <label for="quaternionZ">Z:</label>
+            <div class="displayXYWZ">
+              <label for="quaternionZ">Z</label>
               <input
                 pInputText
                 type="number"
@@ -355,24 +341,38 @@
                 style="width: 100px;"
               />
             </div>
-            <div>
-              <label for="quaternionW">W:</label>
+          </div>
+          <div>
+            <div class="displayXYWZ">
+              <label for="quaternionY">Y</label>
+              <input
+                pInputText
+                type="number"
+                id="quaternionY"
+                [(ngModel)]="currentQuaternion!.y"
+                placeholder="Enter Y"
+                style="width: 100px;"
+              />
+            </div>
+            <div class="displayXYWZ">
+              <label for="quaternionW">W</label>
               <input
                 pInputText
                 type="number"
                 id="quaternionW"
                 [(ngModel)]="currentQuaternion!.w"
                 placeholder="Enter W"
-                style="width: 100px;"
+                style="width: 100px;   position: relative; right: 3px;"
               />
             </div>
+          </div>
           </div>
         </div>
         
         </div>
           <div class="action-container">
             <div class="action" class="display:flex; text-wrap:nowrap; align-items:center ">
-              <label for="nodeAction" class="label" >Add Action:</label>
+              <label for="nodeAction" class="Label" >Add Action:</label>
               <p-dropdown 
               appendTo="body"
               [options]="actionOptions"
@@ -380,15 +380,15 @@
               (onChange)="onActionChange($event.value)"
               placeholder="Select Action" 
               [autoDisplayFirst]="false"
-              styleClass="small-dropdown"
-              [style]="{'width':'143px !important'}"
+              class="small-dropdown"
+              [style]="{'width':'12.5rem !important'}"
           ></p-dropdown>            
             </div>
             <!-- <div *ngIf="validationError" class="validation-error">{{ validationError }}</div> -->
           </div>
 
           <div *ngIf="actions.length > 0" class="action-div">
-            <p style="font-size: 15px;padding: 0px;margin:0px ;">Actions:</p>
+            <p class="Label">Actions:</p>
             <div class="action-buttons">
               <div *ngFor="let action of actions; let i = index" class="action-item">
                 <button class="action-button" (click)="openActionForm(action)" >
@@ -400,20 +400,20 @@
           </div>
 
           <div class="input-group1">
-            <label for="nodeDescription" class="label" >Node Description:</label>
+            <label for="nodeDescription" class="Label" >Node Description:</label>
             <input pInputText
               type="text"
               id="nodeDescription"
               placeholder="Enter Node Description"
               [(ngModel)]="nodeDetails.description"
-              [style]="{'height':'30px','width':'12.5rem'}"
+              [style]="{'height':'30px','width':'12.5rem','position': 'relative','left': '62px'}"
             />
           </div>
             <div class="input-group">
               <div class="node-action">
                 <div class="node-row">
                   <div class="node1">
-                    <label for="nodeTypeDropdown" class="label">Node Type:</label>
+                    <label for="nodeTypeDropdown" class="Label">Node Type:</label>
                     <select
                       id="nodeTypeDropdown"
                       class="nodeform-control"
@@ -428,24 +428,27 @@
                   </div>
                   <div>
                     <div class="node2-sub" *ngIf="selectedNodeType === 'Intermediate' || selectedNodeType === 'Waiting'">
-                      <label for="predockPoseDropdown" class="label">Dock Pose:</label>
+                      <label for="predockPoseDropdown" class="Label">Dock Pose:</label>
                       <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedDockPose">
+                        <option *ngIf="!connectedNodes.length" disabled selected value="">Nill</option>
                         <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                           {{ node.nodeId }}
                         </option>
                       </select>
                     </div>
                   <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
-                    <label for="predockPoseDropdown" class="label">Predock Pose:</label>
+                    <label for="predockPoseDropdown" class="Label">Predock Pose:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedPredockPose">
+                      <option *ngIf="!connectedNodes.length" disabled selected value="">Nill</option>
                       <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                         {{ node.nodeId }}
                       </option>
                     </select>
                   </div>
                   <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
-                    <label for="predockPoseDropdown" class="label">Undock Pose:</label>
+                    <label for="predockPoseDropdown" class="Label">Undock Pose:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedUndockPose">
+                      <option *ngIf="!connectedNodes.length" disabled selected value="">Nill</option>
                       <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                         {{ node.nodeId }}
                       </option>

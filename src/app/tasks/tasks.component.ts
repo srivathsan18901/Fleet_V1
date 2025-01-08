@@ -12,7 +12,46 @@ import { MessageService } from 'primeng/api';
 })
 export class TasksComponent implements OnInit, AfterViewInit {
   i: any;
+  uniqueRobotNames: string[] = [];
+  mapData: any | null = null;
+  searchQuery: string = '';
+  isPopupVisible: boolean = false;
+  tasks: any[] = [];
+  filteredTaskData: any[] = [];
+  paginatedData: any[] = [];
+  selectedStatus: string = '';
+  selectedRobot: string = '';
 
+  onRobotFilter(event: any) {
+    this.selectedRobot = event.target.value;
+    this.applyFilters();
+  }
+  applyFilters() {
+    this.filteredTaskData = this.tasks.filter((task: any) => {
+      const statusMatch = this.selectedStatus
+        ? task.status === this.selectedStatus
+        : true;
+      const robotMatch = this.selectedRobot
+        ? task.roboName === this.selectedRobot
+        : true;
+      return statusMatch && robotMatch;
+    });
+    this.setPaginatedData(); // Update paginated data based on filtered results
+  }
+  clearFilters() {
+    this.selectedStatus = '';
+    this.selectedRobot = '';
+  
+    // Reset the value of the select elements
+    const statusFilterElement = document.getElementById('status-filter') as HTMLSelectElement;
+    const robotFilterElement = document.getElementById('robot-filter') as HTMLSelectElement;
+  
+    if (statusFilterElement) statusFilterElement.value = '';
+    if (robotFilterElement) robotFilterElement.value = '';
+  
+    // Reapply filters to display all data
+    this.applyFilters();
+  }  
   trackByTaskId(index: number, item: any): number {
     return item.taskId; // or any unique identifier like taskId
   }
@@ -88,14 +127,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
 
-  mapData: any | null = null;
-  searchQuery: string = '';
-  isPopupVisible: boolean = false;
-
-  tasks: any[] = [];
-
-  filteredTaskData: any[] = [];
-  paginatedData: any[] = [];
 
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
@@ -209,7 +240,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
   onPageChange(event: PageEvent) {
     this.setPaginatedData();
   }
-  selectedStatus: string = ''; // New variable
 
   onStatusFilter(event: Event): void {
     const selectedValue = (event.target as HTMLSelectElement).value;
@@ -354,6 +384,4 @@ export class TasksComponent implements OnInit, AfterViewInit {
   onClose() {
     this.isPopupVisible = false;
   }
-
-  // cancel popup
 }

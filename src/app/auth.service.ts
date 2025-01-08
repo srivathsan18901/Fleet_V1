@@ -34,6 +34,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('timerStartTime');
     localStorage.removeItem('lastSession');
+    localStorage.removeItem('maxAge');
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
     })

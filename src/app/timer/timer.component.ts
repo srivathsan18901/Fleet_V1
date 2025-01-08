@@ -4,40 +4,49 @@ import { AuthService } from '../auth.service';
 import { ProjectService } from '../services/project.service';
 import { Subscription } from 'rxjs';
 import { environment } from '../../environments/environment.development';
+import { SessionService } from '../services/session.service';
+import { CookieService } from 'ngx-cookie-service';
 
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
-  styleUrls: ['./timer.component.css']
+  styleUrls: ['./timer.component.css'],
 })
 export class TimerComponent {
   private subscription: Subscription = new Subscription();
-  totalDuration: number = 18000; // 3 hours in seconds
+  totalDuration: number = this.sessionService.getMaxAge() + 20 || 1200; // 20 minutes in seconds
   remainingTime: number = 0; // Initialize with 0
   fiveMinuteRemaining: number = 300; // 5 minutes in seconds
   logoutTimeout: any;
   fiveMinuteTimeout: any;
 
+  trackSessionAge: any;
+
   constructor(
     private authService: AuthService,
     private router: Router,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private sessionService: SessionService,
+    private cookieService: CookieService
   ) {}
 
   ngOnInit() {
     this.initializeTimer();
-    // this.initializeFiveMinuteTimer();   
-    this.subscription = this.projectService.isFleetUp$.subscribe(async (status) => {
-      console.log('Fleet status changed:', status);
-      await this.recordFleetStatus(status); // change the method by storing it in cookie, later for sure!!!
-    }); 
+    this.totalDuration = this.sessionService.getMaxAge();
+    // this.initializeFiveMinuteTimer();
+    this.subscription = this.projectService.isFleetUp$.subscribe(
+      async (status) => {
+        console.log('Fleet status changed:', status);
+        await this.recordFleetStatus(status); // change the method by storing it in cookie, later for sure!!!
+      }
+    );
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe(); // Clean up the subscription
   }
 
-  async recordFleetStatus(status: boolean): Promise<void>{
+  async recordFleetStatus(status: boolean): Promise<void> {
     let projectId = this.projectService.getSelectedProject();
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/track-fleet-status`,
@@ -48,8 +57,8 @@ export class TimerComponent {
         body: JSON.stringify({
           projectId: projectId._id,
           isFleetOn: status,
-          timeStamp: Date.now()
-        })
+          timeStamp: Date.now(),
+        }),
       }
     );
     // if (!response.ok) {
@@ -66,12 +75,15 @@ export class TimerComponent {
     const lastSession = localStorage.getItem('lastSession');
 
     if (storedStartTime && lastSession === 'active') {
-      const elapsedTime = Math.floor((Date.now() - parseInt(storedStartTime)) / 1000);
+      const elapsedTime = Math.floor(
+        (Date.now() - parseInt(storedStartTime)) / 1000
+      );
       this.remainingTime = this.totalDuration - elapsedTime;
 
-      if (this.remainingTime <= 0) {
-        this.logout();
-      }
+      // if (this.remainingTime < 0 || !this.cookieService.get('_token')) { // yet to uncomment..
+      //   alert('sry! your session time gonna over now');
+      //   this.logout();
+      // }
     } else {
       this.resetTimer();
     }
@@ -80,18 +92,21 @@ export class TimerComponent {
 
   startLogoutTimer() {
     this.logoutTimeout = setInterval(() => {
-      if (this.remainingTime > 0) {
-        this.remainingTime--;
-      } else {
+      let sessionId = this.cookieService.get('_token');
+      if (this.remainingTime > 0) this.remainingTime--;
+      if (!sessionId || this.remainingTime < 0) {
+        alert('sry! your session time gonna over now');
         this.logout();
+      } else {
+        // this.logout(); // notify this is in case..
       }
     }, 1000);
   }
 
   resetTimer() {
     this.remainingTime = this.totalDuration;
-    localStorage.setItem('timerStartTime', Date.now().toString());
-    localStorage.setItem('lastSession', 'active');
+    // localStorage.setItem('timerStartTime', Date.now().toString());
+    // localStorage.setItem('lastSession', 'active');
   }
 
   initializeFiveMinuteTimer() {
@@ -129,13 +144,12 @@ export class TimerComponent {
     localStorage.setItem('fiveMinuteStartTime', Date.now().toString());
   }
 
-  triggerFiveMinuteAction() {
-
-  }
+  triggerFiveMinuteAction() {}
 
   logout() {
     clearInterval(this.logoutTimeout);
     clearInterval(this.fiveMinuteTimeout);
+    // clearInterval(this.trackSessionAge);
     this.projectService.clearProjectData();
     this.projectService.clearMapData();
     this.projectService.clearIsMapSet();
@@ -147,7 +161,9 @@ export class TimerComponent {
     const hours = Math.floor(this.remainingTime / 3600);
     const minutes = Math.floor((this.remainingTime % 3600) / 60);
     const seconds = this.remainingTime % 60;
-    return `${this.formatTimeUnit(hours)}:${this.formatTimeUnit(minutes)}:${this.formatTimeUnit(seconds)}`;
+    return `${this.formatTimeUnit(hours)}:${this.formatTimeUnit(
+      minutes
+    )}:${this.formatTimeUnit(seconds)}`;
   }
 
   getFormattedFiveMinuteTime(): string {

@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment.development';
 import { env } from 'node:process';
 import { MessageService } from 'primeng/api';
 import { UserPermissionService } from '../services/user-permission.service';
+import { SessionService } from '../services/session.service';
 
 @Component({
   selector: 'app-login',
@@ -25,7 +26,8 @@ export class LoginComponent {
     private projectService: ProjectService, //private cookieService: CookieService
     private UserService: ProjectService,
     private userPermissionService: UserPermissionService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit() {
@@ -35,6 +37,7 @@ export class LoginComponent {
       .then((res) => res.json())
       .then((data) => {
         if (data.isCookieDeleted) {
+          // || data.isSessionDestroyed
           this.projectService.clearProjectData();
           this.authService.logout();
           // this.router.navigate(['/']);
@@ -159,11 +162,26 @@ export class LoginComponent {
             life: 4000,
           });
         }
+        if (res.status === 409) {
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Authencation Failed',
+            detail: 'User already signed in somewhere..',
+            life: 4000,
+          });
+        }
         return res.json();
         // throw new Error('Login failed');
       })
       .then((data) => {
         // console.log(data.user.projects);
+        if (data.isUserInSession) {
+          alert(data.msg);
+          return;
+        }
+        this.sessionService.setMaxAge(data.maxAge);
+        localStorage.setItem('timerStartTime', Date.now().toString()); // yet to handle it with services..
+        localStorage.setItem('lastSession', 'active');
         if (data.user) {
           let { permissions } = data.user;
           this.userPermissionService.setPermissions(permissions);
