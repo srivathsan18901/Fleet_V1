@@ -62,6 +62,10 @@
   <div>
   <p class="msg">Hello, {{ username }}</p>
   </div>
+  <div class="logoutIcon" (click)="exportProject()">
+    <img src="../../assets/Export.svg" alt="" class="Outlogo" />
+    <span class="logoutlabel">Export Project</span>
+  </div>
   <div class="logoutIcon" (click)="showLogoutConfirmation = true">
     <img src="../../assets/icons/Logout.svg " alt="" class="Outlogo" />
     <span class="logoutlabel">Logout</span>

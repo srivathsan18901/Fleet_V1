@@ -6,7 +6,7 @@
 
 .content-container {
   flex-grow: 1; /* Allows the content to grow */
-  margin-left: 2rem; /* Equivalent to ml-64 (256px) */
+  /* margin-left: 2rem; Equivalent to ml-64 (256px) */
   padding: 3rem; /* Equivalent to p-8 */
   height: 100vh;
   overflow: hidden;

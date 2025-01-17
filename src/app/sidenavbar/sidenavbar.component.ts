@@ -73,6 +73,7 @@ export class SidenavbarComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.selectedProject = this.projectService.getSelectedProject();
     this.subscription = this.projectService.isFleetUp$.subscribe(
       async (status) => {
         console.log('Fleet status changed:', status);
@@ -538,7 +539,43 @@ export class SidenavbarComponent implements OnInit {
   getStartOfDay(establishedTime: Date) {
     return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
+  selectedProject: any | null = null;
+  async exportProject() {
+    if (!this.selectedProject) return;
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project-file/download-project/${this.selectedProject.projectName}`,
+      {
+        credentials: 'include',
+      }
+    );
+    if (!response.ok) alert('try once again');
+    else {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${this.selectedProject.projectName}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
+  }
 
+  goToDocumentation(): void {
+    window.open('/documentation', '_blank');
+  }
+
+  // Document for resource
+  downloadDocument() {
+    const link = document.createElement('a');
+    link.href = 'path/to/your/document.pdf';
+    link.download = 'Training_Resource_Document.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
   ngOnDestroy() {
     if (this.notificationInterval) clearInterval(this.notificationInterval);
     if (this.fleetStatusInterval) clearInterval(this.fleetStatusInterval);
