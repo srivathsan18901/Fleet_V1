@@ -70,7 +70,6 @@ export class Userlogscomponent {
       return;
     }
     this.getTaskLogs();
-    const apoi = this.getTaskLogs();
     this.modeService.currentMode$.subscribe((mode) => {
       this.currentMode = mode; // React to mode updates
       // console.log(this.currentMode,"dkjnonvofpsp")

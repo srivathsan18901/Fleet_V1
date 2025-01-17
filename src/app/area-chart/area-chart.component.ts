@@ -6,6 +6,7 @@ import {
   EventEmitter,
   OnInit,
   ViewChild,
+  signal,
 } from '@angular/core';
 import {
   ApexAxisChartSeries,
@@ -48,6 +49,7 @@ export class AreaChartComponent implements OnInit {
   selectedMetric: string = 'Throughput'; // Default value
   selectedMap: any | null = null;
   [key: string]: any; // index signature..
+  private abortControllers: Map<string, AbortController> = new Map();
 
   throughputArr: number[] = [0];
   throughputXaxisSeries: string[] = [];
@@ -207,32 +209,38 @@ export class AreaChartComponent implements OnInit {
     );
   }
 
-  async fetchChartData(
-    endpoint: string,
-    timeSpan: string,
-    startTime: string,
-    endTime: string
-  ) {
-    // alter to date..
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    // console.log(timeStamp1,"start date")
-    // console.log(timeStamp2,'end date')
-    // console.log(timeSpan,'time span')
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeSpan: timeSpan, // e.g. 'Daily' or 'Weekly'
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-      }
-    );
-    // console.log(await response.json(),"json resposne")
-    return await response.json();
+  async fetchChartData(endpoint: string, timeSpan: string) {
+    if (this.abortControllers.has(endpoint))
+      this.abortControllers.get(endpoint)?.abort();
+
+    const abortController = new AbortController(); // we can abort one or more requests as when we desired to..
+    this.abortControllers.set(endpoint, abortController);
+
+    try {
+      let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+
+      const response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            timeSpan: timeSpan, // e.g. 'Daily' or 'Weekly'
+            timeStamp1: timeStamp1,
+            timeStamp2: timeStamp2,
+          }),
+          signal: abortController.signal,
+        }
+      );
+
+      return await response.json();
+    } catch (error) {
+      console.log('Error while fetching chart datum : ', error);
+      return;
+    } finally {
+      this.abortControllers.delete(endpoint);
+    }
   }
 
   async updateThroughput() {
@@ -243,12 +251,7 @@ export class AreaChartComponent implements OnInit {
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.throuputTimeInterval);
       this.throuputTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'throughput',
-        this.currentFilter,
-        '',
-        ''
-      );
+      const data = await this.fetchChartData('throughput', this.currentFilter);
       // console.log(data,'data')
       if (data.throughput) {
         this.throughputArr = data.throughput.Stat.map(
@@ -270,12 +273,8 @@ export class AreaChartComponent implements OnInit {
 
     if (this.throuputTimeInterval) return;
 
-    const data = await this.fetchChartData(
-      'throughput',
-      this.currentFilter,
-      '',
-      ''
-    );
+    const data = await this.fetchChartData('throughput', this.currentFilter);
+    if (data && !data.throughput) return;
     let { Stat } = data.throughput;
     // console.log(Stat);
     // console.log(data,'data from line 256')
@@ -297,12 +296,8 @@ export class AreaChartComponent implements OnInit {
     ); // this.selectedMetric..
 
     this.throuputTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'throughput',
-        this.currentFilter,
-        '',
-        ''
-      );
+      const data = await this.fetchChartData('throughput', this.currentFilter);
+      if (data && !data.throughput) return;
       let { Stat } = data.throughput;
 
       if (data.throughput) {
@@ -324,47 +319,6 @@ export class AreaChartComponent implements OnInit {
     // console.log('chart fn')
   }
 
-  async fetchStarvationData(
-    endpoint: string,
-    timeSpan: string,
-    startTime: string,
-    endTime: string
-  ) {
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-
-    // Fetch data from the API
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeSpan: timeSpan,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    // Assuming data contains a list of tasks
-    if (data && data.tasks) {
-      const totalTasks = data.tasks.length;
-      const notAssignedCount = data.tasks.filter(
-        (task: any) => task.TaskStatus_Names === 'NOTASSIGNED'
-      ).length;
-
-      const notAssignedPercentage = (notAssignedCount / totalTasks) * 100;
-
-      // Return the data with the calculated NOTASSIGNED percentage
-      return { tasks: data.tasks, notAssignedPercentage };
-    }
-
-    return { tasks: [], notAssignedPercentage: 0 };
-  }
-
   async updateStarvationRate() {
     this.clearAllIntervals(this.starvationTimeInterval);
 
@@ -373,9 +327,7 @@ export class AreaChartComponent implements OnInit {
       this.starvationTimeInterval = 0;
       const data = await this.fetchChartData(
         'starvationrate',
-        this.currentFilter,
-        '',
-        ''
+        this.currentFilter
       );
       console.log(data, 'data starvation');
 
@@ -400,9 +352,7 @@ export class AreaChartComponent implements OnInit {
 
     const data = await this.fetchChartData(
       'starvationrate',
-      this.currentFilter,
-      '',
-      ''
+      this.currentFilter
     );
 
     if (data.starvation) {
@@ -423,9 +373,7 @@ export class AreaChartComponent implements OnInit {
     this.starvationTimeInterval = setInterval(async () => {
       const data = await this.fetchChartData(
         'starvationrate',
-        this.currentFilter,
-        '',
-        ''
+        this.currentFilter
       );
       if (data.starvation) {
         this.starvationArr = data.starvation.map((stat: any) => {
@@ -514,9 +462,7 @@ export class AreaChartComponent implements OnInit {
       console.log('pick');
       const data = await this.fetchChartData(
         'pickaccuracy',
-        this.currentFilter,
-        '',
-        ''
+        this.currentFilter
       );
 
       if (data.throughput) {
@@ -540,12 +486,7 @@ export class AreaChartComponent implements OnInit {
     if (this.pickAccTimeInterval) return;
 
     // Fetch the data and calculate the COMPLETED percentage
-    const data = await this.fetchChartData(
-      'pickaccuracy',
-      this.currentFilter,
-      '',
-      ''
-    );
+    const data = await this.fetchChartData('pickaccuracy', this.currentFilter);
     if (data.throughput) {
       this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
         Math.round(stat.pickAccuracy)
@@ -564,14 +505,12 @@ export class AreaChartComponent implements OnInit {
     this.pickAccTimeInterval = setInterval(async () => {
       const data = await this.fetchChartData(
         'pickaccuracy',
-        this.currentFilter,
-        '',
-        ''
+        this.currentFilter
       );
       console.log(data, 'pick acc');
       if (data.throughput) {
-        this.pickAccuracyArr = data.throughput.Stat.map(
-          (stat: any) => Math.round(stat.pickAccuracy)
+        this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
+          Math.round(stat.pickAccuracy)
         );
         this.pickAccXaxisSeries = data.throughput.Stat.map(
           (stat: any, index: any) => ++index
@@ -662,14 +601,11 @@ export class AreaChartComponent implements OnInit {
       clearInterval(this.errRateTimeInterval);
       this.errRateTimeInterval = 0;
 
-      const data = await this.fetchChartData(
-        'err-rate',
-        this.currentFilter,
-        '',
-        ''
-      );
+      const data = await this.fetchChartData('err-rate', this.currentFilter);
       if (data.errRate) {
-        this.errRateArr = data.errRate.map((stat: any) => Math.round(stat.errorRate));
+        this.errRateArr = data.errRate.map((stat: any) =>
+          Math.round(stat.errorRate)
+        );
         this.errRateXaxisSeries = data.errRate.map(
           (stat: any, index: any) => ++index
         );
@@ -686,14 +622,11 @@ export class AreaChartComponent implements OnInit {
     if (this.errRateTimeInterval) return;
 
     // Fetch the data and calculate the error rate
-    const data = await this.fetchChartData(
-      'err-rate',
-      this.currentFilter,
-      '',
-      ''
-    );
+    const data = await this.fetchChartData('err-rate', this.currentFilter);
     if (data.errRate) {
-      this.errRateArr = data.errRate.map((stat: any) => Math.round(stat.errorRate));
+      this.errRateArr = data.errRate.map((stat: any) =>
+        Math.round(stat.errorRate)
+      );
       this.errRateXaxisSeries = data.errRate.map(
         (stat: any, index: any) => ++index
       );
@@ -702,14 +635,11 @@ export class AreaChartComponent implements OnInit {
     this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries);
 
     this.errRateTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'err-rate',
-        this.currentFilter,
-        '',
-        ''
-      );
+      const data = await this.fetchChartData('err-rate', this.currentFilter);
       if (data.errRate) {
-        this.errRateArr = data.errRate.map((stat: any) => Math.round(stat.errorRate));
+        this.errRateArr = data.errRate.map((stat: any) =>
+          Math.round(stat.errorRate)
+        );
         this.errRateXaxisSeries = data.errRate.map(
           (stat: any, index: any) => ++index
         );
@@ -795,6 +725,9 @@ export class AreaChartComponent implements OnInit {
     if (this.starvationTimeInterval) clearInterval(this.starvationTimeInterval);
     if (this.pickAccTimeInterval) clearInterval(this.pickAccTimeInterval);
     if (this.errRateTimeInterval) clearInterval(this.errRateTimeInterval);
+
+    this.abortControllers.forEach((controller) => controller.abort()); // forEach(val, key, map/arr/..)
+    this.abortControllers.clear();
   }
 
   // let a = [];

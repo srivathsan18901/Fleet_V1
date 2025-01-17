@@ -16,12 +16,17 @@ import { environment } from '../../environments/environment.development';
 import { UserPermissionService } from '../services/user-permission.service';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
+import { SessionService } from '../services/session.service';
+import Swal from 'sweetalert2';
+
 @Component({
   selector: 'app-sidenavbar',
   templateUrl: './sidenavbar.component.html',
   styleUrls: ['./sidenavbar.component.css'],
 })
 export class SidenavbarComponent implements OnInit {
+  private subscription: Subscription = new Subscription();
+
   username: string | null = null;
   userrole: string | null = null;
   robotActivities: any[] = [];
@@ -36,7 +41,7 @@ export class SidenavbarComponent implements OnInit {
   isNotificationVisible = false;
   languageArrowState = false;
   isFleetUp: boolean = false; // Set to true or false based on your logic
-  isAmqpUp: boolean = false;
+  // isAmqpUp: boolean = false;
 
   private autoCloseTimeout: any;
   notifications: any[] = [];
@@ -50,6 +55,7 @@ export class SidenavbarComponent implements OnInit {
 
   fleetStatusInterval: ReturnType<typeof setInterval> | null = null;
   notificationInterval: ReturnType<typeof setInterval> | null = null;
+  sessionCheck: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private authService: AuthService,
@@ -59,6 +65,7 @@ export class SidenavbarComponent implements OnInit {
     private userPermissionService: UserPermissionService,
     private eRef: ElementRef,
     private cookieService: CookieService,
+    private sessionService: SessionService,
     private cdRef: ChangeDetectorRef
   ) {
     this.userManagementData = this.userPermissionService.getPermissions();
@@ -66,6 +73,12 @@ export class SidenavbarComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.subscription = this.projectService.isFleetUp$.subscribe(
+      async (status) => {
+        console.log('Fleet status changed:', status);
+        await this.recordFleetStatus(status); // change the method by storing it in cookie, later for sure!!!
+      }
+    );
     const fleetSub = this.isFleetService.isFleet$.subscribe((status) => {
       this.isFleet = status;
       this.updateUI(); // Update UI based on the current state
@@ -84,27 +97,48 @@ export class SidenavbarComponent implements OnInit {
     }
     this.cookieValue = JSON.parse(this.cookieService.get('_user'));
     this.selectedMap = this.projectService.getMapData();
-    await this.getFleetStatus();
-    this.fleetStatusInterval = setInterval(async () => {
-      await this.getFleetStatus();
-    }, 1000 * 2); // max to 30 or 60 sec
+
+    this.startGetFleetStatus();
+
+    this.sessionCheck = setInterval(() => {
+      let sessionId = this.cookieService.get('_token');
+      let timeRemaining = this.sessionService.getRemainingTime();
+      if (!sessionId || (timeRemaining && timeRemaining <= 0)) {
+        Swal.fire({
+          position: 'center',
+          icon: 'warning',
+          html: `<span style="font-size: 20px;">Heads up! Your session is almost over.</span>`,
+          showConfirmButton: true,
+        });
+        this.logout();
+        return;
+      }
+    }, 1000 * 5);
+
     if (!this.selectedMap) return;
     await this.getRoboStatus();
     await this.getTaskErrs();
     this.notificationInterval = setInterval(async () => {
-      await this.getRoboStatus();
-      await this.getTaskErrs(); // or run in indivdual..
+      // only allowed to check if fleet is up
+      if (this.isFleet == true) {
+        await this.getRoboStatus();
+        await this.getTaskErrs(); // or run in indivdual..
+      }
     }, 1000 * 5); // max to 30 or 60 sec
   }
+
   get iconUrl(): string {
     return this.isFleet ? this.fleetIconUrl : this.simulationIconUrl;
   }
+
   fleetIconUrl: string = '../assets/fleet_icon.png';
   simulationIconUrl: string = '../assets/simulation_icon.png';
+
   get buttonLabel(): string {
     // console.log("button lable")
-    return this.isFleet ? 'Real Time' : 'Simulation';
+    return this.isFleet ? 'Fleet Mode' : 'Simulation';
   }
+
   updateUI() {
     // Example of adding a simple fade-in/out effect to a specific element
     const modeElement = document.querySelector('.mode-indicator');
@@ -123,27 +157,63 @@ export class SidenavbarComponent implements OnInit {
         : 'Simulation Mode Active';
     }
   }
+
+  async recordFleetStatus(status: boolean): Promise<void> {
+    let projectId = this.projectService.getSelectedProject();
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project/track-fleet-status`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          projectId: projectId._id,
+          isFleetOn: status,
+          timeStamp: Date.now(),
+        }),
+      }
+    );
+    // if (!response.ok) {
+    //   console.log('Err with status code of ', response.status);
+    // }
+    let data = await response.json();
+    if (data.error) return;
+    const { fleetRecords } = data;
+    // console.log(fleetRecords);
+  }
+
+  async startGetFleetStatus() {
+    try {
+      // this.isFleetService.abortFleetStatusSignal(); // yet to uncomment..
+      await this.getFleetStatus();
+    } catch (error) {
+      console.log(error);
+    }
+    setTimeout(() => this.startGetFleetStatus(), 1000 * 3);
+  }
+
   async getFleetStatus() {
     let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-fleet-status`
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-fleet-status`,
+      {
+        signal: this.isFleetService.getAbortController().signal,
+      }
     );
     let data = await response.json();
-    // console.log(data.fleetUp);
+
     this.isFleetUp = data.fleetUp ? true : false;
-    let project = this.projectService.getSelectedProject();
-    if (project && project._id) {
-      let rabbitResponse = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/stream-data/rabbitmq-status/${project._id}`
-      );
-
-      let rabbitData = await rabbitResponse.json();
-
-      this.isAmqpUp = rabbitData.rabbitmqStatus ? true : false;
-    }
+    // let project = this.projectService.getSelectedProject();
+    // if (project && project._id) {
+    // let rabbitResponse = await fetch(
+    //   `http://${environment.API_URL}:${environment.PORT}/stream-data/rabbitmq-status/${project._id}`
+    // );
+    // let rabbitData = await rabbitResponse.json();
+    // this.isAmqpUp = rabbitData.rabbitmqStatus ? true : false;
+    // }
 
     let prevFleetStatus = this.projectService.getIsFleetUp();
-    if (prevFleetStatus === (this.isFleetUp && this.isAmqpUp)) return;
-    this.projectService.setIsFleetUp(this.isFleetUp && this.isAmqpUp);
+    if (prevFleetStatus === this.isFleetUp) return; // && this.isAmqpUp
+    this.projectService.setIsFleetUp(this.isFleetUp); // && this.isAmqpUp
   }
 
   // not called anywhere..
@@ -413,7 +483,9 @@ export class SidenavbarComponent implements OnInit {
   toggleSidebar(isEnlarged: boolean) {
     this.isSidebarEnlarged = isEnlarged;
   }
+
   showLogoutConfirmation = false;
+
   logout() {
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
@@ -470,5 +542,6 @@ export class SidenavbarComponent implements OnInit {
   ngOnDestroy() {
     if (this.notificationInterval) clearInterval(this.notificationInterval);
     if (this.fleetStatusInterval) clearInterval(this.fleetStatusInterval);
+    if (this.sessionCheck) clearInterval(this.sessionCheck);
   }
 }

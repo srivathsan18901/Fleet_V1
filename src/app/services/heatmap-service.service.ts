@@ -13,6 +13,7 @@ interface Coor {
 })
 export class HeatmapService {
   private heatmapInstances: Map<string, any> = new Map();
+  heatMapSignalController: AbortController | null = null;
 
   origin: any | null = null;
   ratio: number | null = null;
@@ -93,18 +94,25 @@ export class HeatmapService {
   async updateAccHmap() {
     let map = this.projectService.getMapData();
     if (!map) return;
+    try {
+      if (this.heatMapSignalController) this.heatMapSignalController.abort();
 
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/update-map/${map.mapName}`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ heatMap: this.accumulatedSet }),
-      }
-    );
+      this.heatMapSignalController = new AbortController();
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/update-map/${map.mapName}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ heatMap: this.accumulatedSet }),
+          signal: this.heatMapSignalController.signal,
+        }
+      );
 
-    let data = await response.json();
+      let data = await response.json();
+    } catch (error) {
+      console.log(error);
+    }
     // console.log(data);
   }
 
@@ -114,7 +122,7 @@ export class HeatmapService {
     if (coors.x == null || coors.y == null) return;
     this.accumulatedData.push(coors);
 
-    if (this.accumulatedData.length >= 5) {
+    if (this.accumulatedData.length >= 10) {
       this.accumulatedData.forEach((point) => {
         let existingCoor = this.accumulatedSet.find(
           (coor) => coor.x === point.x && coor.y === point.y

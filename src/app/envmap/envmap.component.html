@@ -1,10 +1,15 @@
+<ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" size="medium" color="white" [fullScreen]="true">
+  <div class="custom-spinner">
+    <img src="../../assets/loading-loading-forever.gif" alt="Loading..." class="loading"/>
+    <p style="color: white">Saving Map...</p>
+  </div>
+</ngx-spinner>
 <div class="popup-overlay" [ngStyle]="{ 'pointer-events': isNodeDetailsPopupVisible ? 'none' : 'auto' }">
   <div
-    class="popup-content"
-    [ngClass]="{ 'fixed-size': showImage, 'dynamic-size': !showImage }"
-    [ngStyle]="{ 'pointer-events': isNodeDetailsPopupVisible ? 'auto' : 'auto' }"
-  >
-
+  class="popup-content"
+  [ngClass]="{ 'fixed-size': showImage, 'dynamic-size': !showImage }"
+  [ngStyle]="{ 'pointer-events': isNodeDetailsPopupVisible ? 'auto' : 'auto' }"
+  >  
     <h3 *ngIf="!showImage">Select and insert Map file</h3>
     <!-- Image for file upload -->
     <label for="fileInput" class="upload-image" *ngIf="!showImage">
@@ -117,11 +122,7 @@
             d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
           />
         </svg></button>
-        <button
-          *ngIf="isDistanceConfirmed"
-          class="save-btn"
-          (click)="saveCanvas()"
-        >
+        <button *ngIf="isDistanceConfirmed" class="save-btn" (click)="saveCanvas()" >
           Save
         </button>
         <button class="clear-btn" (click)="clearCanvas()" style="margin-right: 2.5rem;">Clear</button>
@@ -159,7 +160,7 @@
             <input
               type="file"
               id="anotherFileInput"
-              accept="image/png, image/jpeg, image/pgm"
+              accept=".pgm"
               (change)="handleAnotherFileUpload($event)"
               hidden
             />
@@ -167,9 +168,24 @@
           <div>
             
           </div>
+          <div class="fileText">
+            <p *ngIf="anotherFileName" class="file-name" [title]="anotherFileName">
+              {{ anotherFileName }}
+            </p>
+          </div>
           
-          <p *ngIf="anotherFileName" class="file-name">{{ anotherFileName }}</p>
-
+          <button class="close-btn1" *ngIf="!this.showOriginCanvas" (click)="closeImagePopup()"> <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+          >
+            <path fill="none" d="M0 0h24v24H0z" />
+            <path
+              d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+            />
+          </svg>
+          </button>
           <!-- <div *ngIf="anotherFileName" class="coordinate-inputs">
             <label for="xCoordinate">X:</label>
             <input
@@ -188,7 +204,6 @@
           </div> -->
           <button (click)="openOrigin()" class="originBTN" *ngIf="anotherFileName">Open</button>
         </div>
-        
 
         <div class="originCanvas" >
         <div class="tooltip" #tooltip *ngIf="this.showOriginCanvas">(x: 0, y: 0)</div>
@@ -202,7 +217,7 @@
           <button (click)="toggleRotateMode()" [ngStyle]="{ 'pointer-events': this.isPanning ? 'none' : 'auto', 'filter': isPanning ? 'blur(2px)' : 'none' }">{{ isRotating ? 'Disable Rotate' : 'Enable Rotate' }}</button>
           <!-- <button (click)="enablePlotOrigin()">{{ plotOrigin ? 'Disable Plot Origin' : 'Plot Origin' }}</button> -->
         </div>
-        <button class="close-btn" (click)="closeImagePopup()"> <svg
+        <button class="close-btn" *ngIf="this.showOriginCanvas" (click)="closeImagePopup()"> <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
           width="24"
@@ -382,6 +397,7 @@
               [autoDisplayFirst]="false"
               class="small-dropdown"
               [style]="{'width':'12.5rem !important'}"
+              #dropdown
           ></p-dropdown>            
             </div>
             <!-- <div *ngIf="validationError" class="validation-error">{{ validationError }}</div> -->
@@ -406,7 +422,7 @@
               id="nodeDescription"
               placeholder="Enter Node Description"
               [(ngModel)]="nodeDetails.description"
-              [style]="{'height':'30px','width':'12.5rem','position': 'relative','left': '62px'}"
+              [style]="{'height':'30px','width':'12.5rem','position': 'relative','left': '29px'}"
             />
           </div>
             <div class="input-group">
@@ -430,7 +446,7 @@
                     <div class="node2-sub" *ngIf="selectedNodeType === 'Intermediate' || selectedNodeType === 'Waiting'">
                       <label for="predockPoseDropdown" class="Label">Dock Pose:</label>
                       <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedDockPose">
-                        <option *ngIf="!connectedNodes.length" disabled selected value="">Nill</option>
+                        <option *ngIf="!connectedNodes.length" disabled selected value="">Select</option>
                         <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                           {{ node.nodeId }}
                         </option>
@@ -439,8 +455,8 @@
                   <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
                     <label for="predockPoseDropdown" class="Label">Predock Pose:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedPredockPose">
-                      <option *ngIf="!connectedNodes.length" disabled selected value="">Nill</option>
-                      <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
+                      <option *ngIf="!connectedNodes.length" disabled selected value="">Select</option>
+                      <option *ngIf="connectedNodes.length" disabled selected value="" style="font-size: 10px;" class="select-text">Select</option>                      <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                         {{ node.nodeId }}
                       </option>
                     </select>
@@ -448,7 +464,8 @@
                   <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
                     <label for="predockPoseDropdown" class="Label">Undock Pose:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedUndockPose">
-                      <option *ngIf="!connectedNodes.length" disabled selected value="">Nill</option>
+                      <option *ngIf="!connectedNodes.length" disabled selected value="">Select</option>
+                      <option *ngIf="connectedNodes.length" disabled selected value="" class="select-text">Select</option>
                       <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                         {{ node.nodeId }}
                       </option>
@@ -665,7 +682,6 @@
     </div>
   </div>
 </div>
-
 <app-robot-popup
   [isVisible]="isRobotPopupVisible"
   [mapName]="this.mapName"
@@ -673,6 +689,7 @@
   (close)="closeRobotPopup()"
   (addRobot)="placeRobots($event)"
 ></app-robot-popup>
+
 
 <div *ngIf="isPopupVisible" class="zonepopup-overlay1">
   <div class="zonepopup-content1">

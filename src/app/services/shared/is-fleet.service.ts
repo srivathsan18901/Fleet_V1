@@ -8,7 +8,20 @@ export class IsFleetService {
   private isFleetSubject = new BehaviorSubject<boolean>(false);
   isFleet$ = this.isFleetSubject.asObservable();
 
+  fleetStatusAbortController: AbortController | null = null;
+
   setIsFleet(value: boolean) {
     this.isFleetSubject.next(value);
+  }
+
+  getAbortController(): AbortController {
+    this.fleetStatusAbortController?.abort();
+    this.fleetStatusAbortController = new AbortController();
+    return this.fleetStatusAbortController;
+  }
+
+  abortFleetStatusSignal() {
+    this.fleetStatusAbortController?.abort();
+    this.fleetStatusAbortController = null;
   }
 }

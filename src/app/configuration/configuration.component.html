@@ -125,6 +125,7 @@
         <!-- Date Filter and Date Inputs -->
         <div class="date-filters" *ngIf="currentTable === 'Environment'">
           <div class="date-inputs">
+            <div class="dateInput1">
             <label for="start-date">Start Date:</label>
             <input
               pInputText
@@ -136,7 +137,8 @@
               [max]="maxDate"
               style="height: 35px; width: 150px"
             />
-
+            </div>
+            <div class="dateInput2">
             <label for="end-date">End Date:</label>
             <input
               pInputText
@@ -148,6 +150,7 @@
               [max]="maxDate"
               style="height: 35px; width: 150px"
             />
+          </div>
           </div>
         </div>
       </div>
@@ -635,7 +638,7 @@
             *ngIf="showImageUploadPopup"
             [EnvData]="this.EnvData"
             [currEditMap]="this.currEditMap"
-            [onMapEdit]="this.onMapEdit"
+            [mapEdit]="this.onMapEdit"
             [currEditMapDet]="this.currEditMapDet"
             (save)="onPopupSave()"
             (closePopup)="closeImageUploadPopup()"

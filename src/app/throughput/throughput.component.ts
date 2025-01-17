@@ -280,7 +280,7 @@ export class ThroughputComponent {
 
   clearTroughputInterval() {
     clearInterval(this.throuputTimeInterval);
-    this.throuputTimeInterval = 0;
+    // this.throuputTimeInterval = 0; // yet to uncomment.. if in case of local logic..
   }
 
   ngOnDestroy() {

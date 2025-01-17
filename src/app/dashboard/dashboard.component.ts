@@ -21,6 +21,7 @@ import { Subscription } from 'rxjs';
 import { NodeGraphService } from '../services/nodegraph.service';
 import { HeatmapService } from '../services/heatmap-service.service';
 import { log } from 'node:console';
+import { abort } from 'node:process';
 
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
@@ -151,8 +152,11 @@ export class DashboardComponent implements AfterViewInit {
   shouldAnimate: boolean = true; // Control the animation
   svgFillColor: string = '#FFA3A3'; // Default color
   rackSize: number = 25;
+
   paths: Map<number, any[]> = new Map<number, any[]>();
   roboPathIds: Set<number> = new Set<number>();
+
+  mapDetailsController: AbortController | null = null;
 
   async deleteRobot(robot: any, index: number) {
     // console.log(robot);
@@ -216,7 +220,6 @@ export class DashboardComponent implements AfterViewInit {
     private heatmapService: HeatmapService
   ) {
     if (this.projectService.getIsMapSet()) return;
-    // this.onInitMapImg(); // yet to remove..
   }
   private subscriptions: Subscription[] = [];
   isFleet: boolean = false;
@@ -225,9 +228,9 @@ export class DashboardComponent implements AfterViewInit {
   fleetIconUrl: string = '../assets/fleet_icon.png';
   simulationIconUrl: string = '../assets/simulation_icon.png';
 
-  toggleFleetMode(fleetMode: number){
-    let currentMode = (sessionStorage.getItem('isFleet') == 'true') ? 0 : 1;
-    if(currentMode == fleetMode) return;
+  toggleFleetMode(fleetMode: number) {
+    let currentMode = sessionStorage.getItem('isFleet') == 'true' ? 0 : 1;
+    if (currentMode == fleetMode) return;
     this.isFleet = !fleetMode ? true : false;
     this.isFleetService.setIsFleet(this.isFleet);
     sessionStorage.setItem('isFleet', String(this.isFleet));
@@ -264,6 +267,9 @@ export class DashboardComponent implements AfterViewInit {
 
     this.subscriptions.push(fleetSub);
     const savedIsFleet = sessionStorage.getItem('isFleet');
+
+    this.isFleetService.abortFleetStatusSignal(); // remove if interrupting opts...
+
     if (savedIsFleet !== null) {
       this.isFleet = savedIsFleet === 'true'; // Convert string to boolean
       this.isFleetService.setIsFleet(this.isFleet); // Sync the state with the service
@@ -926,7 +932,7 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
   async sendAction() {
-    if(!this.isFleetUp) {
+    if (!this.isFleetUp) {
       this.messageService.add({
         severity: 'error',
         summary: `Fleet not engaged!`,
@@ -935,7 +941,7 @@ export class DashboardComponent implements AfterViewInit {
       });
       return;
     }
-    if (!this.taskAction || !this.roboToAssign || !this.sourceLocation ) {
+    if (!this.taskAction || !this.roboToAssign || !this.sourceLocation) {
       this.messageService.add({
         severity: 'error',
         summary: `Data not sent`,
@@ -946,7 +952,8 @@ export class DashboardComponent implements AfterViewInit {
     }
     // Handle default robo assignment
     const DEFAULT_AGENT_ID = '-99';
-    this.roboToAssign = this.roboToAssign === 'Default' ? DEFAULT_AGENT_ID : this.roboToAssign;
+    this.roboToAssign =
+      this.roboToAssign === 'Default' ? DEFAULT_AGENT_ID : this.roboToAssign;
     const genId = Date.now().toString(16);
 
     let taskData = {
@@ -968,7 +975,7 @@ export class DashboardComponent implements AfterViewInit {
     );
 
     let data = await response.json();
-    this.hideATPopup(); // Reset to default value
+    this.cancelATAction();  // Reset to default value..
     this.messageService.add({
       severity: 'info',
       summary: `${data.msg}`,
@@ -988,14 +995,13 @@ export class DashboardComponent implements AfterViewInit {
     if (popup) {
       popup.style.display = 'none';
     }
-    if (this.roboToAssign = `DEFAULT_AGENT_ID`){
+    if ((this.roboToAssign = `DEFAULT_AGENT_ID`)) {
       this.roboToAssign = 'Default';
-    }
-    else{
+    } else {
       this.roboToAssign = this.roboToAssign;
     }
   }
-  
+
   addRightClickListener(canvas: HTMLCanvasElement) {
     canvas.addEventListener('contextmenu', (event) => {
       event.preventDefault(); // Prevent the default context menu
@@ -1007,8 +1013,12 @@ export class DashboardComponent implements AfterViewInit {
       const mouseX = event.clientX - rect.left;
       const mouseY = event.clientY - rect.top;
       const transY = canvas.height - mouseY;
-      const imgX = ((mouseX - this.mapImageX + this.offsetX) - this.offsetX)/ this.zoomLevel;
-      const imgY = ((transY - this.mapImageY + this.offsetY)+ this.offsetY) / this.zoomLevel;
+      const imgX =
+        (mouseX - this.mapImageX + this.offsetX - this.offsetX) /
+        this.zoomLevel;
+      const imgY =
+        (transY - this.mapImageY + this.offsetY + this.offsetY) /
+        this.zoomLevel;
 
       for (let robo of this.simMode) {
         const roboX = robo.pos.x;
@@ -1033,7 +1043,7 @@ export class DashboardComponent implements AfterViewInit {
       if (event.button === 2) {
         return;
       }
-  
+
       const assignTask = this.nodeGraphService.getAssignTask();
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -1049,8 +1059,12 @@ export class DashboardComponent implements AfterViewInit {
       // const imgY =
       //   (transY - this.mapImageY + this.offsetY) / this.zoomLevel +
       //   this.offsetY;
-      const imgX = ((mouseX - this.mapImageX + this.offsetX) - this.offsetX)/ this.zoomLevel;
-      const imgY = ((transY - this.mapImageY + this.offsetY)+ this.offsetY) / this.zoomLevel;
+      const imgX =
+        (mouseX - this.mapImageX + this.offsetX - this.offsetX) /
+        this.zoomLevel;
+      const imgY =
+        (transY - this.mapImageY + this.offsetY + this.offsetY) /
+        this.zoomLevel;
       if (assignTask) {
         for (let node of this.nodes) {
           const nodeX = node.nodePosition.x;
@@ -1182,8 +1196,12 @@ export class DashboardComponent implements AfterViewInit {
       this.offsetY = this.nodeGraphService.getOffsetY();
       this.zoomLevel = this.nodeGraphService.getZoomLevel();
       // Adjust for zoom and pan
-      const imgX = ((mouseX - this.mapImageX + this.offsetX) - this.offsetX)/ this.zoomLevel;
-      const imgY = ((transY - this.mapImageY + this.offsetY)+ this.offsetY) / this.zoomLevel;
+      const imgX =
+        (mouseX - this.mapImageX + this.offsetX - this.offsetX) /
+        this.zoomLevel;
+      const imgY =
+        (transY - this.mapImageY + this.offsetY + this.offsetY) /
+        this.zoomLevel;
       this.draggingRobo = this.nodeGraphService.getDraggingRobo();
       if (
         this.draggingRobo &&
@@ -1231,7 +1249,10 @@ export class DashboardComponent implements AfterViewInit {
             const robotScreenX =
               roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
             const robotScreenY =
-              (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
+              (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) *
+                this.zoomLevel +
+              this.offsetY +
+              this.mapImageY; // Y position on the canvas
 
             robottooltip.style.left = `${robotScreenX - 30}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${robotScreenY - 45}px`; // Above the robot's Y position
@@ -1279,8 +1300,8 @@ export class DashboardComponent implements AfterViewInit {
         imgY >= 0 &&
         imgY <= this.mapImageHeight / this.zoomLevel;
       if (isInsideMap) {
-        const formattedX = ((imgX * this.ratio) - this.origin.x).toFixed(2);
-        const formattedY = ((imgY * this.ratio) - this.origin.y).toFixed(2);
+        const formattedX = (imgX * this.ratio - this.origin.x).toFixed(2);
+        const formattedY = (imgY * this.ratio - this.origin.y).toFixed(2);
         //Set tooltip content and position
         tooltip.textContent = `X = ${formattedX}, Y = ${formattedY}`;
         tooltip.style.display = 'block';
@@ -1353,7 +1374,6 @@ export class DashboardComponent implements AfterViewInit {
         detail: 'Robot has been Enabled',
         life: 4000,
       });
-      await this.showSpline(robot.amrId);
     } else {
       this.messageService.add({
         severity: 'error',
@@ -1368,9 +1388,12 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   async getMapDetails() {
+    if (this.mapDetailsController) this.mapDetailsController.abort(); // abort prev req..
+    this.mapDetailsController = new AbortController();
     let mapData = this.projectService.getMapData();
     let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${mapData.mapName}`
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${mapData.mapName}`,
+      { signal: this.mapDetailsController.signal }
     );
     if (!response.ok)
       throw new Error(`Error with status code of ${response.status}`);
@@ -1446,59 +1469,6 @@ export class DashboardComponent implements AfterViewInit {
     this.mapImg.src = `http://${environment.API_URL}:${environment.PORT}/${imgName.imgUrl}`;
   }
 
-  async fetchRoboPos(x: number, y: number, yaw: number) {
-    // console.log(amrPos);
-    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-
-    const imageWidth = 35; // Set this to the actual width of the plotted image
-    const imageHeight = 25; // Set this to the actual height of the plotted image
-
-    const mapImage = new Image();
-    let map = this.projectService.getMapData();
-    mapImage.src = `http://${environment.API_URL}:${environment.PORT}/${map.imgUrl}`;
-    await mapImage.decode(); // Wait for the image to load
-
-    if (ctx) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      this.offsetX = this.nodeGraphService.getOffsetX();
-      this.offsetY = this.nodeGraphService.getOffsetY();
-      this.zoomLevel = this.nodeGraphService.getZoomLevel();
-      // Calculate the scaled image dimensions
-      const imgWidth = mapImage.width * this.zoomLevel;
-      const imgHeight = mapImage.height * this.zoomLevel;
-
-      // Center the image on the canvas
-      const centerX = (canvas.width - imgWidth) / 2;
-      const centerY = (canvas.height - imgHeight) / 2;
-      // Apply transformation for panning and zooming
-      ctx.save();
-      ctx.translate(centerX, centerY);
-      ctx.scale(this.zoomLevel, this.zoomLevel);
-      ctx.restore(); // Reset transformation after drawing
-
-      if (
-        this.nodeGraphService.getShowModelCanvas() ||
-        !this.nodeGraphService.getAssignTask()
-      ) {
-        // this.showModelCanvas
-        this.redrawOtherElements(ctx, mapImage); // Pass the mapImage for transformations
-      }
-      // Draw the map image
-      ctx.drawImage(mapImage, 0, 0);
-
-      // If showModelCanvas is true, draw additional elements
-      // if (this.nodeGraphService.getShowModelCanvas()) { // yet to uncomment in case..
-      //   // this.showModelCanvas
-      //   this.redrawOtherElements(ctx, mapImage);
-      // }
-      // if (i > 0) clearPreviousImage(amrPos[i - 1].x, amrPos[i - 1].y);
-      const transformedY = canvas.height - y;
-      // console.log(amrPos[i].x, amrPos[i].y);
-      this.plotRobo(ctx, x, transformedY, yaw, 'robot0', 'black');
-    }
-  }
-
   redrawOtherElements(ctx: CanvasRenderingContext2D, img: HTMLImageElement) {
     // // Redraw nodes, edges, assets, and zones
     this.nodes.forEach((node) => {
@@ -1541,76 +1511,6 @@ export class DashboardComponent implements AfterViewInit {
     );
   }
 
-  async onInitMapImg() {
-    let project = this.projectService.getSelectedProject();
-    // console.log(project,'Project')
-    let mapArr = [];
-
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-project/${project._id}`,
-      { credentials: 'include' }
-    );
-    if (!response.ok) {
-      console.error('Error while fetching map data : ', response.status);
-      return;
-    }
-
-    let data = await response.json();
-    // console.log(data, 'oninit map');
-    let projectSites = data.project.sites;
-
-    mapArr = projectSites.flatMap((sites: any) => {
-      return sites.maps.map((map: any) => {
-        let date = new Date(map?.createdAt);
-        let createdAt = date.toLocaleString('en-IN', {
-          month: 'short',
-          year: 'numeric',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric',
-        });
-
-        return {
-          id: map.mapId,
-          mapName: map.mapName,
-          siteName: sites.siteName,
-          date: createdAt,
-          createdAt: map.createdAt, // for sorting..
-        };
-      });
-    });
-
-    mapArr.sort(
-      (a: any, b: any) =>
-        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-
-    if (!mapArr.length) return;
-
-    const mapResponse = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${mapArr[0].mapName}`
-    );
-    let mapData = await mapResponse.json();
-
-    this.projectService.setMapData({
-      ...mapArr[0],
-      imgUrl: mapData.map.imgUrl,
-    });
-
-    // Set the zoomLevel after fetching the map data
-    const img = new Image();
-    img.src = `http://${environment.API_URL}:${environment.PORT}/${mapData.map.imgUrl}`;
-
-    // Ensure the zoom level is calculated after the image is loaded
-    img.onload = () => {
-      this.zoomLevel = img.width > 1355 || img.height > 664 ? 0.8 : 1.0;
-      console.log(`Zoom level set to: ${this.zoomLevel}`);
-    };
-
-    this.loadCanvas();
-  }
-
   quaternionToYaw(w: number, x: number, y: number, z: number): number {
     // Calculate the yaw (rotation around the Z-axis)
     const yaw = Math.atan2(2 * (w * z + x * y), 1 - 2 * (y * y + z * z));
@@ -1633,7 +1533,7 @@ export class DashboardComponent implements AfterViewInit {
     const URL = `http://${environment.API_URL}:${environment.PORT}/stream-data/live-AMR-pos/${this.selectedMap.id}`;
     const ASSET_URL = `http://${environment.API_URL}:${environment.PORT}/stream-data/live-assets/${this.selectedMap.id}`;
 
-    if (this.posEventSource) this.posEventSource.close();
+    if (this.posEventSource) this.posEventSource.close(); // put in ngOnDestroy if needed..
     if (this.assetEventSource) this.assetEventSource.close();
 
     this.posEventSource = new EventSource(URL);
@@ -1646,7 +1546,7 @@ export class DashboardComponent implements AfterViewInit {
 
       try {
         const data = JSON.parse(event.data);
-        if(data.fleet) this.toggleFleetMode(data.fleet.FleetMode)
+        if (data.fleet) this.toggleFleetMode(data.fleet.FleetMode);
         // console.log(data);
 
         const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
@@ -1789,12 +1689,12 @@ export class DashboardComponent implements AfterViewInit {
     const borderColor = '#000000'; // Define the border color
     const borderThickness = 0.8; // Define the border thickness
     const triangleSize = circleRadius / 1.15; // Define the triangle size
-  
+
     if (ctx) {
       ctx.save();
       ctx.translate(x, y);
       ctx.rotate((orientation * Math.PI) / 180);
-  
+
       // Draw the rounded rectangle (manually if roundRect is unsupported)
       ctx.beginPath();
       ctx.moveTo(-width / 2 + borderRadius, -height / 2);
@@ -1827,13 +1727,13 @@ export class DashboardComponent implements AfterViewInit {
         -height / 2
       );
       ctx.closePath();
-  
+
       ctx.fillStyle = rectangleColor; // Set the rectangle color
       ctx.fill();
       ctx.lineWidth = borderThickness;
       ctx.strokeStyle = borderColor;
       ctx.stroke();
-  
+
       // Draw the circle inside the rounded rectangle
       ctx.beginPath();
       ctx.arc(0, 0, circleRadius, 0, Math.PI * 2); // Circle at the center
@@ -1843,24 +1743,23 @@ export class DashboardComponent implements AfterViewInit {
       ctx.strokeStyle = borderColor; // Set the circle border color
       ctx.stroke();
       ctx.closePath();
-  
+
       // Draw the triangle pointing to the front
       ctx.beginPath();
       ctx.moveTo(-circleRadius - triangleSize, 0); // Left of the circle
       ctx.lineTo(-circleRadius, -triangleSize / 2); // Top corner
       ctx.lineTo(-circleRadius, triangleSize / 2); // Bottom corner
       ctx.closePath();
-  
+
       ctx.fillStyle = circleColor; // Same color as the circle
       ctx.fill();
       ctx.lineWidth = borderThickness - 0.2; // Triangle border thickness
       ctx.strokeStyle = borderColor; // Triangle border color
       ctx.stroke();
-  
+
       ctx.restore();
     }
   }
-  
 
   isOptionsExpanded: boolean = false;
 
@@ -1915,16 +1814,14 @@ export class DashboardComponent implements AfterViewInit {
       const robotCanvasY = transformedPosY;
       this.setPaths(path, imgHeight, centerX, centerY, parseInt(robotId));
 
-      if (
-        this.nodeGraphService.getShowModelCanvas()
-      ) {
+      if (this.nodeGraphService.getShowModelCanvas()) {
         this.nodes = this.nodeGraphService.getNodes();
         this.edges = this.nodeGraphService.getEdges();
         this.zones = this.nodeGraphService.getZones();
         this.assets = this.nodeGraphService.getAssets();
         this.drawNodesAndEdges(ctx, mapImage, centerX, centerY, this.zoomLevel);
       }
-      if(this.nodeGraphService.getAssignTask()){
+      if (this.nodeGraphService.getAssignTask()) {
         this.nodes = this.nodeGraphService.getNodes();
         this.drawnodesonAT(ctx, mapImage, centerX, centerY, this.zoomLevel);
       }
@@ -2128,13 +2025,13 @@ export class DashboardComponent implements AfterViewInit {
     ctx.globalAlpha = 1;
     ctx.restore();
   }
-  drawnodesonAT(    
+  drawnodesonAT(
     ctx: CanvasRenderingContext2D,
     img: HTMLImageElement,
     centerX: number,
     centerY: number,
-    zoomLevel: number){
-      
+    zoomLevel: number
+  ) {
     this.offsetX = this.nodeGraphService.getOffsetX();
     this.offsetY = this.nodeGraphService.getOffsetY();
     this.zoomLevel = this.nodeGraphService.getZoomLevel();
@@ -2144,7 +2041,7 @@ export class DashboardComponent implements AfterViewInit {
       const scaledY = (img.height - node.nodePosition.y) * zoomLevel; // Flip Y-axis and scale
       this.drawNode(ctx, centerX + scaledX, centerY + scaledY, node.nodeId);
     });
-    }
+  }
   drawNodesAndEdges(
     ctx: CanvasRenderingContext2D,
     img: HTMLImageElement,
@@ -2204,29 +2101,8 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
 
-  async showSpline(roboId: number): Promise<boolean> {
-    if (!this.selectedMap.id) return false;
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/show-spline`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mapId: this.selectedMap.id,
-          roboId: roboId,
-        }),
-      }
-    );
-    let data = await response.json();
-
-    return data.isShowSplined;
-    // if (data.isShowSplined) this.getLivePos();
-  }
-
   // start-stop the operation!
   startStopOpt() {
-    // this.showSpline();
     if (this.isInLive) return;
 
     this.ONBtn = !this.ONBtn;
@@ -2239,26 +2115,6 @@ export class DashboardComponent implements AfterViewInit {
     return this.isInLive // this.ONVtm
       ? '../../assets/icons/on.svg'
       : '../../assets/icons/off.svg';
-  }
-
-  getliveAmrPos() {
-    const URL = `http://${environment.API_URL}:${environment.PORT}/stream-data/live-AMR-pos`;
-    if (this.eventSource) this.eventSource.close();
-
-    this.eventSource = new EventSource(URL);
-    this.eventSource.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        console.log(data);
-      } catch (error) {
-        console.error('Error parsing SSE data:', error);
-      }
-    };
-
-    this.eventSource.onerror = (error) => {
-      console.error('SSE error:', error);
-      this.eventSource.close();
-    };
   }
 
   private plotAsset(
@@ -2680,5 +2536,11 @@ export class DashboardComponent implements AfterViewInit {
 
   onClose(): void {
     this.showDashboard = false;
+  }
+
+  ngOnDestroy() {
+    this.mapDetailsController?.abort();
+    if (this.posEventSource) this.posEventSource.close(); // ONLY comment.. if interrupting on other operations..
+    if (this.assetEventSource) this.assetEventSource.close();
   }
 }

@@ -22,6 +22,9 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { SessionService } from '../services/session.service';
 import { map } from 'rxjs';
+import { Dropdown } from 'primeng/dropdown';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 // import { NodeGraphService } from '../services/nodegraph.service';
 
 interface Node {
@@ -353,8 +356,6 @@ export class EnvmapComponent implements AfterViewInit {
     this.toggleOptionsMenu();
     this.selectedAssetType = assetType;
     this.isPlottingAsset = true;
-
-    // console.log("hey");
   }
 
   constructor(
@@ -362,6 +363,8 @@ export class EnvmapComponent implements AfterViewInit {
     private renderer: Renderer2,
     private projectService: ProjectService,
     private messageService: MessageService,
+    private isFleetService: IsFleetService,
+    private spinner: NgxSpinnerService,
     private sessionService: SessionService // private nodeGraphService:NodeGraphService
   ) {
     if (this.currEditMap) this.showImage = true;
@@ -538,8 +541,8 @@ export class EnvmapComponent implements AfterViewInit {
       this.robotImages['robotB'] = new Image();
       this.robotImages['robotB'].src = 'assets/CanvasRobo/robotB.svg';
 
-      this.robotImages['robot0'] = new Image();
-      this.robotImages['robot0'].src = 'assets/CanvasRobo/Robot/Robo0.svg';
+      // this.robotImages['robot0'] = new Image();
+      // this.robotImages['robot0'].src = 'assets/CanvasRobo/Robot/Robo0.svg';
       // Initialize assets and robots
       this.assetImages['docking'] = new Image();
       this.assetImages['docking'].src = 'assets/Asseticon/docking-station.svg';
@@ -1092,7 +1095,7 @@ export class EnvmapComponent implements AfterViewInit {
       const file = input.files[0];
       this.anotherFileName = file.name; // Store file name separately
   
-      if (file.type === 'image/x-portable-graymap' || file.name.endsWith('.pgm')) {
+      if (file.type === '.x-portable-graymap' || file.name.endsWith('.pgm')) {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
           const buffer = e.target!.result as ArrayBuffer;
@@ -1101,13 +1104,23 @@ export class EnvmapComponent implements AfterViewInit {
         };
         reader.readAsArrayBuffer(file);
       } else {
-        // Fallback for other formats
-        const reader = new FileReader();
-        reader.onload = (e: ProgressEvent<FileReader>) => {
-          this.anotherImageSrc = e.target!.result as string;
-          this.renderOverlayCanvas();
-        };
-        reader.readAsDataURL(file);
+        // // Fallback for other formats
+        // const reader = new FileReader();
+        // reader.onload = (e: ProgressEvent<FileReader>) => {
+        //   this.anotherImageSrc = e.target!.result as string;
+        //   this.renderOverlayCanvas();
+        // };
+        // reader.readAsDataURL(file);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File Type',
+          detail: 'Please upload a valid PGM file.',
+        });
+  
+        // Reset the input field and file name
+        input.value = '';
+        this.anotherFileName = '';
+        return;
       }
     }
   }
@@ -1212,6 +1225,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.openOriginPopup();
   }
   openOriginPopup(): void {
+    
     if (!this.ratio) {
       this.messageService.add({
         severity: 'error',
@@ -1220,7 +1234,19 @@ export class EnvmapComponent implements AfterViewInit {
       });
       return;
     }
-  
+
+    if (this.anotherFileName) {
+      const isPgmFile = this.anotherFileName.toLowerCase().endsWith('.pgm');
+      if (!isPgmFile) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid File',
+          detail: 'Only PGM files are allowed. Please upload a valid PGM file.',
+        });
+        return;
+      }
+    }
+
     if (this.imageSrc) {
       this.showOriginPopup = true;
       this.isPanning=!this.isPanning;
@@ -1595,6 +1621,9 @@ export class EnvmapComponent implements AfterViewInit {
   }
 
   updateEditedMap() {
+
+    this.isFleetService.abortFleetStatusSignal();
+
     this.nodes = this.nodes.map((node) => {
       node.nodePosition.x =
         node.nodePosition.x * (this.ratio || 1) - (this.origin.x || 0);
@@ -1654,6 +1683,8 @@ export class EnvmapComponent implements AfterViewInit {
         this.assets = updatedData.stations;
         this.zones = updatedData.zones;
         this.robos = Array.isArray(updatedData.robos) ? updatedData.robos : [];
+
+        this.spinner.hide();
 
         // Success Toast
         this.messageService.add({
@@ -1725,6 +1756,9 @@ export class EnvmapComponent implements AfterViewInit {
       });
       return;
     }
+
+    this.spinner.show();
+
     if (this.currEditMap) {
       this.updateEditedMap();
       return;
@@ -1769,6 +1803,9 @@ export class EnvmapComponent implements AfterViewInit {
     });
 
     let orientation = { x: 0, y: 0, z: 0, w: 0 };
+
+    this.isFleetService.abortFleetStatusSignal();
+
     if (this.nodes.length)
       orientation = this.ToQuaternion_(
         0,
@@ -1802,6 +1839,9 @@ export class EnvmapComponent implements AfterViewInit {
     })
       .then((response) => response.json())
       .then((data) => {
+
+        this.spinner.hide();
+
         if (data.exists === true || data.isFileExist === false) {
           this.messageService.add({
             severity: 'warn',
@@ -1823,27 +1863,6 @@ export class EnvmapComponent implements AfterViewInit {
             second: 'numeric',
           });
 
-          // if (!this.EnvData.length) {
-          //   this.projectService.setMapData({
-          //     id: data.map._id,
-          //     mapName: data.map.mapName,
-          //     siteName: this.siteName,
-          //     date: createdAt,
-          //     createdAt: data.map.createdAt,
-          //     imgUrl: data.map.imgUrl,
-          //   });
-          //   this.projectService.setIsMapSet(true);
-          //   this.selectedMap = {
-          //     id: data.map._id,
-          //     mapName: data.map.mapName,
-          //     siteName: this.siteName,
-          //     date: createdAt,
-          //     createdAt: data.map.createdAt,
-          //     imgUrl: data.map.imgUrl,
-          //   };
-          //   // return;
-          // }
-
           this.EnvData.push({
             id: data.map._id,
             mapName: data.map.mapName,
@@ -1860,6 +1879,7 @@ export class EnvmapComponent implements AfterViewInit {
           this.cdRef.detectChanges();
           this.refreshTable.emit(); // Emit the event to refresh the table
           this.sessionService.grossDelete();
+
           // window.location.reload();
         }
 
@@ -2584,6 +2604,8 @@ export class EnvmapComponent implements AfterViewInit {
     isSelected: boolean = false,
     orientation: number = 0
   ): void {
+    this.robotImages['robot0'] = new Image();
+    this.robotImages['robot0'].src = 'assets/CanvasRobo/Robot/Robo0.svg';
     const image = this.robotImages['robotB'];
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = canvas.getContext('2d');

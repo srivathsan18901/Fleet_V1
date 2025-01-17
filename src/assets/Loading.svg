@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid" width="200" height="200" style="shape-rendering: auto; display: block; background: rgb(255, 255, 255);"><g data-idx="1"><g transform="matrix(1,0,0,1,50,50)" data-idx="2">
+<circle stroke-dasharray="0px, 0px, 81.681px, 0px, 0px, 163.363px" stroke-width="5" stroke="#d20909" r="26" fill="none" cy="0" cx="0" data-idx="3" transform="matrix(1,0,0,1,0,0)">
+
+
+</circle>
+
+<circle stroke-dasharray="0px, 0px, 100.531px, 0px, 0px, 201.062px" stroke-width="5" stroke="#fb402d" r="32" fill="none" cy="0" cx="0" data-idx="6" transform="matrix(1,0,0,1,0,0)">
+
+
+</circle>
+
+<circle transform="matrix(1,0,0,1,0,0)" stroke-dasharray="0px, 0px, 119.381px, 0px, 0px, 238.761px" stroke-width="5" stroke="#d5cece" r="38" fill="none" cy="0" cx="0" data-idx="9">
+
+
+</circle>
+</g><g data-idx="12"></g></g><text data-watermark="true" text-anchor="middle" dominant-baseline="middle" stroke-opacity="0.1" fill="black" fill-opacity="0.1" stroke="white" stroke-width="1" font-size="5.0" x="50" y="50" data-idx="13" style="opacity: 1; font-size: 5px;">LOADING.IO</text></svg>

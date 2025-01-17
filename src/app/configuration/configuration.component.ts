@@ -665,7 +665,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
     // Store the selected map in localStorage or service
     if (this.selectedMap) {
-      localStorage.setItem('selectedMapId', this.selectedMap.id);
+      localStorage.setItem('selectedMapId', this.selectedMap.id); // no need any more ig..
       this.messageService.add({
         severity: 'success',
         summary: 'Map Selected',

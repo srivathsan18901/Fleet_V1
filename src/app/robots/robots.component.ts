@@ -119,8 +119,10 @@ export class RobotsComponent implements OnInit {
     this.liveRobos = await this.getLiveRoboInfo();
     this.updateLiveRoboInfo();
     this.liveRoboInterval = setInterval(async () => {
-      this.liveRobos = await this.getLiveRoboInfo();
-      this.updateLiveRoboInfo();
+      if (this.isFleet) {
+        this.liveRobos = await this.getLiveRoboInfo();
+        this.updateLiveRoboInfo();
+      }
     }, 1000 * 5);
 
     // Subscribe to route changes to close popup on navigation

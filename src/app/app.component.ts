@@ -14,9 +14,6 @@ export class AppComponent {
   getRouteAnimationData(outlet: any) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData.animation;
   }
-
-
-
   constructor(private loaderService: LoaderService, public router: Router) {}
   shouldShowSidebar(): boolean {
     // Add the routes where you want to hide the sidebar
@@ -29,8 +26,20 @@ export class AppComponent {
     window.onpopstate = () => {
       window.history.go(1)
     };
+    // this.startRouteAlternation();
   }
-
+  private intervalId: any;
+  private startRouteAlternation(): void {
+    let toggle = false; // Keeps track of the current route
+    this.intervalId = setInterval(() => {
+      if (toggle) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        this.router.navigate(['/statistics']);
+      }
+      toggle = !toggle;
+    }, 1000 * 20); // Switch routes every 20 seconds
+  }
   public getRouter(): Router {
     return this.router;
   }

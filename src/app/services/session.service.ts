@@ -6,6 +6,7 @@ import { Injectable } from '@angular/core';
 export class SessionService {
   imgKey: string = 'base64Img';
   mapKey: string = 'mapData';
+  remainingTime: number | null = null;
   constructor() {}
 
   storeImage(file: File) {
@@ -120,5 +121,13 @@ export class SessionService {
     localStorage.removeItem('isMapInEdit');
     localStorage.removeItem(this.mapKey);
     // localStorage.clear();
+  }
+
+  setRemainingTime(remainingTime: number) {
+    this.remainingTime = remainingTime;
+  }
+
+  getRemainingTime() {
+    return this.remainingTime;
   }
 }

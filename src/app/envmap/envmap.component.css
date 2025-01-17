@@ -80,7 +80,7 @@
 .p-inputtext{
   padding: 0 !important;
   width: 240px;
-  height: 35px !important;
+  height: 32px !important;
   font-size: 12px !important;
   font-family: "graphik", Arial,  sans-serif;
   display: flex !important;
@@ -241,14 +241,25 @@ h2 {
   height: auto;
   cursor: pointer;
 }
+.loading{
+  height: 100px;
+  width: 100px;
+}
 
 .file-name {
   margin-top: 10px;
   font-size: 14px;
   font-family: "graphik", Arial,  sans-serif;
   color: #333;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
-
+.fileText{
+  display: flex;
+  justify-content: center;
+}
 .form-wrapper {
   display: flex;
   align-items: flex-start;
@@ -349,7 +360,7 @@ h2 {
   border-radius: 5px;
   background-color: #FFFFFF;
   width: 55px;
-  font-size: 12px;
+  font-size: 10px;
   font-family: 'graphik', Arial, sans-serif;
   color: #6c7381;
   border: 0.5px solid #9ca1aa;
@@ -461,6 +472,28 @@ canvas {
   position: absolute;
   top: -35px;
   right: -40px;
+  background-color: white;
+  border: 2px solid red;
+  border-radius: 50%;
+  color: red;
+  font-size: 20px;
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: bolder;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: none; */
+  /* border-radius: 5px; */
+  cursor: pointer;
+  z-index: 10;
+}
+.close-btn1 {
+  position: absolute;
+  top: -20px;
+  right: -20px;
   background-color: white;
   border: 2px solid red;
   border-radius: 50%;
@@ -621,7 +654,7 @@ canvas {
 .node-row {
   display: flex;
   /* justify-content: center;  */
-  gap: 1.15rem; /* Space between columns */
+  gap: 0.75rem; /* Space between columns */
   font-size: 5px;
 }
 .node1-sub{
@@ -1073,17 +1106,17 @@ button {
     fill: white; /* Change color on hover */
   }
 
-  .close-btn svg {
+  .close-btn svg,.close-btn1 svg {
     width: 20px;
     height: 20px;
     fill: red; /* Color for the close icon */
   }
 
-  .close-btn:hover {
+  .close-btn:hover,.close-btn1:hover {
     background-color: #da2127;
   }
 
-  .close-btn:hover svg {
+  .close-btn:hover svg,.close-btn1:hover svg {
     fill: white; /* Change color on hover */
   }
   .input-groupg {
@@ -1106,14 +1139,13 @@ button {
     width: 6rem;
   }
 
-
 .small-dropdown {
       height: 12px !important; /* Override default height */
       font-size: small; /* Adjust font size accordingly for readability */
       font-family: "graphik", Arial,  sans-serif;
       width: 143px;
       position:relative;
-      right: -98px;
+      right: -65px;
 }
 
 

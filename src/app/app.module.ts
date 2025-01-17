@@ -75,6 +75,7 @@ import { PlannerComponent } from './configuration/Addons/planner/planner.compone
 import { CommunicationComponent } from './configuration/Addons/communication/communication.component';
 import { TaskComponent } from './configuration/Addons/task/task.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
+import { NgxSpinnerModule } from "ngx-spinner";
 // import { NotAuthorizedComponent } from './guards/not-authorized/not-authorized.component';
 
 
@@ -156,8 +157,9 @@ import { HeatmapComponent } from './heatmap/heatmap.component';
     InputMaskModule,
     InputGroupAddonModule,
     TableModule,
-
     PaginatorModule,
+    BrowserAnimationsModule,
+    NgxSpinnerModule,
     // TableModule
   ],
   providers: [

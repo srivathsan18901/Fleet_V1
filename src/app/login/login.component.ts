@@ -8,7 +8,7 @@ import { env } from 'node:process';
 import { MessageService } from 'primeng/api';
 import { UserPermissionService } from '../services/user-permission.service';
 import { SessionService } from '../services/session.service';
-
+import Swal from 'sweetalert2'
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -176,7 +176,13 @@ export class LoginComponent {
       .then((data) => {
         // console.log(data.user.projects);
         if (data.isUserInSession) {
-          alert(data.msg);
+          // alert(data.msg);
+          Swal.fire({
+            position: "center",
+            icon: "warning",
+            html: `<span style="font-size: 20px;">${data.msg}</span>`,
+            showConfirmButton: true,
+          });          
           return;
         }
         this.sessionService.setMaxAge(data.maxAge);

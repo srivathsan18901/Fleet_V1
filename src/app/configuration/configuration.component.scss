@@ -737,10 +737,18 @@ tr:nth-child(even) {
   display: flex;
   padding: 10px;
   height: 3rem;
-  gap: 0.7rem; /* Space between date inputs */
+  // gap: 0.7rem; /* Space between date inputs */
   align-items: center;
   border-radius: 10px;
   filter: drop-shadow(0px 4px 0.5px rgba(225, 223, 223, 0.333));
+}
+.dateInput1,.dateInput2{
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+}
+.dateInput2{
+  margin-left: 20px;
 }
 .ASR-button, .IP-Scan{
   padding: 10px 20px;

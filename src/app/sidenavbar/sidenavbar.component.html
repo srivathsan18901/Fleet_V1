@@ -6,8 +6,8 @@
     </div> -->
 
     <!-- Fleet Status Indicator -->
-    <div class="fleet-status" [ngClass]="{'fleet-up': (isFleetUp && isAmqpUp), 'fleet-down': !(isFleetUp && isAmqpUp)}">
-      <img [src]="(isFleetUp && isAmqpUp) ? '../../assets/Liveoff.svg' : '../../assets/Liveon.svg'">
+    <div class="fleet-status" [ngClass]="{'fleet-up': isFleetUp, 'fleet-down': !isFleetUp}">
+      <img [src]="isFleetUp ? '../../assets/Liveoff.svg' : '../../assets/Liveon.svg'">
       {{ isFleetUp ? 'LIVE' : 'LIVE' }}
     </div>
     
@@ -17,6 +17,7 @@
     </button>
 
     <app-fullscreen-button></app-fullscreen-button>
+    
   <div class="notification">
     <img alt="" src="../../assets/icons/Notification_icon.svg" routerLink="/notification" (click)="showNotification()" class="Nlogo" />
   </div>
@@ -61,12 +62,12 @@
   <div>
   <p class="msg">Hello, {{ username }}</p>
   </div>
-  <div class="timer">
-    <app-timer></app-timer>
-  </div>
   <div class="logoutIcon" (click)="showLogoutConfirmation = true">
     <img src="../../assets/icons/Logout.svg " alt="" class="Outlogo" />
     <span class="logoutlabel">Logout</span>
+  </div>
+  <div class="timer">
+    <app-timer></app-timer>
   </div>
 </div>
 <!-- side bar -->

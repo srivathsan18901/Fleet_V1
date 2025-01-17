@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, OnChanges } from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
-import { log } from 'console';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-statistics',
@@ -24,6 +25,8 @@ export class StatisticsComponent {
   notifications: any[] = [];
   taskErrNotifications: any[] = [];
 
+  isFleet: boolean = false;
+
   statisticsData: any = {
     systemThroughput: 0,
     systemThroughputChange: 3.5,
@@ -36,6 +39,7 @@ export class StatisticsComponent {
   }; // Initialize the array with mock data
 
   systemThroughput: number[] = [1, 2, 3, 4, 5];
+  private subscriptions: Subscription[] = [];
 
   filteredOperationActivities = this.operationActivities;
   filteredNotifications = this.notifications;
@@ -44,10 +48,13 @@ export class StatisticsComponent {
   taskStatus_interval: any | null = null;
   currTaskStatus_interval: any | null = null;
 
+  private abortControllers: Map<string, AbortController> = new Map();
+
   constructor(
     private router: Router,
     private projectService: ProjectService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private isFleetService: IsFleetService
   ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
   }
@@ -66,24 +73,39 @@ export class StatisticsComponent {
   }
 
   async ngOnInit() {
+    const fleetSub = this.projectService.isFleetUp$.subscribe((status) => {
+      this.isFleet = status;
+      this.cdRef.detectChanges();
+      // console.log(status);
+    });
+    this.subscriptions.push(fleetSub);
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) return;
+    // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
     await this.getGrossStatus();
-    this.operationPie = await this.fetchTasksStatus();
-    await this.getTaskNotifications();
+    if (this.isFleet) this.operationPie = await this.fetchTasksStatus();
+    if (this.isFleet) await this.getTaskNotifications();
     this.taskStatus_interval = setInterval(async () => {
-      this.operationPie = await this.fetchTasksStatus();
+      if (this.isFleet) this.operationPie = await this.fetchTasksStatus();
     }, 1000 * 10);
     this.operationActivities = await this.fetchCurrTasksStatus();
     this.filteredOperationActivities = this.operationActivities;
     this.currTaskStatus_interval = setInterval(async () => {
-      let currTasks = await this.fetchCurrTasksStatus();
-      this.filteredOperationActivities = currTasks;
+      if (this.isFleet) {
+        let currTasks = await this.fetchCurrTasksStatus();
+        this.filteredOperationActivities = currTasks;
+      }
     }, 1000 * 10);
   }
 
   async fetchFleetStatus(endpoint: string, bodyData = {}): Promise<any> {
+    if (this.abortControllers.has(endpoint))
+      this.abortControllers.get(endpoint)?.abort();
+
+    const abortController = new AbortController();
+    this.abortControllers.set(endpoint, abortController);
+
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-gross-status/${endpoint}`,
       {
@@ -91,6 +113,7 @@ export class StatisticsComponent {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyData),
+        signal: abortController.signal,
       }
     );
 
@@ -99,6 +122,7 @@ export class StatisticsComponent {
 
   // not called anywhere..
   async getFleetLogStatus() {
+    return;
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
       {
@@ -164,6 +188,14 @@ export class StatisticsComponent {
   async getTaskNotifications() {
     let establishedTime = new Date(this.selectedMap.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+    let endPoint = '/err-logs/task-logs';
+
+    if (this.abortControllers.has(endPoint))
+      this.abortControllers.get(endPoint)?.abort();
+
+    const abortController = new AbortController();
+    this.abortControllers.set(endPoint, abortController);
+
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.selectedMap.id}`,
       {
@@ -175,6 +207,7 @@ export class StatisticsComponent {
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
+        signal: abortController.signal,
       }
     );
     const data = await response.json();
@@ -194,35 +227,31 @@ export class StatisticsComponent {
   }
 
   async getGrossStatus() {
-    const mapId = this.selectedMap.id;
     const projectId = this.projectService.getSelectedProject()._id;
 
     let uptime = await this.fetchFleetStatus('system-uptime', {
       projectId: projectId,
     });
-    if (uptime.systemUptime) {
+    if (uptime.systemUptime)
       this.statisticsData.systemUptime = uptime.systemUptime;
-    } else {
-      this.statisticsData.systemUptime = 'Loading...';
-    }
-    // await this.fetchFleetStatus('success-rate', { // yet to take..
-    //   mapId: mapId,
-    // });
-    // yet to uncomment..
-    // if (successRate.successRate)
-    //   this.statisticsData.successRate = successRate.successRate;
-    // let responsiveness = await this.fetchFleetStatus('system-responsiveness', {
-    //   mapId: mapId,
-    // });
-    // if (responsiveness.systemResponsiveness)
-    //   this.statisticsData.responsiveness = responsiveness.systemResponsiveness;
+    else this.statisticsData.systemUptime = 'Loading...';
   }
 
   async fetchCurrTasksStatus(): Promise<any[]> {
     let establishedTime = new Date(this.selectedMap.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
+
+    let endPoint = '/fleet-tasks/curr-task-activities';
+
+    if (this.abortControllers.has(endPoint))
+      this.abortControllers.get(endPoint)?.abort();
+
+    const abortController = new AbortController();
+    this.abortControllers.set(endPoint, abortController);
+
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/curr-task-activities`,
       {
@@ -234,6 +263,7 @@ export class StatisticsComponent {
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
+        signal: abortController.signal,
       }
     );
     // if(!response.ok) throw new Error(`Error occured with status code of : ${response.status}`)
@@ -283,6 +313,15 @@ export class StatisticsComponent {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime); // yet to take, in seri..
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
+
+    let endPoint = '/fleet-tasks';
+
+    if (this.abortControllers.has(endPoint))
+      this.abortControllers.get(endPoint)?.abort();
+
+    const abortController = new AbortController();
+    this.abortControllers.set(endPoint, abortController);
+
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
       {
@@ -294,6 +333,7 @@ export class StatisticsComponent {
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
+        signal: abortController.signal,
       }
     );
     // if(!response.ok) throw new Error(`Error occured with status code of : ${response.status}`)
@@ -332,16 +372,14 @@ export class StatisticsComponent {
       let completedTasks = tasksStatus[0];
       let errorTasks = tasksStatus[4];
       let cancelledTasks = tasksStatus[5];
-      if (
-        completedTasks === 0 ||
-        isNaN(completedTasks) ||
-        isNaN(errorTasks) ||
-        isNaN(cancelledTasks)
-      ) {
+      let inProgressTasks = tasksStatus[2];
+      if (isNaN(completedTasks) || isNaN(errorTasks) || isNaN(cancelledTasks)) {
         this.statisticsData.successRate = 'Loading...';
       } else {
         this.statisticsData.successRate = (
-          (completedTasks / (completedTasks + errorTasks)) * 100 || 0
+          ((completedTasks + errorTasks + cancelledTasks) /
+            (completedTasks + errorTasks + cancelledTasks + inProgressTasks)) *
+            100 || 0
         ).toFixed(2);
       }
       return tasksStatus;
@@ -393,5 +431,8 @@ export class StatisticsComponent {
     if (this.taskStatus_interval) clearInterval(this.taskStatus_interval);
     if (this.currTaskStatus_interval)
       clearInterval(this.currTaskStatus_interval);
+
+    this.abortControllers.forEach((controller) => controller.abort()); // forEach(val, key, map/arr/..)
+    this.abortControllers.clear();
   }
 }
