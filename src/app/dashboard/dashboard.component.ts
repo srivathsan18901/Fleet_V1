@@ -1746,9 +1746,10 @@ export class DashboardComponent implements AfterViewInit {
 
       // Draw the triangle pointing to the front
       ctx.beginPath();
-      ctx.moveTo(-circleRadius - triangleSize, 0); // Left of the circle
-      ctx.lineTo(-circleRadius, -triangleSize / 2); // Top corner
-      ctx.lineTo(-circleRadius, triangleSize / 2); // Bottom corner
+      ctx.moveTo(circleRadius + triangleSize, 0); // Right of the circle
+      ctx.lineTo(circleRadius, -triangleSize / 2); // Top corner
+      ctx.lineTo(circleRadius, triangleSize / 2); // Bottom corner
+      
       ctx.closePath();
 
       ctx.fillStyle = circleColor; // Same color as the circle

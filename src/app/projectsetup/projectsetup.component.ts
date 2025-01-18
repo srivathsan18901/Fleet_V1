@@ -45,8 +45,8 @@ export class ProjectsetupComponent {
 
   ngOnInit(): void {
     // hook
-    let pDet = this.cookieService.get('project-data');
-    console.log(pDet);
+    // let pDet = this.cookieService.get('project-data');
+    // console.log(pDet);
 
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/projects/project-list`,
@@ -190,7 +190,7 @@ export class ProjectsetupComponent {
           summary: data.msg,
           life: 4000, // Duration the toast will be visible
         });
-      };
+      }
       if (data.dupKeyErr || data.isZipValidate === false) {
         this.messageService.add({
           severity: 'error',
@@ -210,14 +210,21 @@ export class ProjectsetupComponent {
           severity: 'Project with has same id or contents already exists',
           summary: data.msg,
           life: 3000, // Duration the toast will be visible
-        });        this.projectService.clearProjectData();
+        });
+        this.projectService.clearProjectData();
       } else if (!data.idExist && data.nameExist) {
         return true;
       } else if (!data.err && !data.conflicts && data.user) {
         // console.log(data.user);
         // console.log(data.project[0]);
+        let project_data = {
+          _id: data.project[0]._id,
+          projectName: data.project[0].projectName,
+          createdAt: data.project[0].createdAt,
+          updatedAt: data.project[0].updatedAt,
+        };
         this.projectService.setProjectCreated(true); //
-        this.projectService.setSelectedProject(data.project[0]); //
+        this.projectService.setSelectedProject(project_data); //
         this.router.navigate(['/dashboard']);
       }
       return false;
@@ -260,12 +267,13 @@ export class ProjectsetupComponent {
     if (
       file.type !== 'application/zip' &&
       file.type !== 'application/x-zip-compressed'
-    ) {      this.messageService.add({
-      severity: 'error',
-      summary: 'Selection Error',
-      detail: 'File type not valid',
-      life: 3000, // Duration the toast will be visible
-    });
+    ) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Selection Error',
+        detail: 'File type not valid',
+        life: 3000, // Duration the toast will be visible
+      });
       return;
     }
     if (file) {

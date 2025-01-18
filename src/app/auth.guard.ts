@@ -38,7 +38,7 @@ export class AuthGuard implements CanActivate {
   }
 
   private checkLogin(url: string): boolean {
-    if (this.authService.isLoggedIn()) {
+    if (this.authService.isLoggedIn()) { // want to ensure with both _user and _token in cookie..
       // Redirect to /project_setup if logged in and accessing root
       if (url === '/') {
         this.router.navigate(['/project_setup']);

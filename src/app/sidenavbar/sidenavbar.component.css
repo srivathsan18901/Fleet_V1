@@ -572,17 +572,16 @@
     text-align: center;
   } */
   .timer {
-    /* background-color: rgb(160, 160, 160);  */
-    color: #ff3333; /* White font color */
-    font-family: "graphik", Arial,  sans-serif;
-    font-size: 20px;
-    /* padding: 5px 10px; */
-    border-radius: 5px;
-    margin-right: -0.5rem;
+    color: #ffffff;
+    font-family: "graphik", Arial, sans-serif;
+    font-size: 20px;    
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
     display: flex;
-    justify-content: center; /* Center horizontally */
-    align-items: center; /* Center vertically */
-    text-align: center; /* Center text */
+    justify-content: center;
+    position: relative;
+    top: 7px;
+    background-color: #ff3333;
   }
 
 /* profile */
@@ -620,19 +619,19 @@
 .Profile-popup {
   position: absolute;
   top: 50px;
-  right: 10px;
-  width: 319px;
+  right: 0px;
+  width: 245px;
   background-color: rgb(255, 252, 252);
+  -webkit-backdrop-filter: blur(10px);
   backdrop-filter: blur(10px);
-  box-shadow: 0 0 30px rgba(0, 0, 0, 0.3); /* Heavy box shadow */
   box-shadow: 0px 6px 6px -5px #FF7373, -6px 0px 6px -5px #FF7373, 6px 0px 6px -3px #FF7373;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  padding: 10px;
+  padding: 10px 5px;
   z-index: 10;
-  justify-items: center;
   transition: transform 0.5s ease, opacity 0.5s ease;
 }
+
 .logoutlabel{
   color: #ff3333;
   font-family: 'graphik', Arial, sans-serif;
@@ -642,18 +641,23 @@
   font-family: 'graphik', Arial, sans-serif;
   color: #ff3333;
   font-weight: bold;
+  margin-bottom: 5px;
+}
+.Projmsg{
+  font-family: "graphik", Arial, sans-serif;
+  color: #ff3333;
+  font-size: 12px;
+  margin-bottom: 0px;
 }
 .logoutIcon{
   display: flex;
   gap: 10px;
-  padding: 5px;
-  border-radius: 10px;  
-  width: fit-content;
+  padding: 10px; 
+  width: auto;
 }
 .logoutIcon:hover{
-  border: 1px solid #ff3333;
-  border-radius: 30px;
-  padding: 5px 10px;
+  background-color: #83818138;  
+  padding: 10px ;
 }
 .profile-header {
   display: flex;

@@ -26,7 +26,7 @@ import Swal from 'sweetalert2';
 })
 export class SidenavbarComponent implements OnInit {
   private subscription: Subscription = new Subscription();
-
+  projectName: string | null = null;
   username: string | null = null;
   userrole: string | null = null;
   robotActivities: any[] = [];
@@ -74,6 +74,7 @@ export class SidenavbarComponent implements OnInit {
 
   async ngOnInit() {
     this.selectedProject = this.projectService.getSelectedProject();
+    this.projectName = this.selectedProject.projectName;
     this.subscription = this.projectService.isFleetUp$.subscribe(
       async (status) => {
         console.log('Fleet status changed:', status);

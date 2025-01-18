@@ -8,14 +8,26 @@ import {
 import { Observable, endWith } from 'rxjs';
 import { ProjectService } from '../services/project.service';
 import { UserPermissionService } from '../services/user-permission.service';
-
+import { AuthService } from '../auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ProjectGuard implements CanActivate {
-  constructor(private projectService: ProjectService, private router: Router, private userPermissionService: UserPermissionService) {}
-  routes:string[] = ['/dashboard', '/statistics', '/robots', '/Reports', '/tasks', '/usermanagement']
+  constructor(
+    private projectService: ProjectService,
+    private router: Router,
+    private userPermissionService: UserPermissionService,
+    private authService: AuthService
+  ) {}
+  routes: string[] = [
+    '/dashboard',
+    '/statistics',
+    '/robots',
+    '/Reports',
+    '/tasks',
+    '/usermanagement',
+  ];
 
   canActivate(
     next: ActivatedRouteSnapshot,
@@ -26,7 +38,7 @@ export class ProjectGuard implements CanActivate {
     //PROTECTED ROUTING HERE
 
     // return this.checkProjectExist(url);
-    return this.checkProjectExist(url) && this.checkPermissions(url)
+    return this.checkProjectExist(url) && this.checkPermissions(url);
   }
 
   checkProjectExist(url: string): boolean {
@@ -47,12 +59,10 @@ export class ProjectGuard implements CanActivate {
   }
 
   checkPermissions(url: string): boolean {
-
-    
     // console.log(this.userPermissionService.getPermissions())
     const { generalPermissions } = this.userPermissionService.getPermissions();
     if (url == '/project_setup' || url === '/configuration') return true; // check later fr sure..
-  
+
     // Check permissions for each route
     if (url === '/dashboard' && generalPermissions.dashboard) {
       // this.router.navigate([url]);
@@ -80,17 +90,27 @@ export class ProjectGuard implements CanActivate {
     }
 
     let i = 0;
-    for(let page of Object.keys(generalPermissions)){
-      if(generalPermissions[page]){
+    for (let page of Object.keys(generalPermissions)) {
+      if (generalPermissions[page]) {
         this.router.navigate([this.routes[i]]);
         return true;
       }
       i += 1;
     }
-  
-    // Deny navigation and prevent route change
+
+    alert('No page has been enabled for you..!');
+    // ..
+    // let user = this.authService.getUser();
+    // if (!user) return false;
+    // // console.log(url);
+
+    // if (user.role === 'User') {
+    //   if (url === '/') return true;
+    //   this.router.navigate(['/']);
+    // } else if (url === '/project_setup') return true;
+
+    // this.router.navigate(['/project_setup']);
+    // ..
     return false;
   }
-  
-  
 }

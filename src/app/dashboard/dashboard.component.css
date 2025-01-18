@@ -764,7 +764,9 @@ input:checked ~ .slider {
   background-color: #f0453f; /* Red for Simulation */
 
 }
-
+.Config_btn{
+  color: #ff7373;
+}
 
 .blinking-svg {
   /* width: 95px;
