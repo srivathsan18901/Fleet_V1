@@ -22,6 +22,8 @@ import { NodeGraphService } from '../services/nodegraph.service';
 import { HeatmapService } from '../services/heatmap-service.service';
 import { log } from 'node:console';
 import { abort } from 'node:process';
+import html2canvas from 'html2canvas';
+
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
   MEDIUM_SPEED_ZONE = 'Medium Speed Zone',
@@ -2426,7 +2428,56 @@ export class DashboardComponent implements AfterViewInit {
     // if(this.isPanning){}
     document.body.style.cursor = this.isPanning ? 'grab' : 'default';
   }
-
+  // async captureCanvas() {
+  //   this.messageService.add({
+  //     severity: 'info',
+  //     summary: 'Capturing Screen',
+  //     detail: 'Screen Capturing Turned On ',
+  //     life: 4000,
+  //   });
+  
+  //   try {
+  //     // Select the root or container element you want to capture
+  //     const elementToCapture = document.getElementById('myCanvas'); // or document.getElementById('your-root-id')
+  
+  //     // Use html2canvas to capture the element
+  //     if (elementToCapture) {
+  //       const canvas = await html2canvas(elementToCapture, {
+  //         useCORS: true,
+  //         scale: 2,
+  //       });
+      
+  //       const imgData = canvas.toDataURL('image/png');
+  
+  //       // Create a link to download the image
+  //       const link = document.createElement('a');
+  //       link.href = imgData;
+  //       link.download = 'screenshot.png';
+  //       document.body.appendChild(link);
+  //       link.click();
+  //       document.body.removeChild(link);
+    
+  //       this.messageService.add({
+  //         severity: 'success',
+  //         summary: 'Capture Complete',
+  //         detail: 'Screen has been captured successfully!',
+  //         life: 4000,
+  //       });
+  //       // Rest of your logic here...
+  //     } else {
+  //       console.error('Element with ID "container" not found');
+  //     }
+  
+  //   } catch (err) {
+  //     console.error('Error capturing screen:', err);
+  //     this.messageService.add({
+  //       severity: 'error',
+  //       summary: 'Capture Failed',
+  //       detail: 'An error occurred while capturing the screen.',
+  //       life: 4000,
+  //     });
+  //   }
+  // }
   async captureCanvas() {
     this.messageService.add({
       severity: 'info',
