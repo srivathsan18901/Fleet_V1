@@ -663,6 +663,7 @@ export class DashboardComponent implements AfterViewInit {
   
   async toggleShowEdges() {
     this.showEdges = !this.showEdges;
+    this.redrawCanvas();
   }
   
   async toggleAssignTask() {
@@ -854,29 +855,31 @@ export class DashboardComponent implements AfterViewInit {
     this.nodes.forEach((node) => {
       const transformedY = img.height - node.nodePosition.y;
       this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
-    });
+    });    
     if(this.showEdges)
-    this.edges.forEach((edge) => {
-      const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
-      const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
-      if (startNode && endNode) {
-        const startPos = {
-          x: startNode.nodePosition.x,
-          y: startNode.nodePosition.y,
-        };
-        const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
-        const transformedStartY = img.height - startPos.y;
-        const transformedEndY = img.height - endPos.y;
-        this.drawEdge(
-          ctx,
-          { x: startPos.x, y: transformedStartY },
-          { x: endPos.x, y: transformedEndY },
-          edge.direction,
-          edge.startNodeId,
-          edge.endNodeId
-        );
-      }
-    });
+      this.edges.forEach((edge) => {
+        const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
+        const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
+        if (startNode && endNode) {
+          const startPos = {
+            x: startNode.nodePosition.x,
+            y: startNode.nodePosition.y,
+          };
+          const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
+          const transformedStartY = img.height - startPos.y;
+          const transformedEndY = img.height - endPos.y;
+          this.drawEdge(
+            ctx,
+            { x: startPos.x, y: transformedStartY },
+            { x: endPos.x, y: transformedEndY },
+            edge.direction,
+            edge.startNodeId,
+            edge.endNodeId
+          );
+        }
+      });      
+    
+
 
     this.zones.forEach((zone) => {
       this.plottedPoints = zone.pos;
