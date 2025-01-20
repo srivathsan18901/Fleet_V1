@@ -1,13 +1,14 @@
 <div class="topbar" >
+  <div class="Projmsg1">
+    <p class="Projmsg_t">Project: </p>
+    <p class="Projmsg_N">{{ projectName }}</p>
+    </div>
   <div class="TopbarContents">
   <app-loader></app-loader>
     <!-- <div class="timer">
       <app-timer></app-timer>
     </div> -->
-    <div class="Projmsg1">
-    <p class="Projmsg_t">Project: </p>
-    <p class="Projmsg_N">{{ projectName }}</p>
-    </div>
+
     <!-- Fleet Status Indicator -->
     <div class="fleet-status" [ngClass]="{'fleet-up': isFleetUp, 'fleet-down': !isFleetUp}">
       <img [src]="isFleetUp ? '../../assets/Liveoff.svg' : '../../assets/Liveon.svg'">

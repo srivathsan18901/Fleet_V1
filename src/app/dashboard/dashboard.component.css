@@ -108,7 +108,7 @@ canvas {
 }
 .ONBtn1 {
   position: absolute;
-  top: 825px;
+  bottom: 38px;
   right: 44px;
   /* padding: 21px 30px 0px 0px; */
   cursor: pointer;

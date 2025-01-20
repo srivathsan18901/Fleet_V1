@@ -22,7 +22,6 @@ import { NodeGraphService } from '../services/nodegraph.service';
 import { HeatmapService } from '../services/heatmap-service.service';
 import { log } from 'node:console';
 import { abort } from 'node:process';
-
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
   MEDIUM_SPEED_ZONE = 'Medium Speed Zone',
