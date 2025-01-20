@@ -4,7 +4,7 @@
     <!-- <div class="timer">
       <app-timer></app-timer>
     </div> -->
-
+    <p class="Projmsg">Project: {{ projectName }}</p>
     <!-- Fleet Status Indicator -->
     <div class="fleet-status" [ngClass]="{'fleet-up': isFleetUp, 'fleet-down': !isFleetUp}">
       <img [src]="isFleetUp ? '../../assets/Liveoff.svg' : '../../assets/Liveon.svg'">
@@ -61,17 +61,17 @@
 <div class="Profile-popup" *ngIf="showProfilePopup" > 
   <div style="text-align: center; margin-bottom: 5px; border-radius: 4px; border-bottom: 1px solid #ff3333;">
   <p class="msg">Hello, {{ username }}</p>
-  <p class="Projmsg">Project: {{ projectName }}</p>
+  <!-- <p class="Projmsg">Project: {{ projectName }}</p> -->
   </div>
   <div class="Option_set">
   <div class="logoutIcon" (click)="exportProject()">
     <img src="../../assets/Export.svg" alt="" class="Outlogo" />
     <span class="logoutlabel">Export Project</span>
   </div>
-  <div class="logoutIcon" (click)="showLogoutConfirmation = true">
+  <!-- <div class="logoutIcon" (click)="showLogoutConfirmation = true">
     <img src="../../assets/icons/Logout.svg " alt="" class="Outlogo" />
     <span class="logoutlabel">Logout</span>
-  </div>
+  </div> -->
 </div>
   <div class="timer">
     <app-timer></app-timer>

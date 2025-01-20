@@ -115,6 +115,7 @@ export class DashboardComponent implements AfterViewInit {
   private recorder: any;
   private stream: MediaStream | null = null; // Store the MediaStream here
   showModelCanvas: boolean = false; // Initially hide the modelCanvas
+  showEdges: boolean = false;
   assignTask: boolean = false;
   isShowPath: boolean = false;
   isShowRoboPath: boolean = false;
@@ -327,6 +328,7 @@ export class DashboardComponent implements AfterViewInit {
     await this.getMapDetails();
     // this.showModelCanvas = false;
     this.nodeGraphService.setShowModelCanvas(false);
+    this.showModelCanvas = false; // no need in later..
     this.nodeGraphService.setAssignTask(false);
     this.cdRef.detectChanges();
     this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
@@ -658,8 +660,14 @@ export class DashboardComponent implements AfterViewInit {
       console.error('Error updating map:', error);
     }
   }
+  
+  async toggleShowEdges() {
+    this.showEdges = !this.showEdges;
+  }
+  
   async toggleAssignTask() {
     this.nodeGraphService.setShowModelCanvas(false);
+    this.showModelCanvas = false;
     this.nodeGraphService.setAssignTask(!this.nodeGraphService.getAssignTask());
     if (this.isInLive) {
       await this.getLivePos();
@@ -685,6 +693,7 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setShowModelCanvas(
       !this.nodeGraphService.getShowModelCanvas()
     );
+    this.showModelCanvas = this.nodeGraphService.getShowModelCanvas()
     if (this.isInLive) {
       // this.initSimRoboPos();
       await this.getLivePos();
@@ -846,7 +855,7 @@ export class DashboardComponent implements AfterViewInit {
       const transformedY = img.height - node.nodePosition.y;
       this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
     });
-
+    if(this.showEdges)
     this.edges.forEach((edge) => {
       const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
       const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
@@ -1477,6 +1486,7 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     // Draw edges between nodes
+    if(this.showEdges)
     this.edges.forEach((edge) => {
       const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
       const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
@@ -2061,6 +2071,7 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     // Plot edges with scaling and centering
+    if(this.showEdges)
     this.edges.forEach((edge) => {
       const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
       const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
