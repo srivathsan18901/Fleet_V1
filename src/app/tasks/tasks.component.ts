@@ -163,13 +163,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
     console.log(data, 'task data');
     if (!data.tasks) return;
     const { tasks } = data.tasks;
-    if (!('tasks' in data.tasks)) {
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Warning',
-        detail: 'Task lists are empty.',
-      });
-    }
+    // if (!('tasks' in data.tasks)) {
+    //   this.messageService.add({
+    //     severity: 'warn',
+    //     summary: 'Warning',
+    //     detail: 'Task lists are empty.',
+    //   });
+    // }
 
     if (tasks)
       this.tasks = tasks.map((task: any) => {
