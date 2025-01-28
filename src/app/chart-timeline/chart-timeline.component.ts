@@ -155,7 +155,7 @@ export class ChartTimelineComponent implements OnInit {
             fontSize: '12px',
           },
           formatter: function (value: number) {
-            return value.toFixed(2); // Ensure two decimal places
+            return value.toFixed(1); // Ensure two decimal places
           },
         },
       },

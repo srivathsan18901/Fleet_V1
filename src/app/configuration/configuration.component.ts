@@ -394,6 +394,7 @@ export class ConfigurationComponent implements AfterViewInit {
     } catch (error) {
       console.log(error);
     }
+    
   }
 
   // edit robo..
@@ -590,6 +591,7 @@ export class ConfigurationComponent implements AfterViewInit {
         this.paginator.length = this.filteredRobotData.length;
         // console.log(this.filteredRobotData);
       }
+      
     }
   }
 
@@ -626,12 +628,13 @@ export class ConfigurationComponent implements AfterViewInit {
         )
       );
     }
-
+    
     // Reset the paginator after filtering
     if (this.paginator) {
       this.paginator.firstPage();
     }
-
+    this.paginatedData1 = this.filteredRobotData
+    
     this.setPaginatedData(); // Update paginated data after filtering
   }
 

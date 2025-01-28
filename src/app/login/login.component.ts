@@ -8,7 +8,7 @@ import { env } from 'node:process';
 import { MessageService } from 'primeng/api';
 import { UserPermissionService } from '../services/user-permission.service';
 import { SessionService } from '../services/session.service';
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -151,7 +151,7 @@ export class LoginComponent {
       }),
     })
       .then((res) => {
-        // console.log(res,'---response')
+        // console.log(res, '---response');
         if (res.status === 404 || res.status === 401) {
           this.errorMessage =
             "*Wrong password or user with this role doesn't exist";
@@ -178,11 +178,11 @@ export class LoginComponent {
         if (data.isUserInSession) {
           // alert(data.msg);
           Swal.fire({
-            position: "center",
-            icon: "warning",
+            position: 'center',
+            icon: 'warning',
             html: `<span style="font-size: 20px;">${data.msg}</span>`,
             showConfirmButton: true,
-          });          
+          });
           return;
         }
         this.sessionService.setMaxAge(data.maxAge);
@@ -194,8 +194,9 @@ export class LoginComponent {
           if (data.user.role === 'User') {
             // console.log('user initilalized')
 
-            if (!data.project) {
+            if (!data.user.projects || !data.user.projects.length) {
               alert('No project has been assigned to this user.');
+              this.authService.logout();
               return;
             }
             this.authService.login({
@@ -203,18 +204,17 @@ export class LoginComponent {
               role: data.user.role,
             });
             let project_data = {
-              _id: data.project._id,
-              projectName: data.project.projectName,
-              createdAt: data.project.createdAt,
-              updatedAt: data.project.updatedAt,
+              _id: data.user.projects[0].projectId,
+              projectName: data.user.projects[0].projectName,
+              createdAt: JSON.stringify(new Date()), // data.projects[0].createdAt
+              updatedAt: JSON.stringify(new Date()), // data.projects[0].createdAt
             };
+
             this.projectService.setSelectedProject(project_data);
             this.projectService.setProjectCreated(true);
             this.messageService.add({
               severity: 'success',
-              summary: `Welcome ${this.projectService.setSelectedProject(
-                data.project
-              )}`,
+              summary: `Welcome ${data.user.projects[0].projectName}`,
               detail: 'Authentication Success',
               life: 4000,
             });

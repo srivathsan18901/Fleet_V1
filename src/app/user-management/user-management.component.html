@@ -366,6 +366,7 @@
         <div [ngClass]="{
             'transform translate-x-0': pages[0].isOpen,
             'transform translate-x-[100%]': pages[1].isOpen,
+            'transform translate-x-[200%]': pages[2].isOpen,
           }" class="flex absolute w-[180px] h-[50px] rounded-md duration-300 bg-[#FF3333]">
 
         </div>
@@ -463,24 +464,48 @@
           </div>
         </div>
       </div>
-
-
-
+      <!-- PROJECT Tab -->
+      <div class="absolute top-0 left-0 w-full h-full overflow-y-auto transition-transform duration-500 ease-in-out" [class.translate-x-0]="activeTab === 'PROJECT'" [class.translate-x-[100%]]="activeTab !== 'PROJECT'" >
+      <!-- Table -->
+      <div class="p-4">
+        <table class="table-auto w-full rounded-md ">
+          <!-- Table Head -->
+          <thead>
+            <tr class="bg-[#ffcdcd]  rounded-md">
+              <th class="px-4 py-4 text-left">Project Name</th>
+              <th class="px-4 py-4 text-left">Created At</th>
+              <th class="px-4 py-4">Assign Project</th>
+            </tr>
+          </thead>
+          <!-- Table Body -->
+          <tbody >
+            <tr *ngFor="let project of projects; let i = index" [ngClass]="{ 'bg-[#ffeeee]': i % 2 === 1 }" >
+              <td class="px-4 py-2">{{ project.name }}</td>
+              <td class="px-4 py-2">{{ project.createdAt }}</td>
+              <td class="px-4 py-2 text-center">
+                <button
+                class="px-1 py-1 text-[12px] rounded text-white"
+                [ngClass]="{
+                  'bg-transparent border-2 border-[black]-800 text-black': !project.assigned,
+                  'bg-red-500 text-white': project.assigned,
+                  'blur-sm opacity-50 cursor-not-allowed': isAnyAssigned && !project.assigned
+                }"
+                (click)="toggleAssign(project)"
+                [disabled]="isAnyAssigned && !project.assigned"
+              >
+                {{ project.assigned ? 'Un-Assign' : 'Assign' }}
+              </button>
+              
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
     </div>
 
   </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
 
 <!-- Delete User Permission -->
 <div *ngIf="deleteUserOCstate" class="absolute flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50">

@@ -99,6 +99,7 @@ export class ProjectGuard implements CanActivate {
     }
 
     alert('No page has been enabled for you..!');
+    this.authService.logout(); // to stay in login..
     // ..
     // let user = this.authService.getUser();
     // if (!user) return false;

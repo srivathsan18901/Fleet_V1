@@ -339,9 +339,9 @@
 }
 
 @media (min-width: 1200px) {
-  .statistics-container {
-    height: 70vh; /* Larger screens will have 70% of viewport height */
-  }
+  /* .statistics-container {
+    height: 70vh; Larger screens will have 70% of viewport height
+  } */
 
   .stat-card {
     height: 13vh; /* Fixed height for larger screens */

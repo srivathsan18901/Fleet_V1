@@ -7,7 +7,6 @@ import {
   OnDestroy,
   ChangeDetectorRef,
 } from '@angular/core';
-
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ProjectService } from '../services/project.service';
@@ -18,12 +17,18 @@ import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
 import { SessionService } from '../services/session.service';
 import Swal from 'sweetalert2';
-
+import { TranslationService } from '../services/translation.service';
+interface Flag {
+  flagComp: string; // Type based on your data, e.g., string for SVG content
+  nameTag: "ENG" | "JAP" | "FRE" | "GER"; // Type based on your data, e.g., string for the flag name
+  order: number; // Assuming 'order' is also part of each flag object
+}
 @Component({
   selector: 'app-sidenavbar',
   templateUrl: './sidenavbar.component.html',
   styleUrls: ['./sidenavbar.component.css'],
 })
+
 export class SidenavbarComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   projectName: string | null = null;
@@ -32,23 +37,18 @@ export class SidenavbarComponent implements OnInit {
   robotActivities: any[] = [];
   fleetActivities: any[] = [];
   selectedMap: any | null = null;
-
   showNotificationPopup = false; // Property to track popup visibility
   showProfilePopup = false;
   isSidebarEnlarged = false; // Property to track sidebar enlargement
   cookieValue: any;
-
   isNotificationVisible = false;
   languageArrowState = false;
   isFleetUp: boolean = false; // Set to true or false based on your logic
   // isAmqpUp: boolean = false;
-
   private autoCloseTimeout: any;
   notifications: any[] = [];
   private subscriptions: Subscription[] = [];
-
   processedErrors: Set<string>; // To track processed errors
-
   filteredRobotActivities = this.robotActivities;
   filteredNotifications = this.notifications;
   userManagementData: any;
@@ -65,14 +65,50 @@ export class SidenavbarComponent implements OnInit {
     private userPermissionService: UserPermissionService,
     private eRef: ElementRef,
     private cookieService: CookieService,
+    private renderer: Renderer2,
     private sessionService: SessionService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private translationService: TranslationService
   ) {
     this.userManagementData = this.userPermissionService.getPermissions();
     this.processedErrors = new Set<string>(); // yet to noify later..
   }
 
   async ngOnInit() {
+    this.renderer.listen('document', 'click', (event: Event) => {
+      const target = event.target as HTMLElement;
+      const notificationElement = this.eRef.nativeElement.querySelector('.notification-popup');
+      const profileElement = this.eRef.nativeElement.querySelector('.Profile-popup');
+      const languageDropdownElement = this.eRef.nativeElement.querySelector('.language-dropdown');
+      const languageToggleElement = this.eRef.nativeElement.querySelector('.language-toggle');
+      if (
+        this.showProfilePopup &&
+        profileElement &&
+        !profileElement.contains(target) &&
+        !target.classList.contains('PPicon') // Profile icon
+      ) {
+        this.showProfilePopup = false;
+      }
+      if (
+        this.showNotificationPopup &&
+        notificationElement &&
+        !notificationElement.contains(target) &&
+        !target.classList.contains('Nlogo') // Notification icon
+      ) {
+        this.showNotificationPopup = false;
+      }
+
+    // Close Language Dropdown
+    if (
+      this.languageArrowState && // Check if the dropdown is open
+      languageDropdownElement &&
+      !languageDropdownElement.contains(target) &&
+      languageToggleElement !== target && // Ensure the toggle is excluded
+      !languageToggleElement.contains(target)
+    ) {
+      this.languageArrowState = false; // Close the language dropdown
+    }
+    });
     this.selectedProject = this.projectService.getSelectedProject();
     this.projectName = this.selectedProject.projectName;
     this.subscription = this.projectService.isFleetUp$.subscribe(
@@ -431,57 +467,37 @@ export class SidenavbarComponent implements OnInit {
     }
   }
 
-  toggleNotificationPopup() {
-    this.showNotificationPopup = !this.showNotificationPopup;
-  }
+
   // Function to show the notification popup
   showNotification() {
-    this.isNotificationVisible = true;
+    this.showNotificationPopup = true;
     this.languageArrowState = false;
     this.showProfilePopup = false;
-    this.startAutoClose(); // Start auto-close timer when popup is shown
   }
 
-  // Function to close the notification popup
+  
   closeNotification() {
-    this.isNotificationVisible = false;
-    this.clearAutoClose(); // Clear the timer if manually closed
+    this.showNotificationPopup = false;
   }
 
-  // Start the auto-close after 5 seconds
-  startAutoClose() {
-    this.clearAutoClose(); // Clear any existing timer
-    this.autoCloseTimeout = setTimeout(() => {
-      this.closePopup();
-      this.languageArrowState = false;
-    }, 5000); // 5 seconds
-  }
-
-  // Cancel auto-close when the mouse is over the popup
-  cancelAutoClose() {
-    this.clearAutoClose();
-  }
-
-  // Clear the auto-close timeout
-  clearAutoClose() {
-    if (this.autoCloseTimeout) {
-      clearTimeout(this.autoCloseTimeout);
-      this.autoCloseTimeout = null;
-    }
-  }
 
   closePopup() {
     this.languageArrowState = false;
     this.showProfilePopup = false;
-    this.isNotificationVisible = false;
+    this.showNotificationPopup = false;
   }
 
   toggleProfilePopup() {
     this.showProfilePopup = !this.showProfilePopup;
-    this.isNotificationVisible = false;
+    this.showNotificationPopup = false;
     this.languageArrowState = false;
   }
-
+  toggleNotificationPopup(event: Event){
+    event.stopPropagation();
+    this.showNotificationPopup = !this.showNotificationPopup;
+    this.showProfilePopup = false;
+    this.languageArrowState = false;
+  }
   toggleSidebar(isEnlarged: boolean) {
     this.isSidebarEnlarged = isEnlarged;
   }
@@ -507,7 +523,15 @@ export class SidenavbarComponent implements OnInit {
   }
 
   // language
-  flags = [];
+
+  
+  flags: Flag[] = [
+    { flagComp: '<img src="../../assets/Language/Eng.svg">', nameTag: 'ENG', order: 0 },
+    { flagComp: '<img src="../../assets/Language/Jap.svg">', nameTag: 'JAP', order: 1 },  
+    { flagComp: '<img src="../../assets/Language/Fre.svg">', nameTag: 'FRE', order: 2 },  
+    { flagComp: '<img src="../../assets/Language/Ger.svg">', nameTag: 'GER', order: 3 }, 
+  ];
+  
 
   trackFlag(index: number, flag: any): number {
     return flag.order; // Use the unique identifier for tracking
@@ -519,15 +543,18 @@ export class SidenavbarComponent implements OnInit {
     this.showProfilePopup = false;
   }
 
-  // flagSvg = this.flags[0].flagComp;
-  // flagName = this.flags[0].nameTag;
+  flagSvg = this.flags[0].flagComp;
+  flagName = this.flags[0].nameTag;
 
   changeFlag(order: number) {
-    // this.flagSvg = this.flags[order].flagComp;
-    // this.flagName = this.flags[order].nameTag;
-    this.languageChange();
+    const selectedLanguage = this.flags[order].nameTag;
+    this.flagSvg = this.flags[order].flagComp;
+    this.flagName = this.flags[order].nameTag;
+    this.translationService.setLanguage(selectedLanguage);
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getsideNavTranslation(key);
+  }
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
     let startTimeOfDay = this.getStartOfDay(establishedTime);

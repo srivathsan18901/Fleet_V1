@@ -458,8 +458,8 @@
 .filter{
   display: flex;
   position: absolute;
-  top: 132px;
-  right: 25px;
+  top: 136px;
+  right: 22px;
   justify-content: end;
   background-color: #f7f7f7;
   padding:10px 15px;
@@ -473,10 +473,10 @@
   font-family: 'graphik', Arial, sans-serif;
 }
 .filter select{
-  background: transparent;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.355);
+  background: #ffffff;
   margin-left: 10px;
-  border-radius: 5px;
+  border-radius: 25px;
+  padding: 3px;
 }
 .robot-filter{
   margin-right: 10px;
@@ -485,7 +485,8 @@
   background: #ff5c5c;
   color: white;
   padding: 0px 5px;
-  border-radius: 10px;
+  font-size: 13px;
+  border-radius: 5px;
 }
 .btn-disabled {
   background: #f09e98; /* Red for cancel */

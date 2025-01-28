@@ -77,8 +77,7 @@ import { TaskComponent } from './configuration/Addons/task/task.component';
 import { HeatmapComponent } from './heatmap/heatmap.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 // import { NotAuthorizedComponent } from './guards/not-authorized/not-authorized.component';
-
-
+import { BadgeModule } from "primeng/badge";
 
 @NgModule({
   declarations: [
@@ -126,8 +125,6 @@ import { NgxSpinnerModule } from "ngx-spinner";
     CommunicationComponent,
     TaskComponent,
     HeatmapComponent,
-
-
   ],
   imports: [
     MatRadioModule,
@@ -160,11 +157,11 @@ import { NgxSpinnerModule } from "ngx-spinner";
     PaginatorModule,
     BrowserAnimationsModule,
     NgxSpinnerModule,
+    BadgeModule
     // TableModule
   ],
   providers: [
     // provideClientHydration()
-
     provideAnimationsAsync(),
     MessageService,
   ],

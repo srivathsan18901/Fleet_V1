@@ -41,17 +41,21 @@ export class TasksComponent implements OnInit, AfterViewInit {
   clearFilters() {
     this.selectedStatus = '';
     this.selectedRobot = '';
-  
+
     // Reset the value of the select elements
-    const statusFilterElement = document.getElementById('status-filter') as HTMLSelectElement;
-    const robotFilterElement = document.getElementById('robot-filter') as HTMLSelectElement;
-  
+    const statusFilterElement = document.getElementById(
+      'status-filter'
+    ) as HTMLSelectElement;
+    const robotFilterElement = document.getElementById(
+      'robot-filter'
+    ) as HTMLSelectElement;
+
     if (statusFilterElement) statusFilterElement.value = '';
     if (robotFilterElement) robotFilterElement.value = '';
-  
+
     // Reapply filters to display all data
     this.applyFilters();
-  }  
+  }
   trackByTaskId(index: number, item: any): number {
     return item.taskId; // or any unique identifier like taskId
   }
@@ -127,7 +131,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
 
   constructor(
@@ -199,9 +202,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.setPaginatedData(); // Set initial paginated data after view is initialized
   }
   isDisabled(status: string): boolean {
-    return status === 'COMPLETED' || status === 'CANCELLED' || status === 'FAILED';
+    return (
+      status === 'COMPLETED' || status === 'CANCELLED' || status === 'FAILED'
+    ); // || status === 'INPROGRESS'
   }
-  
+
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
     let startTimeOfDay = this.getStartOfDay(establishedTime);

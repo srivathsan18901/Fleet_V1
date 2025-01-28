@@ -61,6 +61,8 @@ export class StatisticsComponent {
 
   onViewAllClick() {
     this.router.navigate(['/tasks']); // Navigate to tasks page
+    console.log('hey');
+    
   }
 
   setView(view: string): void {

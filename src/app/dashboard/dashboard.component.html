@@ -14,8 +14,8 @@
 
       <!-- Text -->
       <p class="py-4 font-bold text-[24px] text-[#00000050] -mt-20">
-        - No Maps Selected, Please Select Map from
-        <button class="Config_btn" routerLink="/configuration" routerLinkActive="active">Configuration</button> -
+        {{ getTranslation('noMapText') }}
+        <button class="Config_btn" routerLink="/configuration" routerLinkActive="active">{{ getTranslation('noMapButtonText') }}</button> -
       </p>
     </div>
     <div *ngIf="canvasNoImage" class="no-map-container">
@@ -27,7 +27,7 @@
 
       <!-- Text -->
       <p class="py-4 font-bold text-[24px] text-[#00000050] -mt-20">
-        - No Maps Found -
+        {{ getTranslation('noMapsFoundText') }}
       </p>
     </div>
     <div
@@ -79,7 +79,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Initialization</p>
+        <p>{{ getTranslation('initialization') }}</p>
       </div>
       <div style="display: flex; flex-direction: row">
         <div
@@ -90,7 +90,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Configuration</p>
+        <p>{{ getTranslation('configuration') }}</p>
       </div>
       <div style="display: flex; flex-direction: row">
         <div
@@ -101,7 +101,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Pause</p>
+        <p>{{ getTranslation('pause') }}</p>
       </div>
       <div style="display: flex; flex-direction: row">
         <div
@@ -112,7 +112,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Error</p>
+        <p>{{ getTranslation('error') }}</p>
       </div>
       <div style="display: flex; flex-direction: row">
         <div
@@ -123,7 +123,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Waiting</p>
+        <p>{{ getTranslation('waiting') }}</p>
       </div>
       <div style="display: flex; flex-direction: row">
         <div
@@ -134,7 +134,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Idle</p>
+        <p>{{ getTranslation('idle') }}</p>
       </div>
       <!-- MOVESTATE -->
       <div style="display: flex; flex-direction: row">
@@ -146,7 +146,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Moving</p>
+        <p>{{ getTranslation('moving') }}</p>
       </div>
       <!-- DOCKSTATE -->
       <div style="display: flex; flex-direction: row">
@@ -158,7 +158,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Docking</p>
+        <p>{{ getTranslation('docking') }}</p>
       </div>
       <!-- UNDOCKSTATE -->
       <div style="display: flex; flex-direction: row">
@@ -170,7 +170,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Undocking</p>
+        <p>{{ getTranslation('undocking') }}</p>
       </div>
       <!-- LOADSTATE -->
       <div style="display: flex; flex-direction: row">
@@ -182,7 +182,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Loading</p>
+        <p>{{ getTranslation('loading') }}</p>
       </div>
       <!-- UNLOADSTATE -->
       <div style="display: flex; flex-direction: row">
@@ -194,7 +194,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Unloading</p>
+        <p>{{ getTranslation('unloading') }}</p>
       </div>
       <!-- CHARGESTATE -->
       <div style="display: flex; flex-direction: row">
@@ -206,7 +206,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Charging</p>
+        <p>{{ getTranslation('charging') }}</p>
       </div>
       <!-- FAILEDSTATE -->
       <div style="display: flex; flex-direction: row">
@@ -218,7 +218,7 @@
             margin-right: 10px;
           "
         ></div>
-        <p>Failed</p>
+        <p>{{ getTranslation('failed') }}</p>
       </div>
     </div>
     <!-- dashboard.component.html -->
@@ -289,7 +289,7 @@
     <div class="dropdown" *ngIf="isImage">
       <!-- Dropdown Button with Arrow -->
       <button class="dropdown-button" (click)="toggleDropdown()">
-        Enable Robot
+        {{ getTranslation('enableRobot') }}
         <svg
           [ngClass]="{ rotate: isDropdownOpen }"
           class="duration-300"
@@ -412,13 +412,28 @@
       />
     </div> -->
     <div class="ONBtn1" *ngIf="isImage && showModelCanvas">
-      <button class="AT-btn1" (click)="toggleShowEdges()"><img src="../../assets/edges.svg" style="float:left;margin-right:0.5em">Show Edges</button>
+      <button class="AT-btn1" (click)="toggleShowEdges()"><img src="../../assets/edges.svg" style="float:left;margin-right:0.5em">{{ getTranslation('showEdges') }}</button>
     </div>
 
+    <div class="ONBtn2" *ngIf="isImage">
+      <button
+        class="AT-btn2"
+        [ngClass]="{ 'bg-red-500 text-white': !isClicked, 'bg-green-500 text-black': isClicked }"
+        (click)="toggleButton()"
+      >
+        <img
+          [src]="isClicked ? '../../assets/pause.svg' : '../../assets/resume.svg'"
+          style="float: left; margin-right: 0.5em"
+        />
+        {{ !isClicked ? getTranslation('pauseText') : getTranslation('resumeText') }}
+      </button>
+    </div>
     <div class="ONBtn" *ngIf="isImage">
-      <button class="AT-btn" (click)="toggleAssignTask()"><img src="../../assets/Task.svg" style="float:left;margin-right:0.5em">Assign Task</button>
+      <button class="AT-btn" (click)="toggleAssignTask()"><img src="../../assets/Task.svg" style="float:left;margin-right:0.5em">{{ getTranslation('assignTask') }}</button>
     </div>
 
+    
+    
     <!-- Floor Selector -->
     <div class="FloorSelector" *ngIf="ONBtn"></div>
 
@@ -435,7 +450,7 @@
             class="Zoom"
             (click)="zoomIn()"
           />
-          <span class="tooltiptext">Zoom In</span>
+          <span class="tooltiptext">{{ getTranslation('zoomIn') }}</span>
         </div>
 
         <!-- Zoom Out -->
@@ -445,7 +460,7 @@
             class="ZoomOut"
             (click)="zoomOut()"
           />
-          <span class="tooltiptext">Zoom Out</span>
+          <span class="tooltiptext">{{ getTranslation('zoomOut') }}</span>
         </div>
 
         <!-- Pan -->
@@ -455,7 +470,7 @@
             class="Expand"
             (click)="togglePan()"
           />
-          <span class="tooltiptext">Pan</span>
+          <span class="tooltiptext">{{ getTranslation('pan') }}</span>
         </div>
 
         <!-- Capture -->
@@ -465,7 +480,7 @@
             class="Capture"
             (click)="captureCanvas()"
           />
-          <span class="tooltiptext">Capture</span>
+          <span class="tooltiptext">{{ getTranslation('capture') }}</span>
         </div>
 
         <!-- Record -->
@@ -480,7 +495,7 @@
             (click)="toggleRecording()"
           />
           <span class="tooltiptext">{{
-            recording ? "Stop Recording" : "Start Recording"
+            recording ?  getTranslation('startRecording') : getTranslation('stopRecording')
           }}</span>
         </div>
 
@@ -491,7 +506,7 @@
             class="Pointer"
             (click)="toggleDashboard()"
           />
-          <span class="tooltiptext">Dashboard</span>
+          <span class="tooltiptext">{{ getTranslation('dashboard') }}</span>
         </div>
 
         <!-- Model Canvas -->
@@ -501,7 +516,7 @@
             class="ModelCanvas"
             (click)="toggleShowPath()"
           />
-          <span class="tooltiptext">Show Path</span>
+          <span class="tooltiptext">{{ getTranslation('showPath') }}</span>
         </div>
         <div class="tooltip">
           <img
@@ -509,7 +524,7 @@
             class="ModelCanvas"
             (click)="toggleHeatmap()"
           />
-          <span class="tooltiptext">Heat Map</span>
+          <span class="tooltiptext">{{ getTranslation('heatMap') }}</span>
         </div>
         <div class="tooltip">
           <img
@@ -517,7 +532,7 @@
             class="ModelCanvas"
             (click)="toggleModelCanvas()"
           />
-          <span class="tooltiptext">Map Option</span>
+          <span class="tooltiptext">{{ getTranslation('mapOption') }}</span>
         </div>
       </div>
       <!-- <div class="tooltip">
@@ -546,21 +561,21 @@
       <div class="Chart2_Chart3">
         <div class="Chart2-container">
           <div class="Chart2" [ngClass]="{ blurred: ONBtn }">
-            <p>Uptime</p>
+            <p>{{ getTranslation('uptime') }}</p>
             <div class="U-Chart">
               <app-uptime [ONBtn]="ONBtn"></app-uptime>
             </div>
             <!-- Label centered inside Chart2 container -->
-            <span class="chart-label">Total Uptime</span>
+            <span class="chart-label">{{ getTranslation('totalUptime') }}</span>
           </div>
         </div>
 
         <div class="Chart3-container">
           <div class="Chart3" [ngClass]="{ blurred: ONBtn }">
-            <p class="chart-title">Robots</p>
+            <p class="chart-title">{{ getTranslation('robots') }}</p>
             <!-- Top-left title -->
             <app-chart1 [isFleet]="this.isFleet" [ONBtn]="ONBtn"> </app-chart1>
-            <span class="chart-label">No of Robots</span>
+            <span class="chart-label">{{ getTranslation('noOfRobots') }}</span>
           </div>
         </div>
       </div>
@@ -577,17 +592,17 @@
 
 <div id="robo-popup" style="position: absolute; display: none; padding: 10px">
   <!-- <button *ngIf="!moveEnabled" (click)="enableMove()">Move</button> -->
-  <button (click)="initializeRobo()">
-    {{ updatedrobo?.isInitialized ? "Release Robot" : "Initialize Robot" }}
+  <button (click)="initializeRobo()" *ngIf="!isFleet">
+    {{ updatedrobo?.isInitialized ? getTranslation('releaseRobot') : getTranslation('initializeRobot') }}
   </button>
-  <button (click)="toggleShowRoboPath()">Show Path</button>
-  <button (click)="cancelAction()">Cancel</button>
+  <button (click)="toggleShowRoboPath()">{{ getTranslation('showPath') }}</button>
+  <button (click)="cancelAction()">{{ getTranslation('cancel') }}</button>
 </div>
 
 <div id="assignTask-popup" style="position: absolute; display: none; padding: 10px;background: linear-gradient(#e66464b2, #ffffff71);;backdrop-filter: blur(5px); border: 1px solid #ccc; border-radius: 8px;filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404)); z-index: 1000;">
   <div class="ATactions">
   <div>
-  <label class="idlabel" for="robot-select">Robot ID:</label>
+  <label class="idlabel" for="robot-select">{{ getTranslation('robotID') }}:</label>
   <select class="idDD" id="robot-select" [(ngModel)]="roboToAssign">
     <option [value]="'Default'" disabled>Default</option>
     <option *ngFor="let robo of currentRoboList" [value]="robo">
@@ -596,18 +611,18 @@
   </select>
   </div>
   <div>
-  <label class="idlabel" for="robot-select">Action:</label>
+  <label class="idlabel" for="robot-select">{{ getTranslation('action') }}:</label>
   <select class="idDD" id="robot-select" [(ngModel)]="taskAction">
-    <option value="MOVE">Move</option>
-    <option value="PICK">Pick</option>
-    <option value="DROP">Drop</option>
+    <option value="MOVE">{{ getTranslation('move') }}</option>
+    <option value="PICK">{{ getTranslation('pick') }}</option>
+    <option value="DROP">{{ getTranslation('drop') }}</option>
   </select>
   </div>
 </div>
 
   <div class="ATbtn-set">
-  <button class="sendATbtn" (click)="sendAction()">Send</button>
-  <button class="cancelATbtn" (click)="cancelATAction()">Cancel</button>
+  <button class="sendATbtn" (click)="sendAction()">{{ getTranslation('send') }}</button>
+  <button class="cancelATbtn" (click)="cancelATAction()">{{ getTranslation('cancel') }}</button>
   </div>
 </div>
 

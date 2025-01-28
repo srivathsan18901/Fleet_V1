@@ -17,6 +17,7 @@ export class NodeGraphService {
   private isShowRoboPath: number = 0;
   private draggingRobo: any = null;
   roboIDColor: Map<number, string> = new Map<number, string>(); // check...
+  fleetRoboIDColor: Map<number, string> = new Map<number, string>();
   showModelCanvas: boolean = false;
   assignTask:boolean=false;
 
@@ -80,8 +81,9 @@ export class NodeGraphService {
     return this.simMode;
   }
 
-  setRoboIdClr(roboIDColor: Map<number, string>) {
+  setRoboIdClr(roboIDColor: Map<number, string>, fleetRoboIDColor: Map<number, string>) {
     this.roboIDColor = roboIDColor;
+    this.fleetRoboIDColor = fleetRoboIDColor;
   }
 
   getRoboIdClr(): Map<number, string> {

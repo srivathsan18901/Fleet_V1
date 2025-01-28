@@ -197,9 +197,7 @@ export class RobotDashboardComponent implements OnInit {
     // ? `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %`
     // : "Loading...";
 
-    this.statisticsData.totalDistance = `${(tot_Dis / robots.length).toFixed(
-      2
-    )} m`;
+    this.statisticsData.totalDistance = `${(tot_Dis / robots.length).toFixed(1)} m`;
     // tot_Dis && robots.length
     // ? `${(tot_Dis / robots.length).toFixed(2)} m`
     // : "Loading...";

@@ -124,6 +124,12 @@ export class UserManagementComponent implements OnInit {
       isOpen: false,
       general: 'Configuration',
     },
+    {
+      order: 2,
+      nameTag: 'PROJECT',
+      isOpen: false,
+      general: 'PROJECT',
+    },
   ];
 
   changePage(order: any) {
@@ -136,7 +142,30 @@ export class UserManagementComponent implements OnInit {
     this.activeTab = this.pages[order].general;
     // alert(this.activeTab)
   }
+  projects = [
+    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
+    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
+    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
+    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
+    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
+    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
+    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
+    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
+    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
+    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
+    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
+    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
+  ];
 
+  // Track if any project is assigned
+  get isAnyAssigned() {
+    return this.projects.some(project => project.assigned);
+  }
+
+  // Toggle assign/unassign for a project
+  toggleAssign(project: any) {
+    project.assigned = !project.assigned;
+  }
   generalPermissions = [
     {
       order: 0,

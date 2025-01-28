@@ -7,6 +7,7 @@ import { environment } from '../../environments/environment.development';
 import { SessionService } from '../services/session.service';
 import { CookieService } from 'ngx-cookie-service';
 import Swal from 'sweetalert2';
+import { TranslationService } from '../services/translation.service';
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
@@ -29,9 +30,12 @@ export class TimerComponent {
     private router: Router,
     private projectService: ProjectService,
     private sessionService: SessionService,
-    private cookieService: CookieService
+    private cookieService: CookieService,
+    private translationService: TranslationService
   ) {}
-
+  getTranslation(key: string) {
+    return this.translationService.getsideNavTranslation(key);
+  }
   ngOnInit() {
     this.initializeTimer();
     this.totalDuration = this.sessionService.getMaxAge();

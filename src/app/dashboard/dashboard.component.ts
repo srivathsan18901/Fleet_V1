@@ -23,6 +23,7 @@ import { HeatmapService } from '../services/heatmap-service.service';
 import { log } from 'node:console';
 import { abort } from 'node:process';
 import html2canvas from 'html2canvas';
+import { TranslationService } from '../services/translation.service';
 
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
@@ -203,13 +204,20 @@ export class DashboardComponent implements AfterViewInit {
     ];
     // clear an roboIdColor
     this.roboIDColor.clear();
-    let i = 0;
+    this.fleetRoboIdColor.clear();
+    let i = 0,
+      j = 0;
     for (let robo of this.simMode) {
       this.roboIDColor.set(robo.amrId, colors[i]);
       i++;
       if (i > 9) i -= 10;
     }
-    this.nodeGraphService.setRoboIdClr(this.roboIDColor);
+    for (let robo of this.robos) {
+      this.fleetRoboIdColor.set(robo.roboDet.id, colors[j]);
+      j++;
+      if (j > 9) j -= 10;
+    }
+    this.nodeGraphService.setRoboIdClr(this.roboIDColor, this.fleetRoboIdColor);
   }
 
   constructor(
@@ -219,7 +227,8 @@ export class DashboardComponent implements AfterViewInit {
     private isFleetService: IsFleetService,
     private modeService: ModeService,
     private nodeGraphService: NodeGraphService,
-    private heatmapService: HeatmapService
+    private heatmapService: HeatmapService,
+    private translationService: TranslationService
   ) {
     if (this.projectService.getIsMapSet()) return;
   }
@@ -240,7 +249,9 @@ export class DashboardComponent implements AfterViewInit {
 
     this.redrawCanvas();
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getDashboardTranslation(key);
+  }
   toggleHeatmap() {
     this.showHeatMap = !this.showHeatMap;
   }
@@ -348,7 +359,28 @@ export class DashboardComponent implements AfterViewInit {
       this.isInLive = true;
     }
   }
+  isClicked: boolean = false; // Tracks the clicked state of the button
 
+  toggleButton() {
+    this.isClicked = !this.isClicked; // Toggles the clicked state
+    if(this.isClicked){
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Paused',
+        detail: 'Fleet Has been Paused',
+        life: 4000,
+      });
+    }
+    if(!this.isClicked){
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Resumed',
+        detail: 'Fleet Has been Resumed',
+        life: 4000,
+      });
+    }
+  }
+  
   updateUI() {
     // Example of adding a simple fade-in/out effect to a specific element
     const modeElement = document.querySelector('.mode-indicator');
@@ -536,28 +568,45 @@ export class DashboardComponent implements AfterViewInit {
     let data = await response.json();
     console.log(data);
     // this.cancelDelete();
-    if (data.isInitialized) {
-      // alert('robo Initialized!');
-      this.messageService.add({
-        severity: 'info',
-        summary: 'robo Initialized!',
-        detail: 'Robot',
-        life: 4000,
-      });
-      return;
-    }
-    if (data.msg) {
-      this.messageService.add({
-        severity: 'error',
-        summary: data.msg,
-        life: 2000,
-      });
+    if (!this.isFleet) {
+      if (data.isInitialized) {
+        // alert('robo Initialized!');
+        this.messageService.add({
+          severity: 'info',
+          summary: 'robo Initialized!',
+          detail: 'Robot',
+          life: 4000,
+        });
+        return;
+      }
+      if (data.msg) {
+        this.messageService.add({
+          severity: 'error',
+          summary: data.msg,
+          life: 2000,
+        });
+      }
     }
   }
 
   toggleShowPath() {
     this.isShowPath = !this.isShowPath;
     this.nodeGraphService.setIsShowPath(this.isShowPath);
+    if (this.isShowPath) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Robot Path is Visible',
+        detail: 'Path for all robots are now visible',
+        life: 4000,
+      });
+    } else {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Robot Path is disable',
+        detail: 'Path for all robots are not visible',
+        life: 4000,
+      });
+    }
   }
 
   toggleShowRoboPath() {
@@ -661,12 +710,12 @@ export class DashboardComponent implements AfterViewInit {
       console.error('Error updating map:', error);
     }
   }
-  
+
   async toggleShowEdges() {
     this.showEdges = !this.showEdges;
     this.redrawCanvas();
   }
-  
+
   async toggleAssignTask() {
     this.nodeGraphService.setShowModelCanvas(false);
     this.showModelCanvas = false;
@@ -688,14 +737,14 @@ export class DashboardComponent implements AfterViewInit {
       this.currentRoboList = this.simMode.map((robo) => robo.amrId);
       return;
     }
-    this.currentRoboList = this.robos.map((robo) => robo.roboDet.amrid);
+    this.currentRoboList = this.robos.map((robo) => robo.roboDet.id);
   }
   async toggleModelCanvas() {
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setShowModelCanvas(
       !this.nodeGraphService.getShowModelCanvas()
     );
-    this.showModelCanvas = this.nodeGraphService.getShowModelCanvas()
+    this.showModelCanvas = this.nodeGraphService.getShowModelCanvas();
     if (this.isInLive) {
       // this.initSimRoboPos();
       await this.getLivePos();
@@ -816,16 +865,17 @@ export class DashboardComponent implements AfterViewInit {
     }
 
     if (this.isFleet) {
-      this.robos.forEach((robo) =>
+      this.robos.forEach((robo) => {
+        let clr = this.roboIDColor.get(robo.roboDet.id) || 'black';
         this.plotRobo(
           ctx,
           robo.pos.x,
           robo.pos.y,
           robo.roboDet.selected,
           robo.state,
-          'black'
-        )
-      );
+          clr
+        );
+      });
     }
 
     this.racks.forEach((rack) => {
@@ -856,8 +906,8 @@ export class DashboardComponent implements AfterViewInit {
     this.nodes.forEach((node) => {
       const transformedY = img.height - node.nodePosition.y;
       this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
-    });    
-    if(this.showEdges)
+    });
+    if (this.showEdges)
       this.edges.forEach((edge) => {
         const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
         const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
@@ -866,7 +916,10 @@ export class DashboardComponent implements AfterViewInit {
             x: startNode.nodePosition.x,
             y: startNode.nodePosition.y,
           };
-          const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
+          const endPos = {
+            x: endNode.nodePosition.x,
+            y: endNode.nodePosition.y,
+          };
           const transformedStartY = img.height - startPos.y;
           const transformedEndY = img.height - endPos.y;
           this.drawEdge(
@@ -878,9 +931,7 @@ export class DashboardComponent implements AfterViewInit {
             edge.endNodeId
           );
         }
-      });      
-    
-
+      });
 
     this.zones.forEach((zone) => {
       this.plottedPoints = zone.pos;
@@ -910,16 +961,17 @@ export class DashboardComponent implements AfterViewInit {
     }
 
     if (this.isFleet) {
-      this.robos.forEach((robo) =>
+      this.robos.forEach((robo) => {
+        let clr = this.roboIDColor.get(robo.roboDet.id) || 'black';
         this.plotRobo(
           ctx,
           robo.pos.x,
           robo.pos.y,
           robo.roboDet.selected,
           robo.imgState,
-          'black'
-        )
-      );
+          clr
+        );
+      });
     }
     ctx.restore(); // Reset transformation after drawing
   }
@@ -988,7 +1040,7 @@ export class DashboardComponent implements AfterViewInit {
     );
 
     let data = await response.json();
-    this.cancelATAction();  // Reset to default value..
+    this.cancelATAction(); // Reset to default value..
     this.messageService.add({
       severity: 'info',
       summary: `${data.msg}`,
@@ -1353,7 +1405,7 @@ export class DashboardComponent implements AfterViewInit {
         body: JSON.stringify({
           mapId: this.selectedMap.id,
           roboToEnable: {
-            robotId: robot.amrId,
+            robotId: this.isFleet ? robot.roboDet.id : robot.amrId,
             enable: true,
           },
         }),
@@ -1490,28 +1542,31 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     // Draw edges between nodes
-    if(this.showEdges)
-    this.edges.forEach((edge) => {
-      const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
-      const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
-      if (startNode && endNode) {
-        const startPos = {
-          x: startNode.nodePosition.x,
-          y: startNode.nodePosition.y,
-        };
-        const endPos = { x: endNode.nodePosition.x, y: endNode.nodePosition.y };
-        const transformedStartY = img.height - startPos.y;
-        const transformedEndY = img.height - endPos.y;
-        this.drawEdge(
-          ctx,
-          { x: startPos.x, y: transformedStartY },
-          { x: endPos.x, y: transformedEndY },
-          edge.direction,
-          edge.startNodeId,
-          edge.endNodeId
-        );
-      }
-    });
+    if (this.showEdges)
+      this.edges.forEach((edge) => {
+        const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
+        const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
+        if (startNode && endNode) {
+          const startPos = {
+            x: startNode.nodePosition.x,
+            y: startNode.nodePosition.y,
+          };
+          const endPos = {
+            x: endNode.nodePosition.x,
+            y: endNode.nodePosition.y,
+          };
+          const transformedStartY = img.height - startPos.y;
+          const transformedEndY = img.height - endPos.y;
+          this.drawEdge(
+            ctx,
+            { x: startPos.x, y: transformedStartY },
+            { x: endPos.x, y: transformedEndY },
+            edge.direction,
+            edge.startNodeId,
+            edge.endNodeId
+          );
+        }
+      });
 
     this.zones.forEach((zone) => {
       this.plottedPoints = zone.pos;
@@ -1686,6 +1741,7 @@ export class DashboardComponent implements AfterViewInit {
   };
 
   roboIDColor = new Map<number, string>();
+  fleetRoboIdColor = new Map<number, string>();
 
   plotRobo(
     ctx: CanvasRenderingContext2D,
@@ -1763,7 +1819,7 @@ export class DashboardComponent implements AfterViewInit {
       ctx.moveTo(circleRadius + triangleSize, 0); // Right of the circle
       ctx.lineTo(circleRadius, -triangleSize / 2); // Top corner
       ctx.lineTo(circleRadius, triangleSize / 2); // Bottom corner
-      
+
       ctx.closePath();
 
       ctx.fillStyle = circleColor; // Same color as the circle
@@ -1909,8 +1965,22 @@ export class DashboardComponent implements AfterViewInit {
         const yaw = robo.pos.orientation;
 
         // Draw the robot on the canvas with updated positions and orientation
-        let clr = this.roboIDColor.get(robo.amrId) || 'white';
+        let clr = this.roboIDColor.get(robo.roboDet.id) || 'white';
         this.plotRobo(ctx, robotPosX, robotPosY, yaw, robo.imgState, clr);
+        if (
+          robo.imgState === 'LOADSTATE' ||
+          robo.imgState === 'UNLOADSTATE' ||
+          robo.payload
+        ) {
+          this.plotRack(
+            ctx,
+            robotPosX - (this.rackSize * this.zoomLevel) / 2,
+            robotPosY - (this.rackSize * this.zoomLevel) / 2,
+            this.rackSize * this.zoomLevel,
+            yaw,
+            '#7393B3'
+          );
+        }
       });
 
     this.racks.forEach((rack) => {
@@ -2075,28 +2145,28 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     // Plot edges with scaling and centering
-    if(this.showEdges)
-    this.edges.forEach((edge) => {
-      const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
-      const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
+    if (this.showEdges)
+      this.edges.forEach((edge) => {
+        const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
+        const endNode = this.nodes.find((n) => n.nodeId === edge.endNodeId);
 
-      if (startNode && endNode) {
-        const startX = startNode.nodePosition.x * zoomLevel;
-        const startY = (img.height - startNode.nodePosition.y) * zoomLevel;
-        const endX = endNode.nodePosition.x * zoomLevel;
-        const endY = (img.height - endNode.nodePosition.y) * zoomLevel;
+        if (startNode && endNode) {
+          const startX = startNode.nodePosition.x * zoomLevel;
+          const startY = (img.height - startNode.nodePosition.y) * zoomLevel;
+          const endX = endNode.nodePosition.x * zoomLevel;
+          const endY = (img.height - endNode.nodePosition.y) * zoomLevel;
 
-        // Adjust for centering
-        this.drawEdge(
-          ctx,
-          { x: centerX + startX, y: centerY + startY },
-          { x: centerX + endX, y: centerY + endY },
-          edge.direction,
-          edge.startNodeId,
-          edge.endNodeId
-        );
-      }
-    });
+          // Adjust for centering
+          this.drawEdge(
+            ctx,
+            { x: centerX + startX, y: centerY + startY },
+            { x: centerX + endX, y: centerY + endY },
+            edge.direction,
+            edge.startNodeId,
+            edge.endNodeId
+          );
+        }
+      });
 
     // Plot zones with scaling and centering
     this.zones.forEach((zone) => {
@@ -2435,20 +2505,20 @@ export class DashboardComponent implements AfterViewInit {
   //     detail: 'Screen Capturing Turned On ',
   //     life: 4000,
   //   });
-  
+
   //   try {
   //     // Select the root or container element you want to capture
   //     const elementToCapture = document.getElementById('myCanvas'); // or document.getElementById('your-root-id')
-  
+
   //     // Use html2canvas to capture the element
   //     if (elementToCapture) {
   //       const canvas = await html2canvas(elementToCapture, {
   //         useCORS: true,
   //         scale: 2,
   //       });
-      
+
   //       const imgData = canvas.toDataURL('image/png');
-  
+
   //       // Create a link to download the image
   //       const link = document.createElement('a');
   //       link.href = imgData;
@@ -2456,7 +2526,7 @@ export class DashboardComponent implements AfterViewInit {
   //       document.body.appendChild(link);
   //       link.click();
   //       document.body.removeChild(link);
-    
+
   //       this.messageService.add({
   //         severity: 'success',
   //         summary: 'Capture Complete',
@@ -2467,7 +2537,7 @@ export class DashboardComponent implements AfterViewInit {
   //     } else {
   //       console.error('Element with ID "container" not found');
   //     }
-  
+
   //   } catch (err) {
   //     console.error('Error capturing screen:', err);
   //     this.messageService.add({
