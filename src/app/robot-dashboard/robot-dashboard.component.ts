@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { interval } from 'rxjs';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-robot-dashboard',
@@ -38,11 +39,14 @@ export class RobotDashboardComponent implements OnInit {
   constructor(
     private router: Router,
     private projectService: ProjectService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private translationService: TranslationService,
   ) {
     this.processedErrors = new Set<string>();
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getStatisticsTranslation(key);
+  }
   async ngOnInit() {
     this.router.navigate(['/statistics/robot']);
     this.selectedMap = this.projectService.getMapData();

@@ -1,5 +1,5 @@
 <div class="radial-chart-container relative">
-  <p class="absolute text-[20px] font-semibold">Robots</p>
+  <p class="absolute text-[20px] font-semibold">{{ getTranslation('robots') }}</p>
   <div id="chart">
     <apx-chart
       [series]="chartOptions.series ?? []"
@@ -14,17 +14,17 @@
   <div class="chart-labels">
     <div class="label-item">
       <span class="label-color healthy-color"></span>
-      <span class="label-text">Active</span>
+      <span class="label-text">{{ getTranslation('active') }}</span>
       <span class="label-value">{{ roboStatePie[0] }}</span>
     </div>
     <div class="label-item">
       <span class="label-color inactive-color"></span>
-      <span class="label-text">Inactive</span>
+      <span class="label-text">{{ getTranslation('inactive') }}</span>
       <span class="label-value">{{ roboStatePie[1] }}</span>
     </div>
     <div class="label-item">
       <span class="label-color error-color"></span>
-      <span class="label-text">Error</span>
+      <span class="label-text">{{ getTranslation('error') }}</span>
       <span class="label-value">{{ roboStatePie[2] }}</span>
     </div>
   </div>

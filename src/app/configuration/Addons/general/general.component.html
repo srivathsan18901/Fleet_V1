@@ -8,29 +8,29 @@
           <div class="form-control">
             <div class="validate">
               <div class="field">
-                <label for="fleetServerMode">Fleet Server Mode :  </label>
+                <label for="fleetServerMode">{{getTranslation("Fleet Server Mode")}} :  </label>
                 <p-dropdown
                 [options]="fleetModes"
                 [(ngModel)]="formData.fleetServerMode"
                 name="fleetServerMode"
                 optionLabel="name"
-                placeholder="Select Mode"
+                placeholder="{{getTranslation('Select Mode')}}"
                 (onChange)="onFleetModeChange()"
                 required
               ></p-dropdown>
               </div>
               <div *ngIf=" generalForm.controls['fleetServerMode'].invalid && generalForm.controls['fleetServerMode'].touched">
-                <small class="text-danger"> *Fleet Server Mode is required</small>
+                <small class="text-danger"> {{getTranslation('*Fleet Server Mode is required')}}</small>
               </div>
             </div>
 
             <!-- Server IP -->
             <div class="validate">
               <div class="field">
-                <label for="serverIP" style="margin-right: 5rem;">Server IP: </label>
+                <label for="serverIP" style="margin-right: 5rem;">{{getTranslation("Sever IP")}} : </label>
                 <input
                   type="text"
-                  placeholder="Enter IP"
+                  placeholder="{{getTranslation('Enter IP')}}"
                   minlength="7"
                   maxlength="15"
                   size="15"
@@ -45,17 +45,17 @@
               </div>
               
               <div *ngIf="!disableOtherFields && serverIPInput.invalid && serverIPInput.touched && generalForm.controls['serverIP'].invalid && generalForm.controls['serverIP'].touched">
-                <small class="text-danger"> *Valid Server IP is required</small>
+                <small class="text-danger"> {{getTranslation('*Valid Server IP is required')}}</small>
               </div>
             </div>    
 
             <!-- Server Port -->
             <div class="validate">
               <div class="field">
-                <label for="serverPort" style="margin-right: 3.8rem">Server Port :  </label>
+                <label for="serverPort" style="margin-right: 3.8rem">{{getTranslation("Server Port")}} :  </label>
                 <input
                   class="input"
-                  placeholder="Enter Port"
+                  placeholder="{{getTranslation('Enter Port')}}"
                   type="number"
                   min="1000"
                   max="9999"
@@ -67,7 +67,7 @@
                 />
               </div>
               <div *ngIf=" !disableOtherFields && generalForm.controls['serverPort'].invalid && generalForm.controls['serverPort'].touched">
-                <small class="text-danger"> *Server Port is required.</small>
+                <small class="text-danger"> {{getTranslation('*Server Port is required')}}.</small>
               </div>
             </div>
           </div>
@@ -76,10 +76,10 @@
           <div class="form2">
             <div class="validate">
               <div class="field">
-                <label for="databaseIp" style="margin-right: 2rem;">Database IP: </label>
+                <label for="databaseIp" style="margin-right: 2rem;">{{getTranslation("Database IP")}} : </label>
                 <input
                   type="text"
-                  placeholder="Enter IP"
+                  placeholder="{{getTranslation('Enter IP')}}"
                   minlength="7"
                   maxlength="50"
                   size="15"
@@ -95,7 +95,7 @@
               </div>
               <div *ngIf=" !disableOtherFields && databaseIpInput.invalid && databaseIpInput.touched && generalForm.controls['databaseIp'].invalid && generalForm.controls['databaseIp'].touched">
                 <small class="text-danger">
-                  *A valid Database IP is required
+                  {{getTranslation('*A valid Database IP is required')}}
                 </small>
               </div>
             </div>
@@ -103,20 +103,20 @@
             <!-- Dropdown for Database Type -->
             <div class="validate">
               <div class="field">
-                <label for="selectedDb">Database Type : </label><br />
+                <label for="selectedDb">{{getTranslation("Database Type")}} : </label><br />
                 <p-dropdown
                   appendTo="body"
                   [options]="dtype"
                   [(ngModel)]="selectedDb"
                   name="selectedDb"
                   optionLabel="name"
-                  placeholder="Select"
+                  placeholder="{{getTranslation('Select')}}"
                   required
                   [disabled]="disableOtherFields"
                 ></p-dropdown>
               </div>
               <div *ngIf="!disableOtherFields && generalForm.submitted && !selectedDb && generalForm.touched">
-                <small class="text-danger"> *Database Type is required.</small>
+                <small class="text-danger"> {{getTranslation('*Database Type is required')}}.</small>
               </div>
             </div>
           </div>
@@ -125,10 +125,10 @@
           <div class="form3">
             <div class="validate">
               <div class="field">
-                <label for="databaseName" style="margin-right: 3rem;">Database Name : </label>
+                <label for="databaseName" style="margin-right: 3rem;">{{getTranslation("Database Name")}} : </label>
                 <input
                   type="text"
-                  placeholder="Enter DB name"
+                  placeholder="{{getTranslation('Enter DB name')}}"
                   style="width: 10rem;"
                   [(ngModel)]="formData.databaseName"
                   name="databaseName"
@@ -140,27 +140,27 @@
               <!-- <div *ngIf="generalForm.controls['databaseName'].invalid && generalForm.controls['databaseName'].touched"> -->
 
               <div *ngIf="!disableOtherFields && generalForm.controls['databaseName'].invalid && generalForm.controls['databaseName'].touched">
-                <small class="text-danger"> *Database Name is required.</small>
+                <small class="text-danger"> {{getTranslation('*Database Name is required')}}.</small>
               </div>
             </div>
 
             <!-- Dropdown for Robot Manager -->
             <div class="validate">
               <div class="field">
-                <label for="selectedRoboManagerType">Robot Manager Type : </label><br />
+                <label for="selectedRoboManagerType">{{getTranslation("Robot Manager Type")}} : </label><br />
                 <p-dropdown
                   appendTo="body"
                   [options]="robotManagerType"
                   [(ngModel)]="selectedRoboManagerType"
                   name="selectedRoboManagerType"
                   optionLabel="name"
-                  placeholder="Select"
+                  placeholder="{{getTranslation('Select')}}"
                   required
                   [disabled]="disableOtherFields"
                 ></p-dropdown>
               </div>
               <div *ngIf="!disableOtherFields && generalForm.submitted && !selectedRoboManagerType && generalForm.touched">
-                <small class="text-danger"> *Robot Manager Type is required.</small>
+                <small class="text-danger"> {{getTranslation('*Robot Manager Type is required')}}.</small>
               </div>
             </div>
           </div>
@@ -169,7 +169,7 @@
         <!-- Submit Button -->
         <div class="field mt-1 centers">
           <p-button
-            label="Submit"
+            label="{{getTranslation('Submit')}}"
             type="submit"
             class="block mt-1 pt-2"
             styleClass="p-button-danger p-button1"
@@ -177,7 +177,7 @@
             (onClick)="saveParams()"
           ></p-button>
           <p-button
-          label="Clear"
+          label="{{getTranslation('Clear')}}"
           class="clearbtn"
           styleClass="p-button-secondary"
           (onClick)="generalForm.resetForm()"

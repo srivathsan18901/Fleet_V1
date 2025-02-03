@@ -5,9 +5,9 @@
   <div class="content-container">
     <div class="main-content">
       <div class="header-section mb-4">
-        <h1 class="header-title">Robot Details</h1>
+        <h1 class="header-title">{{ getTranslation("Robot Details") }}</h1>
         <div class="subheader-container">
-          <div class="subheader-text">Create and edit task reports</div>
+          <div class="subheader-text">{{ getTranslation("Create and edit task reports") }}</div>
           <img
             src="../../assets/icons/i-icon.svg"
             alt="Icon"
@@ -35,7 +35,7 @@
         <div class="card-container-wrapper mt-4 w-full flex h-full" >
   
             <span *ngIf="this.robots.length === 0 && this.isFleet === true || this.isFleet === false" class="flex w-full h-full items-center justify-center flex-col">
-              <!-- Generator: Adobe Illustrator 27.5.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+              
                <span class="flex size-[450px] -mt-14">
 
               <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -1820,8 +1820,8 @@
               </svg>
 
               </span>
-              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === false"> - Sim Mode has been Enabled -</p>
-              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === true"> - No Robots Found -</p>
+              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === false"> {{ getTranslation("- Sim Mode has been Enabled -") }}</p>
+              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === true"> {{ getTranslation("- No Robots Found -") }}</p>
             </span>
 
             <div *ngIf="this.isFleet === true">
@@ -1875,9 +1875,9 @@
                   <div class="bottom-section"> 
                     <h2 class="card-header title">{{ robot.name }}</h2>
                     <div class="card-id-status">
-                      <p>ID: {{ robot.id }}</p> <!-- Display ID -->
-                      <p>S.no: {{ robot.serialNumber }}</p> <!-- Display Serial Number -->
-                      <p>Status: 
+                      <p>{{ getTranslation("ID") }} :{{ robot.id }}</p> <!-- Display ID -->
+                      <p>{{ getTranslation("S.No") }} : {{ robot.serialNumber }}</p> <!-- Display Serial Number -->
+                      <p>{{ getTranslation("Status") }} : 
               <span [ngStyle]="{'color': robot.status === 'ACTIVE' ? 'green' : 'red'}">
                 {{ robot.status }}
               </span>
@@ -1887,7 +1887,7 @@
                     <!-- Add a dedicated button or area to trigger the popup -->
                     <div class="details-button-wrapper">
                       <button class="details-button" (click)="openRobotDetail(robot)">
-                        View Details
+                        {{ getTranslation("View Details") }}
                       </button>
                     </div>
 

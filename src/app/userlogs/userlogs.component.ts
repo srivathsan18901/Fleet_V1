@@ -9,6 +9,8 @@ import { ModeService } from '../dashboard/mode.service';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
 // import { clearInterval } from 'timers';
+import { TranslationService } from '../services/translation.service';
+
 
 @Component({
   selector: 'app-userlogs',
@@ -26,7 +28,7 @@ export class Userlogscomponent {
   isPopupVisible: boolean | undefined;
   isTransitioning: boolean = false;
   activeButton: string = 'task'; // Default active button
-  activeHeader: string = 'Task logs'; // Default header
+  activeHeader: string = this.getTranslation("Task Logs"); // Default header
   currentTable = 'task';
   currentTab: any;
   filteredTaskData: any[] = [];
@@ -58,7 +60,8 @@ export class Userlogscomponent {
     private exportService: ExportService,
     private projectService: ProjectService,
     private modeService: ModeService,
-    private isFleetService: IsFleetService
+    private isFleetService: IsFleetService,
+    private translationService: TranslationService
   ) {
     this.mapData = this.projectService.getMapData();
   }
@@ -97,7 +100,9 @@ export class Userlogscomponent {
       await this.getFleetLogs();
     }, 1000 * 3);
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getErrorTranslation(key);
+  }
   async ngAfterViewInit() {
     this.setPaginatedData();
   }
@@ -600,13 +605,13 @@ export class Userlogscomponent {
   getHeader(button: string): string {
     switch (button) {
       case 'task':
-        return 'Task logs';
+        return this.getTranslation("Task Logs");
       case 'robot':
-        return 'Robot logs';
+        return this.getTranslation("Robot Logs");
       case 'fleet':
-        return 'Fleet logs';
+        return this.getTranslation("Fleet Logs");
       default:
-        return 'Task logs';
+        return this.getTranslation("Task Logs");
     }
   }
 

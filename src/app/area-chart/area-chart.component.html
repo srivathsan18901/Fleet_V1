@@ -3,7 +3,7 @@
     <div class="menu">
       <div class="item">
         <a href="javascript:void(0);" class="link" id="selectedMetric">
-          <span>{{ selectedMetric }}</span>
+          <span>{{ getTranslation(selectedMetric) }}</span>
           <!-- Angular data binding to update the displayed text -->
           <svg viewBox="0 0 360 360" xml:space="preserve">
             <g id="SVGRepo_iconCarrier">
@@ -24,15 +24,15 @@
               href="javascript:void(0);"
               class="submenu-link"
               (click)="updateChart('data1', 'Throughput')"
-              >Throughput</a
+              >{{ getTranslation('Throughput') }}</a
             >
           </div>
           <div class="submenu-item">
             <a
               href="javascript:void(0);"
               class="submenu-link"
-              (click)="updateChart('data2', 'Starvation rate')"
-              >Starvation rate</a
+              (click)="updateChart('data2', 'starvationRate')"
+              >{{ getTranslation('starvationRate') }}</a
             >
           </div>
           <!-- <div class="submenu-item"> -->
@@ -47,16 +47,16 @@
             <a
               href="javascript:void(0);"
               class="submenu-link"
-              (click)="updateChart('data3', 'Pick accuracy')"
-              >Pick accuracy</a
+              (click)="updateChart('data3', 'pickAccuracy')"
+              >{{ getTranslation('pickAccuracy') }}</a
             >
           </div>
           <div class="submenu-item">
             <a
               href="javascript:void(0);"
               class="submenu-link"
-              (click)="updateChart('data4', 'Error rate')"
-              >Error rate</a
+              (click)="updateChart('data4', 'errorRate')"
+              >{{ getTranslation('errorRate') }}</a
             >
           </div>
         </div>
@@ -79,7 +79,7 @@
         (change)="applyFilter($event)"
         checked
       />
-      <label for="today" class="label">Today</label>
+      <label for="today" class="label">{{ getTranslation('today') }}</label>
 
       <input
         type="radio"
@@ -89,7 +89,7 @@
         class="input"
         (change)="applyFilter($event)"
       />
-      <label for="week" class="label">Week</label>
+      <label for="week" class="label">{{ getTranslation('week') }}</label>
 
       <input
         type="radio"
@@ -99,7 +99,7 @@
         class="input"
         (change)="applyFilter($event)"
       />
-      <label for="month" class="label">Month</label>
+      <label for="month" class="label">{{ getTranslation('month') }}</label>
     </div>
   </div>
 </div>

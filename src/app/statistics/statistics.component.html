@@ -10,13 +10,13 @@
           (click)="setView('operation')"
           [class.active]="currentView === 'operation'"
         >
-          Operation
+        {{ getTranslation('operation') }}
         </button>
         <button
           (click)="setView('robot')"
           [class.active]="currentView === 'robot'"
         >
-          Robot
+        {{ getTranslation('robot') }}
         </button>
         <div
           class="slider"
@@ -32,7 +32,7 @@
       <div class="statistics-container">
         <!-- Stat card 1 -->
         <div class="stat-card stat-card-1">
-          <div class="stat-value">System throughput</div>
+          <div class="stat-value">{{ getTranslation('systemThroughput') }}</div>
           <h2>{{ statisticsData.systemThroughput }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.systemThroughputChange }}% <span>&uarr;</span> -->
@@ -58,8 +58,8 @@
 
         <!-- Stat card 2 -->
         <div class="stat-card stat-card-2">
-          <div class="stat-value">System uptime</div>
-          <h2>{{ statisticsData.systemUptime || 'Loading...' }}</h2>
+          <div class="stat-value">{{ getTranslation('systemUptime') }}</div>
+          <h2>{{ statisticsData.systemUptime || getTranslation('loading') }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.systemUptimeChange }}% <span>&uarr;</span> -->
           </div>
@@ -84,9 +84,9 @@
 
         <!-- Stat card 3 -->
         <div class="stat-card stat-card-3">
-          <div class="stat-value">Success rate</div>
+          <div class="stat-value">{{ getTranslation('successRate') }}</div>
           <!-- <h2>{{ statisticsData.successRate || 'Loading...' }}</h2> -->
-          <h2>{{ statisticsData.successRate || 'Loading...'}}</h2>
+          <h2>{{ statisticsData.successRate || getTranslation('loading')}}</h2>
           <div class="stat-change negative">
             <!-- {{ statisticsData.successRateChange }}% <span>&darr;</span> -->
           </div>
@@ -111,8 +111,8 @@
 
         <!-- Stat card 4 -->
         <div class="stat-card stat-card-4">
-          <div class="stat-value">Responsiveness</div>
-          <h2>{{ statisticsData.responsiveness || 'Loading...' }}</h2>
+          <div class="stat-value">{{ getTranslation('responsiveness') }}</div>
+          <h2>{{ statisticsData.responsiveness ||  getTranslation('loading')  }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.responsivenessChange }}% <span>&uarr;</span> -->
           </div>
@@ -149,13 +149,13 @@
       <div class="donut-chart-container">
         <app-gradient-donut
           [series]="operationPie"
-          [labels]="['Completed', 'Assigned', 'In-Progress', 'ToDo', 'Error', 'Cancelled']"
+          [labels]="[getTranslation('completed'), getTranslation('assigned'), getTranslation('inProgress'), getTranslation('toDo'), getTranslation('error'), getTranslation('cancelled')]"
           [legendFontSize]="'14px'"
           [dataLabelFontSize]="'14px'"
           [chartWidth]="495"
           [chartHeight]="334"
           [fillType]="'gradient'"
-          [titleText]="'Operations'"
+          [titleText]="getTranslation('operations')"
           [legendFontSize]="'16px'"
           [dataLabelFontSize]="'18px'"
         >
@@ -168,24 +168,24 @@
       <!-- Robot Activity Section -->
       <div class="operation-activity-container">
         <div class="section-header">
-          <h3>Operation Activities</h3>
+          <h3>{{ getTranslation('operationActivities') }}</h3>
           <div class="search-box">
             <input
               type="text"
-              placeholder="Search activities..."
+              placeholder="{{ getTranslation('searchActivities') }}"
               (input)="onSearch($event)"
             />
           </div>
-          <button class="view-all-btn" (click)="onViewAllClick()">View All</button>
+          <button class="view-all-btn" (click)="onViewAllClick()">{{ getTranslation('viewAll') }}</button>
         </div>
         <div class="operation-activity-table-container">
           <table class="operation-activity-table">
             <thead>
               <tr>
-                <th>Task ID</th>
-                <th>Task Name</th>
-                <th>Robot Name</th>
-                <th>Status</th>
+                <th>{{ getTranslation('taskId') }}</th>
+                <th>{{ getTranslation('taskName') }}</th>
+                <th>{{ getTranslation('robotName') }}</th>
+                <th>{{ getTranslation('status') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -195,7 +195,7 @@
               <td colspan="4" class="no-data">
                 <div class="no-data-container">
                   <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
-                  <p class="no-data-text">No data found</p>
+                  <p class="no-data-text">{{ getTranslation('noData') }}</p>
                 </div>
               </td>
             </tr>
@@ -215,11 +215,11 @@
       <!-- Notifications Section -->
       <div class="notifications-container">
         <div class="section-header">
-          <h3>Notifications</h3>
+          <h3>{{ getTranslation('notifications') }}</h3>
           <div class="search-box">
             <input
               type="text"
-              placeholder="Search notifications..."
+              placeholder="{{ getTranslation('searchNotifications') }}"
             />
           </div>
           <!-- <button class="view-all-btn">View All</button> -->
@@ -228,9 +228,9 @@
           <table class="notifications-table">
             <thead>
               <tr>
-                <th>Message</th>
-                <th>Task ID</th>
-                <th>Timestamp</th>
+                <th>{{ getTranslation('message') }}</th>
+                <th>{{ getTranslation('taskId') }}</th>
+                <th>{{ getTranslation('timestamp') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -240,7 +240,7 @@
                 <td colspan="3" class="no-data">
                   <div class="no-data-container">
                     <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
-                    <p class="no-data-text">No data found</p>
+                    <p class="no-data-text">{{ getTranslation('noData') }}</p>
                   </div>
                 </td>
               </tr>

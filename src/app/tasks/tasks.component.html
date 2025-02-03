@@ -5,9 +5,9 @@
     <div class="main-content">
       <!-- Header section -->
       <div class="header-section">
-        <h1 class="header-title">Tasks</h1>
+        <h1 class="header-title">{{ getTranslation("Tasks")}}</h1>
         <div class="subheader-container">
-          <div class="subheader-text">View and Edit Tasks</div>
+          <div class="subheader-text">{{ getTranslation("View and Edit Tasks")}}</div>
           <img
             src="../../assets/icons/i-icon.svg"
             alt="Icon"
@@ -19,7 +19,7 @@
       <div class="search-filter-container" >
         <!-- Search Bar -->
         <div class="search-box">
-          <input type="text" (input)="onSearch($event)" placeholder="Search For Tasks..." />
+          <input type="text" (input)="onSearch($event)" placeholder="{{ getTranslation('Search For Tasks...') }}" />
           <button class="search-btn">
             <img
               src="../../assets/icons/download-removebg-preview.png"
@@ -72,14 +72,14 @@
       <div class="filter">
         <img src="../../assets/filter.svg" class="filter-img">
       <div class="status-filter">
-        <label for="status-filter">Status:</label>
+        <label for="status-filter">{{ getTranslation('Status') }}:</label>
         <select id="status-filter" (change)="onStatusFilter($event)">
-          <option value="">All</option>
-          <option value="COMPLETED">Completed</option>
-          <option value="IN_PROGRESS">In Progress</option>
-          <option value="CANCELLED">Cancelled</option>
-          <option value="FAILED">Failed</option>
-          <option value="NOTASSIGNED">Not Assigned</option>
+          <option value="">{{ getTranslation('All') }}</option>
+          <option value="COMPLETED">{{ getTranslation('Completed') }}</option>
+          <option value="IN_PROGRESS">{{ getTranslation('In Progress') }}</option>
+          <option value="CANCELLED">{{ getTranslation('Cancelled') }}</option>
+          <option value="FAILED">{{ getTranslation('Failed') }}</option>
+          <option value="NOTASSIGNED">{{ getTranslation('Not Assigned') }}</option>
         </select>
       </div>
       
@@ -92,7 +92,7 @@
       </div> -->
       
       <!-- Clear Filters Button -->
-      <button (click)="clearFilters()" class="clr-btn">Clear</button>
+      <button (click)="clearFilters()" class="clr-btn">{{ getTranslation('Clear') }}</button>
       </div>
 
       <!-- Table -->
@@ -103,14 +103,14 @@
             <table class="table">
               <thead >
                 <tr>
-                  <th>S.no</th>
-                  <th>Task ID</th>
-                  <th>Task Type</th>
-                  <th>Status</th>
-                  <th>Robot Name</th>
+                  <th>{{ getTranslation('S.no') }}</th>
+                  <th>{{ getTranslation('Task ID') }}</th>
+                  <th>{{ getTranslation('Task Type') }}</th>
+                  <th>{{ getTranslation('Status') }}</th>
+                  <th>{{ getTranslation('Robot Name') }}</th>
                   <!-- <th>Source</th> -->
-                  <th>Destination</th>
-                  <th>Actions</th>
+                  <th>{{ getTranslation('Destination') }}</th>
+                  <th>{{ getTranslation('Actions') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -119,7 +119,7 @@
                 <td colspan="8" class="no-data">
                   <div class="no-data-container">
                     <img src="../assets/no-data.png" alt="No Data" class="no-data-image">
-                    <p class="no-data-text">No data found</p>
+                    <p class="no-data-text">{{ getTranslation('No data found') }}</p>
                   </div>
                 </td>
               </tr>
@@ -157,7 +157,7 @@
                       [disabled]="isDisabled(item.status)"
                       class="btn-common"
                       (click)="!isDisabled(item.status) && onCancel(item)">
-                      Cancel
+                      {{ getTranslation('Cancel') }}
                     </button>
                     
                    </div>
@@ -181,7 +181,7 @@
     </div>
       <!-- Export -->
       <div class="export-button-container">
-        <button class="export-button" (click)="showPopup()">Export</button>
+        <button class="export-button" (click)="showPopup()">{{ getTranslation('Export') }}</button>
         <div *ngIf="isPopupVisible" class="export-popup">
           <div class="popup-content">
             <button class="close-button" (click)="onClose()">
@@ -197,10 +197,10 @@
                 />
               </svg>
             </button>
-            <h3>Select Format</h3>
+            <h3>{{ getTranslation('Select Format') }}</h3>
             <div class="button-container">
-              <button (click)="exportData('csv')">Export as CSV</button>
-              <button (click)="exportData('excel')">Export as Excel</button>
+              <button (click)="exportData('csv')">{{ getTranslation('Export as CSV') }}</button>
+              <button (click)="exportData('excel')">{{ getTranslation('Export as Excel') }}</button>
               <!-- <button (click)="exportData('pdf')">Export as PDF</button> -->
             </div>
           </div>

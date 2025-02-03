@@ -4,6 +4,7 @@ import {
   Input,
   ViewChild,
   EventEmitter,
+  OnDestroy 
 } from '@angular/core';
 import {
   ApexNonAxisChartSeries,
@@ -16,6 +17,7 @@ import {
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { IsFleetService } from '../services/shared/is-fleet.service';
+import { TranslationService } from '../services/translation.service';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -49,7 +51,8 @@ export class RadialChartComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private isFleetService: IsFleetService
+    private isFleetService: IsFleetService,
+    private translationService: TranslationService,
   ) {
     this.chartOptions = {
       series: this.roboStatePie,
@@ -69,7 +72,7 @@ export class RadialChartComponent implements OnInit {
             },
             total: {
               show: true,
-              label: 'Total',
+              label: this.getTranslation('total'),
               formatter: () => this.totCount, // Dynamic total count
             },
           },
@@ -87,13 +90,17 @@ export class RadialChartComponent implements OnInit {
       labels: ['Active', 'Inactive', 'Error'], // Label names
     };
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getStatisticsTranslation(key);
+  }
+  
   async ngOnInit() {
     // this.isFleetService.isFleet$.subscribe((value) => { // use for later..
     //   this.isFleet = value; // React to changes
     //   console.log('isFleet in RadialChartComponent:', this.isFleet);
     // });
     this.isFleet = sessionStorage.getItem('isFleet') == 'true' ? true : false;
+    
 
     await this.getMapDetails();
 

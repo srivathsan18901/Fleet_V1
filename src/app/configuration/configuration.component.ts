@@ -23,6 +23,8 @@ import { AuthService } from '../auth.service';
 import { SessionService } from '../services/session.service';
 import { ProjectService } from '../services/project.service';
 import { UserPermissionService } from '../services/user-permission.service';
+import { TranslationService } from '../services/translation.service';
+
 
 interface Poll {
   ip: string;
@@ -138,7 +140,8 @@ export class ConfigurationComponent implements AfterViewInit {
     private sessionService: SessionService,
     private authService: AuthService,
     private cookieService: CookieService,
-    private userPermissionService: UserPermissionService
+    private userPermissionService: UserPermissionService,
+    private translationService: TranslationService
   ) {
     this.filteredEnvData = [...this.EnvData];
     // this.filteredRobotData = [...this.robotData];
@@ -154,7 +157,7 @@ export class ConfigurationComponent implements AfterViewInit {
       this.configurationPermissions =
         this.userManagementData.configurationPermissions;
       let tabs = ['environment', 'robot', 'fleet'];
-      let UITabs = ['Environment', 'Robot', 'Fleet'];
+      let UITabs = ['Environment', 'Robot','Fleet'];
       let activeButtons = ['Environment', 'robot', 'fleet'];
       let i = 0;
       for (let tab of tabs) {
@@ -266,7 +269,9 @@ export class ConfigurationComponent implements AfterViewInit {
     this.searchTerm = '';
     this.searchTermChanged();
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getConfigurationTranslation(key);
+  }
   reloadTable() {
     this.loadData(); // Ensure data is reloaded properly
     this.setPaginatedData(); // Ensure the paginated data is set correctly after loading
@@ -394,7 +399,6 @@ export class ConfigurationComponent implements AfterViewInit {
     } catch (error) {
       console.log(error);
     }
-    
   }
 
   // edit robo..
@@ -477,6 +481,7 @@ export class ConfigurationComponent implements AfterViewInit {
         let project = this.projectService.getSelectedProject();
         let map = this.projectService.getMapData();
         let roboInfo = {
+          amrId: robo.amrId,
           roboId: robo._id,
           projectName: project.projectName,
           mapName: map.mapName,
@@ -591,7 +596,6 @@ export class ConfigurationComponent implements AfterViewInit {
         this.paginator.length = this.filteredRobotData.length;
         // console.log(this.filteredRobotData);
       }
-      
     }
   }
 
@@ -628,13 +632,13 @@ export class ConfigurationComponent implements AfterViewInit {
         )
       );
     }
-    
+
     // Reset the paginator after filtering
     if (this.paginator) {
       this.paginator.firstPage();
     }
-    this.paginatedData1 = this.filteredRobotData
-    
+    this.paginatedData1 = this.filteredRobotData;
+
     this.setPaginatedData(); // Update paginated data after filtering
   }
 
@@ -1126,13 +1130,13 @@ export class ConfigurationComponent implements AfterViewInit {
   getHeader(button: string): string {
     switch (button) {
       case 'Environment':
-        return 'Environment';
+        return this.getTranslation('Environment');
       case 'robot':
-        return 'Robot';
+        return this.getTranslation('Robot');
       case 'fleet':
-        return 'Fleet';
+        return this.getTranslation('Fleet');
       default:
-        return 'Environment';
+        return this.getTranslation('Environment');
     }
   }
 

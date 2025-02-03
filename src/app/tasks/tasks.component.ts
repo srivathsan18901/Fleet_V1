@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MessageService } from 'primeng/api';
+import { TranslationService } from '../services/translation.service';
 
 @Component({
   selector: 'app-tasks',
@@ -136,9 +137,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
   constructor(
     private exportService: ExportService,
     private projectService: ProjectService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private translationService: TranslationService
   ) {}
-
+  getTranslation(key: string) {
+    return this.translationService.getTasksTranslation(key);
+  }
   async ngOnInit() {
     this.mapData = this.projectService.getMapData();
     let establishedTime = new Date(this.mapData.createdAt); // created time of map..

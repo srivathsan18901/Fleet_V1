@@ -12,6 +12,7 @@ import { ProjectService } from '../services/project.service';
 import { Router, NavigationStart } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { IsFleetService } from '../services/shared/is-fleet.service';
+import { TranslationService } from '../services/translation.service';
 export interface Robot {
   isCharging: boolean;
   networksrength: any;
@@ -87,7 +88,8 @@ export class RobotsComponent implements OnInit {
     public dialog: MatDialog,
     private projectService: ProjectService,
     private router: Router, // Inject Router
-    private isFleetService: IsFleetService
+    private isFleetService: IsFleetService,
+    private translationService: TranslationService
   ) {}
 
   async ngOnInit() {
@@ -139,7 +141,9 @@ export class RobotsComponent implements OnInit {
       this.isFleetService.setIsFleet(this.isFleet); // Sync the state with the service
     }
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getRobotsTranslation(key);
+  }
   // Fetch robots from the API
   async fetchAllRobos(): Promise<any[]> {
     const response = await fetch(
@@ -187,7 +191,7 @@ export class RobotsComponent implements OnInit {
           robo.battery = liveRobo.battery.toFixed(2);
           robo.batteryPercentage = liveRobo.battery.toFixed(2);
           robo.currentTask = liveRobo.current_task;
-          robo.status = liveRobo.isConnected ? 'ACTIVE' : 'INACTIVE';
+          robo.status = liveRobo.isConnected ? this.getTranslation("Active") : this.getTranslation("Inactive");
           robo.isConnected = liveRobo.isConnected;
           robo.distance = liveRobo.DISTANCE;
           robo.temperature = liveRobo.robotTemperature;

@@ -21,6 +21,7 @@ import {
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { TranslationService } from '../services/translation.service';
 import {
   Robot,
   RobotDetailPopupComponent,
@@ -112,7 +113,8 @@ export class ChartTimelineComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private translationService: TranslationService
   ) {
     this.getLiveRoboInfo().then((names) => {
       this.roboNames = names;
@@ -198,7 +200,9 @@ export class ChartTimelineComponent implements OnInit {
       },
     };
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getStatisticsTranslation(key);
+  }
   ngOnInit() {
     this.currentFilter = 'today';
     this.selectedMap = this.projectService.getMapData();

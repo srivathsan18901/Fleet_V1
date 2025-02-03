@@ -1,4 +1,10 @@
-import { Component, ViewEncapsulation, OnInit, ViewChild } from '@angular/core';
+import {
+  Component,
+  ViewEncapsulation,
+  OnInit,
+  ViewChild,
+  Injectable,
+} from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { AuthService } from '../auth.service';
 // import { PageEvent } from '@angular/material/paginator';
@@ -7,7 +13,14 @@ import { ProjectService } from '../services/project.service';
 import { log } from 'node:console';
 import { stat } from 'node:fs';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { TranslationService } from '../services/translation.service';
 
+interface projectList {
+  id: string;
+  name: string;
+  createdAt: string;
+  assigned: boolean;
+}
 @Component({
   selector: 'app-user-management',
   templateUrl: './user-management.component.html',
@@ -18,7 +31,8 @@ export class UserManagementComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private messageService: MessageService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private translationService: TranslationService
   ) {}
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -50,7 +64,7 @@ export class UserManagementComponent implements OnInit {
   pageNumber: any = 0;
   activeTab: string = 'General'; // Default tab
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
     if (!this.selectedProject && !this.selectedProject._id) {
       console.log('no project selected!');
@@ -63,9 +77,12 @@ export class UserManagementComponent implements OnInit {
     }
     this.currUserName = user.name;
     this.fetchUsers();
+    await this.fetchProjectList();
     this.setPaginatedData();
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getUserManagementTranslation(key);
+  }
   userPermissionState = [
     [
       false,
@@ -114,19 +131,19 @@ export class UserManagementComponent implements OnInit {
   pages: any = [
     {
       order: 0,
-      nameTag: 'GENERAL',
+      nameTag: this.getTranslation('GENERAL'),
       isOpen: true,
       general: 'General',
     },
     {
       order: 1,
-      nameTag: 'CONFIGURATION',
+      nameTag:  this.getTranslation('CONFIGURATION'),
       isOpen: false,
       general: 'Configuration',
     },
     {
       order: 2,
-      nameTag: 'PROJECT',
+      nameTag: this.getTranslation('PROJECT'),
       isOpen: false,
       general: 'PROJECT',
     },
@@ -142,30 +159,150 @@ export class UserManagementComponent implements OnInit {
     this.activeTab = this.pages[order].general;
     // alert(this.activeTab)
   }
-  projects = [
-    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
-    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
-    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
-    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
-    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
-    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
-    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
-    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
-    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
-    { name: 'Project A', createdAt: '2025-01-01', assigned: false },
-    { name: 'Project B', createdAt: '2025-01-15', assigned: false },
-    { name: 'Project C', createdAt: '2025-01-20', assigned: false },
-  ];
+  projects: projectList[] = [];
+
+  async fetchProjectList() {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project/gross-project-list`,
+      { method: 'GET', credentials: 'include' }
+    );
+
+    let data = await response.json();
+
+    if (data.error) {
+      console.log('Error in getting project list : ', data.error);
+      return;
+    }
+
+    this.projects = data.projects.map((project: any) => {
+      let date = new Date(project.createdAt);
+      let createdAt = date.toLocaleString('en-IN', {
+        month: 'short',
+        year: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      });
+
+      return {
+        id: project._id,
+        name: project.projectName,
+        createdAt: createdAt,
+        assigned: false,
+      };
+    });
+  }
 
   // Track if any project is assigned
   get isAnyAssigned() {
-    return this.projects.some(project => project.assigned);
+    return this.projects.some((project) => project.assigned);
   }
 
-  // Toggle assign/unassign for a project
-  toggleAssign(project: any) {
-    project.assigned = !project.assigned;
+  setAlteredProjectList() {
+    this.projects = this.projects.map((project: projectList) => {
+      let isProjectExist = this.user.projects.find(
+        (userProj: any) => userProj.projectId == project.id
+      );
+      project.assigned = isProjectExist ? true : false;
+
+      return project;
+    });
   }
+
+  // assign for a project
+  async toggleAssign(project: projectList) {
+    if (this.user.userName == this.authService.getUser().name) {
+      alert('not allowed to assign yourself!');
+      return;
+    }
+    let bodyData = {
+      projectId: project.id,
+      projectName: project.name,
+      userName: this.user.userName,
+      userRole: this.user.userRole,
+    };
+
+    if (this.user.userRole == 'Administrator') {
+      this.messageService.add({
+        severity: 'warn',
+        summary: `Project cannot be Assigned`,
+        detail: 'Project cannot be assigned to other administrator',
+        life: 4000,
+      });
+
+      return;
+    }
+
+    if (project.assigned) {
+      await this.unAssignProject(bodyData);
+      return;
+    }
+
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project/assign-project`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    if (response.status == 201) {
+      this.projects = this.projects.map((proj: projectList) => {
+        if (proj.id == project.id) proj.assigned = true;
+        return proj;
+      });
+    }
+
+    const data = await response.json();
+    // console.log(data);
+    if (data.error) {
+      console.log('Error occured in assigning project : ', data.error);
+      return;
+    }
+
+    if (data.msg) {
+      this.messageService.add({
+        severity: 'info',
+        summary: `${data.msg}`,
+        life: 4000,
+      });
+    }
+  }
+
+  async unAssignProject(bodyData: any) {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project/unassign-project`,
+      {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    if (response.status == 201) {
+      this.projects = this.projects.map((proj: any) => {
+        if (proj.id == bodyData.projectId) proj.assigned = false;
+        return proj;
+      });
+    }
+    const data = await response.json();
+    // console.log(data);
+    if (data.error) {
+      console.log('Error occured in assigning project : ', data.error);
+      return;
+    }
+    if (data.msg) {
+      this.messageService.add({
+        severity: 'info',
+        summary: `${data.msg}`,
+        life: 4000,
+      });
+    }
+  }
+
   generalPermissions = [
     {
       order: 0,
@@ -341,6 +478,7 @@ export class UserManagementComponent implements OnInit {
             userId: user._id,
             userName: user.name,
             userRole: user.role,
+            projects: user.projects,
             // userPermissions: user.permissions, // user permission..
             createdBy: user.createdBy,
             createdOn: formattedDate,
@@ -669,6 +807,7 @@ export class UserManagementComponent implements OnInit {
       console.log('User found:', this.user.userName);
       // Fetch user permissions and update the state
       this.fetchUserPermissions(this.user.userId);
+      this.setAlteredProjectList();
       this.userPermissionOCstate = !this.userPermissionOCstate;
     } else {
       console.error('User not found:', userId);

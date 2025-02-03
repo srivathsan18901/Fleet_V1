@@ -27,7 +27,7 @@ export type ChartOptions = {
   title: ApexTitleSubtitle;
   responsive: ApexResponsive[];
 };
-
+import { TranslationService } from '../services/translation.service';
 @Component({
   selector: 'app-gradient-donut',
   templateUrl: './gradient-donut.component.html',
@@ -67,11 +67,15 @@ export class GradientDonutComponent implements OnInit {
 
   public chartOptions: Partial<ChartOptions> | any;
 
-  constructor() {
+  constructor(
+    private translationService: TranslationService
+  ) {
     this.chartOptions = {};
   }
-
-  ngOnInit(): void {
+  getTranslation(key: string) {
+    return this.translationService.getStatisticsTranslation(key);
+  }
+  async ngOnInit() {
     this.chartOptions = {
       series: this.series,
       chart: {
@@ -106,7 +110,7 @@ export class GradientDonutComponent implements OnInit {
               },
               total: {
                 show: true,
-                label: 'Total',
+                label: this.getTranslation('total'),
                 fontSize: '1.2em',
                 fontWeight: 'bold',
                 color: '#121212',
@@ -158,9 +162,28 @@ export class GradientDonutComponent implements OnInit {
     };
   }
 
-  ngOnChanges() {
-    // changes: SimpleChanges
-    // called when a binded input data property of a component changes..
-    this.chartOptions.series = this.series;
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['series'] || changes['labels'] || changes['titleText']) {
+      this.chartOptions = {
+        ...this.chartOptions, // Keep existing settings
+        series: this.series,
+        labels: this.labels,
+        title: {
+          text: this.titleText, // Update title dynamically
+          align: 'left',
+          margin: 10,
+          offsetX: 0,
+          offsetY: 15,
+          floating: false,
+          style: {
+            fontSize: '1.2em',
+            color: '#263238',
+            fontFamily: '"Graphik", Arial, sans-serif',
+          },
+        },
+      };
+    }
   }
+  
+  
 }

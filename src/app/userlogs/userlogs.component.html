@@ -8,7 +8,7 @@
       <div class="header-section">
         <h1 class="header-title">{{ activeHeader }}</h1>
         <div class="subheader-container">
-          <div class="subheader-text">Create and edit logs</div>
+          <div class="subheader-text">{{ getTranslation("Create and edit logs") }}</div>
           <img
             src="../../assets/icons/i-icon.svg"
             alt="Icon"
@@ -24,7 +24,7 @@
           <input
             type="text"
             (input)="onSearch($event)"
-            placeholder="Search For Logs..."
+            placeholder="{{ getTranslation('Search For Logs...') }}"
           />
           <button class="search-btn">
             <img
@@ -91,7 +91,7 @@
               (click)="showTable('task')"
               (click)="setActiveButton('task')"
             >
-              Task
+            {{ getTranslation("Task") }}
             </button>
             <button
               class="button"
@@ -102,7 +102,7 @@
               (click)="showTable('robot')"
               (click)="setActiveButton('robot')"
             >
-              Robot
+            {{ getTranslation("Robot") }}
             </button>
             <button
               class="button"
@@ -113,7 +113,7 @@
               (click)="showTable('fleet')"
               (click)="setActiveButton('fleet')"
             >
-              Fleet
+            {{ getTranslation("Fleet") }}
             </button>
           </div>
         </div>
@@ -127,12 +127,12 @@
             <table class="table" *ngIf="currentTable === 'task'">
               <thead class="table-header">
                 <tr>
-                  <th class="table-header-cell">Date and time</th>
-                  <th class="table-header-cell">Task ID</th>
-                  <th class="table-header-cell">Task name</th>
-                  <th class="table-header-cell">Error code</th>
-                  <th class="table-header-cell">Criticality</th>
-                  <th class="table-header-cell">Description</th>
+                  <th class="table-header-cell">{{ getTranslation("Date and time") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Task ID") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Task Name") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Error code") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Criticality") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Description") }}</th>
                 </tr>
               </thead>
 
@@ -149,7 +149,7 @@
                         alt="No Data"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">No data found</p>
+                      <p class="no-data-text">{{ getTranslation("No data found") }}</p>
                     </div>
                   </td>
                 </tr>
@@ -182,7 +182,7 @@
                         alt="Simulation Mode"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">Sim mode has been enabled.</p>
+                      <p class="no-data-text">{{ getTranslation("Sim mode has been enabled") }}</p>
                     </div>
                   </td>
                 </tr>
@@ -217,12 +217,12 @@
             <table class="table" *ngIf="currentTable === 'robot'">
               <thead class="table-header">
                 <tr>
-                  <th class="table-header-cell">Date and time</th>
-                  <th class="table-header-cell">Robot ID</th>
-                  <th class="table-header-cell">Robot name</th>
-                  <th class="table-header-cell">Error code</th>
-                  <th class="table-header-cell">Criticality</th>
-                  <th class="table-header-cell">Description</th>
+                  <th class="table-header-cell">{{ getTranslation("Date and time") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Robot ID") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Robot Name") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Error code") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Criticality") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Description") }}</th>
                 </tr>
               </thead>
 
@@ -236,7 +236,7 @@
                         alt="No Data"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">No data found</p>
+                      <p class="no-data-text">{{ getTranslation("No data found") }}</p>
                     </div>
                   </td>
                 </tr>
@@ -269,7 +269,7 @@
                         alt="Simulation Mode"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">Sim mode has been enabled.</p>
+                      <p class="no-data-text">{{ getTranslation("Sim mode has been enabled") }}</p>
                     </div>
                   </td>
                 </tr>
@@ -302,11 +302,11 @@
             <table class="table" *ngIf="currentTable === 'fleet'">
               <thead class="table-header">
                 <tr>
-                  <th class="table-header-cell">Date and time</th>
-                  <th class="table-header-cell">Module name</th>
-                  <th class="table-header-cell">Error code</th>
-                  <th class="table-header-cell">Criticality</th>
-                  <th class="table-header-cell">Description</th>
+                  <th class="table-header-cell">{{ getTranslation("Date and time") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Module Name") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Error code") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Criticality") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Description") }}</th>
                 </tr>
               </thead>
               <tbody *ngIf="currentTable === 'fleet' && isFleet == true">
@@ -319,7 +319,7 @@
                         alt="No Data"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">No data found</p>
+                      <p class="no-data-text">{{ getTranslation("No data found") }}</p>
                     </div>
                   </td>
                 </tr>
@@ -350,7 +350,7 @@
                         alt="Simulation Mode"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">Sim mode has been enabled.</p>
+                      <p class="no-data-text">{{ getTranslation("Sim mode has been enabled") }}</p>
                     </div>
                   </td>
                 </tr>
@@ -379,7 +379,7 @@
 
       <!-- Export -->
       <div class="export-button-container">
-        <button class="export-button" (click)="showPopup()">Export</button>
+        <button class="export-button" (click)="showPopup()">{{ getTranslation("Export") }}</button>
         <div *ngIf="isPopupVisible" class="export-popup">
           <div class="popup-content">
             <button class="close-button" (click)="onClose()">
@@ -395,10 +395,10 @@
                 />
               </svg>
             </button>
-            <h3>Select Format</h3>
+            <h3>{{ getTranslation("Select Format") }}</h3>
             <div class="button-container">
-              <button (click)="exportData('csv')">Export as CSV</button>
-              <button (click)="exportData('excel')">Export as Excel</button>
+              <button (click)="exportData('csv')">{{ getTranslation("Export as CSV") }}</button>
+              <button (click)="exportData('excel')">{{ getTranslation("Export as Excel") }}</button>
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
-
+import { TranslationService } from '../services/translation.service';
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
@@ -54,11 +54,14 @@ export class StatisticsComponent {
     private router: Router,
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
-    private isFleetService: IsFleetService
+    private isFleetService: IsFleetService,
+    private translationService: TranslationService
   ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getStatisticsTranslation(key);
+  }
   onViewAllClick() {
     this.router.navigate(['/tasks']); // Navigate to tasks page
     console.log('hey');

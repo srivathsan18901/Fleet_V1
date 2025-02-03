@@ -3,6 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { Subscription } from 'rxjs';
+import { TranslationService } from '../services/translation.service';
 
 export interface Robot {
   isCharging: boolean;
@@ -116,6 +117,7 @@ export class RobotDetailPopupComponent {
   constructor(
     public dialogRef: MatDialogRef<RobotDetailPopupComponent>,
     private projectService: ProjectService,
+    private translationService: TranslationService,
     @Inject(MAT_DIALOG_DATA) public data: Robot
   ) {
 
@@ -130,7 +132,9 @@ export class RobotDetailPopupComponent {
       return 'low'; // Red for low battery
     }
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getRobotsTranslation(key);
+  }
   ngOnInit(): void {
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) {

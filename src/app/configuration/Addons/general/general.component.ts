@@ -4,6 +4,8 @@ import { ProjectService } from '../../../services/project.service';
 import { environment } from '../../../../environments/environment.development';
 import { FormBuilder } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { TranslationService } from '../../../services/translation.service';
+
 
 interface DB {
   name: string;
@@ -67,7 +69,9 @@ export class GeneralComponent {
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
     private fb: FormBuilder,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private translationService: TranslationService
+
   ) {
     this.formData = {
       selectedDb: '',
@@ -95,7 +99,9 @@ export class GeneralComponent {
       databaseName: '',
     };
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getConfigurationTranslation(key);
+  }
   async ngOnInit() {
     this.selectedProject = this.projectService.getSelectedProject();
     let response = await fetch(

@@ -21,13 +21,13 @@
             (click)="setView('operation')"
             [class.active]="currentView === 'operation'"
           >
-            Operation
+          {{ getTranslation('operation') }}
           </button>
           <button
             (click)="setView('robot')"
             [class.active]="currentView === 'robot'"
           >
-            Robot
+          {{ getTranslation('robot') }}
           </button>
           <div
             class="slider"
@@ -44,8 +44,8 @@
       <div class="statistics-container">
 
       <div class="stat-card stat-card-1">
-        <div class="stat-value">Average speed</div>
-        <h2>{{ statisticsData.averageSpeed || 'Loading...' }}</h2>
+        <div class="stat-value">{{ getTranslation('averageSpeed') }}</div>
+        <h2>{{ statisticsData.averageSpeed || getTranslation('loading') }}</h2>
         <div class="stat-change positive">
           <!-- +{{ statisticsData.averageSpeedchange }}% <span>&uarr;</span> -->
         </div>
@@ -70,8 +70,8 @@
 
       <!-- Stat card 2 -->
       <div class="stat-card stat-card-2">
-        <div class="stat-value">Total distance</div>
-        <h2>{{ statisticsData.totalDistance || 'Loading...' }}</h2>
+        <div class="stat-value">{{ getTranslation('totalDistance') }}</div>
+        <h2>{{ statisticsData.totalDistance || getTranslation('loading') }}</h2>
         <div class="stat-change positive">
           <!-- +{{ statisticsData.totalDistanceChange }}% <span>&uarr;</span> -->
         </div>
@@ -96,8 +96,8 @@
 
       <!-- Stat card 3 -->
       <div class="stat-card stat-card-3">
-        <div class="stat-value">Robot utilization</div>
-        <h2>{{ statisticsData.robotUtilization || 'Loading...' }}</h2>
+        <div class="stat-value">{{ getTranslation('robotUtilization') }}</div>
+        <h2>{{ statisticsData.robotUtilization || getTranslation('loading') }}</h2>
         <div class="stat-change negative">
           <!-- {{ statisticsData.robotUtilizationChange }}% <span>&darr;</span> -->
         </div>
@@ -122,8 +122,8 @@
 
       <!-- Stat card 4 -->
       <div class="stat-card stat-card-4">
-        <div class="stat-value">Network connection</div>
-        <h2>{{ statisticsData.networkConnection|| 'Loading...' }}</h2>
+        <div class="stat-value">{{ getTranslation('networkConnection') }}</div>
+        <h2>{{ statisticsData.networkConnection|| getTranslation('loading') }}</h2>
         <div class="stat-change positive">
           <!-- +{{ statisticsData.networkConnectionChange }}% <span>&uarr;</span> -->
         </div>
@@ -193,11 +193,11 @@
         <!-- Robot Activity Section -->
         <div class="robot-activity-container">
           <div class="section-header">
-            <h3>Robot Activities</h3>
+            <h3>{{ getTranslation('robotActivities') }}</h3>
             <div class="search-box">
               <input
                 type="text"
-                placeholder="Search activities..."
+                placeholder="{{ getTranslation('searchActivities') }}"
                 (input)="onSearch($event)"
               />
             </div>
@@ -207,10 +207,10 @@
             <table class="robot-activity-table">
               <thead>
                 <tr>
-                  <th>Robot Id</th>
-                  <th>Robot State</th>
-                  <th>Task Name</th>
-                  <th>Status</th>
+                  <th>{{ getTranslation('robotId') }}</th>
+                  <th>{{ getTranslation('robotState') }}</th>
+                  <th>{{ getTranslation('taskName') }}</th>
+                  <th>{{ getTranslation('status') }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -220,7 +220,7 @@
                   <td colspan="4" class="no-data">
                     <div class="no-data-container">
                       <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
-                      <p class="no-data-text">No data found</p>
+                      <p class="no-data-text">{{ getTranslation('noData') }}</p>
                     </div>
                   </td>
                 </tr>
@@ -240,11 +240,11 @@
         <!-- Notifications Section -->
         <div class="notifications-container">
           <div class="section-header">
-            <h3>Notifications</h3>
+            <h3>{{ getTranslation('notifications') }}</h3>
             <div class="search-box">
               <input
                 type="text"
-                placeholder="Search notifications..."
+                placeholder="{{ getTranslation('searchNotifications') }}"
                 (input)="onSearchNotifications($event)"
               />
             </div>
@@ -254,10 +254,10 @@
           <table class="notifications-table">
           <thead>
             <tr>
-              <th>Error/Warning</th>
+              <th>{{ getTranslation('error') }}</th>
               <!-- <th>Error</th> -->
-              <th>Robot ID</th>
-              <th>Description</th>
+              <th>{{ getTranslation('robotId') }}</th>
+              <th>{{ getTranslation('description') }}</th>
             </tr>
           </thead>
 
@@ -267,7 +267,7 @@
               <td colspan="3" class="no-data">
                 <div class="no-data-container">
                   <img src="../../assets/no-data.png" alt="No Data" class="no-data-image">
-                  <p class="no-data-text">No data found</p>
+                  <p class="no-data-text">{{ getTranslation('noData') }}</p>
                 </div>
               </td>
             </tr>

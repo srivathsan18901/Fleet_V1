@@ -12,6 +12,7 @@ import {
 } from 'ng-apexcharts';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
+import { TranslationService } from '../services/translation.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -50,7 +51,8 @@ export class ThroughputComponent {
 
   constructor(
     private projectService: ProjectService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private translationService: TranslationService,
   ) {
     const seriesData = {
       hourlyDataSeries1: {
@@ -91,7 +93,7 @@ export class ThroughputComponent {
         curve: 'smooth',
       },
       title: {
-        text: 'ThroughPut',
+        text: this.getTranslation('throughput'),
         align: 'left',
         style: {
           fontFamily: 'Arial, Helvetica, sans-serif',
@@ -100,7 +102,7 @@ export class ThroughputComponent {
         },
       },
       subtitle: {
-        text: 'Picks Per Hour',
+        text: this.getTranslation('picksPerHour'),
         align: 'left',
         style: {
           fontFamily: 'Arial, Helvetica, sans-serif',
@@ -128,7 +130,9 @@ export class ThroughputComponent {
       },
     };
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getDashboardTranslation(key);
+  }
   async ngOnInit() {
     this.selectedMap = this.projectService.getMapData();
     this.isInLive = this.projectService.getInLive();

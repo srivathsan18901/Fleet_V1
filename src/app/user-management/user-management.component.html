@@ -1,107 +1,170 @@
-<div class=" mainContent">
-
+<div class="mainContent">
   <app-loader></app-loader>
   <!-- Title and Button -->
   <div class="flex w-full items-center justify-between">
     <!-- Title -->
     <!-- Header section -->
     <div class="header-section">
-      <h1 class="header-title font-arial">User Management</h1>
+      <h1 class="header-title font-arial">{{getTranslation("User Management")}}</h1>
       <div class="subheader-container">
-        <div class="subheader-text font-sans">View and Edit Tasks</div>
-        <img src="../../assets/icons/i-icon.svg" alt="Icon" class="subheader-icon" />
+        <div class="subheader-text font-sans">{{getTranslation("View and Edit Users")}}</div>
+        <img
+          src="../../assets/icons/i-icon.svg"
+          alt="Icon"
+          class="subheader-icon"
+        />
       </div>
     </div>
 
-
     <!-- Button -->
     <span (click)="userCreatePopUpOpen(false)">
-      <button class="create-user">Create User</button>
+      <button class="create-user">{{getTranslation("Create User")}}</button>
     </span>
   </div>
   <!-- Table -->
   <div class="flex flex-col items-center justify-start w-full h-20px">
     <!-- Table Title -->
     <span
-      class="w-full h-[55px] text-[14px] text-black font-semibold rounded-[6px] bg-[#ffcdcd] flex items-center justify-between px-4">
-      <span class="w-[30%] text-[14px] h-[55px] flex items-center justify-between">
-        <p class="w-full text-[14px] flex items-center h-full pl-3 justify-start ">Name</p>
+      class="w-full h-[55px] text-[14px] text-black font-semibold rounded-[6px] bg-[#ffcdcd] flex items-center justify-between px-4"
+    >
+      <span
+        class="w-[30%] text-[14px] h-[55px] flex items-center justify-between"
+      >
+        <p
+          class="w-full text-[14px] flex items-center h-full pl-3 justify-start"
+        >
+        {{getTranslation("Name")}}
+        </p>
       </span>
-      <span class="flex text-[14px] h-[40px] w-[80%] items-center justify-between">
-        <p class="w-full text-[14px] flex items-center h-full pl-3 justify-start ">User Type</p>
-        <p class="w-full text-[14px] flex items-center h-full pl-3 justify-start ">Created By</p>
-        <p class="w-full text-[14px] flex items-center h-full pl-3 justify-start ">Created on</p>
-        <p class="w-full text-[14px] flex items-center h-full pl-3 justify-center">Options</p>
+      <span
+        class="flex text-[14px] h-[40px] w-[80%] items-center justify-between"
+      >
+        <p
+          class="w-full text-[14px] flex items-center h-full pl-3 justify-start"
+        >
+        {{getTranslation("User Type")}}
+        </p>
+        <p
+          class="w-full text-[14px] flex items-center h-full pl-3 justify-start"
+        >
+        {{getTranslation("Created by")}}
+        </p>
+        <p
+          class="w-full text-[14px] flex items-center h-full pl-3 justify-start"
+        >
+        {{getTranslation("Created on")}}
+        </p>
+        <p
+          class="w-full text-[14px] flex items-center h-full pl-3 justify-center"
+        >
+        {{getTranslation("Options")}}
+        </p>
       </span>
     </span>
     <!-- Table Rows -->
-    <span class="flex flex-col w-full items-center justify-start h-[420px] pb-3 overflow-y-auto">
-      @if( paginatedData.length === 0){<p class="flex items-center py-5 text-[14px] text-[#9e9e9e]">- No data Found -
-      </p>}
-      @if(paginatedData.length > 0) {
-      @for (user of paginatedData;track trackByTaskId) {
-      <span class="w-full twoColors text-black font-medium duration-300 flex items-center justify-between px-3">
-        <span class="w-[30%] h-[50px] flex items-center justify-between  ">
-          <p class="flex text-[14px] items-center justify-start pl-3  h-full capitalize w-full">{{user!.userName}}</p>
+    <span
+      class="flex flex-col w-full items-center justify-start h-[420px] pb-3 overflow-y-auto"
+    >
+      @if( paginatedData.length === 0){
+      <p class="flex items-center py-5 text-[14px] text-[#9e9e9e]">
+        - {{getTranslation("No data Found")}} -
+      </p>
+      } @if(paginatedData.length > 0) { @for (user of paginatedData;track
+      trackByTaskId) {
+      <span
+        class="w-full twoColors text-black font-medium duration-300 flex items-center justify-between px-3"
+      >
+        <span class="w-[30%] h-[50px] flex items-center justify-between">
+          <p
+            class="flex text-[14px] items-center justify-start pl-3 h-full capitalize w-full"
+          >
+            {{ user!.userName }}
+          </p>
         </span>
-        <span class="flex text-[14px] w-[80%] h-[50px] items-center justify-between">
-          <p class="w-full text-[14px] flex items-center pl-3   h-full justify-start ">{{user!.userRole}}</p>
-          <p class="w-full text-[14px] flex items-center pl-3   h-full justify-start capitalizeborder-r-2 ">
-            {{user!.createdBy}}</p>
-          <p class="w-full text-[14px] flex items-center pl-3  h-full justify-start  ">{{user!.createdOn}}</p>
-
+        <span
+          class="flex text-[14px] w-[80%] h-[50px] items-center justify-between"
+        >
+          <p
+            class="w-full text-[14px] flex items-center pl-3 h-full justify-start"
+          >
+            {{ user!.userRole }}
+          </p>
+          <p
+            class="w-full text-[14px] flex items-center pl-3 h-full justify-start capitalizeborder-r-2"
+          >
+            {{ user!.createdBy }}
+          </p>
+          <p
+            class="w-full text-[14px] flex items-center pl-3 h-full justify-start"
+          >
+            {{ user!.createdOn }}
+          </p>
 
           <span class="flex gap-5 items-center justify-center w-full">
-            <button class="edit-button" (click)="userPermissionPopUpOpen(user!.userId)">
+            <button
+              class="edit-button"
+              (click)="userPermissionPopUpOpen(user!.userId)"
+            >
               <svg class="edit-svgIcon" viewBox="0 0 512 512">
                 <path
-                  d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z">
-                </path>
+                  d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
+                ></path>
               </svg>
             </button>
 
-
-            <button class="delete-button" (click)="getDeleteUser(user!.userName, user!.userRole)">
+            <button
+              class="delete-button"
+              (click)="getDeleteUser(user!.userName, user!.userRole)"
+            >
               <svg class="delete-svgIcon" viewBox="0 0 448 512">
                 <path
-                  d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z">
-                </path>
+                  d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"
+                ></path>
               </svg>
             </button>
-
-
           </span>
-
         </span>
       </span>
-      }
-      }
-
+      } }
     </span>
     <div class="paginator-container" *ngIf="filteredData.length > 0">
-      <mat-paginator [length]="filteredData.length" [pageSize]="5" [pageSizeOptions]="[5, 10 ]"
-        (page)="onPageChange($event)" showFirstLastButtons>
+      <mat-paginator
+        [length]="filteredData.length"
+        [pageSize]="5"
+        [pageSizeOptions]="[5, 10]"
+        (page)="onPageChange($event)"
+        showFirstLastButtons
+      >
       </mat-paginator>
     </div>
   </div>
-
 </div>
 
-
 <!-- Create User Popup -->
-<div *ngIf="userCreatePopUp"
-  class="absolute flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50">
+<div
+  *ngIf="userCreatePopUp"
+  class="absolute flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50"
+>
   <div class="popup w-[700px] py-7 bg-[#D9D9D9]">
     <!-- Title -->
     <span class="flex flex-col items-start justify-center gap-3.5">
-      <p class=" text-[35px] text-[#DA2127]  font-bold">Create User</p>
-      <p class=" flex items-center justify-center gap-2 text-[14px] font-medium text-[#7B7B7B]">
-        Create an New User
-        <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <p class="text-[35px] text-[#DA2127] font-bold">{{getTranslation("Create User")}}</p>
+      <p
+        class="flex items-center justify-center gap-2 text-[14px] font-medium text-[#7B7B7B]"
+      >
+      {{getTranslation("Create a New User")}}
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 25 25"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <g clip-path="url(#clip0_513_29001)">
             <path
               d="M12.4987 2.08301C6.75495 2.08301 2.08203 6.75592 2.08203 12.4997C2.08203 18.2434 6.75495 22.9163 12.4987 22.9163C18.2424 22.9163 22.9154 18.2434 22.9154 12.4997C22.9154 6.75592 18.2424 2.08301 12.4987 2.08301ZM13.5404 17.708H11.457V11.458H13.5404V17.708ZM13.5404 9.37467H11.457V7.29134H13.5404V9.37467Z"
-              fill="black" />
+              fill="black"
+            />
           </g>
           <defs>
             <clipPath id="clip0_513_29001">
@@ -112,61 +175,112 @@
       </p>
     </span>
     <!-- User Credentials Form -->
-    <div class="w-full h-full flex flex-col items-start justify-start mt-10 gap-5">
+    <div
+      class="w-full h-full flex flex-col items-start justify-start mt-10 gap-5"
+    >
       <!-- Username and UserRole -->
       <span class="w-full flex items-center justify-center gap-5">
-        <input [(ngModel)]="userName" type="text" maxlength="250" placeholder="Username"
-          class="w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
+        <input
+          [(ngModel)]="userName"
+          type="text"
+          maxlength="250"
+          placeholder="{{getTranslation('Username')}}"
+          class="w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none"
+        />
         <!-- DropDown -->
         <span
           class="relative w-[40%] flex px-4 py-3 items-center justify-between gap-5 rounded-lg shadow-[0_0_30px_#00000030]"
-          (click)="userRoleChange()">
-          <p class="font-semibold capitalize text-[14px]">{{userRole}}</p>
-          <svg [ngClass]="{'rotateArrow': userRoleOCstate}" class="duration-300" width="14" height="15"
-            viewBox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M7.00007 12.3125L0 5.42194L2.33335 3.125L7.00007 7.71879L11.6667 3.125L14 5.42194L7.00007 12.3125Z"
-              fill="black" />
+          (click)="userRoleChange()"
+        >
+          <p class="font-semibold capitalize text-[14px]">{{ userRole }}</p>
+          <svg
+            [ngClass]="{ rotateArrow: userRoleOCstate }"
+            class="duration-300"
+            width="14"
+            height="15"
+            viewBox="0 0 14 15"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.00007 12.3125L0 5.42194L2.33335 3.125L7.00007 7.71879L11.6667 3.125L14 5.42194L7.00007 12.3125Z"
+              fill="black"
+            />
           </svg>
 
           <!-- DropDown Options -->
           @if (userRoleOCstate) {
           <span
-            class="absolute enterAnimation bg-white top-[110%] left-0 rounded-lg shadow-[0_0_30px_#00000020] z-50 w-full px-2 py-3 flex flex-col items-center justify-center gap-3">
+            class="absolute enterAnimation bg-white top-[110%] left-0 rounded-lg shadow-[0_0_30px_#00000020] z-50 w-full px-2 py-3 flex flex-col items-center justify-center gap-3"
+          >
             @for (user of userRoleCredentials; track user) {
-            <p class="w-full font-semibold text-[14px] capitalize hover:bg-[#a3a3a3] p-2 rounded-md cursor-pointer pl-2"
-              (click)="changeUserRole(user.order)">{{user.userRole}}</p>
+            <p
+              class="w-full font-semibold text-[14px] capitalize hover:bg-[#a3a3a3] p-2 rounded-md cursor-pointer pl-2"
+              (click)="changeUserRole(user.order)"
+            >
+              {{ user.userRole }}
+            </p>
             }
           </span>
           }
         </span>
       </span>
       <!-- Password and Confrim password with show password button -->
-      <span class="w-full flex-col relative flex items-start justify-between gap-3">
+      <span
+        class="w-full flex-col relative flex items-start justify-between gap-3"
+      >
         <span class="w-full flex gap-10 items-center justify-center">
           <span class="w-full relative flex items-center justify-end">
-            <input [(ngModel)]="passWord" type="{{passwordType}}" maxlength="50" placeholder="Password"
-              class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
-            <p class="absolute text-[10px] right-2 bottom-1 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer"
-              (click)="showPassword()">{{passwordView}}</p>
+            <input
+              [(ngModel)]="passWord"
+              type="{{ passwordType }}"
+              maxlength="50"
+              placeholder="{{getTranslation('Password')}}"
+              class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none"
+            />
+            <p
+              class="absolute text-[10px] right-2 bottom-1 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer"
+              (click)="showPassword()"
+            >
+              {{ passwordView }}
+            </p>
           </span>
 
           <span class="w-full relative flex items-center justify-end">
-            <input [(ngModel)]="confrimPassword" type="{{confrimPasswordType}}" maxlength="50"
-              placeholder="Confrim Password"
-              class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none">
-            <p class="absolute text-[10px] right-2 bottom-1 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer"
-              (click)="showConfrimPassword()">{{confrimPasswordView}}</p>
+            <input
+              [(ngModel)]="confrimPassword"
+              type="{{ confrimPasswordType }}"
+              maxlength="50"
+              placeholder="{{getTranslation('Confirm Password')}}"
+              class="bg-transparent w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none"
+            />
+            <p
+              class="absolute text-[10px] right-2 bottom-1 w-14 flex items-center justify-center py-1 rounded-[2px] cursor-pointer"
+              (click)="showConfrimPassword()"
+            >
+              {{ confrimPasswordView }}
+            </p>
           </span>
         </span>
-        <p class="absolute top-[calc(100%+5px)] text-red-500">{{errorMessage}}</p>
+        <p class="absolute top-[calc(100%+5px)] text-red-500">
+          {{ errorMessage }}
+        </p>
       </span>
 
       <div class="flex w-full items-center mt-10 gap-5 justify-end">
         <span class="flex gap-5 items-center">
-          <button (click)="createUser()"
-            class="w-[120px] py-[8px] rounded-md bg-[#ff3333] text-[14px] text-white font-medium">Create User</button>
-          <button (click)="userCreatePopUpOpen(true)"
-            class="w-[120px] py-[8px] rounded-md border-2 border-[#ff3333] text-[14px] text-[#ff3333] font-medium">Cancel</button>
+          <button
+            (click)="createUser()"
+            class="w-[120px] py-[8px] rounded-md bg-[#ff3333] text-[14px] text-white font-medium"
+          >
+          {{getTranslation('Create User')}}
+          </button>
+          <button
+            (click)="userCreatePopUpOpen(true)"
+            class="w-[120px] py-[8px] rounded-md border-2 border-[#ff3333] text-[14px] text-[#ff3333] font-medium"
+          >
+          {{getTranslation('Cancel')}}
+          </button>
         </span>
       </div>
     </div>
@@ -289,7 +403,6 @@
 <!-- } -->
 <!-- </span>  -->
 
-
 <!-- <span class="mt-7 w-full flex items-center justify-end">
       <button class="px-10 py-3 bg-[#D30000] rounded-md text-white font-semibold text-[14px]"
         (click)="saveEditPermission()">Edit Permission</button>
@@ -335,75 +448,107 @@
 <!-- </div> -->
 <!-- </div> -->
 
-
 <!--Joel's code-->
 
-<div *ngIf="userPermissionOCstate"
-  class="relative overflow-y-auto flex items-center justify-center w-screen h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50 box-border">
-
+<div
+  *ngIf="userPermissionOCstate"
+  class="relative overflow-y-auto flex items-center justify-center w-screen h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50 box-border"
+>
   <div
-    class="w-[70%] h-[70%] relative overflow-y-auto scrollCSS MinimalScrollCSS py-10 bg-[#FFFFFF] rounded-[20px] px-10 flex flex-col gap-5">
-
+    class="w-[70%] h-[70%] relative overflow-y-auto scrollCSS MinimalScrollCSS py-10 bg-[#FFFFFF] rounded-[20px] px-10 flex flex-col gap-5"
+  >
     <!-- Title and Close Button -->
     <div class="flex items-center justify-between w-full">
       <div class="flex flex-col items-start gap-2.5">
-        <p class="text-[36px] text-[#DA2127] font-bold">User Permissions</p>
-        <p class="text-[16px] text-[#7B7B7B] ">Select a category to manage permissions</p>
+        <p class="text-[36px] text-[#DA2127] font-bold">{{getTranslation('User Permissions')}}</p>
+        <p class="text-[16px] text-[#7B7B7B]">
+          {{getTranslation('Select a category to manage permissions')}}
+        </p>
       </div>
       <button class="close-button" (click)="userPermissionPopUpClose()">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
           <path fill="none" d="M0 0h24v24H0z" />
           <path
-            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z" />
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
         </svg>
       </button>
     </div>
 
     <!-- Tabs and Save Button -->
-    <div class="flex items-center justify-between border-b-2 border-gray-800 pb-3">
+    <div
+      class="flex items-center justify-between border-b-2 border-gray-800 pb-3"
+    >
       <div class="flex">
-
-        <div [ngClass]="{
+        <div
+          [ngClass]="{
             'transform translate-x-0': pages[0].isOpen,
             'transform translate-x-[100%]': pages[1].isOpen,
             'transform translate-x-[200%]': pages[2].isOpen,
-          }" class="flex absolute w-[180px] h-[50px] rounded-md duration-300 bg-[#FF3333]">
-
-        </div>
+          }"
+          class="flex absolute w-[180px] h-[50px] rounded-md duration-300 bg-[#FF3333]"
+        ></div>
 
         <!-- Tab Buttons -->
         @for (page of pages; track page) {
-        <span (click)=changePage(page.order)
-          class="flex z-40 items-center justify-center text-black w-[180px] cursor-pointer h-[50px]">
-          <p [ngClass]="{'text-white  duration-300 ': page.isOpen}">{{page.nameTag}}</p>
+        <span
+          (click)="changePage(page.order)"
+          class="flex z-40 items-center justify-center text-black w-[180px] cursor-pointer h-[50px]"
+        >
+          <p [ngClass]="{ 'text-white  duration-300 ': page.isOpen }">
+            {{ page.nameTag }}
+          </p>
         </span>
         }
       </div>
-      <button class="px-8 py-3 bg-[#D30000] rounded-md text-white text-[14px]"
-        (click)="saveEditPermission()">UPDATE</button>
+      <button
+        class="px-8 py-3 bg-[#D30000] rounded-md text-white text-[14px]"
+        (click)="saveEditPermission()"
+      >
+      {{getTranslation('UPDATE')}}
+      </button>
     </div>
 
     <!-- Tab Content Wrapper -->
     <div class="relative w-full h-full mt-5 overflow-hidden">
       <!-- General Tab -->
-      <div class="absolute top-0 left-0 w-full h-full transition-transform overflow-y-auto duration-500 ease-in-out"
-        [class.translate-x-[-100%]]="activeTab !== 'General'" [class.translate-x-0]="activeTab === 'General'">
+      <div
+        class="absolute top-0 left-0 w-full h-full transition-transform overflow-y-auto duration-500 ease-in-out"
+        [class.translate-x-[-100%]]="activeTab !== 'General'"
+        [class.translate-x-0]="activeTab === 'General'"
+      >
         <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <div *ngFor="let permission of generalPermissions">
             <!-- Card -->
             <div
-              class="p-5 w-full h-[200px] gap-3 rounded-[15px] bg-[#d9d9d9] shadow-inner hover:shadow-lg hover:scale-[1.02] transition transform duration-300 ease-in-out relative flex flex-col">
+              class="p-5 w-full h-[200px] gap-3 rounded-[15px] bg-[#d9d9d9] shadow-inner hover:shadow-lg hover:scale-[1.02] transition transform duration-300 ease-in-out relative flex flex-col"
+            >
               <div class="flex items-center justify-start gap-3">
                 <!-- Icon -->
-                <div class="bg-[#FF3333] rounded-md size-[50px] shadow-lg flex items-center justify-center">
-                  <img [src]="permission.icon" alt="{{ permission.nameTag }} icon" class="size-[60%]" />
+                <div
+                  class="bg-[#FF3333] rounded-md size-[50px] shadow-lg flex items-center justify-center"
+                >
+                  <img
+                    [src]="permission.icon"
+                    alt="{{ permission.nameTag }} icon"
+                    class="size-[60%]"
+                  />
                 </div>
                 <!-- Title -->
-                <p class="text-[24px] font-black pt-1 font-bold text-black">{{ permission.nameTag }}</p>
+                <p class="text-[24px] font-black pt-1 font-bold text-black">
+                  {{ permission.nameTag }}
+                </p>
               </div>
               <!-- Description -->
-              <p class="text-[14px] text-[#7B7B7B] text-wrap text-justify leading-5 indent-4 tracking-wide flex-grow">
-                 {{ permission.description }}
+              <p
+                class="text-[14px] text-[#7B7B7B] text-wrap text-justify leading-5 indent-4 tracking-wide flex-grow"
+              >
+                {{ permission.description }}
               </p>
               <!-- Toggle Switch -->
               <div class="self-end">
@@ -419,43 +564,65 @@
 
       <!-- Configuration Tab -->
 
-      <div class="absolute top-0 left-0 w-full h-full overflow-y-auto transition-transform duration-500 ease-in-out"
+      <div
+        class="absolute top-0 left-0 w-full h-full overflow-y-auto transition-transform duration-500 ease-in-out"
         [class.translate-x-0]="activeTab === 'Configuration'"
-        [class.translate-x-[100%]]="activeTab !== 'Configuration'">
-
+        [class.translate-x-[100%]]="activeTab !== 'Configuration'"
+      >
         <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-         
           <!-- Cards -->
-          <div *ngFor="let config of configurationSettings; let i = index" class="p-4 border-r-2 border-gray-800 last:border-none">
-
+          <div
+            *ngFor="let config of configurationSettings; let i = index"
+            class="p-4 border-r-2 border-gray-800 last:border-none"
+          >
             <!-- Card -->
             <div class="flex items-center justify-between mb-3">
               <div>
-                <p class="text-[26px] sm:text-[20px] lg:text-[28px]  text-black">{{ config.title }}</p>
-                <p class="text-[10px] sm:text-[10px] lg:text-[10px] text-[#7B7B7B] max-w-[140px]">{{ config.description }}</p>
-
+                <p class="text-[26px] sm:text-[20px] lg:text-[28px] text-black">
+                  {{ config.title }}
+                </p>
+                <p
+                  class="text-[10px] sm:text-[10px] lg:text-[10px] text-[#7B7B7B] max-w-[140px]"
+                >
+                  {{ config.description }}
+                </p>
               </div>
               <label class="switch">
-                <input type="checkbox" [(ngModel)]="config.enabled" class="sr-only peer" />
+                <input
+                  type="checkbox"
+                  [(ngModel)]="config.enabled"
+                  class="sr-only peer"
+                />
                 <span class="slider"></span>
               </label>
             </div>
 
             <!-- Suboptions -->
             <div class="flex flex-col gap-4">
-              <div *ngFor="let subOption of config.subOptions; let i = index" class="flex flex-col">
+              <div
+                *ngFor="let subOption of config.subOptions; let i = index"
+                class="flex flex-col"
+              >
                 <!-- Each Row -->
                 <div class="flex items-center justify-between gap-4 py-2">
                   <!-- Option Text -->
-                  <p [class.text-gray-400]="!config.enabled" [class.text-black]="config.enabled"
-                    class="text-[15px] font-medium">
+                  <p
+                    [class.text-gray-400]="!config.enabled"
+                    [class.text-black]="config.enabled"
+                    class="text-[15px] font-medium"
+                  >
                     {{ subOption.label }}
                   </p>
 
                   <!-- Toggle Switch -->
                   <label class="switch">
-                    <input type="checkbox" *ngIf="config.enabled" [disabled]="!config.enabled" [(ngModel)]="subOption.enabled"
-                      class="sr-only peer" />
+                    <input
+                      type="checkbox"
+                      *ngIf="config.enabled"
+                      [disabled]="!config.enabled"
+                      [(ngModel)]="subOption.enabled"
+                      class="sr-only peer"
+                    />
                     <span class="slider"></span>
                   </label>
                 </div>
@@ -465,61 +632,82 @@
         </div>
       </div>
       <!-- PROJECT Tab -->
-      <div class="absolute top-0 left-0 w-full h-full overflow-y-auto transition-transform duration-500 ease-in-out" [class.translate-x-0]="activeTab === 'PROJECT'" [class.translate-x-[100%]]="activeTab !== 'PROJECT'" >
-      <!-- Table -->
-      <div class="p-4">
-        <table class="table-auto w-full rounded-md ">
-          <!-- Table Head -->
-          <thead>
-            <tr class="bg-[#ffcdcd]  rounded-md">
-              <th class="px-4 py-4 text-left">Project Name</th>
-              <th class="px-4 py-4 text-left">Created At</th>
-              <th class="px-4 py-4">Assign Project</th>
-            </tr>
-          </thead>
-          <!-- Table Body -->
-          <tbody >
-            <tr *ngFor="let project of projects; let i = index" [ngClass]="{ 'bg-[#ffeeee]': i % 2 === 1 }" >
-              <td class="px-4 py-2">{{ project.name }}</td>
-              <td class="px-4 py-2">{{ project.createdAt }}</td>
-              <td class="px-4 py-2 text-center">
-                <button
-                class="px-1 py-1 text-[12px] rounded text-white"
-                [ngClass]="{
-                  'bg-transparent border-2 border-[black]-800 text-black': !project.assigned,
-                  'bg-red-500 text-white': project.assigned,
-                  'blur-sm opacity-50 cursor-not-allowed': isAnyAssigned && !project.assigned
-                }"
-                (click)="toggleAssign(project)"
-                [disabled]="isAnyAssigned && !project.assigned"
+      <div
+        class="absolute top-0 left-0 w-full h-full overflow-y-auto transition-transform duration-500 ease-in-out"
+        [class.translate-x-0]="activeTab === 'PROJECT'"
+        [class.translate-x-[100%]]="activeTab !== 'PROJECT'"
+      >
+        <!-- Table -->
+        <div class="p-4">
+          <table class="table-auto w-full rounded-md">
+            <!-- Table Head -->
+            <thead>
+              <tr class="bg-[#ffcdcd] rounded-md">
+                <th class="px-4 py-4 text-left">Project Name</th>
+                <th class="px-4 py-4 text-left">Created At</th>
+                <th class="px-4 py-4">Assign Project</th>
+              </tr>
+            </thead>
+            <!-- Table Body -->
+            <tbody>
+              <tr
+                *ngFor="let project of projects; let i = index"
+                [ngClass]="{ 'bg-[#ffeeee]': i % 2 === 1 }"
               >
-                {{ project.assigned ? 'Un-Assign' : 'Assign' }}
-              </button>
-              
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+                <td class="px-4 py-2">{{ project.name }}</td>
+                <td class="px-4 py-2">{{ project.createdAt }}</td>
+                <td class="px-4 py-2 text-center">
+                  <button
+                    class="px-6 py-1 text-[14px] rounded text-white"
+                    [ngClass]="{
+                      'bg-transparent border-2 border-[black]-800 text-black':
+                        !project.assigned,
+                      'bg-red-500 text-white': project.assigned,
+                      'blur-sm opacity-50 cursor-not-allowed':
+                        isAnyAssigned && !project.assigned
+                    }"
+                    (click)="toggleAssign(project)"
+                    [disabled]="isAnyAssigned && !project.assigned"
+                  >
+                    {{ project.assigned ? "Un-Assign" : "Assign" }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-
   </div>
 </div>
 
 <!-- Delete User Permission -->
-<div *ngIf="deleteUserOCstate" class="absolute flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50">
-  <div class="w-[600px] bg-white flex flex-col gap-5 rounded-[20px] shadow-[0_0_100px_#00000060] p-10">
+<div
+  *ngIf="deleteUserOCstate"
+  class="absolute flex items-center justify-center w-screen box-border h-screen bg-[#000000] bg-opacity-90 bg-blur top-0 left-0 z-50"
+>
+  <div
+    class="w-[600px] bg-white flex flex-col gap-5 rounded-[20px] shadow-[0_0_100px_#00000060] p-10"
+  >
     <!-- Title -->
     <span class="flex flex-col items-start justify-center">
-      <p class=" text-[35px] text-[#DA2127] font-bold mb-10px">Delete</p>
-      <p class=" flex items-center justify-center gap-2 text-[14px] font-medium text-[#7B7B7B]">
+      <p class="text-[35px] text-[#DA2127] font-bold mb-10px">Delete</p>
+      <p
+        class="flex items-center justify-center gap-2 text-[14px] font-medium text-[#7B7B7B]"
+      >
         Delete an user
-        <svg width="20" height="20" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg
+          width="20"
+          height="20"
+          viewBox="0 0 25 25"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
           <g clip-path="url(#clip0_513_29001)">
             <path
               d="M12.4987 2.08301C6.75495 2.08301 2.08203 6.75592 2.08203 12.4997C2.08203 18.2434 6.75495 22.9163 12.4987 22.9163C18.2424 22.9163 22.9154 18.2434 22.9154 12.4997C22.9154 6.75592 18.2424 2.08301 12.4987 2.08301ZM13.5404 17.708H11.457V11.458H13.5404V17.708ZM13.5404 9.37467H11.457V7.29134H13.5404V9.37467Z"
-              fill="black" />
+              fill="black"
+            />
           </g>
           <defs>
             <clipPath id="clip0_513_29001">
@@ -530,15 +718,24 @@
       </p>
     </span>
 
-    <p class="flex text-[16px] font-normal">Are you sure to delete the user ?</p>
+    <p class="flex text-[16px] font-normal">
+      Are you sure to delete the user ?
+    </p>
 
     <span class="flex w-full justify-end items-center mt-10">
       <span class="flex justify-between items-center gap-5">
-        <p (click)="deleteUser(deleteUserName,deleteUserRole)"
-          class="cursor-pointer flex px-10 py-2.5 bg-[#D30000] text-white border-2 border-[#D30000] rounded-md ">
-          Delete</p>
-        <p (click)="deleteUserPopUp()"
-          class="cursor-pointer flex px-10 py-2.5 border-2 rounded-md border-[#D30000] text-[#D30000]">Cancel</p>
+        <p
+          (click)="deleteUser(deleteUserName, deleteUserRole)"
+          class="cursor-pointer flex px-10 py-2.5 bg-[#D30000] text-white border-2 border-[#D30000] rounded-md"
+        >
+          Delete
+        </p>
+        <p
+          (click)="deleteUserPopUp()"
+          class="cursor-pointer flex px-10 py-2.5 border-2 rounded-md border-[#D30000] text-[#D30000]"
+        >
+          Cancel
+        </p>
       </span>
     </span>
   </div>

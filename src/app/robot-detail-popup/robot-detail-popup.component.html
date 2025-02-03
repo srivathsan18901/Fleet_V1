@@ -28,7 +28,7 @@
            disabled
         />
         <label for="emergencyStop"><i></i></label>
-        <span class="tooltip">Emergency Stop</span>
+        <span class="tooltip">{{getTranslation("Emergency Stop")}}</span>
       </div>
 
 
@@ -43,7 +43,7 @@
     <!-- Status container -->
     <div class="status-container z-50 top-[0px]  w-[10vw] h-[8vh]">
       <span class="status-indicator" [ngClass]="data.isConnected ? 'active' : 'inactive'"></span>
-      <span class="status-text">{{ data.isConnected ? 'Active' : 'Inactive' }}</span>
+      <span class="status-text">{{ data.isConnected ? getTranslation("Active") : getTranslation("Inactive") }}</span>
     </div>
 
     <!-- connect button -->
@@ -51,7 +51,7 @@
       class="status-button absolute z-50 top-[0px] w-[10vw] h-[8vh]
       {{ data.isConnected ? 'connected' : '' }}"
       (click)="toggleConnection()">
-      {{ data.isConnected ? 'Disconnect' : 'Connect' }}
+      {{ data.isConnected ?  getTranslation("Disconnect") :  getTranslation("Connect") }}
     </button>
 
 
@@ -96,16 +96,16 @@
             [title]="data.averagedischarge"> 
             {{ truncateNumber(data.averagedischarge) }} m
           </span>
-          <span class="discharge-label">Average Discharge</span>
+          <span class="discharge-label">{{getTranslation("Average Discharge")}}</span>
         </div>
         
         <div class="battery-status-container">
           <span class="battery-percentage">{{ data.batteryPercentage| number:'1.2-2' }} %</span>
-          <span class="battery-label">Battery</span>
+          <span class="battery-label">{{getTranslation("Battery")}}</span>
         </div>
         <div class="average-charging-time">
           <span class="charging-time">{{ data.averageChargingTime | number:'1.2-2' }} m</span>
-          <span class="charging-time-label">Average Charging Time</span>
+          <span class="charging-time-label">{{getTranslation("Average Charging Time")}}</span>
         </div>
       </div>
 
@@ -115,7 +115,7 @@
 
   <div class="speed-container">
     <div class="current-speed-container">
-      <span class="label">Current speed</span>
+      <span class="label">{{getTranslation("Current speed")}}</span>
       <div class="speed-value-container">
         <span class="speed-value">{{ data.currentspeed | number:'1.2-2' }}</span>
         <span class="unit">m/s</span>
@@ -128,7 +128,7 @@
           <span class="speed-value">{{ data.averagespeed | number:'1.2-2' }}</span>
           <span class="unit">m/s</span>
         </div>
-        <span class="label">Average speed</span>
+        <span class="label">{{getTranslation("Average speed")}}</span>
 
         <!-- Added Average Transfer Time -->
         <div class="transfer-time-container">
@@ -136,7 +136,7 @@
             <span class="time-value">{{ data.averagetransfertime| number:'1.2-2' }}</span>
             <span class="unit">min</span>
           </div>
-          <span class="label">Average Transfer Time</span>
+          <span class="label">{{getTranslation("Average Transfer Time")}}</span>
         </div>
       </div>
 
@@ -145,7 +145,7 @@
           <span class="speed-value">{{ data.maximumspeed | number:'1.2-2' }}</span>
           <span class="unit">m/s</span>
         </div>
-        <span class="label">Maximum speed</span>
+        <span class="label">{{getTranslation("Maximum speed")}}</span>
 
         <!-- Added Average Docking Time -->
         <div class="docking-time-container">
@@ -153,7 +153,7 @@
             <span class="time-value">{{ data.averagedockingtime | number:'1.2-2' }}</span>
             <span class="unit">min</span>
           </div>
-          <span class="label">Average Docking Time</span>
+          <span class="label">{{getTranslation("Average Docking Time")}}</span>
         </div>
       </div>
     </div>
@@ -164,14 +164,14 @@
   <div class="frame-1597881883_1874-1899">
     <div class="details-container">
       <div class="details-content">
-        <span class="details-title">Details</span>
+        <span class="details-title">{{getTranslation("Details")}}</span>
         <div class="details-info">
           <div class="current-task">
-            <span class="current-task-label">Current task:</span>
+            <span class="current-task-label">{{getTranslation("Current task")}} :</span>
             <span class="current-task-value">{{ data.currentTask }} </span>
           </div>
           <div class="current-map">
-            <span class="current-map-label">Current map:</span>
+            <span class="current-map-label">{{getTranslation("Current map")}}:</span>
             <span class="current-map-value">{{selectedMap.mapName}}</span>
           </div>
         </div>
@@ -210,7 +210,7 @@
         </defs>
       </svg>
     </div>
-    <span class="pick-drop-label">Total Pick / Drop</span>
+    <span class="pick-drop-label">{{getTranslation("Total Pick / Drop")}}</span>
   </div>
   <span class="pick-drop-values">{{ data.PickCount }} / {{ data.DropCount }}</span>
 </div>
@@ -257,7 +257,7 @@
           </defs>
         </svg>
       </div>
-      <span class="networkstrength-label">Network Strength</span>
+      <span class="networkstrength-label">{{getTranslation("Network Strength")}}</span>
     </div>
     <span class="networkstrength-value">{{data.networkstrength||0}}dBm</span>
   </div>
@@ -307,7 +307,7 @@
         </svg>
         </div>
       </div>
-      <span class="robottemperature-label">CPU Temperature</span>
+      <span class="robottemperature-label">{{getTranslation("CPU Temperature")}}</span>
     </div>
     <span class="robottemperature-value">{{ data.temperature | number:'1.2-2'}} °C</span>
   </div>
@@ -350,7 +350,7 @@
           </svg>
         </div>
       </div>
-      <span class="robot-utilization-label">Total Distance</span>
+      <span class="robot-utilization-label">{{getTranslation("Total Distance")}}</span>
     </div>
     <span class="robot-utilization-value">{{ data.distance| number:'1.1-1' }}m</span>
   </div>
@@ -399,7 +399,7 @@
                 </defs>
               </svg>
           </div>
-          <span class="memory-text">Memory</span>
+          <span class="memory-text">{{getTranslation("Memory")}}</span>
     </div>
     <span class="memory-value">{{ data.memory| number:'1.2-2' }} %</span>
       </div>
@@ -447,7 +447,7 @@
               </svg>
         </div>
       </div>
-      <span class="cpu-utilization-text">CPU Utilization</span>
+      <span class="cpu-utilization-text">{{getTranslation("CPU Utilization")}}</span>
     </div>
     <span 
     class="cpu-utilization-value" 
@@ -500,7 +500,7 @@
               </svg>
             </div>
           </div>
-          <span class="text-error_1864-1825">Error</span>
+          <span class="text-error_1864-1825">{{getTranslation("Error")}}</span>
         </div>
         <span class="error-value">{{ data.error }}</span>
       </div>

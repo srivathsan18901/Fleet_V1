@@ -173,7 +173,7 @@ export class LoginComponent {
         return res.json();
         // throw new Error('Login failed');
       })
-      .then((data) => {
+      .then(async (data) => {
         // console.log(data.user.projects);
         if (data.isUserInSession) {
           // alert(data.msg);
@@ -195,7 +195,12 @@ export class LoginComponent {
             // console.log('user initilalized')
 
             if (!data.user.projects || !data.user.projects.length) {
-              alert('No project has been assigned to this user.');
+              this.messageService.add({
+                severity: 'warn',
+                summary: `Project Not Assigned`,
+                detail: 'No project has been assigned to this user.',
+                life: 4000,
+              });
               this.authService.logout();
               return;
             }
@@ -209,6 +214,25 @@ export class LoginComponent {
               createdAt: JSON.stringify(new Date()), // data.projects[0].createdAt
               updatedAt: JSON.stringify(new Date()), // data.projects[0].createdAt
             };
+
+            let bodyData = {
+              name: this.authService.getUser().name,
+              role: this.authService.getUser().role,
+              projectId: data.user.projects[0].projectId,
+            };
+
+            let isProjInSession = await this.setProjectInSession(bodyData);
+
+            if (isProjInSession) {
+              Swal.fire({
+                position: 'center',
+                icon: 'warning',
+                html: `<span style="font-size: 20px;">${'Project already in use!'}</span>`,
+                showConfirmButton: true,
+              });
+              this.authService.logout(); // yet to look at it..
+              return;
+            }
 
             this.projectService.setSelectedProject(project_data);
             this.projectService.setProjectCreated(true);
@@ -267,6 +291,33 @@ export class LoginComponent {
     if (this.focusedContainer && !this.focusedContainer.contains(target)) {
       this.focusedContainer.classList.remove('focused');
       this.focusedContainer = null;
+    }
+  }
+
+  async setProjectInSession(bodyData: any): Promise<any> {
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/auth/set-project-session`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData),
+        }
+      );
+
+      let data = await response.json();
+      if (data.error) {
+        console.log('Error while set project in session : ', data.error);
+        return false;
+      }
+
+      console.log(data);
+
+      return data.isProjInSession;
+    } catch (error) {
+      console.log('Error in set project session : ', error);
+      return null;
     }
   }
 }

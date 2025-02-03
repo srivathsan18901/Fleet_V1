@@ -51,6 +51,7 @@
     align-items: center;
     justify-content: center;
     width: 110px;
+    margin: 0px 15px;
     height: 35px;
     color: white;
     border: none;
@@ -405,7 +406,7 @@
   .TopbarContents {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 5px;
   }
 
   .username {

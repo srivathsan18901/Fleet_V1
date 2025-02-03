@@ -22,6 +22,7 @@ import {
 } from 'ng-apexcharts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
+import { TranslationService } from '../services/translation.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -47,6 +48,7 @@ export class AreaChartComponent implements OnInit {
   @ViewChild('chart') chart!: ChartComponent;
   public chartOptions: ChartOptions;
   selectedMetric: string = 'Throughput'; // Default value
+  translatedMetric: string = '';
   selectedMap: any | null = null;
   [key: string]: any; // index signature..
   private abortControllers: Map<string, AbortController> = new Map();
@@ -72,7 +74,8 @@ export class AreaChartComponent implements OnInit {
 
   constructor(
     private projectService: ProjectService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private translationService: TranslationService
   ) {
     this.chartOptions = {
       series: [
@@ -153,14 +156,22 @@ export class AreaChartComponent implements OnInit {
     this.selectedMap = this.projectService.getMapData();
     this.updateChart('data1', 'Throughput');
   }
-
+  
+  getTranslation(key: string) {
+    const translation = this.translationService.getStatisticsTranslation(key);
+    // console.log(`Translating key: ${key} => ${translation}`);
+    return translation;
+  }
+  
+  
   updateChart(dataKey: string, metricName: string): void {
     if (!this.selectedMap) {
       console.log('no map has been selected!');
       return;
     }
     this.selectedMetric = metricName; // Update the displayed metric name
-
+    console.log(this.selectedMetric);
+    
     switch (dataKey) {
       case 'data1':
         this.updateThroughput();
@@ -183,12 +194,12 @@ export class AreaChartComponent implements OnInit {
     //   if (this[interval]) {
     if (this.selectedMetric === 'Throughput')
       this.updateChart('data1', this.selectedMetric);
-    else if (this.selectedMetric === 'Starvation rate')
+    else if (this.selectedMetric === 'starvationRate')
       this.updateChart('data2', this.selectedMetric);
-    else if (this.selectedMetric === 'Pick accuracy')
+    else if (this.selectedMetric === 'pickAccuracy')
       this.updateChart('data3', this.selectedMetric);
-    // else if (this.selectedMetric === 'Error rate')
-    else this.updateChart('data4', this.selectedMetric);
+    else if (this.selectedMetric === 'errorRate')
+     this.updateChart('data4', this.selectedMetric);
     // return;
     // }
     // });

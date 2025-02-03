@@ -5,6 +5,7 @@ import { ProjectService } from '../services/project.service';
 import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment.development';
 import { MessageService } from 'primeng/api';
+import Swal from 'sweetalert2';
 
 interface Project {
   _id?: string; // Assuming _id is optional
@@ -50,10 +51,7 @@ export class ProjectsetupComponent {
 
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/projects/project-list`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
+      { method: 'GET', credentials: 'include' }
     )
       .then((res) => {
         if (res.ok) return res.json();
@@ -130,31 +128,6 @@ export class ProjectsetupComponent {
   }
 
   async logout() {
-    /* try {
-      const response = await fetch(
-        'http://localhost:3000/fleet-project-file/download-project/Vachan_proj',
-        {
-          credentials: 'include',
-        }
-      );
-      if (!response.ok) alert('try once again');
-      else {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = url;
-        a.download = `Vachan_proj.zip`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      }
-    } catch (error) {
-      console.log('Err ra pans : ', error);
-    }
-
-    return;  */
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
     })
@@ -174,11 +147,7 @@ export class ProjectsetupComponent {
     try {
       let response = await fetch(
         `http://${environment.API_URL}:${environment.PORT}/fleet-project-file/upload-project/`,
-        {
-          credentials: 'include',
-          method: 'POST',
-          body: this.form,
-        }
+        { credentials: 'include', method: 'POST', body: this.form }
       );
       // if (!response.ok)
       //   throw new Error(`err with status code of ${response.status}`);
@@ -215,14 +184,31 @@ export class ProjectsetupComponent {
       } else if (!data.idExist && data.nameExist) {
         return true;
       } else if (!data.err && !data.conflicts && data.user) {
-        // console.log(data.user);
-        // console.log(data.project[0]);
         let project_data = {
           _id: data.project[0]._id,
           projectName: data.project[0].projectName,
           createdAt: data.project[0].createdAt,
           updatedAt: data.project[0].updatedAt,
         };
+
+        let bodyData = {
+          name: this.authService.getUser().name,
+          role: this.authService.getUser().role,
+          projectId: data.project[0]._id,
+        };
+        const isProjInSession = await this.setProjectInSession(bodyData);
+
+        if (isProjInSession) {
+          // alert('Project already in use!');
+          Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            html: `<span style="font-size: 20px;">${'Project already in use!'}</span>`,
+            showConfirmButton: true,
+          });
+          return;
+        }
+
         this.projectService.setProjectCreated(true); //
         this.projectService.setSelectedProject(project_data); //
         this.router.navigate(['/dashboard']);
@@ -301,11 +287,6 @@ export class ProjectsetupComponent {
     this.isFocused[inputId] = false;
   }
 
-  // onProjectChange(event: any) {
-  //   this.project = JSON.parse(event.target.value);
-  //   if (!JSON.parse(event.target.value)._id)
-  //     this.project._id = JSON.parse(event.target.value).projectId;
-  // }
   onProjectChange(event: any) {
     try {
       this.project = event;
@@ -369,10 +350,7 @@ export class ProjectsetupComponent {
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          project: {
-            projectName: this.projectname,
-            siteName: this.sitename,
-          },
+          project: { projectName: this.projectname, siteName: this.sitename },
         }),
       }
     )
@@ -404,8 +382,14 @@ export class ProjectsetupComponent {
         }
         return res.json();
       })
-      .then((data) => {
+      .then(async (data) => {
         if (data && !data.exists) {
+          let bodyData = {
+            name: this.authService.getUser().name,
+            role: this.authService.getUser().role,
+            projectId: data.project._id,
+          };
+          await this.setProjectInSession(bodyData);
           this.projectService.setProjectCreated(true);
           this.projectService.setSelectedProject(data.project);
           this.router.navigate(['/dashboard']);
@@ -443,10 +427,7 @@ export class ProjectsetupComponent {
 
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/${this.project._id}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
+      { method: 'GET', credentials: 'include' }
     )
       .then((res) => {
         if (!res.ok) {
@@ -454,7 +435,7 @@ export class ProjectsetupComponent {
         }
         return res.json();
       })
-      .then((data) => {
+      .then(async (data) => {
         if (!data.exists) {
           this.messageService.add({
             severity: 'error',
@@ -472,6 +453,25 @@ export class ProjectsetupComponent {
           createdAt: data.project.createdAt,
           updatedAt: data.project.updatedAt,
         };
+        let bodyData = {
+          name: this.authService.getUser().name,
+          role: this.authService.getUser().role,
+          projectId: data.project._id,
+        };
+
+        let isProjInSession = await this.setProjectInSession(bodyData);
+
+        if (isProjInSession) {
+          // alert('Project already in use!');
+          Swal.fire({
+            position: 'center',
+            icon: 'warning',
+            html: `<span style="font-size: 20px;">${'Project already in use!'}</span>`,
+            showConfirmButton: true,
+          });
+          return;
+        }
+
         this.projectService.setSelectedProject(project_data);
         this.projectService.setProjectCreated(true);
         this.router.navigate(['/dashboard']);
@@ -492,5 +492,32 @@ export class ProjectsetupComponent {
           life: 3000,
         });
       });
+  }
+
+  async setProjectInSession(bodyData: any): Promise<any> {
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/auth/set-project-session`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(bodyData),
+        }
+      );
+
+      let data = await response.json();
+      if (data.error) {
+        console.log('Error while set project in session : ', data.error);
+        return false;
+      }
+
+      console.log(data);
+
+      return data.isProjInSession;
+    } catch (error) {
+      console.log('Error in set project session : ', error);
+      return null;
+    }
   }
 }

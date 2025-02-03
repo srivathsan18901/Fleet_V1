@@ -23,9 +23,9 @@
     </div>
     <div class="mainContent">
       <div class="header-section">
-        <h1 class="header-title">{{ activeHeader }}</h1>
+        <h1 class="header-title">{{ activeHeader }}</h1>        
         <div class="subheader-container">
-          <div class="subheader-text">Create and edit Configuration</div>
+          <div class="subheader-text">{{getTranslation("Create and Edit Configuration")}}</div>
           <img
             src="../../assets/icons/i-icon.svg"
             alt="Icon"
@@ -42,7 +42,7 @@
               type="text"
               maxlength="250"
               (input)="onSearch($event)"
-              placeholder="Search For Something..."
+              placeholder="{{getTranslation('Search for Something...')}}"
               class="search-input"
               [(ngModel)]="searchTerm"
               (ngModelChange)="searchTermChanged()"
@@ -65,16 +65,16 @@
             [class.disabled]="!isMapAvailable()"
             [disabled]="!isMapAvailable()"
           >
-            Simulation
+          {{getTranslation("Simulation")}}
           </button>
         </div>
 
         <!-- Popup for selecting robots -->
         <div *ngIf="isPopupVisible" class="sim-popup-modal">
           <div class="sim-popup-content">
-            <h3>Enter the Robots for Simulation</h3>
+            <h3>{{getTranslation("Enter the Robots for Simulation")}}</h3>
             <div>
-              <label for="robots">Number of Robots:</label>
+              <label for="robots">{{getTranslation("Number of Robots:")}}</label>
 
               <input
                 type="number"
@@ -89,7 +89,7 @@
             </h4>
 
             <div class="sim-button-container">
-              <button (click)="addRobot()">Add</button>
+              <button (click)="addRobot()">{{getTranslation("Add")}}</button>
               <!-- <button (click)="closePopup()">Cancel</button> -->
 
               <button class="close-popup-btn" (click)="closePopup()">
@@ -107,7 +107,7 @@
                 </svg>
               </button>
 
-              <button (click)="clearAllRobots()">Delete All</button>
+              <button (click)="clearAllRobots()">{{getTranslation("Delete All")}}</button>
             </div>
 
             <div *ngIf="totalRobots > 0">
@@ -119,14 +119,14 @@
               </ul>
             </div>
 
-            <p>Total Robots: {{ totalRobots }}</p>
+            <p>{{getTranslation("Total Robots")}}: {{ totalRobots }}</p>
           </div>
         </div>
         <!-- Date Filter and Date Inputs -->
         <div class="date-filters" *ngIf="currentTable === 'Environment'">
           <div class="date-inputs">
             <div class="dateInput1">
-            <label for="start-date">Start Date:</label>
+            <label for="start-date">{{getTranslation("Start Date:")}}</label>
             <input
               pInputText
               type="date"
@@ -139,7 +139,7 @@
             />
             </div>
             <div class="dateInput2">
-            <label for="end-date">End Date:</label>
+            <label for="end-date">{{getTranslation("End Date:")}}</label>
             <input
               pInputText
               type="date"
@@ -164,7 +164,7 @@
                 'active-button': activeButton === 'Environment',
                 'transition-active': isTransitioning
               }" (click)="showTable('Environment')" (click)="setActiveButton('Environment')">
-              Environment
+              {{getTranslation("Environment")}}
             </button>
 
 
@@ -173,7 +173,7 @@
                 'active-button': activeButton === 'robot',
                 'transition-active': isTransitioning
               }" (click)="showTable('robot')" (click)="setActiveButton('robot')">
-              Robot
+              {{getTranslation("Robot")}}
             </button>
 
 
@@ -182,7 +182,7 @@
                 'active-button': activeButton === 'fleet',
                 'transition-active': isTransitioning
               }" (click)="setActiveButton('fleet')">
-              Fleet
+              {{getTranslation("Fleet")}}
             </button>
 
 
@@ -210,14 +210,14 @@
             <table *ngIf="currentTable === 'Environment' && !imageUploaded">
               <thead>
                 <tr>
-                  <th>Map Name</th>
-                  <th>Site Name</th>
-                  <th>Last Created</th>
+                  <th>{{getTranslation("Map Name")}}</th>
+                  <th>{{getTranslation("Site Name")}}</th>
+                  <th>{{getTranslation("Last Created")}}</th>
                   <th class="iconTable"
                     *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.edit=== true || configurationPermissions.environment.delete === true">
-                  <div>Edit/Delete</div>
+                  <div>{{getTranslation("Edit/Delete")}}</div>
                   </th>
-                  <th class="iconTable">Pick Map</th>
+                  <th class="iconTable">{{getTranslation("Pick Map")}}</th>
                 </tr>
               </thead>
               <tbody>
@@ -229,7 +229,7 @@
                         alt="No Data"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">No data found</p>
+                      <p class="no-data-text">{{getTranslation("No Data found")}}</p>
                     </div>
                   </td>
                 </tr>
@@ -290,8 +290,8 @@
                       <!-- SELECT -->
                       {{
                         item.mapName === this.selectedMap?.mapName
-                          ? "Deselect"
-                          : "Select"
+                          ? getTranslation('Deselect')
+                          : getTranslation('Select')
                       }}
                     </button>
                   </td>
@@ -321,14 +321,14 @@
             <thead>
               <tr>
                 <!-- <th><input type="checkbox" (change)="toggleSelectAll($event)" /></th> -->
-                <th>S.no</th>
-                <th>IP Address</th>
-                <th>AMR ID</th>
-                <th>UUID</th>
-                <th>AMR Name</th>
+                <th>{{getTranslation('S.no')}}</th>
+                <th>{{getTranslation('IP Address')}}</th>
+                <th>{{getTranslation('AMR ID')}}</th>
+                <th>{{getTranslation('UUID')}}</th>
+                <th>{{getTranslation('AMR Name')}}</th>
                 <th class="iconTable"
                 *ngIf="configurationPermissions.robot.enabled === true && configurationPermissions.robot.edit=== true || configurationPermissions.robot.delete === true">
-                Edit/Delete</th>
+                {{getTranslation('Edit/Delete')}}</th>
               </tr>
             </thead>
             <tbody>
@@ -349,7 +349,7 @@
                       alt="No Data"
                       class="no-data-image"
                     />
-                    <p class="no-data-text">No data found</p>
+                    <p class="no-data-text">{{getTranslation('No Data found')}}</p>
                   </div>
                 </td>
                 <!-- <td colspan="4" class="iconTable">No data found</td> -->
@@ -429,7 +429,7 @@
           </div>
           <!-- Add this in your main component HTML -->
           <div class="form-group" *ngIf="currentTable === 'robot' && configurationPermissions.robot.enabled === true && configurationPermissions.robot.create== true">
-            <label for="ipRangeFrom">IP Range:</label>
+            <label for="ipRangeFrom">{{getTranslation('IP Range')}}:</label>
             <div class="uservalid">
               <input
                 pInputText
@@ -450,7 +450,7 @@
               </span>
             </div>
 
-            <span>to: </span>
+            <span>{{getTranslation('to')}}: </span>
             <div class="uservalid">
               <input
                 pInputText
@@ -477,7 +477,7 @@
               (click)="startScanning()"
               [disabled]="!isMapAvailable()"
             >
-              Scan
+            {{getTranslation('Scan')}}
             </button>
             <button
               type="button"
@@ -485,7 +485,7 @@
               (click)="stopScanning()"
               [disabled]="!isMapAvailable()"
             >
-              Stop
+            {{getTranslation('Stop')}}
             </button>
             <div *ngIf="isScanning" class="loading-spinner"></div>
           </div>
@@ -500,12 +500,12 @@
           <table *ngIf="currentTable === 'robot' && configurationPermissions.robot.enabled === true && configurationPermissions.robot.create== true">
             <thead>
               <tr>
-                <th>IP</th>
-                <th>MAC</th>
-                <th>Hostname</th>
-                <th>Ping</th>
-                <th>Status</th>
-                <th class="iconTable">Option</th>
+                <th>{{getTranslation('IP')}}</th>
+                <th>{{getTranslation('MAC')}}</th>
+                <th>{{getTranslation('Hostname')}}</th>
+                <th>{{getTranslation('Ping')}}</th>
+                <th>{{getTranslation('Status')}}</th>
+                <th class="iconTable">{{getTranslation('Option')}}</th>
               </tr>
             </thead>
             <tbody>
@@ -518,7 +518,7 @@
                       alt="No Data"
                       class="no-data-image"
                     />
-                    <p class="no-data-text">No data found</p>
+                    <p class="no-data-text">{{getTranslation('No Data found')}}</p>
                   </div>
                 </td>
               </tr>
@@ -566,7 +566,7 @@
                 [class.active]="fleetTab === 'general'"
                 (click)="setFleetTab('general')"
               >
-                General
+              {{getTranslation('General')}}
               </li>
               <!-- <li
                   [class.active]="fleetTab === 'planner'"
@@ -595,8 +595,8 @@
             </ul>
 
             <div *ngIf="fleetTab === 'general'">
-              <h2>Edit the Fleet Parameters</h2>
-              Add content for the General tab
+              <h2>{{getTranslation('Edit The Fleet Parameters')}}</h2>
+              {{getTranslation('Add content for the General tab.')}}
               <app-general></app-general>
             </div>
             <div *ngIf="fleetTab === 'planner'">
@@ -631,7 +631,7 @@
               *ngIf="activeButton === 'Environment'"
               (click)="openImageUploadPopup()"
             >
-              Create
+              {{getTranslation("Create")}}
             </button>
           </div>
           <app-envmap
