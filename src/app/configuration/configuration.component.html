@@ -218,6 +218,7 @@
                   <div>{{getTranslation("Edit/Delete")}}</div>
                   </th>
                   <th class="iconTable">{{getTranslation("Pick Map")}}</th>
+                  <th class="iconTable">{{getTranslation("Export Map")}}</th>
                 </tr>
               </thead>
               <tbody>
@@ -293,6 +294,11 @@
                           ? getTranslation('Deselect')
                           : getTranslation('Select')
                       }}
+                    </button>
+                  </td>
+                  <td class="iconTable">
+                    <button class="sel-btn">
+                      {{getTranslation("Export Map")}}
                     </button>
                   </td>
                 </tr>
@@ -387,7 +393,7 @@
 
                     <!-- delete button -->
 
-                    <button class="delete-button" (click)="deleteRobo(item)" *ngIf="configurationPermissions.robot.enabled === true && configurationPermissions.robot.delete=== true ">
+                    <button class="delete-button" (click)="openDeleteConfirmation(item)" *ngIf="configurationPermissions.robot.enabled === true && configurationPermissions.robot.delete=== true ">
                       <svg class="delete-svgIcon" viewBox="0 0 448 512">
                         <path
                           d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"
@@ -624,7 +630,13 @@
 
 
             <!-- *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.create== true" -->
-
+            <button
+              class="Create-button1"
+              *ngIf="activeButton === 'Environment'"
+              (click)="openImageUploadPopup()"
+            >
+              {{getTranslation("Import Map")}}
+            </button>
 
             <button
               class="Create-button"
@@ -670,14 +682,14 @@
                       d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
                     /></svg
                 ></span>
-                <h2>Add Robot</h2>
+                <h2>{{getTranslation('Add Robot')}}</h2>
               </div>
 
               <div class="rob-inp">
                 <label
                   for="robotName"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >Robot Name:</label
+                  >{{getTranslation('Robot Name')}}:</label
                 >
                 <input
                   pInputText
@@ -691,7 +703,7 @@
                 <label
                   for="manufacturer"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >Manufacturer:</label
+                  >{{getTranslation('Manufacturer')}}:</label
                 >
                 <input
                   pInputText
@@ -705,7 +717,7 @@
                 <label
                   for="serialNumber"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >Serial Number:</label
+                  >{{getTranslation('Serial Number')}}:</label
                 >
                 <input
                   pInputText
@@ -727,7 +739,7 @@
                 <label
                   for="attachmentType"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >Attachment Type:</label
+                  >{{getTranslation('Attachment Type')}}:</label
                 >
                 <select
                   id="attachmentType"
@@ -736,10 +748,10 @@
                   required
                   style="padding: 0.6rem"
                 >
-                  <option value="NOT_SET">NOT_SET</option>
-                  <option value="LIFTER">LIFTER</option>
-                  <option value="SINGLECONVEYOR">SINGLECONVEYOR</option>
-                  <option value="TWINCONVEYOR">TWINCONVEYOR</option>
+                  <option value="NOT_SET">{{getTranslation('NOT_SET')}}</option>
+                  <option value="LIFTER">{{getTranslation('LIFTER')}}</option>
+                  <option value="SINGLECONVEYOR">{{getTranslation('SINGLECONVEYOR')}}</option>
+                  <option value="TWINCONVEYOR">{{getTranslation('TWINCONVEYOR')}}</option>
                 </select>
               </div>
               <div class="flex">
@@ -750,7 +762,7 @@
                     (click)="toggleTypeSpecificationForm($event)"
                     id="typeSpecificationLink"
                   >
-                    Type Specification
+                  {{getTranslation('Type Specification')}}
                   </button>
                 </div>
 
@@ -761,7 +773,7 @@
                     (click)="toggleProtocolLimitsForm($event)"
                     id="protocolLimitsLink"
                   >
-                    Protocol Limits
+                  {{getTranslation('Protocol Limits')}}
                   </button>
                 </div>
 
@@ -772,7 +784,7 @@
                     (click)="toggleProtocolFeaturesForm($event)"
                     id="protocolFeaturesLink"
                   >
-                    Protocol Features
+                  {{getTranslation('Protocol Features')}}
                   </button>
                 </div>
 
@@ -783,7 +795,7 @@
                     (click)="toggleAGVGeometryForm($event)"
                     id="agvGeometryLink"
                   >
-                    AGV Geometry
+                  {{getTranslation('AGV Geometry')}}
                   </button>
                 </div>
 
@@ -794,7 +806,7 @@
                     (click)="toggleLoadSpecificationForm($event)"
                     id="loadSpecificationLink"
                   >
-                    Load Specification
+                  {{getTranslation('Load Specification')}}
                   </button>
                 </div>
 
@@ -807,7 +819,7 @@
                     (click)="toggleLocalizationParametersForm($event)"
                     id="localizationParametersLink"
                   >
-                    Localization Parameters
+                  {{getTranslation('Localization Parameters')}}
                   </button>
                 </div>
               </div>
@@ -824,7 +836,7 @@
             >
               <!-- Localization Parameters form fields here -->
               <div class="rob-inp">
-                <label for="localizationType">Localization Type:</label>
+                <label for="localizationType">{{getTranslation('Localization Type')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -835,7 +847,7 @@
                 />
 
                 <label for="localizationDescription"
-                  >Localization Description:</label
+                  >{{getTranslation('Localization Description')}}:</label
                 >
                 <input
                   pInputText
@@ -866,7 +878,7 @@
             >
               <!-- Load Specification form fields here -->
               <div class="rob-inp">
-                <label for="loadPositions">Load Positions:</label>
+                <label for="loadPositions">{{getTranslation('Load Positions')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -876,7 +888,7 @@
                   style="text-align: center"
                 />
 
-                <label for="loadSets">Load Sets:</label>
+                <label for="loadSets">{{getTranslation('Load Sets')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -900,7 +912,7 @@
               <!-- AGV Geometry form fields here -->
               <div class="rob-inp">
                 <label for="wheelDefinitions" style="margin-right: 1.2rem"
-                  >Wheel Definitions:</label
+                  >{{getTranslation('Wheel Definitions')}}:</label
                 >
                 <input
                   pInputText
@@ -911,7 +923,7 @@
                   style="text-align: center"
                 />
 
-                <label for="envelopes2d">Envelopes 2D:</label>
+                <label for="envelopes2d">{{getTranslation('Envelopes 2D')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -922,7 +934,7 @@
                 />
               </div>
               <div class="rob-inp3">
-                <label for="envelopes3d">Envelopes 3D:</label>
+                <label for="envelopes3d">{{getTranslation('Envelopes 3D')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -948,7 +960,7 @@
             >
               <!-- Protocol Features form fields here -->
               <div class="rob-inp2">
-                <label for="optionalParameters">Optional Parameters:</label>
+                <label for="optionalParameters">{{getTranslation('optionalParameters')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -959,7 +971,7 @@
                   style="text-align: center"
                 />
 
-                <label for="actionScopes">Action Scopes:</label>
+                <label for="actionScopes">{{getTranslation('actionScopes')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -972,7 +984,7 @@
               </div>
               <div class="rob-inp2" style="margin-left: 23px">
                 <label for="actionParameters" style="margin-right: 0.5rem"
-                  >Action Parameters:</label
+                  >{{getTranslation('actionParameters')}}:</label
                 >
                 <input
                   pInputText
@@ -984,7 +996,7 @@
                   style="text-align: center"
                 />
 
-                <label for="resultDescription">Result Description:</label>
+                <label for="resultDescription">{{getTranslation('resultDescription')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -1012,7 +1024,7 @@
               <!-- Protocol Limits form fields here -->
               <div class="rob-inp">
                 <label for="maxStringLens" style="margin-right: 1.5rem"
-                  >Max String Lengths:</label
+                  >{{getTranslation('maxStringLens')}}:</label
                 >
                 <input
                   pInputText
@@ -1024,7 +1036,7 @@
                   style="text-align: center"
                 />
 
-                <label for="maxArrayLens">Max Array Lengths:</label>
+                <label for="maxArrayLens">{{getTranslation('maxArrayLens')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -1036,7 +1048,7 @@
                 />
               </div>
               <div class="rob-inp3">
-                <label for="timing">Timing:</label>
+                <label for="timing">{{getTranslation('timing')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -1066,7 +1078,7 @@
             >
               <div class="rob-inp">
                 <label for="seriesName" style="margin-right: 3.3rem"
-                  >Series Name:</label
+                  >{{getTranslation('seriesName')}}:</label
                 >
                 <input
                   pInputText
@@ -1078,7 +1090,7 @@
                   style="margin-right: 1rem; text-align: center"
                 />
 
-                <label for="seriesDescription">Series Description:</label>
+                <label for="seriesDescription">{{getTranslation('seriesDescription')}}:</label>
                 <input
                   pInputText
                   type="text"
@@ -1090,7 +1102,7 @@
                 />
               </div>
               <div class="rob-inp1">
-                <label for="agvKinematic">AGV Kinematic:</label>
+                <label for="agvKinematic">{{getTranslation('agvKinematic')}}:</label>
                 <p-dropdown
                   [options]="agvKinematicsOptions"
                   id="agvKinematic"
@@ -1102,7 +1114,7 @@
                   styleClass="custom-dropdown"
                 ></p-dropdown>
 
-                <label for="agvClass">AGV Class:</label>
+                <label for="agvClass">{{getTranslation('agvClass')}}:</label>
                 <p-dropdown
                   [options]="agvClassOptions"
                   id="agvClass"
@@ -1116,7 +1128,7 @@
               </div>
 
               <div class="rob-inp2">
-                <label for="maxLoadMass">Max Load Mass (Kg):</label>
+                <label for="maxLoadMass">{{getTranslation('maxLoadMass')}}:</label>
                 <input
                   pInputText
                   type="number"
@@ -1127,7 +1139,7 @@
                   style="margin-right: 1.2rem; text-align: center"
                 />
 
-                <label for="localizationTypes">Localization Types:</label>
+                <label for="localizationTypes">{{getTranslation('localizationTypes')}}:</label>
                 <p-dropdown
                   [options]="localizationTypes"
                   id="localizationTypes"
@@ -1141,7 +1153,7 @@
               </div>
               <div class="rob-inp3">
                 <label for="navigationTypes" style="margin-right: 2rem"
-                  >Navigation Types:</label
+                  >{{getTranslation('navigationTypes')}}:</label
                 >
                 <p-dropdown
                   [options]="navigationTypes"
@@ -1170,7 +1182,7 @@
               type="submit"
               (click)="saveRoboInfo()"
             >
-              Submit
+            {{getTranslation('submit')}}
             </button>
             <!-- <button pButton class="p-button1" type="button" (click)="closeroboPopup()">Close</button> -->
           </div>
@@ -1179,14 +1191,14 @@
 
       <div *ngIf="showConfirmationDialog" class="confirmation-dialog">
         <div class="popup-content1">
-          <h2>Confirm Delete</h2>
-          <p>Are you sure you want to delete this item?</p>
+          <h2>{{getTranslation('confirmDeleteTitle')}}</h2>
+          <p>{{getTranslation('confirmDeleteMessage')}}</p>
           <div>
             <button (click)="confirmDelete()" class="confirm-button">
-              Delete
+              {{getTranslation('delete')}}
             </button>
             <button (click)="cancelDelete()" class="cancel-button">
-              Cancel
+              {{getTranslation('cancel')}}
             </button>
           </div>
         </div>

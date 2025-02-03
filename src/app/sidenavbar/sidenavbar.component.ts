@@ -6,6 +6,7 @@ import {
   Renderer2,
   OnDestroy,
   ChangeDetectorRef,
+  ViewChild,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
@@ -18,6 +19,7 @@ import { Subscription } from 'rxjs';
 import { SessionService } from '../services/session.service';
 import Swal from 'sweetalert2';
 import { TranslationService } from '../services/translation.service';
+import { UserManagementComponent } from '../user-management/user-management.component';
 interface Flag {
   flagComp: string; // Type based on your data, e.g., string for SVG content
   nameTag: "ENG" | "JAP" | "FRE" | "GER"; // Type based on your data, e.g., string for the flag name

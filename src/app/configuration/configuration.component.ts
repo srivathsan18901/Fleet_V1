@@ -472,66 +472,7 @@ export class ConfigurationComponent implements AfterViewInit {
     // this.ngOnInit();
   }
 
-  deleteRobo(robo: any) {
-    const dialogRef = this.dialog.open(ConfirmationDialogComponent); // Open confirmation dialog
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        // If the user confirmed deletion
-        let project = this.projectService.getSelectedProject();
-        let map = this.projectService.getMapData();
-        let roboInfo = {
-          amrId: robo.amrId,
-          roboId: robo._id,
-          projectName: project.projectName,
-          mapName: map.mapName,
-        };
-
-        // Perform the delete operation
-        fetch(
-          `http://${environment.API_URL}:${environment.PORT}/robo-configuration`,
-          {
-            method: 'DELETE',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(roboInfo),
-          }
-        )
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.isRoboExists) {
-              this.messageService.add({
-                severity: 'success',
-                summary: 'Success',
-                detail: 'Robot deleted successfully!',
-                life: 4000,
-              });
-              this.fetchRobos(); // Refresh the list of robots
-              this.setPaginatedData1(); // Update the paginator data
-              this.cdRef.detectChanges(); // Trigger change detection
-              // console.log('line 510');
-              // this.ngOnInit(); // Re-initialize the component if needed
-            } else {
-              this.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Failed to delete the robot.',
-                life: 4000,
-              });
-            }
-          })
-          .catch((error) => {
-            console.error(error);
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'An error occurred while deleting the robot.',
-              life: 4000,
-            });
-          });
-      }
-    });
-  }
 
   trackByTaskId(index: number, item: any): number {
     return item.taskId; // or any unique identifier like taskId
@@ -1282,13 +1223,68 @@ export class ConfigurationComponent implements AfterViewInit {
   openDeleteConfirmation(item: any) {
     this.itemToDelete = item;
     this.showConfirmationDialog = true;
+    
   }
 
   confirmDelete() {
     this.showConfirmationDialog = false;
     this.deleteItemConfirmed(this.itemToDelete);
+    this.deleteRobo(this.itemToDelete);
   }
-
+  deleteRobo(robo: any) {
+    if (robo) {
+      let project = this.projectService.getSelectedProject();
+      let map = this.projectService.getMapData();
+      let roboInfo = {
+        amrId: robo.amrId,
+        roboId: robo._id,
+        projectName: project.projectName,
+        mapName: map.mapName,
+      };
+  
+      // Perform the delete operation
+      fetch(
+        `http://${environment.API_URL}:${environment.PORT}/robo-configuration`,
+        {
+          method: 'DELETE',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(roboInfo),
+        }
+      )
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.isRoboExists) {
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Success',
+              detail: 'Robot deleted successfully!',
+              life: 4000,
+            });
+            this.fetchRobos(); // Refresh the list of robots
+            this.setPaginatedData1(); // Update the paginator data
+            this.cdRef.detectChanges(); // Trigger change detection
+          } else {
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Failed to delete the robot.',
+              life: 4000,
+            });
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: 'An error occurred while deleting the robot.',
+            life: 4000,
+          });
+        });
+    }
+  }
+  
   cancelDelete() {
     this.showConfirmationDialog = false;
     this.itemToDelete = null;

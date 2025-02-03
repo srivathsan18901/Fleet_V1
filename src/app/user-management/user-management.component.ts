@@ -4,6 +4,7 @@ import {
   OnInit,
   ViewChild,
   Injectable,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { environment } from '../../environments/environment.development';
 import { AuthService } from '../auth.service';
@@ -32,7 +33,8 @@ export class UserManagementComponent implements OnInit {
     private authService: AuthService,
     private messageService: MessageService,
     private projectService: ProjectService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private cdRef: ChangeDetectorRef
   ) {}
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -78,7 +80,7 @@ export class UserManagementComponent implements OnInit {
     this.currUserName = user.name;
     this.fetchUsers();
     await this.fetchProjectList();
-    this.setPaginatedData();
+    this.setPaginatedData();   
   }
   getTranslation(key: string) {
     return this.translationService.getUserManagementTranslation(key);
@@ -151,8 +153,10 @@ export class UserManagementComponent implements OnInit {
 
   changePage(order: any) {
     // alert(order)
-    this.pages.map((page: any) => {
+    this.pages = this.pages.map((page: any) => {
+      page.nameTag = this.getTranslation((page.general).toUpperCase())
       page.isOpen = false;
+      return page;
     });
 
     this.pages[order].isOpen = true;
@@ -306,49 +310,49 @@ export class UserManagementComponent implements OnInit {
   generalPermissions = [
     {
       order: 0,
-      nameTag: 'DASHBOARD',
+      nameTag: this.getTranslation('DASHBOARD'),
       icon: '../../assets/icons/dashboard_icon copy.svg',
       enabled: false,
       description:
-        'Control user access to dashboard data and performance insights.',
+        this.getTranslation('Control user access to dashboard data and performance insights.'),
     },
     {
       order: 1,
-      nameTag: 'STATISTICS',
+      nameTag: this.getTranslation('STATISTICS'),
       icon: '../../assets/icons/Statistics.svg',
       enabled: false,
-      description: 'Manage access to statistical data and analytical reports.',
+      description: this.getTranslation('Manage access to statistical data and analytical reports.'),
     },
     {
       order: 2,
-      nameTag: 'ROBOTS',
+      nameTag: this.getTranslation('ROBOTS'),
       icon: '../../assets/icons/Statistics_icon.svg',
       enabled: false,
       description:
-        'Grant control over robot monitoring and performance tracking.',
+        this.getTranslation('Grant control over robot monitoring and performance tracking.'),
     },
     {
       order: 3,
-      nameTag: 'ERRORS',
+      nameTag: this.getTranslation('ERRORS'),
       icon: '../../assets/icons/Logs_icons.svg',
       enabled: false,
       description:
-        'Manage permissions to view and resolve error logs and issues.',
+        this.getTranslation('Manage permissions to view and resolve error logs and issues.'),
     },
     {
       order: 4,
-      nameTag: 'TASKS',
+      nameTag: this.getTranslation('TASKS'),
       icon: '../../assets/icons/Tasks_icons.svg',
       enabled: false,
-      description: 'Control user access to create, edit, and view tasks.',
+      description: this.getTranslation('Control user access to create, edit, and view tasks.'),
     },
     {
       order: 5,
-      nameTag: 'USER MANAGEMENT',
+      nameTag: this.getTranslation('USER MANAGEMENT'),
       icon: '../../assets/icons/Usermanagement_icons.svg',
       enabled: false,
       description:
-        'Administrator user roles and permissions within the system.',
+        this.getTranslation('Administrator user roles and permissions within the system.'),
     },
   ];
 
@@ -378,30 +382,30 @@ export class UserManagementComponent implements OnInit {
 
   configurationSettings = [
     {
-      title: 'Environment',
-      description: 'Environment configurations.',
+      title: this.getTranslation('Environment'),
+      description: this.getTranslation('Environment configurations.'),
       enabled: false, // Main toggle
       subOptions: [
-        { label: 'Create', enabled: false },
-        { label: 'Edit', enabled: false },
-        { label: 'Delete', enabled: false },
+        { label: this.getTranslation('Create'), enabled: false },
+        { label: this.getTranslation('Edit'), enabled: false },
+        { label: this.getTranslation('Delete'), enabled: false },
         // { label: 'View', enabled: false },
       ],
     },
     {
-      title: 'Robot',
-      description: 'Robot configurations.',
+      title: this.getTranslation('Robot'),
+      description: this.getTranslation('Robot configurations.'),
       enabled: false,
       subOptions: [
-        { label: 'Create', enabled: false },
-        { label: 'Edit', enabled: false },
-        { label: 'Delete', enabled: false },
+        { label: this.getTranslation('Create'), enabled: false },
+        { label: this.getTranslation('Edit'), enabled: false },
+        { label: this.getTranslation('Delete'), enabled: false },
         // { label: 'View', enabled: false },
       ],
     },
     {
-      title: 'Fleet',
-      description: 'Fleet configurations.',
+      title: this.getTranslation('Fleet'),
+      description: this.getTranslation('Fleet configurations.'),
       enabled: false,
       subOptions: [
         // { label: 'Create', enabled: false },

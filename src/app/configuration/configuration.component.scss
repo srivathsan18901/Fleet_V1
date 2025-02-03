@@ -121,7 +121,7 @@
 }
 
 .rob-btn {
-  width: 155px; /* Set a fixed width for all buttons */
+  width: 215px; /* Set a fixed width for all buttons */
   padding: 10px;
   background-color: red;
   color: white;
@@ -486,9 +486,20 @@ tr:nth-child(even) {
 .Create-button-container {
   position: fixed;
   bottom: 20px;
+  gap: 10px;
   right: 20px;
 }
-
+.Create-button1 {
+  padding: 12px 20px;
+  background-color: #ff3333;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 10px;
+  font-family: "graphik", Arial,  sans-serif;
+}
 .Create-button {
   padding: 12px 20px;
   background-color: #ff3333;

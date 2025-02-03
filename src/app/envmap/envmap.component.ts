@@ -26,6 +26,7 @@ import { Dropdown } from 'primeng/dropdown';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 // import { NodeGraphService } from '../services/nodegraph.service';
+import { TranslationService } from '../services/translation.service';
 
 interface Node {
   nodeId: string;
@@ -365,13 +366,16 @@ export class EnvmapComponent implements AfterViewInit {
     private messageService: MessageService,
     private isFleetService: IsFleetService,
     private spinner: NgxSpinnerService,
+    private translationService: TranslationService,
     private sessionService: SessionService // private nodeGraphService:NodeGraphService
   ) {
     if (this.currEditMap) this.showImage = true;
     this.robotImages['robotB'] = new Image();
     this.robotImages['robotB'].src = 'assets/CanvasRobo/robotB.svg';
   }
-
+  getTranslation(key: string) {
+    return this.translationService.getEnvmapTranslation(key);
+  }
   ngOnInit() {
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap && !this.currEditMap) return; // yet to uncomment..

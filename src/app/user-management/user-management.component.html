@@ -643,9 +643,9 @@
             <!-- Table Head -->
             <thead>
               <tr class="bg-[#ffcdcd] rounded-md">
-                <th class="px-4 py-4 text-left">Project Name</th>
-                <th class="px-4 py-4 text-left">Created At</th>
-                <th class="px-4 py-4">Assign Project</th>
+                <th class="px-4 py-4 text-left">{{getTranslation('Project Name')}}</th>
+                <th class="px-4 py-4 text-left">{{getTranslation('Created At')}}</th>
+                <th class="px-4 py-4">{{getTranslation('Assign Project')}}</th>
               </tr>
             </thead>
             <!-- Table Body -->
@@ -669,7 +669,7 @@
                     (click)="toggleAssign(project)"
                     [disabled]="isAnyAssigned && !project.assigned"
                   >
-                    {{ project.assigned ? "Un-Assign" : "Assign" }}
+                    {{ project.assigned ? getTranslation('Un-assign') : getTranslation('Assign') }}
                   </button>
                 </td>
               </tr>
@@ -691,11 +691,11 @@
   >
     <!-- Title -->
     <span class="flex flex-col items-start justify-center">
-      <p class="text-[35px] text-[#DA2127] font-bold mb-10px">Delete</p>
+      <p class="text-[35px] text-[#DA2127] font-bold mb-10px">{{getTranslation("Delete")}}</p>
       <p
         class="flex items-center justify-center gap-2 text-[14px] font-medium text-[#7B7B7B]"
       >
-        Delete an user
+      {{getTranslation("Delete an user")}}
         <svg
           width="20"
           height="20"
@@ -719,7 +719,7 @@
     </span>
 
     <p class="flex text-[16px] font-normal">
-      Are you sure to delete the user ?
+      {{getTranslation("Are you sure to delete the user?")}}
     </p>
 
     <span class="flex w-full justify-end items-center mt-10">
@@ -728,13 +728,13 @@
           (click)="deleteUser(deleteUserName, deleteUserRole)"
           class="cursor-pointer flex px-10 py-2.5 bg-[#D30000] text-white border-2 border-[#D30000] rounded-md"
         >
-          Delete
+        {{getTranslation("Delete")}}
         </p>
         <p
           (click)="deleteUserPopUp()"
           class="cursor-pointer flex px-10 py-2.5 border-2 rounded-md border-[#D30000] text-[#D30000]"
         >
-          Cancel
+        {{getTranslation("Cancel")}}
         </p>
       </span>
     </span>

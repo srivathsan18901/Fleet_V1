@@ -1,7 +1,7 @@
 <ngx-spinner bdColor="#ffffff8c" size="medium" color="white" [fullScreen]="true">
   <div class="custom-spinner" style="text-align: center;">
     <img src="../../assets/Animation - 1737374060492.gif" alt="Loading..." class="loading"/>
-    <p style="font-weight: bold;color: #ff3333">Saving Map...</p>
+    <p style="font-weight: bold;color: #ff3333">{{getTranslation('SavingMap')}}</p>
   </div>
 </ngx-spinner>
 
@@ -11,7 +11,7 @@
   [ngClass]="{ 'fixed-size': showImage, 'dynamic-size': !showImage }"
   [ngStyle]="{ 'pointer-events': isNodeDetailsPopupVisible ? 'auto' : 'auto' }"
   >  
-    <h3 *ngIf="!showImage">Select and insert Map file</h3>
+    <h3 *ngIf="!showImage">{{getTranslation('SelectInsertMapFile')}}</h3>
     <!-- Image for file upload -->
     <label for="fileInput" class="upload-image" *ngIf="!showImage">
       <img src="../../assets/icons/arrow-down-circle.svg" alt="Upload" />
@@ -28,21 +28,21 @@
     <div class="form-wrapper" *ngIf="fileName && !showImage">
       <!-- Form for additional details -->
       <div class="form-container" *ngIf="fileName && !showImage">
-        <label for="mapName" >Map Name</label>
+        <label for="mapName" >{{getTranslation('MapName')}}</label>
         <input pInputText
           type="text"
           id="mapName"
           maxlength="250"
           [(ngModel)]="mapName"
-          placeholder="Enter map name"
+          placeholder="{{getTranslation('EnterMapName')}}"
         />
 
-        <label for="siteName">Site Name</label>
+        <label for="siteName">{{getTranslation('SiteName')}}</label>
         <input pInputText
           type="text"
           id="siteName"
           [(ngModel)]="siteName"
-          placeholder="Enter site name"
+          placeholder="{{getTranslation('EnterSiteName')}}"
           maxlength="250"
           (keyup.enter)="open()"
         />
@@ -50,7 +50,7 @@
       <div class="separator"></div>
       <div class="form1-container" *ngIf="fileName && !showImage">
         <div class="Res">
-          <label for="resolution">Resolution</label>
+          <label for="resolution">{{getTranslation('Resolution')}}</label>
           <!-- [(ngModel)]="resolution" -->
           <div class="Res1">
             <input pInputText
@@ -58,17 +58,17 @@
               id="resolution"
               min="0"
               #resolutionInput
-              placeholder="Resolution"
+              placeholder="{{getTranslation('Resolution')}}"
               (keyup.enter)="open()"
               (input)="onInputResolution($event)"
             />
-            <p id="or">or</p>
+            <p id="or">/</p>
             <button class="OpenandLocate" (click)="openImagePopup()">
-              Locate
+              {{getTranslation('Locate')}}
             </button>
           </div>
         </div>
-        <label for="origin">Origin</label>
+        <label for="origin">{{getTranslation('Origin')}}</label>
         <div
           class="origin-coor"
           style="display: flex; align-items: center; gap: 10px"
@@ -76,9 +76,9 @@
         <input pInputText type="number" id="X" placeholder="X" #originX [(ngModel)]="origin.x" (keyup.enter)="open()" />
         <input pInputText type="number" id="Y" placeholder="Y" #originY [(ngModel)]="origin.y" (keyup.enter)="open()" />
         <input pInputText type="number" id="θ" placeholder="θ" #originθ [(ngModel)]="origin.w" (keyup.enter)="open()" />
-        <p id="or">or</p>
+        <p id="or">/</p>
             <button class="OpenandLocate" (click)="openOriginPopup()">
-              Locate
+              {{getTranslation('Locate')}}
             </button>
           <!-- <input
         type="number"
@@ -124,27 +124,27 @@
           />
         </svg></button>
         <button *ngIf="isDistanceConfirmed" class="save-btn" (click)="saveCanvas()" >
-          Save
+          {{getTranslation('Save')}}
         </button>
-        <button class="clear-btn" (click)="clearCanvas()" style="margin-right: 2.5rem;">Clear</button>
+        <button class="clear-btn" (click)="clearCanvas()" style="margin-right: 2.5rem;">{{getTranslation('Clear')}}</button>
 
         <!-- Distance Input Dialog -->
         <div *ngIf="showDistanceDialog" class="distance-dialog-overlay">
           <div class="distance-dialog">
-            <h3>Enter Distance Between Points</h3>
+            <h3>{{getTranslation('EnterDistance')}}</h3>
             <input pInputText
               type="number"
                 min="0"
 
               [(ngModel)]="distanceBetweenPoints"
-              placeholder="Distance in meters"
+              placeholder="{{getTranslation('DistanceInMeters')}}"
             />
             <br>
             <!-- Display error message conditionally -->
             <div *ngIf="showError" class="distance-error-message">
-              Please enter distance between two points in meters.
+              {{getTranslation('PleaseEnterDistance')}}.
             </div>
-            <button (click)="confirmDistance()">Enter</button>
+            <button (click)="confirmDistance()">{{getTranslation('Enter')}}</button>
           </div>
         </div>
       </div>
@@ -154,7 +154,7 @@
       <div class="image-popup-content">
 
         <div class="origin-fileupload" *ngIf="!this.showOriginCanvas">
-          <h3 *ngIf="showOriginPopup && this.ratio">Select Nav image</h3>
+          <h3 *ngIf="showOriginPopup && this.ratio">{{getTranslation('SelectNavImage')}}</h3>
           
           <label for="anotherFileInput" class="upload-image">
             <img src="../../assets/icons/arrow-down-circle.svg" alt="Upload" />
@@ -203,7 +203,7 @@
               [(ngModel)]="inputY"
             />
           </div> -->
-          <button (click)="openOrigin()" class="originBTN" *ngIf="anotherFileName">Open</button>
+          <button (click)="openOrigin()" class="originBTN" *ngIf="anotherFileName">{{getTranslation('Open')}}</button>
         </div>
 
         <div class="originCanvas" >
@@ -212,10 +212,10 @@
         <canvas class="OriginOverlayCanvas" #OriginOverlayCanvas *ngIf="this.showOriginCanvas" style="position: absolute;top: 0;z-index: -1;"></canvas>
         </div>
         <div class="toolbar" *ngIf="this.showOriginCanvas">
-          <button (click)="zoomIn()">Zoom In</button>
-          <button (click)="zoomOut()">Zoom Out</button>
-          <button (click)="togglePanMode()" [ngStyle]="{ 'pointer-events': this.isRotating ? 'none' : 'auto', 'filter': isRotating ? 'blur(2px)' : 'none' }">{{ isPanning ? 'Disable Pan' : 'Enable Pan' }}</button>
-          <button (click)="toggleRotateMode()" [ngStyle]="{ 'pointer-events': this.isPanning ? 'none' : 'auto', 'filter': isPanning ? 'blur(2px)' : 'none' }">{{ isRotating ? 'Disable Rotate' : 'Enable Rotate' }}</button>
+          <button (click)="zoomIn()">{{getTranslation('ZoomIn')}}</button>
+          <button (click)="zoomOut()">{{getTranslation('ZoomOut')}}</button>
+          <button (click)="togglePanMode()" [ngStyle]="{ 'pointer-events': this.isRotating ? 'none' : 'auto', 'filter': isRotating ? 'blur(2px)' : 'none' }">{{ isPanning ? getTranslation('DisablePan') : getTranslation('EnablePan') }}</button>
+          <button (click)="toggleRotateMode()" [ngStyle]="{ 'pointer-events': this.isPanning ? 'none' : 'auto', 'filter': isPanning ? 'blur(2px)' : 'none' }">{{ isRotating ? getTranslation('DisableRotate') : getTranslation('EnableRotate') }}</button>
           <!-- <button (click)="enablePlotOrigin()">{{ plotOrigin ? 'Disable Plot Origin' : 'Plot Origin' }}</button> -->
         </div>
         <button class="close-btn" *ngIf="this.showOriginCanvas" (click)="closeImagePopup()"> <svg
@@ -624,37 +624,37 @@
       </div> -->
       <div class="calibration-layer" *ngIf="!isEdgeDrawingInProgress && !isPlottingEnabled && !isZonePlottingEnabled && !isDeleteModeEnabled && !isPlottingAsset">
         <div class="dropdown">
-          <button class="c-button">Add Node</button>
+          <button class="c-button">{{getTranslation('Add Node')}}</button>
           <div class="dropdown-content">
-            <button (click)="setPlottingMode('single')">Single Node</button>
-            <button (click)="setPlottingMode('multi')">Multi Node</button>
+            <button (click)="setPlottingMode('single')">{{getTranslation('Single Node')}}</button>
+            <button (click)="setPlottingMode('multi')">{{getTranslation('Multi Node')}}</button>
           </div>
         </div>
-        <button class="mul-del c-button" (click)="MuldelMode()">Delete Multiple Nodes</button>
+        <button class="mul-del c-button" (click)="MuldelMode()">{{getTranslation('Delete Multiple Nodes')}}</button>
         <div class="dropdown">
-          <button class="">Connectivity</button>
+          <button class="">{{getTranslation('Connectivity')}}</button>
           <div class="dropdown-content">
-            <button (click)="setDirection('uni')">Uni-Directional</button>
-            <button (click)="setDirection('bi')">Bi-Directional</button>
+            <button (click)="setDirection('uni')">{{getTranslation('Uni-Directional')}}</button>
+            <button (click)="setDirection('bi')">{{getTranslation('Bi-Directional')}}</button>
           </div>
         </div>
-        <button (click)="startZonePlotting()">Zones</button>
+        <button (click)="startZonePlotting()">{{getTranslation('Zones')}}</button>
 
         <div class="dropdown">
-          <button class="">Add Assets</button>
+          <button class="">{{getTranslation('Add Assets')}}</button>
           <div class="dropdown-content">
             <button (click)="selectAssetType('docking')">
-              Docking Station
+              {{getTranslation('Docking Station')}}
             </button>
             <button (click)="selectAssetType('charging')">
-              Charging Station
+              {{getTranslation('Charging Station')}}
             </button>
           </div>
         </div>
 
-        <button (click)="openRobotPopup()">Add Robots</button>
+        <button (click)="openRobotPopup()">{{getTranslation('Add Robots')}}</button>
         <!-- <button (click)="removeRobots()">Remove Robots</button> -->
-        <button (click)="saveOpt()">Save</button>
+        <button (click)="saveOpt()">{{getTranslation('Save')}}</button>
         <!-- <button (click)="toggleOptionsMenu()">Back</button> -->
       </div>
     </div>
