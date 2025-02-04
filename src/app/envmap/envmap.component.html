@@ -694,17 +694,17 @@
 
 <div *ngIf="isPopupVisible" class="zonepopup-overlay1">
   <div class="zonepopup-content1">
-    <h4>Select Zone Type</h4>
+    <h4>{{getTranslation("Select Zone Type")}}</h4>
     <p-dropdown 
-      [options]="zoneTypeList" 
+      [options]="translatedZoneTypeList" 
       class="zoneTypeList"
       [(ngModel)]="zoneType" 
-      placeholder="Select Zone Type">
+      placeholder="{{getTranslation('Select Zone Type')}}">
     </p-dropdown>
     <div>
-      <button (click)="zoneType !== null ? onZoneTypeSelected(zoneType) : null">Confirm</button>
-      <button *ngIf="isDeleteVisible" (click)="onDeleteZone()">Delete</button>
-      <button (click)="onCancel()">Cancel</button>
+      <button (click)="zoneType !== null ? onZoneTypeSelected(zoneType) : null">{{getTranslation("Confirm")}}</button>
+      <button *ngIf="isDeleteVisible" (click)="onDeleteZone()">{{getTranslation("Delete")}}</button>
+      <button (click)="onCancel()">{{getTranslation("Cancel")}}</button>
     </div>
   </div>
 </div>
@@ -909,15 +909,15 @@
   <div class="popup-content1">
     <form>
       <!-- Validation Message -->
-      <h2>Docking Station Details</h2>
+      <h2>{{getTranslation("Docking Station Details")}}</h2>
 
       <div class="UDform">
-        <label for="undockingDistance" style="margin-right: 2rem;">Undocking Distance:</label>
+        <label for="undockingDistance" style="margin-right: 2rem;">{{getTranslation("Undocking Distance")}}:</label>
         <input pInputText
           type="number"
           id="undockingDistance"
           name="undockingDistance"
-          placeholder="Enter undockingDistance"
+          placeholder="{{getTranslation('Enter undockingDistance')}}"
           [(ngModel)]="undockingDistance"
           min="1"
           max="1000"
@@ -926,12 +926,12 @@
       </div>
 
       <div class="UDform">
-        <label for="description" style="margin-right: 6rem;">Description:</label>
+        <label for="description" style="margin-right: 6rem;">{{getTranslation("Description")}}:</label>
         <input pInputText
           type="text"
           id="description"
           name="description"
-          placeholder="Enter Docking Description"
+          placeholder="{{getTranslation('Enter Docking Description')}}"
           [(ngModel)]="description"
           maxlength="300"
           (ngModelChange)="checkDescriptionLength()"
@@ -951,9 +951,9 @@
         *{{ validationMessage }}
       </div>
       <div class="">
-        <button type="button" (click)="deleteSelectedAsset()">Delete</button>
-        <button type="button" (click)="savePopupData()">Save</button>
-        <button type="button" (click)="closePopup1()">Cancel</button>
+        <button type="button" (click)="deleteSelectedAsset()">{{getTranslation("Delete")}}</button>
+        <button type="button" (click)="savePopupData()">{{getTranslation("Save")}}</button>
+        <button type="button" (click)="closePopup1()">{{getTranslation("Cancel")}}</button>
       </div>
     </form>
   </div>
@@ -996,10 +996,10 @@
 
 <div *ngIf="isConfirmationVisible" class="popup-overlay1">
   <div class="popup-content1">
-    <p>Are you sure you want to Remove?</p>
+    <p>{{getTranslation("AreYouSureToRemove")}}</p>
     <div>
-      <button type="button" (click)="confirmDelete()">Confirm</button>
-      <button type="button" (click)="cancelDelete()">Cancel</button>
+      <button type="button" (click)="confirmDelete()">{{getTranslation("Confirm")}}</button>
+      <button type="button" (click)="cancelDelete()">{{getTranslation("Cancel")}}</button>
     </div>
   </div>
 </div>
@@ -1035,10 +1035,10 @@
 
     <!-- Show confirmation message and buttons when 'Remove Robot' is clicked -->
     <div *ngIf="!isConfirmingDelete">
-      <p>Are you sure you want to Remove?</p>
+      <p>{{getTranslation("AreYouSureToRemove")}}</p>
       <div>
-        <button type="button" (click)="confirmRoboDelete()">Confirm</button>
-        <button type="button" (click)="cancelDelete()">Cancel</button>
+        <button type="button" (click)="confirmRoboDelete()">{{getTranslation("Confirm")}}</button>
+        <button type="button" (click)="cancelDelete()">{{getTranslation("Cancel")}}</button>
       </div>
     </div>
   </div>

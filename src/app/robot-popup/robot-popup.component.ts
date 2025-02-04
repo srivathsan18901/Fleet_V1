@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { MessageService } from 'primeng/api';
+import { TranslationService } from '../services/translation.service';
 
 interface Robo {
   roboDet: any;
@@ -23,7 +24,9 @@ export class RobotPopupComponent {
 
   constructor(
     private messageService: MessageService,
-    private projectService: ProjectService
+    private projectService: ProjectService,
+    private translationService: TranslationService,
+
   ) {}
   //..
   mapData: any | null = null;
@@ -31,7 +34,9 @@ export class RobotPopupComponent {
 
   listedRobo: any[] = [];
   availableRobots: any[] = [];
-
+  getTranslation(key: string) {
+    return this.translationService.getEnvmapTranslation(key);
+  }
   ngOnChanges() {
     this.listedRobo = [];
     let avlRobo = this.robos.map((robo) => robo.roboDet);

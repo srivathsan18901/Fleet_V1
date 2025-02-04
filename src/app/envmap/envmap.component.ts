@@ -309,6 +309,7 @@ export class EnvmapComponent implements AfterViewInit {
   showPopup = false;
   plotOrigin: boolean = false;
   zoneTypeList = Object.values(ZoneType); // Converts the enum to an array
+  translatedZoneTypeList: { label: string; value: string }[] = [];
   DockPopup: boolean = false; // To control the popup visibility
   popupPosition = { x: 0, y: 0 }; // To store the popup position
   undockingDistance: string = ''; // Input field for undocking distance
@@ -369,6 +370,7 @@ export class EnvmapComponent implements AfterViewInit {
     private translationService: TranslationService,
     private sessionService: SessionService // private nodeGraphService:NodeGraphService
   ) {
+    this.updateTranslatedZoneTypes();
     if (this.currEditMap) this.showImage = true;
     this.robotImages['robotB'] = new Image();
     this.robotImages['robotB'].src = 'assets/CanvasRobo/robotB.svg';
@@ -376,8 +378,15 @@ export class EnvmapComponent implements AfterViewInit {
   getTranslation(key: string) {
     return this.translationService.getEnvmapTranslation(key);
   }
+  updateTranslatedZoneTypes(): void {
+    this.translatedZoneTypeList = this.zoneTypeList.map(zone => ({
+      label: this.getTranslation(zone),
+      value: zone
+    }));
+  }
   ngOnInit() {
     this.selectedMap = this.projectService.getMapData();
+    console.log(this.translatedZoneTypeList);
     if (!this.selectedMap && !this.currEditMap) return; // yet to uncomment..
     if (this.currEditMap) {
       this.showImage = true;

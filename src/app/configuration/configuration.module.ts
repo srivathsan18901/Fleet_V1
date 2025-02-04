@@ -22,6 +22,8 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { ToastModule } from 'primeng/toast';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
+import { SpeedDialModule } from 'primeng/speeddial';
+
 @NgModule({
   declarations: [
             // GeneralComponent,
@@ -45,6 +47,7 @@ import { MessageService } from 'primeng/api';
     RadioButtonModule,
     ToastModule,
     ReactiveFormsModule,
+    SpeedDialModule,
 
   ],
   exports: [

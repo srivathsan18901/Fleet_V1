@@ -402,6 +402,10 @@ th {
   margin: 0px;
   padding: 0px;
 }
+.exportBtn{
+  display: flex !important;
+  justify-content: center;
+}
 .edit{
   display: flex !important;
   justify-content: center;
@@ -410,6 +414,7 @@ td {
   font-size: 13px;
   font-family: "graphik", Arial,  sans-serif;
 }
+
 
 tr:hover {
   background-color: #f2f2f2;
@@ -1217,7 +1222,7 @@ edit button */
 
  /* delete button */
  /* Delete */
- .delete-button {
+ .export-button,.delete-button {
   margin-left: 10px;
   width: 30px;
   height: 30px;
@@ -1242,14 +1247,14 @@ edit button */
  .delete-svgIcon path {
   fill: white;
  }
- .delete-button:hover {
+ .export-button:hover,.delete-button:hover {
   width: 90px;
   border-radius: 50px;
   transition-duration: 0.3s;
   background-color: rgb(255, 69, 69);
   align-items: center;
  }
- .delete-button:hover .delete-svgIcon {
+ .delete-button:hover .delete-svgIcon, .export-button:hover .delete-svgIcon{
   width: 20px;
   transition-duration: 0.3s;
   transform: translateY(60%);
@@ -1267,6 +1272,14 @@ edit button */
   font-size: 2px;
   font-family: "graphik", Arial,  sans-serif;
  }
+ .export-button::before {
+  display: none;
+  content: "Export";
+  color: white;
+  transition-duration: 0.3s;
+  font-size: 2px;
+  font-family: "graphik", Arial,  sans-serif;
+ }
  .delete-button:hover::before {
   display: block;
   padding-right: 10px;
@@ -1276,7 +1289,15 @@ edit button */
   transform: translateY(0px);
   transition-duration: 0.3s;
  }
-
+ .export-button:hover::before {
+  display: block;
+  padding-right: 10px;
+  font-size: 13px;
+  font-family: "graphik", Arial,  sans-serif;
+  opacity: 1;
+  transform: translateY(0px);
+  transition-duration: 0.3s;
+ }
 
 
 //  simulation

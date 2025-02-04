@@ -47,7 +47,7 @@ import { FullscreenButtonComponent } from './fullscreen-button/fullscreen-button
 // import { ConfigurationModule } from './configuration/configuration.module';
 import { DropdownModule } from 'primeng/dropdown';import { RadialChartComponent } from './radial-chart/radial-chart.component';
 import { ToastModule } from 'primeng/toast';
-import { MessageService } from 'primeng/api';
+import { MessageService,MenuItem } from 'primeng/api';
 import { AppServerModule } from './app.module.server';
 import { SupportComponent } from './support/support.component';
 import { FaqComponent } from './faq/faq.component';
@@ -78,7 +78,8 @@ import { HeatmapComponent } from './heatmap/heatmap.component';
 import { NgxSpinnerModule } from "ngx-spinner";
 // import { NotAuthorizedComponent } from './guards/not-authorized/not-authorized.component';
 import { BadgeModule } from "primeng/badge";
-
+import { SpeedDialModule } from 'primeng/speeddial';
+import { TooltipModule } from 'primeng/tooltip';
 @NgModule({
   declarations: [
     AppComponent,
@@ -144,6 +145,7 @@ import { BadgeModule } from "primeng/badge";
     InputTextModule,
     ButtonModule,
     DropdownModule,
+    SpeedDialModule,
     ToastModule,
     AppServerModule,
     CheckboxModule,
@@ -157,7 +159,8 @@ import { BadgeModule } from "primeng/badge";
     PaginatorModule,
     BrowserAnimationsModule,
     NgxSpinnerModule,
-    BadgeModule
+    BadgeModule,
+    TooltipModule
     // TableModule
   ],
   providers: [

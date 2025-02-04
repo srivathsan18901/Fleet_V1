@@ -8,6 +8,8 @@ import {
   Input,
   viewChild,
 } from '@angular/core';
+import { SpeedDial } from 'primeng/speeddial';
+import { TooltipModule } from 'primeng/tooltip';
 import { ExportService } from '../export.service';
 import { formatDate } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
@@ -15,7 +17,7 @@ import { RobotParametersPopupComponent } from '../robot-parameters-popup/robot-p
 import { environment } from '../../environments/environment.development';
 import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 import { EnvmapComponent } from '../envmap/envmap.component';
-import { MessageService } from 'primeng/api';
+import { MessageService, MenuItem } from 'primeng/api';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FormBuilder } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
@@ -147,10 +149,52 @@ export class ConfigurationComponent implements AfterViewInit {
     // this.filteredRobotData = [...this.robotData];
     // this.filteredRobotData = this.robotData;
   }
-
+  items: any[] =[];
   async ngOnInit() {
     // const rawData = this.projectService.userManagementServiceGet();
-
+    this.items = [
+      {
+        label: 'Create',
+        icon: 'pi pi-plus',
+        command: () => this.openImageUploadPopup(),
+        tooltipOptions: { tooltipLabel: 'Create Map', tooltipPosition: 'top' } 
+      },
+      {
+        label: 'Import Map',
+        icon: 'pi pi-download',
+        command: () => this.openImageUploadPopup(),
+        tooltipOptions: { tooltipLabel: 'Import Map', tooltipPosition: 'top' } 
+      }
+    ];    
+  //   this.items = [
+  //     {
+  //         icon: 'pi pi-pencil',
+  //         command: () => {
+  //             this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
+  //         }
+  //     },
+  //     {
+  //         icon: 'pi pi-refresh',
+  //         command: () => {
+  //             this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+  //         }
+  //     },
+  //     {
+  //         icon: 'pi pi-trash',
+  //         command: () => {
+  //             this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+  //         }
+  //     },
+  //     {
+  //         icon: 'pi pi-upload',
+  //         routerLink: ['/fileupload']
+  //     },
+  //     {
+  //         icon: 'pi pi-external-link',
+  //         target: '_blank',
+  //         url: 'http://angular.io'
+  //     }
+  // ];
     this.userManagementData = this.userPermissionService.getPermissions();
 
     if (this.userManagementData?.configurationPermissions) {
@@ -1217,13 +1261,13 @@ export class ConfigurationComponent implements AfterViewInit {
     }
   }
 
+  
   showConfirmationDialog: boolean = false;
   itemToDelete: any;
 
   openDeleteConfirmation(item: any) {
     this.itemToDelete = item;
     this.showConfirmationDialog = true;
-    
   }
 
   confirmDelete() {
