@@ -757,6 +757,8 @@ tr:nth-child(even) {
   align-items: center;
   border-radius: 10px;
   filter: drop-shadow(0px 4px 0.5px rgba(225, 223, 223, 0.333));
+  width: 505px;
+  justify-content: space-between;
 }
 .dateInput1,.dateInput2{
   display: flex;
@@ -1640,7 +1642,9 @@ tbody td {
   
 
 .date-inputs label{
-  font-family: "graphik", Arial,  sans-serif !important;
+  font-size: 12px;
+  margin-right: 1px;
+  font-family: "graphik", Arial, sans-serif !important;
 }
 
 ::ng-deep .mat-paginator {
