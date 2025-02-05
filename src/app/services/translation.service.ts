@@ -925,6 +925,7 @@ export class TranslationService {
       'Attachment Type': 'Attachment Type',
       'NOT_SET': 'NOT_SET',
       'LIFTER': 'LIFTER',
+      'Open': 'Open',
       'SINGLECONVEYOR': 'SINGLECONVEYOR',
       'TWINCONVEYOR': 'TWINCONVEYOR',
       'Type Specification': 'Type Specification',
@@ -1000,6 +1001,7 @@ export class TranslationService {
       "AMR Name": "AMR名",
       "IP Range": "IP範囲",
       "Stop": "停止 ",
+      'Open': '開く',
       "No Data found": "データが見つかりません",
       "IP": "IP",
       "MAC": "MAC",
@@ -1116,6 +1118,7 @@ export class TranslationService {
       "No Data found": "Aucune donnée trouvée",
       "IP": "IP",
       "MAC": "MAC",
+      'Open': 'Ouvrir',
       "Hostname": "Nom d'hôte",
       "Ping": "Ping",
       "Status": "Statut",
@@ -1212,6 +1215,7 @@ export class TranslationService {
       "Search for Something...": "Nach etwas suchen...",
       "Start Date:": "Startdatum:",
       "End Date:": "Enddatum:",
+      'Open': 'Öffnen',
       "Map Name": "Kartenname",
       "Site Name": "Standortname",
       "Last Created": "Zuletzt erstellt",
@@ -1340,7 +1344,17 @@ export class TranslationService {
       "BACK": "BACK",
       "OPEN": "OPEN",
       "LOGOUT": "LOGOUT",
-      "PROJECT_LIST": "Project List"
+      "PROJECT_LIST": "Project List",
+      "ERROR_DATA_NOT_ATTAINED": "Error: Data doesn't attained",
+      "PROJECT_ALREADY_IN_USE": "Project already in use!",
+      "NO_FILE_SELECTED": "No file selected to import",
+      "SELECTION_ERROR": "Selection Error",
+      "FILE_TYPE_INVALID": "File type not valid",
+      "VALIDATION_ERROR": "Validation Error",
+      "FILL_BOTH_FIELDS": "*Please fill in both the fields.",
+      "FILL_PROJECT_NAME": "*Please fill Project Name.",
+      "SELECTION_ERROR_PROJECT": "An error occurred while selecting the project",
+      "IMPORT_PROJECT_FILE": "Import Project File"
     },
     JAP: {
       "LOGIN": "ログイン",
@@ -1354,7 +1368,17 @@ export class TranslationService {
       "BACK": "戻る",
       "OPEN": "開く",
       "LOGOUT": "ログアウト",
-      "PROJECT_LIST": "プロジェクト一覧"
+      "PROJECT_LIST": "プロジェクト一覧",
+      "ERROR_DATA_NOT_ATTAINED": "エラー: データを取得できませんでした",
+      "PROJECT_ALREADY_IN_USE": "プロジェクトはすでに使用されています！",
+      "NO_FILE_SELECTED": "インポートするファイルが選択されていません",
+      "SELECTION_ERROR": "選択エラー",
+      "FILE_TYPE_INVALID": "ファイル形式が無効です",
+      "VALIDATION_ERROR": "検証エラー",
+      "FILL_BOTH_FIELDS": "*両方のフィールドに入力してください。",
+      "FILL_PROJECT_NAME": "*プロジェクト名を入力してください。",
+      "SELECTION_ERROR_PROJECT": "プロジェクトの選択中にエラーが発生しました",
+      "IMPORT_PROJECT_FILE": "プロジェクトファイルをインポート"
     },
     FRE: {
       "LOGIN": "CONNEXION",
@@ -1368,7 +1392,17 @@ export class TranslationService {
       "BACK": "RETOUR",
       "OPEN": "OUVRIR",
       "LOGOUT": "DÉCONNEXION",
-      "PROJECT_LIST": "Liste des projets"
+      "PROJECT_LIST": "Liste des projets",
+      "ERROR_DATA_NOT_ATTAINED": "Fehler: Daten wurden nicht erhalten",
+      "PROJECT_ALREADY_IN_USE": "Projekt wird bereits verwendet!",
+      "NO_FILE_SELECTED": "Keine Datei zum Importieren ausgewählt",
+      "SELECTION_ERROR": "Auswahlfehler",
+      "FILE_TYPE_INVALID": "Ungültiger Dateityp",
+      "VALIDATION_ERROR": "Validierungsfehler",
+      "FILL_BOTH_FIELDS": "*Bitte füllen Sie beide Felder aus.",
+      "FILL_PROJECT_NAME": "*Bitte geben Sie den Projektnamen ein.",
+      "SELECTION_ERROR_PROJECT": "Beim Auswählen des Projekts ist ein Fehler aufgetreten",
+      "IMPORT_PROJECT_FILE": "Projektdatei importieren"
     },
     GER: {
       "LOGIN": "ANMELDEN",
@@ -1382,10 +1416,9 @@ export class TranslationService {
       "BACK": "ZURÜCK",
       "OPEN": "ÖFFNEN",
       "LOGOUT": "ABMELDEN",
-      "PROJECT_LIST": "Projektliste"
+      "PROJECT_LIST": "Projektliste",
     }
   };
-  
   private loginTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
     ENG: {
       "LOGIN": "LOGIN",

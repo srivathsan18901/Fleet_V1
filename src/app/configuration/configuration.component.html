@@ -22,7 +22,7 @@
     </div>
     <div class="mainContent">
       <div class="header-section">
-        <h1 class="header-title">{{ activeHeader }}</h1>
+        <h1 class="header-title">{{ this.getTranslation(activeHeader) }}</h1>
         <div class="subheader-container">
           <div class="subheader-text">
             {{ getTranslation("Create and Edit Configuration") }}
@@ -1413,9 +1413,14 @@
       </div>
         <!-- Display selected file name -->
         <!-- <div  class="file-name">{{  }}</div> -->
+         <div class="BTN-set">
+          <button  class="cancel-button">
+            {{ getTranslation("Open") }}
+          </button>
           <button (click)="cancelDelete()" class="cancel-button">
             {{ getTranslation("cancel") }}
           </button>
+        </div>
         </div>
       </div>
     </div>

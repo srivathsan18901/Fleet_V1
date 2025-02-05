@@ -11,7 +11,14 @@
   font-weight: bolder;
   margin: 40px 0px 20px 30px; /*TRBL*/
 }
-
+.Impfile{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.BTN-set{
+  
+}
 .language-dropdown {
   display: flex;
   flex-direction: column;

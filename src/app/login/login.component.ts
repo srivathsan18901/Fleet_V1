@@ -52,6 +52,13 @@ export class LoginComponent {
     }, duration);
   }
   ngOnInit() {
+    for(let flag of this.flags){
+      if(flag.nameTag === this.translationService.getCurrentLang()){
+        this.flagSvg = flag.flagComp;
+        this.flagName = flag.nameTag
+        break;
+      }
+    }
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
     })

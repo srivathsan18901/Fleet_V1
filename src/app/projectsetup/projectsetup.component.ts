@@ -1,4 +1,4 @@
-import { Component, ElementRef } from '@angular/core';
+import { Component,HostListener, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ProjectService } from '../services/project.service';
@@ -33,7 +33,7 @@ export class ProjectsetupComponent {
   projectname: string = '';
   isFocused: { [key: string]: boolean } = {};
   selectedProject: string = '';
-  selectedFileName: string = 'Import Project File';
+  selectedFileName: string = this.getTranslation("IMPORT_PROJECT_FILE");
   errorMessage: string = '';
   productList: Project[] = [];
   selectedFile: File | null = null;
@@ -47,6 +47,7 @@ export class ProjectsetupComponent {
     private projectService: ProjectService,
     private cookieService: CookieService,
     private messageService: MessageService,
+    private eRef: ElementRef,
     private translationService: TranslationService
   ) {}
 
@@ -61,6 +62,7 @@ export class ProjectsetupComponent {
         break;
       }
     }
+    this.selectedFileName = this.getTranslation("IMPORT_PROJECT_FILE");
 
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/projects/project-list`,
@@ -76,7 +78,13 @@ export class ProjectsetupComponent {
       })
       .catch((err) => console.log(err));
   }
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
 
+    if (!this.eRef.nativeElement.querySelector('.language-selector')?.contains(event.target as Node)) {
+      this.languageArrowState = false;
+    }
+  }
   showProjDiv1() {
     this.isProjDiv1Visible = !this.isProjDiv1Visible;
     this.isProjDiv2Visible = false;
@@ -130,7 +138,7 @@ export class ProjectsetupComponent {
     this.form = null;
     this.selectedFile = null;
     this.selectedProject = '';
-    this.selectedFileName = 'Import Project File';
+    this.selectedFileName = this.getTranslation("IMPORT_PROJECT_FILE");
     if (!this.isProjDiv1Visible) {
       this.sitename = '';
       this.projectname = '';

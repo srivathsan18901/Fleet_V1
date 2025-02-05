@@ -77,6 +77,13 @@ export class SidenavbarComponent implements OnInit {
   }
 
   async ngOnInit() {
+    for(let flag of this.flags){
+      if(flag.nameTag === this.translationService.getCurrentLang()){
+        this.flagSvg = flag.flagComp;
+        this.flagName = flag.nameTag
+        break;
+      }
+    }
     this.renderer.listen('document', 'click', (event: Event) => {
       const target = event.target as HTMLElement;
       const notificationElement = this.eRef.nativeElement.querySelector('.notification-popup');
