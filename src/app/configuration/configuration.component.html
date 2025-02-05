@@ -1405,17 +1405,20 @@
         <!-- Image for file upload -->
         <label for="fileInput" class="upload-image" >
           <img src="../../assets/icons/arrow-down-circle.svg" alt="Upload" />
+          <p class="ImpText">{{ getTranslation(this.selectedFileName) }}</p>
           <input
             type="file"
-            id="fileInput"
-            hidden
-          />
+            id="fileInput" 
+            (change)="onFileSelected($event)"  
+            style="display: none"
+            accept=".zip"
+            />
         </label>
       </div>
         <!-- Display selected file name -->
         <!-- <div  class="file-name">{{  }}</div> -->
          <div class="BTN-set">
-          <button  class="cancel-button">
+          <button  (click)="importFile()" class="cancel-button">
             {{ getTranslation("Open") }}
           </button>
           <button (click)="cancelDelete()" class="cancel-button">
