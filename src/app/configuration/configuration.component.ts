@@ -150,6 +150,9 @@ export class ConfigurationComponent implements AfterViewInit {
     // this.filteredRobotData = this.robotData;
   }
   items: any[] = [];
+  deleteButtonText: string = '';
+  editButtonText: string = '';
+  exportButtonText: string = '';
   async ngOnInit() {
     // const rawData = this.projectService.userManagementServiceGet();
     this.items = [
@@ -166,6 +169,10 @@ export class ConfigurationComponent implements AfterViewInit {
         tooltipOptions: { tooltipLabel: 'Import Map', tooltipPosition: 'top' } 
       }
     ];    
+    this.deleteButtonText = this.getTranslation('Delete');
+    this.editButtonText = this.getTranslation('edit');
+    this.exportButtonText = this.getTranslation('export');
+    
   //   this.items = [
   //     {
   //         icon: 'pi pi-pencil',
@@ -316,6 +323,7 @@ export class ConfigurationComponent implements AfterViewInit {
   getTranslation(key: string) {
     return this.translationService.getConfigurationTranslation(key);
   }
+  
   reloadTable() {
     this.loadData(); // Ensure data is reloaded properly
     this.setPaginatedData(); // Ensure the paginated data is set correctly after loading

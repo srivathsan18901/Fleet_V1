@@ -293,12 +293,13 @@
       >
       <div #nodeDetailsPopup class="node-details-popup" >
       <div class="sampleCSS">
+        <div class="node_al">
         <div class="node_details">
-          <h2>Details for Node ID : {{ selectedNode?.nodeId }} </h2>
+          <h2>{{getTranslation("details_for_node_id")}} : {{ selectedNode?.nodeId }} </h2>
           <!-- <h2 class="Label">Node ID:  {{ selectedNode?.nodeId }}</h2> -->
           <div class="Nodevalues">
             <div class="XY-coor">
-            <h3 class="Label">Position</h3>
+            <h3 class="Label">{{getTranslation("position")}}</h3>
           <div class="displayXY">
             <label for="X_Co">X</label>
             <input 
@@ -333,7 +334,7 @@
         </div> 
         <div class="quaternion-inputs">
           <div class="quaternion-row">
-            <h3 class="Label">Orientation</h3>
+            <h3 class="Label">{{getTranslation("orientation")}}</h3>
             <div>
             <div class="displayXYWZ">
               <label for="quaternionX">X</label>
@@ -388,13 +389,13 @@
         </div>
           <div class="action-container">
             <div class="action" class="display:flex; text-wrap:nowrap; align-items:center ">
-              <label for="nodeAction" class="Label" >Add Action:</label>
+              <label for="nodeAction" class="Label" >{{getTranslation("add_action")}}:</label>
               <p-dropdown 
               appendTo="body"
               [options]="actionOptions"
               [(ngModel)]="selectedAction"  
               (onChange)="onActionChange($event.value)"
-              placeholder="Select Action" 
+              placeholder="{{getTranslation('select_action')}} "
               [autoDisplayFirst]="false"
               class="small-dropdown"
               [style]="{'width':'12.5rem !important'}"
@@ -405,11 +406,11 @@
           </div>
 
           <div *ngIf="actions.length > 0" class="action-div">
-            <p class="Label">Actions:</p>
+            <p class="Label">{{getTranslation('actions')}}:</p>
             <div class="action-buttons">
               <div *ngFor="let action of actions; let i = index" class="action-item">
                 <button class="action-button" (click)="openActionForm(action)" >
-                  {{ action.actionType }}
+                  {{ getTranslation(action.actionType) }}
                 </button>
                 <span class="delete-icon" (click)="deleteActionFromNode(action)">X</span>
               </div>
@@ -417,11 +418,11 @@
           </div>
 
           <div class="input-group1">
-            <label for="nodeDescription" class="Label" >Node Description:</label>
+            <label for="nodeDescription" class="Label" >{{getTranslation('node_description')}}:</label>
             <input pInputText
               type="text"
               id="nodeDescription"
-              placeholder="Enter Node Description"
+              placeholder="{{getTranslation('enter_node_description')}}"
               [(ngModel)]="nodeDetails.description"
               [style]="{'height':'30px','width':'12.5rem','position': 'relative','left': '29px'}"
             />
@@ -430,42 +431,42 @@
               <div class="node-action">
                 <div class="node-row">
                   <div class="node1">
-                    <label for="nodeTypeDropdown" class="Label">Node Type:</label>
+                    <label for="nodeTypeDropdown" class="Label">{{getTranslation('node_type')}}:</label>
                     <select
                       id="nodeTypeDropdown"
                       class="nodeform-control"
                       [(ngModel)]="selectedNodeType"
                       (change)="updateNodeType()"
                     >
-                      <option [value]="'Intermediate'">Intermediate Node</option>
-                      <option [value]="'Waiting'">Waiting Node</option>
-                      <option [value]="'Charge'">Charge Node</option>
-                      <option [value]="'Dock'">Dock Node</option>
+                      <option [value]="'Intermediate'">{{getTranslation('intermediate_node')}}</option>
+                      <option [value]="'Waiting'">{{getTranslation('waiting_node')}}</option>
+                      <option [value]="'Charge'">{{getTranslation('charge_node')}}</option>
+                      <option [value]="'Dock'">{{getTranslation('dock_node')}}</option>
                     </select>
                   </div>
                   <div>
                     <div class="node2-sub" *ngIf="selectedNodeType === 'Intermediate' || selectedNodeType === 'Waiting'">
-                      <label for="predockPoseDropdown" class="Label">Dock Pose:</label>
+                      <label for="predockPoseDropdown" class="Label">{{getTranslation('dock_pose')}}:</label>
                       <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedDockPose">
-                        <option *ngIf="!connectedNodes.length" disabled selected value="">Select</option>
+                        <option *ngIf="!connectedNodes.length" disabled selected value="">{{getTranslation('select')}}</option>
                         <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                           {{ node.nodeId }}
                         </option>
                       </select>
                     </div>
                   <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
-                    <label for="predockPoseDropdown" class="Label">Predock Pose:</label>
+                    <label for="predockPoseDropdown" class="Label">{{getTranslation('predock_pose')}}:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedPredockPose">
-                      <option *ngIf="!connectedNodes.length" disabled selected value="">Select</option>
+                      <option *ngIf="!connectedNodes.length" disabled selected value="">{{getTranslation('select')}}</option>
                       <option *ngIf="connectedNodes.length" disabled selected value="" style="font-size: 10px;" class="select-text">Select</option>                      <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                         {{ node.nodeId }}
                       </option>
                     </select>
                   </div>
                   <div class="node1-sub" *ngIf="selectedNodeType === 'Dock' || selectedNodeType === 'Charge'">
-                    <label for="predockPoseDropdown" class="Label">Undock Pose:</label>
+                    <label for="predockPoseDropdown" class="Label">{{getTranslation('undock_pose')}}:</label>
                     <select id="predockPoseDropdown" class="form-control" [(ngModel)]="selectedUndockPose">
-                      <option *ngIf="!connectedNodes.length" disabled selected value="">Select</option>
+                      <option *ngIf="!connectedNodes.length" disabled selected value="">{{getTranslation('select')}}</option>
                       <option *ngIf="connectedNodes.length" disabled selected value="" class="select-text">Select</option>
                       <option *ngFor="let node of connectedNodes" [value]="node.nodeId">
                         {{ node.nodeId }}
@@ -481,16 +482,17 @@
             <div *ngIf="validationError" class="node-validation-error">*{{ validationError }}</div>
           </div>
           <div class="Node-btn">
-            <button class="Delnode-btn" (click)="deleteSelectedNode()">Delete Node</button>
+            <button class="Delnode-btn" (click)="deleteSelectedNode()">{{getTranslation('delete_node')}}</button>
             <!-- <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, orientationInput.value)">Save</button> use for later--> 
-            <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, yInput.value)">Save</button>
-            <button class="closenode-btn" (click)="closeNodeDetailsPopup()">Close</button>
+            <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, yInput.value)">{{getTranslation('save')}}</button>
+            <button class="closenode-btn" (click)="closeNodeDetailsPopup()">{{getTranslation('close')}}</button>
           </div>
         </div>
        </div>
+      </div>
         <div class="action-form">
           <div *ngIf="selectedAction === 'Move' && isMoveActionFormVisible" class="move-action-form">
-            <p>Move Action Parameters</p>
+            <p>{{getTranslation('move_action_parameters')}}</p>
             <div class="input-groupg">
               <label>Max Linear Velocity:</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxLinearVelocity" /><br />
@@ -519,13 +521,13 @@
                 <option value="mode2">Mode 2</option>
               </select><br/>
             </div>
-              <button class="actionBTN" (click)="addAction()">Add</button>
-              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
+              <button class="actionBTN" (click)="addAction()">{{getTranslation('add')}}</button>
+              <button class="actionBTN" (click)="cancelAction()">{{getTranslation('cancel')}}</button>
           </div>
 
 
           <div *ngIf="selectedAction === 'Dock' && isDockActionFormVisible" class="move-action-form">
-            <p>Dock Action Parameters</p>
+            <p>{{getTranslation('dock_action_parameters')}}</p>
             <div class="input-groupg">
               <label>Max Linear Velocity:</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxLinearVelocity" /><br />
@@ -573,12 +575,12 @@
                 <option value="mode2">Mode 2</option>
               </select><br/>
             </div>
-              <button class="actionBTN" (click)="addAction()">Add</button>
-              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
+              <button class="actionBTN" (click)="addAction()">{{getTranslation('add')}}</button>
+              <button class="actionBTN" (click)="cancelAction()">{{getTranslation('cancel')}}</button>
           </div>
 
           <div *ngIf="selectedAction === 'Undock' && isUndockActionFormVisible" class="move-action-form">
-            <p>Undock Action Parameters</p>
+            <p>{{getTranslation('undock_action_parameters')}}</p>
             <div class="input-groupg">
               <label>Max Linear Velocity:</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxLinearVelocity" /><br />
@@ -604,8 +606,8 @@
               <label>Undocking Distance:</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.undockingDistance" style="margin-right: 20rem;"/><br />
             </div>
-              <button class="actionBTN" (click)="addAction()">Add</button>
-              <button class="actionBTN" (click)="cancelAction()">Cancel</button>
+              <button class="actionBTN" (click)="addAction()">{{getTranslation('add')}}</button>
+              <button class="actionBTN" (click)="cancelAction()">{{getTranslation('cancel')}}</button>
           </div>
         </div>
       </div>

@@ -273,7 +273,7 @@ export class ProjectsetupComponent {
     if (!this.selectedFile) {
       this.messageService.add({
         severity: 'error',
-        summary: 'No file Selected to Import',
+        summary: this.getTranslation("NO_FILE_SELECTED"),
         life: 3000, // Duration the toast will be visible
       });
       return;
@@ -305,8 +305,8 @@ export class ProjectsetupComponent {
     ) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Selection Error',
-        detail: 'File type not valid',
+        summary: this.getTranslation("SELECTION_ERROR"),
+        detail: this.getTranslation("FILE_TYPE_INVALID"),
         life: 3000, // Duration the toast will be visible
       });
       return;
@@ -352,8 +352,8 @@ export class ProjectsetupComponent {
       // Show error toast notification
       this.messageService.add({
         severity: 'error',
-        summary: 'Selection Error',
-        detail: 'An error occurred while selecting the project',
+        summary: this.getTranslation("SELECTION_ERROR"),
+        detail: this.getTranslation("SELECTION_ERROR_PROJECT"),
         life: 3000, // Duration the toast will be visible
       });
     }
@@ -365,8 +365,8 @@ export class ProjectsetupComponent {
     if (!this.projectname && !this.sitename) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Validation Error',
-        detail: '*Please fill in both the fields.',
+        summary: this.getTranslation("VALIDATION_ERROR"),
+        detail: this.getTranslation("FILL_BOTH_FIELDS"),
         life: 3000,
       });
       return;
@@ -375,8 +375,8 @@ export class ProjectsetupComponent {
     if (!this.projectname) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Validation Error',
-        detail: '*Please fill Project Name.',
+        summary: this.getTranslation("VALIDATION_ERROR"),
+        detail: this.getTranslation("FILL_PROJECT_NAME"),
         life: 3000,
       });
       return;
@@ -385,8 +385,8 @@ export class ProjectsetupComponent {
     if (!this.sitename) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Validation Error',
-        detail: '*Please fill Site Name.',
+        summary: this.getTranslation("VALIDATION_ERROR"),
+        detail: this.getTranslation("PLEASE_FILL_SITE_NAME"),
         life: 3000,
       });
       return;
@@ -407,24 +407,24 @@ export class ProjectsetupComponent {
         if (res.status === 400) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Project Error',
-            detail: 'Project Name already exists.',
+            summary: this.getTranslation("PROJECT_ERROR"),
+            detail: this.getTranslation("PROJECT_NAME_EXISTS"),
             life: 3000,
           });
           return; // Early return to prevent proceeding with parsing the response
         } else if (res.status === 500) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Server Error',
-            detail: 'Error in server side.',
+            summary: this.getTranslation("SERVER_ERROR"),
+            detail: this.getTranslation("SERVER_SIDE_ERROR"),
             life: 3000,
           });
           return;
         } else if (res.status === 403) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Authentication Error',
-            detail: 'Token Invalid.',
+            summary: this.getTranslation("AUTHENTICATION_ERROR"),
+            detail: this.getTranslation("TOKEN_INVALID"),
             life: 3000,
           });
           return;
@@ -445,10 +445,11 @@ export class ProjectsetupComponent {
 
           this.messageService.add({
             severity: 'success',
-            summary: 'Project Created',
-            detail: `Project "${data.project.projectName}" created successfully.`,
+            summary: this.getTranslation("PROJECT_CREATED"),
+            detail: this.getTranslation("PROJECT_CREATED_SUCCESS").replace("{0}", data.project.projectName),
             life: 3000,
           });
+          
         }
         console.log(data);
       })
@@ -456,8 +457,8 @@ export class ProjectsetupComponent {
         console.error(err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Fetch Error',
-          detail: 'An error occurred while creating the project.',
+          summary: this.getTranslation("FETCH_ERROR"),
+          detail: this.getTranslation("FETCH_PROJECT_ERROR"),
           life: 3000,
         });
       });
@@ -467,8 +468,8 @@ export class ProjectsetupComponent {
     if (!this.project || !this.project._id || !this.project.projectName) {
       this.messageService.add({
         severity: 'error',
-        summary: 'No Project Selected',
-        detail: 'Please select a project before proceeding.',
+        summary: this.getTranslation("NO_PROJECT_SELECTED"),
+        detail: this.getTranslation("PLEASE_SELECT_PROJECT"),
         life: 3000,
       });
       return;
@@ -488,9 +489,9 @@ export class ProjectsetupComponent {
         if (!data.exists) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Project Not Found',
+            summary: this.getTranslation("PROJECT_NOT_FOUND"),
             detail:
-              'Project does not exist in the database, try deleting it from the user.',
+              this.getTranslation("PROJECT_DOES_NOT_EXIST"),
             life: 3000,
           });
           return;
@@ -515,7 +516,7 @@ export class ProjectsetupComponent {
           Swal.fire({
             position: 'center',
             icon: 'warning',
-            html: `<span style="font-size: 20px;">${'Project already in use!'}</span>`,
+            html: `<span style="font-size: 20px;">${this.getTranslation("PROJECT_IN_USE")}</span>`,
             showConfirmButton: true,
           });
           return;
@@ -527,17 +528,18 @@ export class ProjectsetupComponent {
 
         this.messageService.add({
           severity: 'success',
-          summary: 'Project Opened',
-          detail: `Successfully opened project: ${data.project.projectName}`,
+          summary: this.getTranslation("PROJECT_OPENED"),
+          detail: this.getTranslation("PROJECT_OPENED_SUCCESS").replace("{0}", data.project.projectName),
           life: 3000,
         });
+        
       })
       .catch((err) => {
         console.error(err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Fetch Error',
-          detail: 'An error occurred while fetching the project.',
+          summary: this.getTranslation("FETCH_ERROR"),
+          detail: this.getTranslation("FETCH_PROJECT_ERROR_OPEN"),
           life: 3000,
         });
       });

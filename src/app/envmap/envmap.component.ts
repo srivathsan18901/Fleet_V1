@@ -2279,11 +2279,11 @@ export class EnvmapComponent implements AfterViewInit {
         );
         this.actionOptions = [];
         if (!actionOpt.includes('Move'))
-          this.actionOptions.push({ label: 'Move', value: 'Move' });
+          this.actionOptions.push({ label: this.getTranslation('move'), value: 'Move' });
         if (!actionOpt.includes('Dock'))
-          this.actionOptions.push({ label: 'Dock', value: 'Dock' });
+          this.actionOptions.push({ label: this.getTranslation('dock'), value: 'Dock' });
         if (!actionOpt.includes('Undock'))
-          this.actionOptions.push({ label: 'Undock', value: 'Undock' });
+          this.actionOptions.push({ label: this.getTranslation('undock'), value: 'Undock' });
 
         this.showNodeDetailsPopup();
         return;

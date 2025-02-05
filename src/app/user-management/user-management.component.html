@@ -501,7 +501,7 @@
           class="flex z-40 items-center justify-center text-black w-[180px] cursor-pointer h-[50px]"
         >
           <p [ngClass]="{ 'text-white  duration-300 ': page.isOpen }">
-            {{ page.nameTag }}
+            {{ getTranslation(page.nameTag) }}
           </p>
         </span>
         }
@@ -535,20 +535,20 @@
                 >
                   <img
                     [src]="permission.icon"
-                    alt="{{ permission.nameTag }} icon"
+                    alt="{{ getTranslation(permission.nameTag) }} icon"
                     class="size-[60%]"
                   />
                 </div>
                 <!-- Title -->
                 <p class="text-[24px] font-black pt-1 font-bold text-black">
-                  {{ permission.nameTag }}
+                  {{ getTranslation(permission.nameTag) }}
                 </p>
               </div>
               <!-- Description -->
               <p
                 class="text-[14px] text-[#7B7B7B] text-wrap text-justify leading-5 indent-4 tracking-wide flex-grow"
               >
-                {{ permission.description }}
+                {{ getTranslation(permission.description) }}
               </p>
               <!-- Toggle Switch -->
               <div class="self-end">
@@ -579,12 +579,12 @@
             <div class="flex items-center justify-between mb-3">
               <div>
                 <p class="text-[26px] sm:text-[20px] lg:text-[28px] text-black">
-                  {{ config.title }}
+                  {{ getTranslation(config.title) }}
                 </p>
                 <p
                   class="text-[10px] sm:text-[10px] lg:text-[10px] text-[#7B7B7B] max-w-[140px]"
                 >
-                  {{ config.description }}
+                  {{ getTranslation(config.description) }}
                 </p>
               </div>
               <label class="switch">
@@ -611,7 +611,7 @@
                     [class.text-black]="config.enabled"
                     class="text-[15px] font-medium"
                   >
-                    {{ subOption.label }}
+                    {{ getTranslation(subOption.label) }}
                   </p>
 
                   <!-- Toggle Switch -->

@@ -333,7 +333,7 @@ export class UserManagementComponent implements OnInit {
     },
     {
       order: 3,
-      nameTag: this.getTranslation('ERRORS'),
+      nameTag: this.getTranslation('error'),
       icon: '../../assets/icons/Logs_icons.svg',
       enabled: false,
       description:
@@ -341,14 +341,14 @@ export class UserManagementComponent implements OnInit {
     },
     {
       order: 4,
-      nameTag: this.getTranslation('TASKS'),
+      nameTag: this.getTranslation('Task'),
       icon: '../../assets/icons/Tasks_icons.svg',
       enabled: false,
       description: this.getTranslation('Control user access to create, edit, and view tasks.'),
     },
     {
       order: 5,
-      nameTag: this.getTranslation('USER MANAGEMENT'),
+      nameTag: this.getTranslation('User Management'),
       icon: '../../assets/icons/Usermanagement_icons.svg',
       enabled: false,
       description:
@@ -383,7 +383,7 @@ export class UserManagementComponent implements OnInit {
   configurationSettings = [
     {
       title: this.getTranslation('Environment'),
-      description: this.getTranslation('Environment configurations.'),
+      description: this.getTranslation('Environment configurations'),
       enabled: false, // Main toggle
       subOptions: [
         { label: this.getTranslation('Create'), enabled: false },
@@ -394,7 +394,7 @@ export class UserManagementComponent implements OnInit {
     },
     {
       title: this.getTranslation('Robot'),
-      description: this.getTranslation('Robot configurations.'),
+      description: this.getTranslation('Robot configurations'),
       enabled: false,
       subOptions: [
         { label: this.getTranslation('Create'), enabled: false },
@@ -405,7 +405,7 @@ export class UserManagementComponent implements OnInit {
     },
     {
       title: this.getTranslation('Fleet'),
-      description: this.getTranslation('Fleet configurations.'),
+      description: this.getTranslation('Fleet configurations'),
       enabled: false,
       subOptions: [
         // { label: 'Create', enabled: false },
