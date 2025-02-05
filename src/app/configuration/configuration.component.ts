@@ -123,7 +123,7 @@ export class ConfigurationComponent implements AfterViewInit {
     { name: 'AUTONOMOUS', value: 'AUTONOMOUS' },
   ];
 
-  selectedFileName: string = this.getTranslation('IMPORT_PROJECT_FILE');
+  selectedFileName: string = this.getTranslation('import_map_file');
   form: FormData | null = null;
   selectedFile: File | null = null;
   renamedProj: any;
@@ -164,16 +164,16 @@ export class ConfigurationComponent implements AfterViewInit {
     // const rawData = this.projectService.userManagementServiceGet();
     this.items = [
       {
-        label: 'Create',
+        label: this.getTranslation('Create'),
         icon: 'pi pi-plus',
         command: () => this.openImageUploadPopup(),
-        tooltipOptions: { tooltipLabel: 'Create Map', tooltipPosition: 'top' },
+        tooltipOptions: { tooltipLabel: this.getTranslation('Create'), tooltipPosition: 'top' },
       },
       {
-        label: 'Import Map',
+        label: this.getTranslation('Import Map'),
         icon: 'pi pi-download',
         command: () => this.openMapImportPopup(),
-        tooltipOptions: { tooltipLabel: 'Import Map', tooltipPosition: 'top' } 
+        tooltipOptions: { tooltipLabel: this.getTranslation('Import Map'), tooltipPosition: 'top' } 
       }
     ];    
     this.deleteButtonText = this.getTranslation('Delete');
@@ -1520,7 +1520,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
     this.form = null;
     this.selectedFile = null;
-    this.selectedFileName = this.getTranslation('IMPORT_PROJECT_FILE');
+    this.selectedFileName = this.getTranslation('import_map_file');
     // if (!this.isProjDiv2Visible) {
     //   this.selectedFileName = 'Import Project File';
     // }

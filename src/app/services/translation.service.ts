@@ -963,6 +963,7 @@ export class TranslationService {
       'delete': 'Delete',
       'cancel': 'Cancel',
       'Import Map': 'Import Map',
+      'import_map_file': 'Import Map File',
       'Export Map': 'Export Map',
       
 
@@ -996,6 +997,7 @@ export class TranslationService {
       "Pick Map": "マップを選択",
       "Select": "選択",
       "Items per page": "ページあたりの項目数",
+      'import_map_file': 'マップファイルをインポート',
       "S.no": "S.no",
       'export': 'エクスポート',
       'edit': '編集',
@@ -1114,6 +1116,7 @@ export class TranslationService {
       "Pick Map": "Choisir une carte",
       "Select": "Sélectionner",
       "Items per page": "Articles par page",
+      'import_map_file': 'Importer un fichier de carte',
       "S.no": "S.no",
       "IP Address": "Adresse IP",
       "AMR ID": "ID AMR",
@@ -1229,6 +1232,7 @@ export class TranslationService {
       "Last Created": "Zuletzt erstellt",
       "Edit/Delete": "Bearbeiten/Löschen",
       "Pick Map": "Karte auswählen",
+      'import_map_file': 'Karten-Datei importieren',
       "Select": "Auswählen",
       "Items per page": "Elemente pro Seite",
       "S.no": "S.nr.",
