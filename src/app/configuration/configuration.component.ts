@@ -59,7 +59,7 @@ export class ConfigurationComponent implements AfterViewInit {
   isPopupVisible: boolean = false;
   isTransitioning: boolean = false;
   activeButton: string = 'Environment'; // Default active button
-  activeHeader: string = this.getTranslation("Environment"); // Default header
+  activeHeader: string = this.getTranslation('Environment'); // Default header
   chosenImageName = ''; // Initialize chosenImageName with an empty string
   imageUploaded: boolean = false; // To track if an image is uploaded
   imageFile: File | null = null; // Store the uploaded image file
@@ -123,6 +123,13 @@ export class ConfigurationComponent implements AfterViewInit {
     { name: 'AUTONOMOUS', value: 'AUTONOMOUS' },
   ];
 
+  selectedFileName: string = this.getTranslation('IMPORT_PROJECT_FILE');
+  form: FormData | null = null;
+  selectedFile: File | null = null;
+  renamedProj: any;
+  isRenamed: boolean = false;
+  defaultSite: string = '';
+
   robotData: any[] = [];
   paginatedData: any[] = [];
   paginatedData1: any[] = [];
@@ -157,44 +164,44 @@ export class ConfigurationComponent implements AfterViewInit {
         label: 'Create',
         icon: 'pi pi-plus',
         command: () => this.openImageUploadPopup(),
-        tooltipOptions: { tooltipLabel: 'Create Map', tooltipPosition: 'top' } 
+        tooltipOptions: { tooltipLabel: 'Create Map', tooltipPosition: 'top' },
       },
       {
         label: 'Import Map',
         icon: 'pi pi-download',
         command: () => this.openMapImportPopup(),
-        tooltipOptions: { tooltipLabel: 'Import Map', tooltipPosition: 'top' } 
-      }
-    ];    
-  //   this.items = [
-  //     {
-  //         icon: 'pi pi-pencil',
-  //         command: () => {
-  //             this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
-  //         }
-  //     },
-  //     {
-  //         icon: 'pi pi-refresh',
-  //         command: () => {
-  //             this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
-  //         }
-  //     },
-  //     {
-  //         icon: 'pi pi-trash',
-  //         command: () => {
-  //             this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
-  //         }
-  //     },
-  //     {
-  //         icon: 'pi pi-upload',
-  //         routerLink: ['/fileupload']
-  //     },
-  //     {
-  //         icon: 'pi pi-external-link',
-  //         target: '_blank',
-  //         url: 'http://angular.io'
-  //     }
-  // ];
+        tooltipOptions: { tooltipLabel: 'Import Map', tooltipPosition: 'top' },
+      },
+    ];
+    //   this.items = [
+    //     {
+    //         icon: 'pi pi-pencil',
+    //         command: () => {
+    //             this.messageService.add({ severity: 'info', summary: 'Add', detail: 'Data Added' });
+    //         }
+    //     },
+    //     {
+    //         icon: 'pi pi-refresh',
+    //         command: () => {
+    //             this.messageService.add({ severity: 'success', summary: 'Update', detail: 'Data Updated' });
+    //         }
+    //     },
+    //     {
+    //         icon: 'pi pi-trash',
+    //         command: () => {
+    //             this.messageService.add({ severity: 'error', summary: 'Delete', detail: 'Data Deleted' });
+    //         }
+    //     },
+    //     {
+    //         icon: 'pi pi-upload',
+    //         routerLink: ['/fileupload']
+    //     },
+    //     {
+    //         icon: 'pi pi-external-link',
+    //         target: '_blank',
+    //         url: 'http://angular.io'
+    //     }
+    // ];
     this.userManagementData = this.userPermissionService.getPermissions();
 
     if (this.userManagementData?.configurationPermissions) {
@@ -267,6 +274,8 @@ export class ConfigurationComponent implements AfterViewInit {
       let data = await response.json();
       this.tableLoader = false;
       const { sites } = data.project;
+      this.defaultSite = sites[0].siteName;
+
       this.EnvData = sites
         .flatMap((sites: any) => {
           return sites.maps.map((map: any) => {
@@ -316,6 +325,150 @@ export class ConfigurationComponent implements AfterViewInit {
   getTranslation(key: string) {
     return this.translationService.getConfigurationTranslation(key);
   }
+
+  onFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (
+      file.type !== 'application/zip' &&
+      file.type !== 'application/x-zip-compressed'
+    ) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Selection Error',
+        detail: 'File type not valid',
+        life: 3000, // Duration the toast will be visible
+      });
+      return;
+    }
+    if (file) {
+      console.log('File selected:', file.name);
+      this.selectedFileName = file.name; // Update the variable with the file name
+      // restrict only 15 char..!
+      if (this.selectedFileName.length > 15)
+        this.selectedFileName = this.selectedFileName.substring(0, 15) + '..';
+    }
+    this.renamedProj = '';
+    let projRename = {
+      isRenamed: this.isRenamed, // false
+      alterName: this.renamedProj, // ""
+    };
+    // this.projectService.setProjectCreated(true); //
+    // this.projectService.setSelectedProject(file.name); //
+    this.selectedFile = file;
+  }
+
+  async importFile() {
+    if (!this.selectedFile) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'No file Selected to Import',
+        life: 3000, // Duration the toast will be visible
+      });
+      return;
+    }
+    const mapRename = {
+      isRenamed: this.isRenamed, // false
+      alterName: this.renamedProj, // ""
+    };
+    let project = this.projectService.getSelectedProject();
+    let map = this.projectService.getMapData();
+    let siteName = map && map.siteName ? map.siteName : this.defaultSite;
+    const mapDetails = {
+      projectId: project._id,
+      siteName: siteName,
+    };
+    if (this.form) this.form = null;
+    this.form = new FormData();
+    this.form.append('mapFile', this.selectedFile);
+    this.form.append('mapRename', JSON.stringify(mapRename));
+    this.form.append('mapDetails', JSON.stringify(mapDetails));
+    const isConflict = await this.sendZip();
+    if (isConflict) {
+      this.renamedProj = prompt(
+        'Map with this name already exists, would you like to rename?'
+      );
+      if (this.renamedProj === null && this.renamedProj === '') return;
+      this.isRenamed = true;
+    }
+  }
+
+  async sendZip() {
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/dashboard-fs/upload-map`,
+        { credentials: 'include', method: 'POST', body: this.form }
+      );
+      // if (!response.ok)
+      //   throw new Error(`err with status code of ${response.status}`);
+      let data = await response.json();
+      console.log(data);
+      if (data.conflicts) {
+        this.messageService.add({
+          severity: 'error',
+          summary: data.msg,
+          life: 4000, // Duration the toast will be visible
+        });
+      }
+      if (data.dupKeyErr || data.isZipValidate === false) {
+        this.messageService.add({
+          severity: 'error',
+          summary: data.msg,
+          life: 3000, // Duration the toast will be visible
+        });
+        return;
+      } else if (data.error) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Try Submitting again',
+          life: 3000, // Duration the toast will be visible
+        });
+        return;
+      } else if (data.idExist) {
+        this.messageService.add({
+          severity: 'error',
+          summary: data.msg,
+          life: 3000, // Duration the toast will be visible
+        });
+      } else if (!data.idExist && data.nameExist) {
+        return true;
+      } else if (!data.error && !data.conflicts && data.isMapUploaded) {
+        const { mapData } = data;
+        this.showImportPopup = false;
+        // let date = new Date(mapData.createdAt);
+        // let createdAt = date.toLocaleString('en-IN', {
+        //   month: 'short',
+        //   year: 'numeric',
+        //   day: 'numeric',
+        //   hour: 'numeric',
+        //   minute: 'numeric',
+        // });
+
+        // let uploadedMap = {
+        //   id: mapData.id,
+        //   mapName: mapData.mapName,
+        //   siteName: mapData.siteName,
+        //   date: createdAt,
+        //   createdAt: mapData.createdAt,
+        // };
+        // this.EnvData.push(uploadedMap);
+        // this.EnvData.sort(
+        //   (a: any, b: any) =>
+        //     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        // );
+
+        // this.filteredEnvData = [...this.EnvData];
+        // this.paginatedData = [...this.EnvData];
+        // this.cdRef.detectChanges();
+        alert(data.msg);
+        await this.ngOnInit();
+      }
+      return false;
+    } catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
   reloadTable() {
     this.loadData(); // Ensure data is reloaded properly
     this.setPaginatedData(); // Ensure the paginated data is set correctly after loading
@@ -932,9 +1085,9 @@ export class ConfigurationComponent implements AfterViewInit {
     this.filterData();
     this.resetFilters();
   }
-  showImportPopup=false;
+  showImportPopup = false;
   openMapImportPopup(): void {
-    this.showImportPopup =true;
+    this.showImportPopup = true;
   }
   closeImageUploadPopup(): void {
     this.showImageUploadPopup = false;
@@ -1357,6 +1510,13 @@ export class ConfigurationComponent implements AfterViewInit {
     this.showConfirmationDialog = false;
     this.itemToDelete = null;
     this.showImportPopup = false;
+
+    this.form = null;
+    this.selectedFile = null;
+    this.selectedFileName = this.getTranslation('IMPORT_PROJECT_FILE');
+    // if (!this.isProjDiv2Visible) {
+    //   this.selectedFileName = 'Import Project File';
+    // }
   }
 
   deleteItemConfirmed(item: any) {
