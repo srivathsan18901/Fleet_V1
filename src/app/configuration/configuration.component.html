@@ -1,4 +1,3 @@
-
 <div class="sidenavbar">
   <div id="container">
     <!-- Sidebar -->
@@ -23,9 +22,11 @@
     </div>
     <div class="mainContent">
       <div class="header-section">
-        <h1 class="header-title">{{ activeHeader }}</h1>        
+        <h1 class="header-title">{{ activeHeader }}</h1>
         <div class="subheader-container">
-          <div class="subheader-text">{{getTranslation("Create and Edit Configuration")}}</div>
+          <div class="subheader-text">
+            {{ getTranslation("Create and Edit Configuration") }}
+          </div>
           <img
             src="../../assets/icons/i-icon.svg"
             alt="Icon"
@@ -42,7 +43,7 @@
               type="text"
               maxlength="250"
               (input)="onSearch($event)"
-              placeholder="{{getTranslation('Search for Something...')}}"
+              placeholder="{{ getTranslation('Search for Something...') }}"
               class="search-input"
               [(ngModel)]="searchTerm"
               (ngModelChange)="searchTermChanged()"
@@ -58,23 +59,32 @@
         <!-- simulation -->
         <!-- robots.component.html -->
 
-        <div class="simulation-container" *ngIf="currentTable === 'robot' && configurationPermissions.robot.enabled === true && configurationPermissions.robot.create== true" >
+        <div
+          class="simulation-container"
+          *ngIf="
+            currentTable === 'robot' &&
+            configurationPermissions.robot.enabled === true &&
+            configurationPermissions.robot.create == true
+          "
+        >
           <button
             class="simulation-button"
             (click)="togglePopup()"
             [class.disabled]="!isMapAvailable()"
             [disabled]="!isMapAvailable()"
           >
-          {{getTranslation("Simulation")}}
+            {{ getTranslation("Simulation") }}
           </button>
         </div>
 
         <!-- Popup for selecting robots -->
         <div *ngIf="isPopupVisible" class="sim-popup-modal">
           <div class="sim-popup-content">
-            <h3>{{getTranslation("Enter the Robots for Simulation")}}</h3>
+            <h3>{{ getTranslation("Enter the Robots for Simulation") }}</h3>
             <div>
-              <label for="robots">{{getTranslation("Number of Robots:")}}</label>
+              <label for="robots">{{
+                getTranslation("Number of Robots:")
+              }}</label>
 
               <input
                 type="number"
@@ -89,7 +99,7 @@
             </h4>
 
             <div class="sim-button-container">
-              <button (click)="addRobot()">{{getTranslation("Add")}}</button>
+              <button (click)="addRobot()">{{ getTranslation("Add") }}</button>
               <!-- <button (click)="closePopup()">Cancel</button> -->
 
               <button class="close-popup-btn" (click)="closePopup()">
@@ -107,7 +117,9 @@
                 </svg>
               </button>
 
-              <button (click)="clearAllRobots()">{{getTranslation("Delete All")}}</button>
+              <button (click)="clearAllRobots()">
+                {{ getTranslation("Delete All") }}
+              </button>
             </div>
 
             <div *ngIf="totalRobots > 0">
@@ -119,73 +131,92 @@
               </ul>
             </div>
 
-            <p>{{getTranslation("Total Robots")}}: {{ totalRobots }}</p>
+            <p>{{ getTranslation("Total Robots") }}: {{ totalRobots }}</p>
           </div>
         </div>
         <!-- Date Filter and Date Inputs -->
         <div class="date-filters" *ngIf="currentTable === 'Environment'">
           <div class="date-inputs">
             <div class="dateInput1">
-            <label for="start-date">{{getTranslation("Start Date:")}}</label>
-            <input
-              pInputText
-              type="date"
-              id="start-date"
-              [ngModel]="startDate ? formatDate(startDate) : null"
-              (ngModelChange)="onDateChange($event, 'start')"
-              [min]="minDate"
-              [max]="maxDate"
-              style="height: 35px; width: 150px"
-            />
+              <label for="start-date">{{
+                getTranslation("Start Date:")
+              }}</label>
+              <input
+                pInputText
+                type="date"
+                id="start-date"
+                [ngModel]="startDate ? formatDate(startDate) : null"
+                (ngModelChange)="onDateChange($event, 'start')"
+                [min]="minDate"
+                [max]="maxDate"
+                style="height: 35px; width: 150px"
+              />
             </div>
             <div class="dateInput2">
-            <label for="end-date">{{getTranslation("End Date:")}}</label>
-            <input
-              pInputText
-              type="date"
-              id="end-date"
-              [ngModel]="endDate ? formatDate(endDate) : null"
-              (ngModelChange)="onDateChange($event, 'end')"
-              [min]="minDate"
-              [max]="maxDate"
-              style="height: 35px; width: 150px"
-            />
-          </div>
+              <label for="end-date">{{ getTranslation("End Date:") }}</label>
+              <input
+                pInputText
+                type="date"
+                id="end-date"
+                [ngModel]="endDate ? formatDate(endDate) : null"
+                (ngModelChange)="onDateChange($event, 'end')"
+                [min]="minDate"
+                [max]="maxDate"
+                style="height: 35px; width: 150px"
+              />
+            </div>
           </div>
         </div>
       </div>
 
-       <!-- Buttons -->
-       <div class="button-container">
+      <!-- Buttons -->
+      <div class="button-container">
         <div class="button-frame">
           <div class="">
-            <button *ngIf="userManagementData?.configurationPermissions?.environment?.enabled"
-              class="button" [ngClass]="{
+            <button
+              *ngIf="
+                userManagementData?.configurationPermissions?.environment
+                  ?.enabled
+              "
+              class="button"
+              [ngClass]="{
                 'active-button': activeButton === 'Environment',
                 'transition-active': isTransitioning
-              }" (click)="showTable('Environment')" (click)="setActiveButton('Environment')">
-              {{getTranslation("Environment")}}
+              }"
+              (click)="showTable('Environment')"
+              (click)="setActiveButton('Environment')"
+            >
+              {{ getTranslation("Environment") }}
             </button>
 
-
-            <button *ngIf="userManagementData?.configurationPermissions?.robot?.enabled" class="button"
+            <button
+              *ngIf="
+                userManagementData?.configurationPermissions?.robot?.enabled
+              "
+              class="button"
               [ngClass]="{
                 'active-button': activeButton === 'robot',
                 'transition-active': isTransitioning
-              }" (click)="showTable('robot')" (click)="setActiveButton('robot')">
-              {{getTranslation("Robot")}}
+              }"
+              (click)="showTable('robot')"
+              (click)="setActiveButton('robot')"
+            >
+              {{ getTranslation("Robot") }}
             </button>
 
-
-            <button *ngIf="userManagementData?.configurationPermissions?.fleet?.enabled" class="button"
+            <button
+              *ngIf="
+                userManagementData?.configurationPermissions?.fleet?.enabled
+              "
+              class="button"
               [ngClass]="{
                 'active-button': activeButton === 'fleet',
                 'transition-active': isTransitioning
-              }" (click)="setActiveButton('fleet')">
-              {{getTranslation("Fleet")}}
+              }"
+              (click)="setActiveButton('fleet')"
+            >
+              {{ getTranslation("Fleet") }}
             </button>
-
-
           </div>
         </div>
       </div>
@@ -210,27 +241,44 @@
             <table *ngIf="currentTable === 'Environment' && !imageUploaded">
               <thead>
                 <tr>
-                  <th>{{getTranslation("Map Name")}}</th>
-                  <th>{{getTranslation("Site Name")}}</th>
-                  <th>{{getTranslation("Last Created")}}</th>
-                  <th class="iconTable"
-                    *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.edit=== true || configurationPermissions.environment.delete === true">
-                  <div>{{getTranslation("Edit/Delete")}}</div>
+                  <th>{{ getTranslation("Map Name") }}</th>
+                  <th>{{ getTranslation("Site Name") }}</th>
+                  <th>{{ getTranslation("Last Created") }}</th>
+                  <th
+                    class="iconTable"
+                    *ngIf="
+                      (configurationPermissions.environment.enabled === true &&
+                        configurationPermissions.environment.edit === true) ||
+                      configurationPermissions.environment.delete === true
+                    "
+                  >
+                    <div>{{ getTranslation("Edit/Delete") }}</div>
                   </th>
-                  <th class="iconTable">{{getTranslation("Pick Map")}}</th>
-                  <th class="iconTable">{{getTranslation("Export Map")}}</th>
+                  <th class="iconTable">{{ getTranslation("Pick Map") }}</th>
+                  <th class="iconTable">{{ getTranslation("Export Map") }}</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngIf="paginatedData.length === 0">
-                  <td [attr.colspan]="(configurationPermissions.environment.enabled && (configurationPermissions.environment.edit || configurationPermissions.environment.delete)) ? 5 : 4" class="no-data">
+                  <td
+                    [attr.colspan]="
+                      configurationPermissions.environment.enabled &&
+                      (configurationPermissions.environment.edit ||
+                        configurationPermissions.environment.delete)
+                        ? 5
+                        : 4
+                    "
+                    class="no-data"
+                  >
                     <div class="no-data-container">
                       <img
                         src="../assets/no-data.png"
                         alt="No Data"
                         class="no-data-image"
                       />
-                      <p class="no-data-text">{{getTranslation("No Data found")}}</p>
+                      <p class="no-data-text">
+                        {{ getTranslation("No Data found") }}
+                      </p>
                     </div>
                   </td>
                 </tr>
@@ -260,9 +308,24 @@
                   <td>
                     {{ item.date }}
                   </td>
-                  <td class="iconTable" *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.edit=== true|| configurationPermissions.environment.delete === true"> 
+                  <td
+                    class="iconTable"
+                    *ngIf="
+                      (configurationPermissions.environment.enabled === true &&
+                        configurationPermissions.environment.edit === true) ||
+                      configurationPermissions.environment.delete === true
+                    "
+                  >
                     <div class="edit">
-                      <button class="edit-button" (click)="editItem(item)"  *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.edit=== true">
+                      <button
+                        class="edit-button"
+                        (click)="editItem(item)"
+                        *ngIf="
+                          configurationPermissions.environment.enabled ===
+                            true &&
+                          configurationPermissions.environment.edit === true
+                        "
+                      >
                         <svg class="edit-svgIcon" viewBox="0 0 512 512">
                           <path
                             d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
@@ -275,7 +338,11 @@
                       <button
                         class="delete-button"
                         (click)="openDeleteConfirmation(item)"
-                        *ngIf="configurationPermissions.environment.enabled === true && configurationPermissions.environment.delete== true"
+                        *ngIf="
+                          configurationPermissions.environment.enabled ===
+                            true &&
+                          configurationPermissions.environment.delete == true
+                        "
                       >
                         <svg class="delete-svgIcon" viewBox="0 0 448 512">
                           <path
@@ -291,33 +358,55 @@
                       <!-- SELECT -->
                       {{
                         item.mapName === this.selectedMap?.mapName
-                          ? getTranslation('Deselect')
-                          : getTranslation('Select')
+                          ? getTranslation("Deselect")
+                          : getTranslation("Select")
                       }}
                     </button>
                   </td>
                   <td class="iconTable">
                     <div class="exportBtn">
-                    <button
-                    class="export-button"                    
-                    >
-                    <!-- <svg class="delete-svgIcon" viewBox="0 0 448 512">
+                      <button class="export-button" (click)="exportMap(item)">
+                        <!-- <svg class="delete-svgIcon" viewBox="0 0 448 512">
                       <path
                         d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"
                       ></path>
                     </svg> -->
-                    <svg class="delete-svgIcon" width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-                      <rect width="35" height="35" fill="url(#pattern0_2892_1779)"/>
-                      <defs>
-                      <pattern id="pattern0_2892_1779" patternContentUnits="objectBoundingBox" width="1" height="1">
-                      <use xlink:href="#image0_2892_1779" transform="scale(0.01)"/>
-                      </pattern>
-                      <image id="image0_2892_1779" width="100" height="100" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAACvUlEQVR4nO3dMWsUQQCG4VOsFDEpRGwlAUsFo52RmBRWFuHAWqwkFoFrLAT9F2IVwSbRYGvrD7ARsRbEQlA0liq+MjBCwLu9vd29nW+G74GFK3ZzM/ey2XC5nRsMzMzMzMzMzCwzwFHgFvAK+Ex7v4EPwD6wkXp+WQFOA6+Zr2fAidRzlQccB97Qj5fAkdRzlgY8ol/3Us9ZFnAM+NpzkO/AmdRzlwSskMbT1HOXBNxMFOQPsAUMC9hWgcWugoQfaO39Al4Ayw6i5QBY9xmiF2XJv7K0PHcQLT8bXeh9UZ+rVQfRsukgWoYOosVBxDiIGAcR4yBiig1yANwFzsYtPP6BvmKD3Bgz7o34Fr6yIoO8qxj7e7QVGWS/Yuzh40XKigyyVzH2PbQ5iBgHEeMgYhxEjIOIcRAxDiLGQcQ4iBgHEeMgYhxEjIOIcRAxDiImiyBvgTXgJHAe2Jnj/0N24nOE57oen7tP8kE+jftEOLA9hyD3x+x/CvhIf+SDPKgYx6jDIKOKYx7SH/kgt6eMZdRBkIkx4jF36I98kMc1xjNqEaQyRjzmSY/zlQ8S7lS9PGOUukHqxLgSx9AX+SDBN+BSjXFtzxDkvwv4mH0vAF96nmsWQWaNMi2IaoysghBfoIs1xjdxn7rHJ4qRXZDaZ0pTCc+MbIPMLYpAjGyDdB5FJEbWQf5FWSkoRvZBWkcRi1FEkMZRBGMUE2TmKKIxigpSO4pwjOKCTI0iHqPIIBOjZBCj2CDEW6C3Dt0WHR77tmibWbFnSK4cRIyDiHEQMQ5SQpDN1KMuWKNFMK+lHnXBrjYJshAX/TWFhZRjlLCqv3Vrt1GMGGQ5rtpm3X2D0LnGQWKUdUfpLMZaqxiHoiyFVf19TWl8zdhtfWZMCLMY/kIQ+CqhYSZbeK0WOg9hZmZmZmZmZmZmZmY2yNdfyWXb9R/oHaoAAAAASUVORK5CYII="/>
-                      </defs>
-                      </svg>
-                      
-                  </button>
-                </div>
+                        <svg
+                          class="delete-svgIcon"
+                          width="35"
+                          height="35"
+                          viewBox="0 0 35 35"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                          xmlns:xlink="http://www.w3.org/1999/xlink"
+                        >
+                          <rect
+                            width="35"
+                            height="35"
+                            fill="url(#pattern0_2892_1779)"
+                          />
+                          <defs>
+                            <pattern
+                              id="pattern0_2892_1779"
+                              patternContentUnits="objectBoundingBox"
+                              width="1"
+                              height="1"
+                            >
+                              <use
+                                xlink:href="#image0_2892_1779"
+                                transform="scale(0.01)"
+                              />
+                            </pattern>
+                            <image
+                              id="image0_2892_1779"
+                              width="100"
+                              height="100"
+                              xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGQAAABkCAYAAABw4pVUAAAACXBIWXMAAAsTAAALEwEAmpwYAAACvUlEQVR4nO3dMWsUQQCG4VOsFDEpRGwlAUsFo52RmBRWFuHAWqwkFoFrLAT9F2IVwSbRYGvrD7ARsRbEQlA0liq+MjBCwLu9vd29nW+G74GFK3ZzM/ey2XC5nRsMzMzMzMzMzCwzwFHgFvAK+Ex7v4EPwD6wkXp+WQFOA6+Zr2fAidRzlQccB97Qj5fAkdRzlgY8ol/3Us9ZFnAM+NpzkO/AmdRzlwSskMbT1HOXBNxMFOQPsAUMC9hWgcWugoQfaO39Al4Ayw6i5QBY9xmiF2XJv7K0PHcQLT8bXeh9UZ+rVQfRsukgWoYOosVBxDiIGAcR4yBiig1yANwFzsYtPP6BvmKD3Bgz7o34Fr6yIoO8qxj7e7QVGWS/Yuzh40XKigyyVzH2PbQ5iBgHEeMgYhxEjIOIcRAxDiLGQcQ4iBgHEeMgYhxEjIOIcRAxDiImiyBvgTXgJHAe2Jnj/0N24nOE57oen7tP8kE+jftEOLA9hyD3x+x/CvhIf+SDPKgYx6jDIKOKYx7SH/kgt6eMZdRBkIkx4jF36I98kMc1xjNqEaQyRjzmSY/zlQ8S7lS9PGOUukHqxLgSx9AX+SDBN+BSjXFtzxDkvwv4mH0vAF96nmsWQWaNMi2IaoysghBfoIs1xjdxn7rHJ4qRXZDaZ0pTCc+MbIPMLYpAjGyDdB5FJEbWQf5FWSkoRvZBWkcRi1FEkMZRBGMUE2TmKKIxigpSO4pwjOKCTI0iHqPIIBOjZBCj2CDEW6C3Dt0WHR77tmibWbFnSK4cRIyDiHEQMQ5SQpDN1KMuWKNFMK+lHnXBrjYJshAX/TWFhZRjlLCqv3Vrt1GMGGQ5rtpm3X2D0LnGQWKUdUfpLMZaqxiHoiyFVf19TWl8zdhtfWZMCLMY/kIQ+CqhYSZbeK0WOg9hZmZmZmZmZmZmZmY2yNdfyWXb9R/oHaoAAAAASUVORK5CYII="
+                            />
+                          </defs>
+                        </svg>
+                      </button>
+                    </div>
                     <!-- <button class="sel-btn">
                       {{getTranslation("Export Map")}}
                     </button> -->
@@ -344,18 +433,25 @@
             </div>
           </div>
 
-          <table *ngIf="currentTable === 'robot' && !imageUploaded ">
+          <table *ngIf="currentTable === 'robot' && !imageUploaded">
             <thead>
               <tr>
                 <!-- <th><input type="checkbox" (change)="toggleSelectAll($event)" /></th> -->
-                <th>{{getTranslation('S.no')}}</th>
-                <th>{{getTranslation('IP Address')}}</th>
-                <th>{{getTranslation('AMR ID')}}</th>
-                <th>{{getTranslation('UUID')}}</th>
-                <th>{{getTranslation('AMR Name')}}</th>
-                <th class="iconTable"
-                *ngIf="configurationPermissions.robot.enabled === true && configurationPermissions.robot.edit=== true || configurationPermissions.robot.delete === true">
-                {{getTranslation('Edit/Delete')}}</th>
+                <th>{{ getTranslation("S.no") }}</th>
+                <th>{{ getTranslation("IP Address") }}</th>
+                <th>{{ getTranslation("AMR ID") }}</th>
+                <th>{{ getTranslation("UUID") }}</th>
+                <th>{{ getTranslation("AMR Name") }}</th>
+                <th
+                  class="iconTable"
+                  *ngIf="
+                    (configurationPermissions.robot.enabled === true &&
+                      configurationPermissions.robot.edit === true) ||
+                    configurationPermissions.robot.delete === true
+                  "
+                >
+                  {{ getTranslation("Edit/Delete") }}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -370,13 +466,25 @@
                 </tr> -->
 
               <tr *ngIf="paginatedData1.length === 0">
-                <td [attr.colspan]="(configurationPermissions.robot.enabled && (configurationPermissions.robot.edit || configurationPermissions.robot.delete)) ? 6 : 5" class="no-data">                  <div class="no-data-container">
+                <td
+                  [attr.colspan]="
+                    configurationPermissions.robot.enabled &&
+                    (configurationPermissions.robot.edit ||
+                      configurationPermissions.robot.delete)
+                      ? 6
+                      : 5
+                  "
+                  class="no-data"
+                >
+                  <div class="no-data-container">
                     <img
                       src="../../assets/no-data.png"
                       alt="No Data"
                       class="no-data-image"
                     />
-                    <p class="no-data-text">{{getTranslation('No Data found')}}</p>
+                    <p class="no-data-text">
+                      {{ getTranslation("No Data found") }}
+                    </p>
                   </div>
                 </td>
                 <!-- <td colspan="4" class="iconTable">No data found</td> -->
@@ -399,12 +507,25 @@
                 </td>
                 <td>{{ item.ipAdd }}</td>
                 <td>{{ item.amrId }}</td>
-                <td>{{ item.uuid}}</td>
+                <td>{{ item.uuid }}</td>
                 <td>{{ item.roboName }}</td>
-                <td class="iconTable" *ngIf="configurationPermissions.robot.enabled === true && configurationPermissions.robot.edit=== true || configurationPermissions.robot.delete === true">
-                  
+                <td
+                  class="iconTable"
+                  *ngIf="
+                    (configurationPermissions.robot.enabled === true &&
+                      configurationPermissions.robot.edit === true) ||
+                    configurationPermissions.robot.delete === true
+                  "
+                >
                   <div class="edit">
-                    <button class="edit-button" (click)="editRobo(item)" *ngIf="configurationPermissions.robot.enabled === true && configurationPermissions.robot.edit=== true ">
+                    <button
+                      class="edit-button"
+                      (click)="editRobo(item)"
+                      *ngIf="
+                        configurationPermissions.robot.enabled === true &&
+                        configurationPermissions.robot.edit === true
+                      "
+                    >
                       <svg class="edit-svgIcon" viewBox="0 0 512 512">
                         <path
                           d="M410.3 231l11.3-11.3-33.9-33.9-62.1-62.1L291.7 89.8l-11.3 11.3-22.6 22.6L58.6 322.9c-10.4 10.4-18 23.3-22.2 37.4L1 480.7c-2.5 8.4-.2 17.5 6.1 23.7s15.3 8.5 23.7 6.1l120.3-35.4c14.1-4.2 27-11.8 37.4-22.2L387.7 253.7 410.3 231zM160 399.4l-9.1 22.7c-4 3.1-8.5 5.4-13.3 6.9L59.4 452l23-78.1c1.4-4.9 3.8-9.4 6.9-13.3l22.7-9.1v32c0 8.8 7.2 16 16 16h32zM362.7 18.7L348.3 33.2 325.7 55.8 314.3 67.1l33.9 33.9 62.1 62.1 33.9 33.9 11.3-11.3 22.6-22.6 14.5-14.5c25-25 25-65.5 0-90.5L453.3 18.7c-25-25-65.5-25-90.5 0zm-47.4 168l-144 144c-6.2 6.2-16.4 6.2-22.6 0s-6.2-16.4 0-22.6l144-144c6.2-6.2 16.4-6.2 22.6 0s6.2 16.4 0 22.6z"
@@ -414,7 +535,14 @@
 
                     <!-- delete button -->
 
-                    <button class="delete-button" (click)="openDeleteConfirmation(item)" *ngIf="configurationPermissions.robot.enabled === true && configurationPermissions.robot.delete=== true ">
+                    <button
+                      class="delete-button"
+                      (click)="openDeleteConfirmation(item)"
+                      *ngIf="
+                        configurationPermissions.robot.enabled === true &&
+                        configurationPermissions.robot.delete === true
+                      "
+                    >
                       <svg class="delete-svgIcon" viewBox="0 0 448 512">
                         <path
                           d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"
@@ -455,8 +583,15 @@
             ></app-robot-parameters-popup>
           </div>
           <!-- Add this in your main component HTML -->
-          <div class="form-group" *ngIf="currentTable === 'robot' && configurationPermissions.robot.enabled === true && configurationPermissions.robot.create== true">
-            <label for="ipRangeFrom">{{getTranslation('IP Range')}}:</label>
+          <div
+            class="form-group"
+            *ngIf="
+              currentTable === 'robot' &&
+              configurationPermissions.robot.enabled === true &&
+              configurationPermissions.robot.create == true
+            "
+          >
+            <label for="ipRangeFrom">{{ getTranslation("IP Range") }}:</label>
             <div class="uservalid">
               <input
                 pInputText
@@ -477,7 +612,7 @@
               </span>
             </div>
 
-            <span>{{getTranslation('to')}}: </span>
+            <span>{{ getTranslation("to") }}: </span>
             <div class="uservalid">
               <input
                 pInputText
@@ -504,7 +639,7 @@
               (click)="startScanning()"
               [disabled]="!isMapAvailable()"
             >
-            {{getTranslation('Scan')}}
+              {{ getTranslation("Scan") }}
             </button>
             <button
               type="button"
@@ -512,7 +647,7 @@
               (click)="stopScanning()"
               [disabled]="!isMapAvailable()"
             >
-            {{getTranslation('Stop')}}
+              {{ getTranslation("Stop") }}
             </button>
             <div *ngIf="isScanning" class="loading-spinner"></div>
           </div>
@@ -524,15 +659,21 @@
             ></app-ipscanner>
           </div>
 
-          <table *ngIf="currentTable === 'robot' && configurationPermissions.robot.enabled === true && configurationPermissions.robot.create== true">
+          <table
+            *ngIf="
+              currentTable === 'robot' &&
+              configurationPermissions.robot.enabled === true &&
+              configurationPermissions.robot.create == true
+            "
+          >
             <thead>
               <tr>
-                <th>{{getTranslation('IP')}}</th>
-                <th>{{getTranslation('MAC')}}</th>
-                <th>{{getTranslation('Hostname')}}</th>
-                <th>{{getTranslation('Ping')}}</th>
-                <th>{{getTranslation('Status')}}</th>
-                <th class="iconTable">{{getTranslation('Option')}}</th>
+                <th>{{ getTranslation("IP") }}</th>
+                <th>{{ getTranslation("MAC") }}</th>
+                <th>{{ getTranslation("Hostname") }}</th>
+                <th>{{ getTranslation("Ping") }}</th>
+                <th>{{ getTranslation("Status") }}</th>
+                <th class="iconTable">{{ getTranslation("Option") }}</th>
               </tr>
             </thead>
             <tbody>
@@ -545,7 +686,9 @@
                       alt="No Data"
                       class="no-data-image"
                     />
-                    <p class="no-data-text">{{getTranslation('No Data found')}}</p>
+                    <p class="no-data-text">
+                      {{ getTranslation("No Data found") }}
+                    </p>
                   </div>
                 </td>
               </tr>
@@ -593,7 +736,7 @@
                 [class.active]="fleetTab === 'general'"
                 (click)="setFleetTab('general')"
               >
-              {{getTranslation('General')}}
+                {{ getTranslation("General") }}
               </li>
               <!-- <li
                   [class.active]="fleetTab === 'planner'"
@@ -622,8 +765,8 @@
             </ul>
 
             <div *ngIf="fleetTab === 'general'">
-              <h2>{{getTranslation('Edit The Fleet Parameters')}}</h2>
-              {{getTranslation('Add content for the General tab.')}}
+              <h2>{{ getTranslation("Edit The Fleet Parameters") }}</h2>
+              {{ getTranslation("Add content for the General tab.") }}
               <app-general></app-general>
             </div>
             <div *ngIf="fleetTab === 'planner'">
@@ -641,19 +784,31 @@
               Add content for the Battery tab
               <app-battery></app-battery>
             </div>
-              <div *ngIf="fleetTab === 'communication'">
+            <div *ngIf="fleetTab === 'communication'">
               <h2>Communication Settings</h2>
               <app-communication></app-communication>
             </div>
           </div>
           <!-- <p-speeddial  direction="up" [style]="{ position: 'fixed', right: 0, bottom: 0, zIndex:1002 }" [buttonProps]="{ severity: 'danger', rounded: true }" [tooltipOptions]="{ tooltipPosition: 'right' }" /> -->
-          <div class="Create-button-container" *ngIf="userManagementData?.configurationPermissions?.environment?.enabled == true">
-            <p-speedDial 
-            [model]="items" 
-            direction="left" 
-            [style]="{ position: 'absolute', right: 0, bottom: 0, zIndex:1002 }" 
-            [buttonProps]="{ severity: 'danger', rounded: true, tooltip: 'Main Action', tooltipPosition: 'top' }"
-          />
+          <div
+            class="Create-button-container"
+            *ngIf="
+              userManagementData?.configurationPermissions?.environment
+                ?.enabled == true
+            "
+          >
+            <p-speedDial
+              [model]="items"
+              direction="left"
+              [style]="{
+                position: 'absolute',
+                right: 0,
+                bottom: 0,
+                zIndex: 1002
+              }"
+              [buttonProps]="{ severity: 'danger', rounded: true }"
+              [tooltipOptions]="{ tooltipPosition: 'top' }"
+            />
           </div>
           <app-envmap
             *ngIf="showImageUploadPopup"
@@ -691,14 +846,14 @@
                       d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
                     /></svg
                 ></span>
-                <h2>{{getTranslation('Add Robot')}}</h2>
+                <h2>{{ getTranslation("Add Robot") }}</h2>
               </div>
 
               <div class="rob-inp">
                 <label
                   for="robotName"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >{{getTranslation('Robot Name')}}:</label
+                  >{{ getTranslation("Robot Name") }}:</label
                 >
                 <input
                   pInputText
@@ -712,7 +867,7 @@
                 <label
                   for="manufacturer"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >{{getTranslation('Manufacturer')}}:</label
+                  >{{ getTranslation("Manufacturer") }}:</label
                 >
                 <input
                   pInputText
@@ -726,7 +881,7 @@
                 <label
                   for="serialNumber"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >{{getTranslation('Serial Number')}}:</label
+                  >{{ getTranslation("Serial Number") }}:</label
                 >
                 <input
                   pInputText
@@ -748,7 +903,7 @@
                 <label
                   for="attachmentType"
                   style="margin-right: 1rem; margin-left: 1rem"
-                  >{{getTranslation('Attachment Type')}}:</label
+                  >{{ getTranslation("Attachment Type") }}:</label
                 >
                 <select
                   id="attachmentType"
@@ -757,10 +912,16 @@
                   required
                   style="padding: 0.6rem"
                 >
-                  <option value="NOT_SET">{{getTranslation('NOT_SET')}}</option>
-                  <option value="LIFTER">{{getTranslation('LIFTER')}}</option>
-                  <option value="SINGLECONVEYOR">{{getTranslation('SINGLECONVEYOR')}}</option>
-                  <option value="TWINCONVEYOR">{{getTranslation('TWINCONVEYOR')}}</option>
+                  <option value="NOT_SET">
+                    {{ getTranslation("NOT_SET") }}
+                  </option>
+                  <option value="LIFTER">{{ getTranslation("LIFTER") }}</option>
+                  <option value="SINGLECONVEYOR">
+                    {{ getTranslation("SINGLECONVEYOR") }}
+                  </option>
+                  <option value="TWINCONVEYOR">
+                    {{ getTranslation("TWINCONVEYOR") }}
+                  </option>
                 </select>
               </div>
               <div class="flex">
@@ -771,7 +932,7 @@
                     (click)="toggleTypeSpecificationForm($event)"
                     id="typeSpecificationLink"
                   >
-                  {{getTranslation('Type Specification')}}
+                    {{ getTranslation("Type Specification") }}
                   </button>
                 </div>
 
@@ -782,7 +943,7 @@
                     (click)="toggleProtocolLimitsForm($event)"
                     id="protocolLimitsLink"
                   >
-                  {{getTranslation('Protocol Limits')}}
+                    {{ getTranslation("Protocol Limits") }}
                   </button>
                 </div>
 
@@ -793,7 +954,7 @@
                     (click)="toggleProtocolFeaturesForm($event)"
                     id="protocolFeaturesLink"
                   >
-                  {{getTranslation('Protocol Features')}}
+                    {{ getTranslation("Protocol Features") }}
                   </button>
                 </div>
 
@@ -804,7 +965,7 @@
                     (click)="toggleAGVGeometryForm($event)"
                     id="agvGeometryLink"
                   >
-                  {{getTranslation('AGV Geometry')}}
+                    {{ getTranslation("AGV Geometry") }}
                   </button>
                 </div>
 
@@ -815,7 +976,7 @@
                     (click)="toggleLoadSpecificationForm($event)"
                     id="loadSpecificationLink"
                   >
-                  {{getTranslation('Load Specification')}}
+                    {{ getTranslation("Load Specification") }}
                   </button>
                 </div>
 
@@ -828,7 +989,7 @@
                     (click)="toggleLocalizationParametersForm($event)"
                     id="localizationParametersLink"
                   >
-                  {{getTranslation('Localization Parameters')}}
+                    {{ getTranslation("Localization Parameters") }}
                   </button>
                 </div>
               </div>
@@ -845,7 +1006,9 @@
             >
               <!-- Localization Parameters form fields here -->
               <div class="rob-inp">
-                <label for="localizationType">{{getTranslation('Localization Type')}}:</label>
+                <label for="localizationType"
+                  >{{ getTranslation("Localization Type") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -856,7 +1019,7 @@
                 />
 
                 <label for="localizationDescription"
-                  >{{getTranslation('Localization Description')}}:</label
+                  >{{ getTranslation("Localization Description") }}:</label
                 >
                 <input
                   pInputText
@@ -887,7 +1050,9 @@
             >
               <!-- Load Specification form fields here -->
               <div class="rob-inp">
-                <label for="loadPositions">{{getTranslation('Load Positions')}}:</label>
+                <label for="loadPositions"
+                  >{{ getTranslation("Load Positions") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -897,7 +1062,7 @@
                   style="text-align: center"
                 />
 
-                <label for="loadSets">{{getTranslation('Load Sets')}}:</label>
+                <label for="loadSets">{{ getTranslation("Load Sets") }}:</label>
                 <input
                   pInputText
                   type="text"
@@ -921,7 +1086,7 @@
               <!-- AGV Geometry form fields here -->
               <div class="rob-inp">
                 <label for="wheelDefinitions" style="margin-right: 1.2rem"
-                  >{{getTranslation('Wheel Definitions')}}:</label
+                  >{{ getTranslation("Wheel Definitions") }}:</label
                 >
                 <input
                   pInputText
@@ -932,7 +1097,9 @@
                   style="text-align: center"
                 />
 
-                <label for="envelopes2d">{{getTranslation('Envelopes 2D')}}:</label>
+                <label for="envelopes2d"
+                  >{{ getTranslation("Envelopes 2D") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -943,7 +1110,9 @@
                 />
               </div>
               <div class="rob-inp3">
-                <label for="envelopes3d">{{getTranslation('Envelopes 3D')}}:</label>
+                <label for="envelopes3d"
+                  >{{ getTranslation("Envelopes 3D") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -969,7 +1138,9 @@
             >
               <!-- Protocol Features form fields here -->
               <div class="rob-inp2">
-                <label for="optionalParameters">{{getTranslation('optionalParameters')}}:</label>
+                <label for="optionalParameters"
+                  >{{ getTranslation("optionalParameters") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -980,7 +1151,9 @@
                   style="text-align: center"
                 />
 
-                <label for="actionScopes">{{getTranslation('actionScopes')}}:</label>
+                <label for="actionScopes"
+                  >{{ getTranslation("actionScopes") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -993,7 +1166,7 @@
               </div>
               <div class="rob-inp2" style="margin-left: 23px">
                 <label for="actionParameters" style="margin-right: 0.5rem"
-                  >{{getTranslation('actionParameters')}}:</label
+                  >{{ getTranslation("actionParameters") }}:</label
                 >
                 <input
                   pInputText
@@ -1005,7 +1178,9 @@
                   style="text-align: center"
                 />
 
-                <label for="resultDescription">{{getTranslation('resultDescription')}}:</label>
+                <label for="resultDescription"
+                  >{{ getTranslation("resultDescription") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -1033,7 +1208,7 @@
               <!-- Protocol Limits form fields here -->
               <div class="rob-inp">
                 <label for="maxStringLens" style="margin-right: 1.5rem"
-                  >{{getTranslation('maxStringLens')}}:</label
+                  >{{ getTranslation("maxStringLens") }}:</label
                 >
                 <input
                   pInputText
@@ -1045,7 +1220,9 @@
                   style="text-align: center"
                 />
 
-                <label for="maxArrayLens">{{getTranslation('maxArrayLens')}}:</label>
+                <label for="maxArrayLens"
+                  >{{ getTranslation("maxArrayLens") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -1057,7 +1234,7 @@
                 />
               </div>
               <div class="rob-inp3">
-                <label for="timing">{{getTranslation('timing')}}:</label>
+                <label for="timing">{{ getTranslation("timing") }}:</label>
                 <input
                   pInputText
                   type="text"
@@ -1087,7 +1264,7 @@
             >
               <div class="rob-inp">
                 <label for="seriesName" style="margin-right: 3.3rem"
-                  >{{getTranslation('seriesName')}}:</label
+                  >{{ getTranslation("seriesName") }}:</label
                 >
                 <input
                   pInputText
@@ -1099,7 +1276,9 @@
                   style="margin-right: 1rem; text-align: center"
                 />
 
-                <label for="seriesDescription">{{getTranslation('seriesDescription')}}:</label>
+                <label for="seriesDescription"
+                  >{{ getTranslation("seriesDescription") }}:</label
+                >
                 <input
                   pInputText
                   type="text"
@@ -1111,7 +1290,9 @@
                 />
               </div>
               <div class="rob-inp1">
-                <label for="agvKinematic">{{getTranslation('agvKinematic')}}:</label>
+                <label for="agvKinematic"
+                  >{{ getTranslation("agvKinematic") }}:</label
+                >
                 <p-dropdown
                   [options]="agvKinematicsOptions"
                   id="agvKinematic"
@@ -1123,7 +1304,7 @@
                   styleClass="custom-dropdown"
                 ></p-dropdown>
 
-                <label for="agvClass">{{getTranslation('agvClass')}}:</label>
+                <label for="agvClass">{{ getTranslation("agvClass") }}:</label>
                 <p-dropdown
                   [options]="agvClassOptions"
                   id="agvClass"
@@ -1137,7 +1318,9 @@
               </div>
 
               <div class="rob-inp2">
-                <label for="maxLoadMass">{{getTranslation('maxLoadMass')}}:</label>
+                <label for="maxLoadMass"
+                  >{{ getTranslation("maxLoadMass") }}:</label
+                >
                 <input
                   pInputText
                   type="number"
@@ -1148,7 +1331,9 @@
                   style="margin-right: 1.2rem; text-align: center"
                 />
 
-                <label for="localizationTypes">{{getTranslation('localizationTypes')}}:</label>
+                <label for="localizationTypes"
+                  >{{ getTranslation("localizationTypes") }}:</label
+                >
                 <p-dropdown
                   [options]="localizationTypes"
                   id="localizationTypes"
@@ -1162,7 +1347,7 @@
               </div>
               <div class="rob-inp3">
                 <label for="navigationTypes" style="margin-right: 2rem"
-                  >{{getTranslation('navigationTypes')}}:</label
+                  >{{ getTranslation("navigationTypes") }}:</label
                 >
                 <p-dropdown
                   [options]="navigationTypes"
@@ -1191,7 +1376,7 @@
               type="submit"
               (click)="saveRoboInfo()"
             >
-            {{getTranslation('submit')}}
+              {{ getTranslation("submit") }}
             </button>
             <!-- <button pButton class="p-button1" type="button" (click)="closeroboPopup()">Close</button> -->
           </div>
@@ -1200,16 +1385,37 @@
 
       <div *ngIf="showConfirmationDialog" class="confirmation-dialog">
         <div class="popup-content1">
-          <h2>{{getTranslation('confirmDeleteTitle')}}</h2>
-          <p>{{getTranslation('confirmDeleteMessage')}}</p>
+          <h2>{{ getTranslation("confirmDeleteTitle") }}</h2>
+          <p>{{ getTranslation("confirmDeleteMessage") }}</p>
           <div>
             <button (click)="confirmDelete()" class="confirm-button">
-              {{getTranslation('delete')}}
+              {{ getTranslation("delete") }}
             </button>
             <button (click)="cancelDelete()" class="cancel-button">
-              {{getTranslation('cancel')}}
+              {{ getTranslation("cancel") }}
             </button>
           </div>
+        </div>
+      </div>
+      <div *ngIf="showImportPopup" class="confirmation-dialog">
+        <div class="popup-content1">
+        <div>
+        <h3 style="color: #ff7373;">{{getTranslation('Import Map')}}</h3>
+        <!-- Image for file upload -->
+        <label for="fileInput" class="upload-image" >
+          <img src="../../assets/icons/arrow-down-circle.svg" alt="Upload" />
+          <input
+            type="file"
+            id="fileInput"
+            hidden
+          />
+        </label>
+      </div>
+        <!-- Display selected file name -->
+        <!-- <div  class="file-name">{{  }}</div> -->
+          <button (click)="cancelDelete()" class="cancel-button">
+            {{ getTranslation("cancel") }}
+          </button>
         </div>
       </div>
     </div>

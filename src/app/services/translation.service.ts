@@ -1327,6 +1327,171 @@ export class TranslationService {
   //   GER: {
   //   }
   // };  
+  private projectSetupTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
+    ENG: {
+      "LOGIN": "LOGIN",
+      "PROJECT": "PROJECT",
+      "CREATE_NEW_PROJECT": "Create New Project",
+      "IMPORT_PROJECT": "Import Project",
+      "EXISTING_PROJECT": "Existing Project",
+      "SITE_NAME": "Site Name",
+      "PROJECT_NAME": "Project Name",
+      "CREATE": "CREATE",
+      "BACK": "BACK",
+      "OPEN": "OPEN",
+      "LOGOUT": "LOGOUT",
+      "PROJECT_LIST": "Project List"
+    },
+    JAP: {
+      "LOGIN": "ログイン",
+      "PROJECT": "プロジェクト",
+      "CREATE_NEW_PROJECT": "新しいプロジェクトを作成",
+      "IMPORT_PROJECT": "プロジェクトをインポート",
+      "EXISTING_PROJECT": "既存のプロジェクト",
+      "SITE_NAME": "サイト名",
+      "PROJECT_NAME": "プロジェクト名",
+      "CREATE": "作成",
+      "BACK": "戻る",
+      "OPEN": "開く",
+      "LOGOUT": "ログアウト",
+      "PROJECT_LIST": "プロジェクト一覧"
+    },
+    FRE: {
+      "LOGIN": "CONNEXION",
+      "PROJECT": "PROJET",
+      "CREATE_NEW_PROJECT": "Créer un nouveau projet",
+      "IMPORT_PROJECT": "Importer un projet",
+      "EXISTING_PROJECT": "Projet existant",
+      "SITE_NAME": "Nom du site",
+      "PROJECT_NAME": "Nom du projet",
+      "CREATE": "CRÉER",
+      "BACK": "RETOUR",
+      "OPEN": "OUVRIR",
+      "LOGOUT": "DÉCONNEXION",
+      "PROJECT_LIST": "Liste des projets"
+    },
+    GER: {
+      "LOGIN": "ANMELDEN",
+      "PROJECT": "PROJEKT",
+      "CREATE_NEW_PROJECT": "Neues Projekt erstellen",
+      "IMPORT_PROJECT": "Projekt importieren",
+      "EXISTING_PROJECT": "Bestehendes Projekt",
+      "SITE_NAME": "Seitenname",
+      "PROJECT_NAME": "Projektname",
+      "CREATE": "ERSTELLEN",
+      "BACK": "ZURÜCK",
+      "OPEN": "ÖFFNEN",
+      "LOGOUT": "ABMELDEN",
+      "PROJECT_LIST": "Projektliste"
+    }
+  };
+  
+  private loginTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
+    ENG: {
+      "LOGIN": "LOGIN",
+      "UserRole": "User Role",
+      "User": " User",
+      "Maintainer": " Maintainer",
+      "Administrator": " Administrator",
+      "Username": "Username",
+      "Password": "Password",
+      "TogglePassword": "Toggle Password Visibility",
+      "LOGIN_BUTTON": "LOGIN",
+      "EnterUsernamePasswordRole": "Enter Username, Password and Select User Role",
+      "EnterUsernamePassword": "Enter Username and Password",
+      "EnterPasswordRole": "Enter Password and Select User Role",
+      "EnterUsernameRole": "Select User Role and Enter Username",
+      "SelectUserRole": "Select User Role",
+      "EnterUsername": "Enter Username",
+      "EnterPassword": "Enter Password",
+      "AuthFailed": "Authentication Failed",
+      "WrongPasswordOrRole": "Wrong password or user with this role doesn't exist",
+      "UserAlreadySignedIn": "User already signed in somewhere..",
+      "ProjectNotAssigned": "No project has been assigned to this user.",
+      "ProjectAlreadyInUse": "Project already in use!",
+      "AuthenticationSuccess": "Authentication Success",
+      "Welcome": "Welcome",
+      "LoginFailed": "Login failed. Please try again."
+    },
+    JAP: {
+      "LOGIN": "ログイン",
+      "UserRole": "ユーザーの役割",
+      "User": " ユーザー",
+      "Maintainer": " メンテナー",
+      "Administrator": " 管理者",
+      "Username": "ユーザー名",
+      "Password": "パスワード",
+      "TogglePassword": "パスワードの表示を切り替える",
+      "LOGIN_BUTTON": "ログイン",
+      "EnterUsernamePasswordRole": "ユーザー名、パスワードを入力し、ユーザーの役割を選択してください",
+      "EnterUsernamePassword": "ユーザー名とパスワードを入力してください",
+      "EnterPasswordRole": "パスワードを入力し、ユーザーの役割を選択してください",
+      "EnterUsernameRole": "ユーザーの役割を選択し、ユーザー名を入力してください",
+      "SelectUserRole": "ユーザーの役割を選択してください",
+      "EnterUsername": "ユーザー名を入力してください",
+      "EnterPassword": "パスワードを入力してください",
+      "AuthFailed": "認証に失敗しました",
+      "WrongPasswordOrRole": "間違ったパスワードまたはその役割のユーザーが存在しません",
+      "UserAlreadySignedIn": "ユーザーはすでにどこかでサインインしています",
+      "ProjectNotAssigned": "このユーザーにはプロジェクトが割り当てられていません",
+      "ProjectAlreadyInUse": "プロジェクトはすでに使用されています！",
+      "AuthenticationSuccess": "認証成功",
+      "Welcome": "ようこそ",
+      "LoginFailed": "ログインに失敗しました。もう一度お試しください。"
+    },
+    FRE: {
+      "LOGIN": "CONNEXION",
+      "UserRole": "Rôle de l'utilisateur",
+      "User": " Utilisateur",
+      "Maintainer": " Mainteneur",
+      "Administrator": " Administrateur",
+      "Username": "Nom d'utilisateur",
+      "Password": "Mot de passe",
+      "TogglePassword": "Afficher/Masquer le mot de passe",
+      "LOGIN_BUTTON": "CONNEXION",
+      "EnterUsernamePasswordRole": "Entrez le nom d'utilisateur, le mot de passe et sélectionnez le rôle de l'utilisateur",
+      "EnterUsernamePassword": "Entrez le nom d'utilisateur et le mot de passe",
+      "EnterPasswordRole": "Entrez le mot de passe et sélectionnez le rôle de l'utilisateur",
+      "EnterUsernameRole": "Sélectionnez le rôle de l'utilisateur et entrez le nom d'utilisateur",
+      "SelectUserRole": "Sélectionnez le rôle de l'utilisateur",
+      "EnterUsername": "Entrez le nom d'utilisateur",
+      "EnterPassword": "Entrez le mot de passe",
+      "AuthFailed": "Échec de l'authentification",
+      "WrongPasswordOrRole": "Mot de passe incorrect ou utilisateur avec ce rôle inexistant",
+      "UserAlreadySignedIn": "L'utilisateur est déjà connecté ailleurs..",
+      "ProjectNotAssigned": "Aucun projet n'a été attribué à cet utilisateur.",
+      "ProjectAlreadyInUse": "Projet déjà en cours d'utilisation!",
+      "AuthenticationSuccess": "Authentification réussie",
+      "Welcome": "Bienvenue",
+      "LoginFailed": "Échec de la connexion. Veuillez réessayer."
+    },
+    GER: {
+      "LOGIN": "ANMELDEN",
+      "UserRole": "Benutzerrolle",
+      "User": " Benutzer",
+      "Maintainer": " Wartungspersonal",
+      "Administrator": " Administrator",
+      "Username": "Benutzername",
+      "Password": "Passwort",
+      "TogglePassword": "Passwort-Sichtbarkeit umschalten",
+      "LOGIN_BUTTON": "ANMELDEN",
+      "EnterUsernamePasswordRole": "Benutzername, Passwort eingeben und Benutzerrolle auswählen",
+      "EnterUsernamePassword": "Benutzername und Passwort eingeben",
+      "EnterPasswordRole": "Passwort eingeben und Benutzerrolle auswählen",
+      "EnterUsernameRole": "Benutzerrolle auswählen und Benutzername eingeben",
+      "SelectUserRole": "Benutzerrolle auswählen",
+      "EnterUsername": "Benutzername eingeben",
+      "EnterPassword": "Passwort eingeben",
+      "AuthFailed": "Authentifizierung fehlgeschlagen",
+      "WrongPasswordOrRole": "Falsches Passwort oder Benutzer mit dieser Rolle existiert nicht",
+      "UserAlreadySignedIn": "Benutzer ist bereits irgendwo angemeldet..",
+      "ProjectNotAssigned": "Diesem Benutzer wurde kein Projekt zugewiesen.",
+      "ProjectAlreadyInUse": "Projekt bereits in Nutzung!",
+      "AuthenticationSuccess": "Authentifizierung erfolgreich",
+      "Welcome": "Willkommen",
+      "LoginFailed": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut."
+    }
+  };  
   private envMapTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
     ENG: {
       "SavingMap": "Saving Map...",
@@ -1639,7 +1804,6 @@ export class TranslationService {
       "Parking Zone": "Parkzone",
     }
   };
-  
   private userManagementTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
     ENG: {
       'User Management': 'User Management',
@@ -1850,6 +2014,9 @@ export class TranslationService {
   setLanguage(lang: 'ENG' | 'JAP' | 'FRE' | 'GER') {
     this.currentLanguage = lang;
   }
+  getCurrentLang(){
+    return this.currentLanguage;
+  }
   getsideNavTranslation(key: string): string {
     return this.sideNavtranslations[this.currentLanguage][key] || key;
   }
@@ -1876,5 +2043,11 @@ export class TranslationService {
   }
   getEnvmapTranslation(key: string): string {
     return this.envMapTranslations[this.currentLanguage][key] || key;
+  }
+  getLoginTranslation(key: string): string {
+    return this.loginTranslations[this.currentLanguage][key] || key;
+  }
+  getProjectSetupTranslation(key: string): string {
+    return this.projectSetupTranslations[this.currentLanguage][key] || key;
   }
 }

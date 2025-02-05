@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener,ElementRef  } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { CookieService } from 'ngx-cookie-service';
@@ -9,6 +9,12 @@ import { MessageService } from 'primeng/api';
 import { UserPermissionService } from '../services/user-permission.service';
 import { SessionService } from '../services/session.service';
 import Swal from 'sweetalert2';
+import { TranslationService } from '../services/translation.service';
+interface Flag {
+  flagComp: string; // Type based on your data, e.g., string for SVG content
+  nameTag: "ENG" | "JAP" | "FRE" | "GER"; // Type based on your data, e.g., string for the flag name
+  order: number; // Assuming 'order' is also part of each flag object
+}
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -27,9 +33,24 @@ export class LoginComponent {
     private UserService: ProjectService,
     private userPermissionService: UserPermissionService,
     private messageService: MessageService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    private eRef: ElementRef,
+    private translationService: TranslationService
   ) {}
+  errorTimeout: any;
+  setErrorMessage(message: string, duration: number = 2000) {
+    this.errorMessage = message;
 
+    // Clear any existing timeout to prevent multiple timers
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
+    }
+
+    // Remove error message after the specified duration
+    this.errorTimeout = setTimeout(() => {
+      this.errorMessage = null;
+    }, duration);
+  }
   ngOnInit() {
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
@@ -50,7 +71,35 @@ export class LoginComponent {
     this.showPassword = !this.showPassword;
     this.passwordFieldType = this.showPassword ? 'text' : 'password';
   }
+  
+  flags: Flag[] = [
+    { flagComp: '<img src="../../assets/Language/Eng.svg">', nameTag: 'ENG', order: 0 },
+    { flagComp: '<img src="../../assets/Language/Jap.svg">', nameTag: 'JAP', order: 1 },  
+    { flagComp: '<img src="../../assets/Language/Fre.svg">', nameTag: 'FRE', order: 2 },  
+    { flagComp: '<img src="../../assets/Language/Ger.svg">', nameTag: 'GER', order: 3 }, 
+  ];
+  
 
+  trackFlag(index: number, flag: any): number {
+    return flag.order; // Use the unique identifier for tracking
+  }
+  languageArrowState = false;
+  languageChange() {
+    this.languageArrowState = !this.languageArrowState;
+  }
+
+  flagSvg = this.flags[0].flagComp;
+  flagName = this.flags[0].nameTag;
+
+  changeFlag(order: number) {
+    const selectedLanguage = this.flags[order].nameTag;
+    this.flagSvg = this.flags[order].flagComp;
+    this.flagName = this.flags[order].nameTag;
+    this.translationService.setLanguage(selectedLanguage);
+  }
+  getTranslation(key: string) {
+    return this.translationService.getLoginTranslation(key);
+  }
   validateForm() {
     const username = (document.getElementById('username') as HTMLInputElement)
       .value;
@@ -63,71 +112,71 @@ export class LoginComponent {
     )?.value;
 
     if (!username && !password && !userRole) {
-      this.errorMessage = '*Enter Username, Password and Select User Role';
+      this.setErrorMessage(this.getTranslation('EnterUsernamePasswordRole'));
       this.messageService.add({
         severity: 'error',
-        summary: 'Authencation Failed',
-        detail: 'Enter Username, Password and Select User Role',
+        summary: this.getTranslation('AuthFailed'),
+        detail: this.getTranslation('EnterUsernamePasswordRole'),
         life: 4000,
       });
       return;
     }
     if (!username && !password) {
-      this.errorMessage = '*Enter Username and Password';
+      this.setErrorMessage(this.getTranslation('EnterUsernamePassword'));
       this.messageService.add({
         severity: 'error',
-        summary: 'Authencation Failed',
-        detail: 'Enter Username and Password',
+        summary: this.getTranslation('AuthFailed'),
+        detail: this.getTranslation('EnterUsernamePassword'),
         life: 4000,
       });
       return;
     }
     if (!password && !userRole) {
-      this.errorMessage = '*Enter Password and Select User Role';
+      this.setErrorMessage(this.getTranslation('EnterUsernamePassword'));
       this.messageService.add({
         severity: 'error',
-        summary: 'Authencation Failed',
-        detail: 'Enter Password and Select User Role',
+        summary: this.getTranslation('AuthFailed'),
+        detail: this.getTranslation('EnterUsernamePassword'),
         life: 4000,
       });
       return;
     }
     if (!userRole && !username) {
-      this.errorMessage = '*Select User Role and Enter Username';
+      this.setErrorMessage(this.getTranslation('EnterUsernameRole'));
       this.messageService.add({
         severity: 'error',
-        summary: 'Authencation Failed',
-        detail: 'Select User Role and Enter Username',
+        summary: this.getTranslation('AuthFailed'),
+        detail: this.getTranslation('EnterUsernameRole'),
         life: 4000,
       });
       return;
     }
     if (!userRole) {
-      this.errorMessage = '*Select User Role ';
+      this.setErrorMessage(this.getTranslation('SelectUserRole'));
       this.messageService.add({
         severity: 'error',
-        summary: 'Authencation Failed',
-        detail: 'Select User Role ',
+        summary: this.getTranslation('AuthFailed'),
+        detail: this.getTranslation('SelectUserRole'),
         life: 4000,
       });
       return;
     }
     if (!username) {
-      this.errorMessage = '*Enter Username';
+      this.setErrorMessage(this.getTranslation('EnterUsername'));
       this.messageService.add({
         severity: 'error',
-        summary: 'Authencation Failed',
-        detail: 'Enter Username',
+        summary: this.getTranslation('AuthFailed'),
+        detail: this.getTranslation('EnterUsername'),
         life: 4000,
       });
       return;
     }
     if (!password) {
-      this.errorMessage = '*Enter Password ';
+      this.setErrorMessage(this.getTranslation('EnterPassword'));
       this.messageService.add({
         severity: 'error',
-        summary: 'Authencation Failed',
-        detail: 'Enter Password',
+        summary: this.getTranslation('AuthFailed'),
+        detail: this.getTranslation('EnterPassword'),
         life: 4000,
       });
       return;
@@ -153,20 +202,19 @@ export class LoginComponent {
       .then((res) => {
         // console.log(res, '---response');
         if (res.status === 404 || res.status === 401) {
-          this.errorMessage =
-            "*Wrong password or user with this role doesn't exist";
+          this.setErrorMessage(this.getTranslation('WrongPasswordOrRole'));
           this.messageService.add({
             severity: 'error',
-            summary: 'Authencation Failed',
-            detail: "Wrong password or user with this role doesn't exist",
+            summary: this.getTranslation('AuthFailed'),
+            detail: this.getTranslation('WrongPasswordOrRole'),
             life: 4000,
           });
         }
         if (res.status === 409) {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Authencation Failed',
-            detail: 'User already signed in somewhere..',
+            summary: this.getTranslation('AuthFailed'),
+            detail: this.getTranslation('UserAlreadySignedIn'),
             life: 4000,
           });
         }
@@ -197,8 +245,7 @@ export class LoginComponent {
             if (!data.user.projects || !data.user.projects.length) {
               this.messageService.add({
                 severity: 'warn',
-                summary: `Project Not Assigned`,
-                detail: 'No project has been assigned to this user.',
+                detail: this.getTranslation('ProjectNotAssigned'),
                 life: 4000,
               });
               this.authService.logout();
@@ -238,8 +285,8 @@ export class LoginComponent {
             this.projectService.setProjectCreated(true);
             this.messageService.add({
               severity: 'success',
-              summary: `Welcome ${data.user.projects[0].projectName}`,
-              detail: 'Authentication Success',
+              summary:  `this.getTranslation('Welcome') ${data.user.projects[0].projectName}`,
+              detail: this.getTranslation('AuthenticationSuccess'),
               life: 4000,
             });
             setTimeout(() => {
@@ -253,8 +300,8 @@ export class LoginComponent {
           });
           this.messageService.add({
             severity: 'success',
-            summary: `Welcome`,
-            detail: 'Authentication Success',
+            summary: this.getTranslation('Welcome'),
+            detail: this.getTranslation('AuthenticationSuccess'),
             life: 4000,
           });
           this.router.navigate(['project_setup']);
@@ -262,11 +309,11 @@ export class LoginComponent {
       })
       .catch((err) => {
         console.error(err);
-        this.errorMessage = 'Login failed. Please try again.';
+        this.setErrorMessage(this.getTranslation('LoginFailed'));
         this.messageService.add({
           severity: 'error',
-          summary: 'Authencation Failed',
-          detail: 'Login failed. Please try again',
+          summary: this.getTranslation('AuthFailed'),
+          detail: this.getTranslation('LoginFailed'),
           life: 4000,
         });
       });
@@ -291,6 +338,9 @@ export class LoginComponent {
     if (this.focusedContainer && !this.focusedContainer.contains(target)) {
       this.focusedContainer.classList.remove('focused');
       this.focusedContainer = null;
+    }
+    if (!this.eRef.nativeElement.querySelector('.language-selector')?.contains(event.target as Node)) {
+      this.languageArrowState = false;
     }
   }
 

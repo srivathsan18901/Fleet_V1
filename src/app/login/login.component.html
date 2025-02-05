@@ -1,4 +1,6 @@
 <div class="login-container">
+
+  
 <div class="Loginpage">
   <div
     class="LeftPanel"
@@ -19,21 +21,43 @@
     </div>
   </div>
   <div class="RightPanel">
-    <p class="Title">LOGIN</p>
-
+    <div class="LoginT">
+    <p class="Title">{{getTranslation("LOGIN")}}</p>
+    <div class="language-selector">
+      <div class="language-toggle" (click)="languageChange()">
+        <span class="language-info">
+           <div [(innerHTML)]="flagSvg" class="flag-icon"></div>
+          <p class="flag-name">{{flagName}}</p> 
+     </span>
+        <!-- <svg [ngClass]="{'rotate': languageArrowState}" class="arrow-icon" width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5.75505 8.33739L0 2.58245L1.91834 0.664062L5.75505 4.50076L9.59169 0.664062L11.51 2.58245L5.75505 8.33739Z" fill="black"/>
+        </svg> -->
+      </div> 
+    <!-- language dropdown -->
+  
+     <div *ngIf="languageArrowState" class="language-dropdown">
+        <div *ngFor="let flag of flags; trackBy: trackFlag" class="language-option" (click)="changeFlag(flag.order)">
+          <span class="option-info">
+            <div [(innerHTML)]="flag.flagComp" class="flag-icon"></div>
+            <p class="flag-name">{{flag.nameTag}}</p>
+          </span>
+        </div>
+      </div> 
+     </div>
+    </div>
     <div class="user-role-section">
-      <p class="UserRole">User Role</p>
+      <p class="UserRole">{{getTranslation("UserRole")}}</p>
       <div class="user-role-container">
         <label class="User">
-          <input type="radio" name="userRole" value="User" /> User</label
+          <input type="radio" name="userRole" value="User" />{{getTranslation("User")}}</label
         >
         <label class="Maintainer"
           ><input type="radio" name="userRole" value="Maintainer" />
-          Maintainer</label
+          {{getTranslation("Maintainer")}}</label
         >
         <label class="Administrator"
           ><input type="radio" name="userRole" value="Administrator" />
-          Administrator</label
+          {{getTranslation("Administrator")}}</label
         >
       </div>
     </div>
@@ -41,7 +65,7 @@
       <div>
       <div class="inputUScontainer" (click)="onContainerClick($event)">
         <input id="username" type="text" required placeholder=" " maxlength="250"/>
-        <label for="username">Username</label>
+        <label for="username">{{getTranslation("Username")}}</label>
       </div>
       <div class="inputPScontainer" (click)="onContainerClick($event)">
         <input
@@ -51,7 +75,7 @@
           placeholder=" "
           maxlength="50"
         />
-        <label for="password">Password</label>
+        <label for="password">{{getTranslation("Password")}}</label>
         <img
           src="{{
             showPassword ? 'assets/icons/eye-off.svg' : 'assets/icons/eye.svg'
@@ -64,7 +88,7 @@
     </div>
       <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
       <div class="LoginBtncls">
-        <button class="LoginBtn" (click)="validateForm()">LOGIN</button>
+        <button class="LoginBtn" (click)="validateForm()">{{getTranslation("LOGIN")}}</button>
       </div>
     </div>
   </div>

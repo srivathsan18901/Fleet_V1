@@ -11,6 +11,85 @@
   font-weight: bolder;
   margin: 40px 0px 20px 30px; /*TRBL*/
 }
+
+.language-dropdown {
+  display: flex;
+  flex-direction: column;
+  /* gap: 0.5rem; Space between dropdown options */
+  /* padding: 0.75rem; Equivalent to p-3 */
+  background-color: rgb(255, 252, 252);; /* Background color */
+  position: absolute;
+  box-shadow: 0px 6px 6px -5px #FF7373, -6px 0px 6px -5px #FF7373, 6px 0px 6px -3px #FF7373;
+  top: 59px; /* Adjust positioning */
+  left: 0;
+  /* border: 2px solid #ccc; Border for dropdown */
+  border-radius: 8px; /* Rounded corners */
+  z-index: 1000; /* Ensure it appears above other elements */
+}
+
+.language-option {
+  padding: 0px 10px; /* Padding for option */
+  border-radius: 5px; /* Rounded corners for options */
+  transition: background-color 0.2s; /* Smooth background color change */
+}
+
+.language-option:hover {
+  background-color: #f0f0f0; /* Hover effect */
+}
+
+.language-selector {
+  position: relative;
+  margin-right: 10px;
+  /* top: 263px;
+  right: 528px; */
+}
+.option-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.5rem; /* Space between flag and name */
+}
+.LoginT{
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.language-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 0.5rem; /* Equivalent to px-2 py-0 */
+  cursor: pointer;
+  transition: box-shadow 0.3s;
+  gap: 2px;
+}
+
+/* .language-toggle:hover {
+  box-shadow: 0 35px 35px rgba(0, 0, 0, 0.25);
+} */
+
+.language-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem; /* Equivalent to gap-10 */
+}
+
+.flag-icon {
+  border-radius: 2px; /* Rounded corners */
+}
+
+.flag-name {
+  font-weight: 600; /* Bold text */
+  font-family:"graphik", Arial, sans-serif;
+  margin-top: 0.9rem; /* Adjust margin for centering */
+}
+
+.arrow-icon {
+  transition: transform 0.3s; /* Smooth rotation */
+}
+.ProjectSetup button{
+ width: 200px;
+}
 .LogoutBtn {
   padding: 15px;
   background-color: #FF7373;

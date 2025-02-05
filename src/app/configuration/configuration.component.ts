@@ -26,7 +26,7 @@ import { SessionService } from '../services/session.service';
 import { ProjectService } from '../services/project.service';
 import { UserPermissionService } from '../services/user-permission.service';
 import { TranslationService } from '../services/translation.service';
-
+import { map } from 'rxjs';
 
 interface Poll {
   ip: string;
@@ -149,7 +149,7 @@ export class ConfigurationComponent implements AfterViewInit {
     // this.filteredRobotData = [...this.robotData];
     // this.filteredRobotData = this.robotData;
   }
-  items: any[] =[];
+  items: any[] = [];
   async ngOnInit() {
     // const rawData = this.projectService.userManagementServiceGet();
     this.items = [
@@ -162,7 +162,7 @@ export class ConfigurationComponent implements AfterViewInit {
       {
         label: 'Import Map',
         icon: 'pi pi-download',
-        command: () => this.openImageUploadPopup(),
+        command: () => this.openMapImportPopup(),
         tooltipOptions: { tooltipLabel: 'Import Map', tooltipPosition: 'top' } 
       }
     ];    
@@ -201,7 +201,7 @@ export class ConfigurationComponent implements AfterViewInit {
       this.configurationPermissions =
         this.userManagementData.configurationPermissions;
       let tabs = ['environment', 'robot', 'fleet'];
-      let UITabs = ['Environment', 'Robot','Fleet'];
+      let UITabs = ['Environment', 'Robot', 'Fleet'];
       let activeButtons = ['Environment', 'robot', 'fleet'];
       let i = 0;
       for (let tab of tabs) {
@@ -333,6 +333,30 @@ export class ConfigurationComponent implements AfterViewInit {
 
   onPopupSave() {
     this.resetFilters();
+  }
+
+  async exportMap(item: any) {
+    let mapId = item.id;
+    let mapName = item.mapName;
+
+    if (!mapId) return;
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/dashboard-fs/download-map/${mapId}`,
+      { credentials: 'include' }
+    );
+    if (!response.ok) alert('try once again');
+    else {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = url;
+      a.download = `${mapName}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+    }
   }
 
   // Simulation
@@ -515,8 +539,6 @@ export class ConfigurationComponent implements AfterViewInit {
     // console.log('line 425');
     // this.ngOnInit();
   }
-
-
 
   trackByTaskId(index: number, item: any): number {
     return item.taskId; // or any unique identifier like taskId
@@ -910,7 +932,10 @@ export class ConfigurationComponent implements AfterViewInit {
     this.filterData();
     this.resetFilters();
   }
-
+  showImportPopup=false;
+  openMapImportPopup(): void {
+    this.showImportPopup =true;
+  }
   closeImageUploadPopup(): void {
     this.showImageUploadPopup = false;
   }
@@ -1261,7 +1286,6 @@ export class ConfigurationComponent implements AfterViewInit {
     }
   }
 
-  
   showConfirmationDialog: boolean = false;
   itemToDelete: any;
 
@@ -1285,7 +1309,7 @@ export class ConfigurationComponent implements AfterViewInit {
         projectName: project.projectName,
         mapName: map.mapName,
       };
-  
+
       // Perform the delete operation
       fetch(
         `http://${environment.API_URL}:${environment.PORT}/robo-configuration`,
@@ -1328,10 +1352,11 @@ export class ConfigurationComponent implements AfterViewInit {
         });
     }
   }
-  
+
   cancelDelete() {
     this.showConfirmationDialog = false;
     this.itemToDelete = null;
+    this.showImportPopup = false;
   }
 
   deleteItemConfirmed(item: any) {

@@ -6,7 +6,12 @@ import { CookieService } from 'ngx-cookie-service';
 import { environment } from '../../environments/environment.development';
 import { MessageService } from 'primeng/api';
 import Swal from 'sweetalert2';
-
+import { TranslationService } from '../services/translation.service';
+interface Flag {
+  flagComp: string; // Type based on your data, e.g., string for SVG content
+  nameTag: "ENG" | "JAP" | "FRE" | "GER"; // Type based on your data, e.g., string for the flag name
+  order: number; // Assuming 'order' is also part of each flag object
+}
 interface Project {
   _id?: string; // Assuming _id is optional
   projectId?: string; // Add this if projectId is present in your data
@@ -41,13 +46,21 @@ export class ProjectsetupComponent {
     private router: Router,
     private projectService: ProjectService,
     private cookieService: CookieService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private translationService: TranslationService
   ) {}
 
   ngOnInit(): void {
     // hook
     // let pDet = this.cookieService.get('project-data');
     // console.log(pDet);
+    for(let flag of this.flags){
+      if(flag.nameTag === this.translationService.getCurrentLang()){
+        this.flagSvg = flag.flagComp;
+        this.flagName = flag.nameTag
+        break;
+      }
+    }
 
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/projects/project-list`,
@@ -81,7 +94,35 @@ export class ProjectsetupComponent {
       this.selectedProject = '';
     }
   }
+  getTranslation(key: string) {
+    return this.translationService.getProjectSetupTranslation(key);
+  }
+    
+  flags: Flag[] = [
+    { flagComp: '<img src="../../assets/Language/Eng.svg">', nameTag: 'ENG', order: 0 },
+    { flagComp: '<img src="../../assets/Language/Jap.svg">', nameTag: 'JAP', order: 1 },  
+    { flagComp: '<img src="../../assets/Language/Fre.svg">', nameTag: 'FRE', order: 2 },  
+    { flagComp: '<img src="../../assets/Language/Ger.svg">', nameTag: 'GER', order: 3 }, 
+  ];
+  
 
+  trackFlag(index: number, flag: any): number {
+    return flag.order; // Use the unique identifier for tracking
+  }
+  languageArrowState = false;
+  languageChange() {
+    this.languageArrowState = !this.languageArrowState;
+  }
+
+  flagSvg = this.flags[0].flagComp;
+  flagName = this.flags[0].nameTag;
+
+  changeFlag(order: number) {
+    const selectedLanguage = this.flags[order].nameTag;
+    this.flagSvg = this.flags[order].flagComp;
+    this.flagName = this.flags[order].nameTag;
+    this.translationService.setLanguage(selectedLanguage);
+  }
   showProjDiv2() {
     this.isProjDiv2Visible = !this.isProjDiv2Visible;
     this.isProjDiv1Visible = false;
@@ -176,7 +217,7 @@ export class ProjectsetupComponent {
         return;
       } else if (data.idExist) {
         this.messageService.add({
-          severity: 'Project with has same id or contents already exists',
+          severity: 'error',
           summary: data.msg,
           life: 3000, // Duration the toast will be visible
         });

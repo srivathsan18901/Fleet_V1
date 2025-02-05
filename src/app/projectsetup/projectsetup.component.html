@@ -18,7 +18,30 @@
       </div>
     </div>
     <div class="RightPanel">
-      <p class="ProjTitle">PROJECT</p>
+      <div  class="LoginT">
+      <p class="ProjTitle">{{getTranslation("PROJECT")}}</p>
+      <div class="language-selector">
+        <div class="language-toggle" (click)="languageChange()">
+          <span class="language-info">
+             <div [(innerHTML)]="flagSvg" class="flag-icon"></div>
+            <p class="flag-name">{{flagName}}</p> 
+       </span>
+          <!-- <svg [ngClass]="{'rotate': languageArrowState}" class="arrow-icon" width="12" height="9" viewBox="0 0 12 9" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5.75505 8.33739L0 2.58245L1.91834 0.664062L5.75505 4.50076L9.59169 0.664062L11.51 2.58245L5.75505 8.33739Z" fill="black"/>
+          </svg> -->
+        </div> 
+      <!-- language dropdown -->
+    
+       <div *ngIf="languageArrowState" class="language-dropdown">
+          <div *ngFor="let flag of flags; trackBy: trackFlag" class="language-option" (click)="changeFlag(flag.order)">
+            <span class="option-info">
+              <div [(innerHTML)]="flag.flagComp" class="flag-icon"></div>
+              <p class="flag-name">{{flag.nameTag}}</p>
+            </span>
+          </div>
+        </div> 
+       </div>
+      </div>
       <div class="details">
         <div class="ProjectSetup">
           <button
@@ -26,21 +49,21 @@
             [class.active-button]="isProjDiv1Visible"
             (click)="showProjDiv1()"
           >
-            Create New Project
+          {{getTranslation("CREATE_NEW_PROJECT")}}
           </button>
           <button
             class="IMFBtn"
             [class.active-button]="isProjDiv2Visible"
             (click)="showProjDiv2()"
           >
-            Import Project
+          {{getTranslation("IMPORT_PROJECT")}}
           </button>
           <button
             class="OEPBtn"
             [class.active-button]="isProjDiv3Visible"
             (click)="showProjDiv3()"
           >
-            Existing Project
+          {{getTranslation("EXISTING_PROJECT")}}
           </button>
         </div>
         <div class="ProjDiv1" *ngIf="isProjDiv1Visible">
@@ -55,7 +78,7 @@
             <label
               for="Sitename"
               [class.active]="isFocused['Sitename'] || sitename"
-              >Site Name</label
+              >{{getTranslation("SITE_NAME")}}</label
             >
           </div>
           <div class="input-container2">
@@ -69,7 +92,7 @@
             <label
               for="Projectname"
               [class.active]="isFocused['Projectname'] || projectname"
-              >Project Name</label
+              >{{getTranslation("PROJECT_NAME")}}</label
             >
           </div>
           <div>
@@ -81,9 +104,9 @@
             </ng-template>
             <div class="ButtonSet">
               <button class="CreateBTN" (click)="createProject()">
-                CREATE
+                {{getTranslation("CREATE")}}
               </button>
-              <button (click)="showProjDiv1()" class="BackBTN">BACK</button>
+              <button (click)="showProjDiv1()" class="BackBTN">{{getTranslation("BACK")}}</button>
             </div>
           </div>
         </div>
@@ -103,8 +126,8 @@
             />
           </div>
           <div class="ButtonSet">
-            <button class="OpenBTN" (click)="importFile()">OPEN</button>
-            <button (click)="showProjDiv2()" class="BackBTN">BACK</button>
+            <button class="OpenBTN" (click)="importFile()">{{getTranslation("OPEN")}}</button>
+            <button (click)="showProjDiv2()" class="BackBTN">{{getTranslation("BACK")}}</button>
           </div>
         </div>
         <div class="ProjDiv3" *ngIf="isProjDiv3Visible">
@@ -114,18 +137,18 @@
           [options]="productList"
           [(ngModel)]="selectedProject"
           optionLabel="projectName"
-          placeholder="Project List"
+          placeholder="{{getTranslation('PROJECT_LIST')}}"
           (onChange)="onProjectChange($event.value)"
           [style]="{ 'position': 'relative' }"
         ></p-dropdown>
         
           <div class="ButtonSet">
-            <button class="OpenBTN" (click)="openProject()">OPEN</button>
-            <button (click)="showProjDiv3()" class="BackBTN">BACK</button>
+            <button class="OpenBTN" (click)="openProject()">{{getTranslation("OPEN")}}</button>
+            <button (click)="showProjDiv3()" class="BackBTN">{{getTranslation("BACK")}}</button>
           </div>
         </div>
         <div class="LogoutBtncls">
-          <button class="LogoutBtn" (click)="logout()">LOGOUT</button>
+          <button class="LogoutBtn" (click)="logout()">{{getTranslation("LOGOUT")}}</button>
         </div>
       </div>
     </div>
