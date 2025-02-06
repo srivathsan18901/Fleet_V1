@@ -822,7 +822,6 @@ export class UserManagementComponent implements OnInit {
   userPermissionPopUpOpen(userId: string) {
     this.user = this.userCredentials.find((user) => userId === user.userId);
     if (this.user) {
-      console.log('User found:', this.user.userName);
       // Fetch user permissions and update the state
       this.fetchUserPermissions(this.user.userId);
       this.setAlteredProjectList();
@@ -932,7 +931,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   userPermissionPopUpClose() {
-    this.userPermissionOCstate = !this.userPermissionOCstate;
+    this.userPermissionOCstate = !this.userPermissionOCstate;    
   }
 
   changeUserPermission(option: number, i: number) {
