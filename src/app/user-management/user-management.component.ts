@@ -927,7 +927,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   userPermissionPopUpClose() {
-    // this.activeTab = this.pages[0].general;
+    this.activeTab = this.pages[0].general;
     // console.log("close",this.pages[0].isOpen);
     this.userPermissionOCstate = !this.userPermissionOCstate;
     this.fetchUsers();
