@@ -664,10 +664,10 @@
                         !project.assigned,
                       'bg-red-500 text-white': project.assigned,
                       'blur-sm opacity-50 cursor-not-allowed':
-                        isAnyAssigned && !project.assigned
+                      project.isDisabled
                     }"
                     (click)="toggleAssign(project)"
-                    [disabled]="isAnyAssigned && !project.assigned"
+                    [disabled]="project.isDisabled"
                   >
                     {{ project.assigned ? getTranslation('Un-assign') : getTranslation('Assign') }}
                   </button>
