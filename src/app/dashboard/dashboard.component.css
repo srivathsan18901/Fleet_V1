@@ -583,7 +583,6 @@ canvas {
   position: absolute;
   top: 0;
   display: inline-block;
-  width: 180px;
   margin: 5px;
 }
 
@@ -600,7 +599,8 @@ canvas {
 }
 
 .dropdown-button {
-  width: 100%;
+  width: auto;
+  gap:10px;
   background-color: #ff333358;
   color: rgb(255, 255, 255);
   padding: 10px 20px;

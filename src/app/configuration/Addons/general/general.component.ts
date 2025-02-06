@@ -5,7 +5,7 @@ import { environment } from '../../../../environments/environment.development';
 import { FormBuilder } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { TranslationService } from '../../../services/translation.service';
-
+import { map,Subscription } from 'rxjs';
 
 interface DB {
   name: string;
@@ -20,15 +20,15 @@ interface DB {
 export class GeneralComponent {
   // dtype: DB[] | undefined;
   // iptype: DB[] | undefined;
-
+  private langSubscription!: Subscription;
   selectedProject: any | null = null;
 
   formData: any;
   disableOtherFields: boolean = true;
 
   fleetModes = [
-    { name: 'Fleet Mode', value: 0 },
-    { name: 'Simulation Mode', value: 1 },
+    { name: this.getTranslation("fleet_mode"), value: 0 },
+    { name: this.getTranslation("simulation_mode"), value: 1 },
   ];
 
   onFleetModeChange() {
@@ -111,6 +111,13 @@ export class GeneralComponent {
         credentials: 'include',
       }
     );
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      this.fleetModes = [
+        { name: this.getTranslation("fleet_mode"), value: 0 },
+        { name: this.getTranslation("simulation_mode"), value: 1 },
+      ];
+      this.cdRef.detectChanges();
+    });
     if (!response.ok) {
       console.log('Err with status code of ', response.status);
     }

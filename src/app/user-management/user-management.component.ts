@@ -379,17 +379,17 @@ export class UserManagementComponent implements OnInit {
   userRoleCredentials = [
     {
       order: 0,
-      userRole: 'User',
+      userRole: this.getTranslation('User'),
       nameTag: 'USER',
     },
     {
       order: 1,
-      userRole: 'Administrator',
+      userRole: this.getTranslation('Administrator'),
       nameTag: 'ADMIN',
     },
     {
       order: 2,
-      userRole: 'Maintainer',
+      userRole: this.getTranslation('Maintainer'),
       nameTag: 'MAINTAINER',
     },
   ];
@@ -803,7 +803,7 @@ export class UserManagementComponent implements OnInit {
     this.userName = '';
     this.passWord = '';
     this.confrimPassword = '';
-    this.userRole = 'User';
+    this.userRole = this.getTranslation('User');
     this.resetPassword();
 
     if (isCancel) {
@@ -822,7 +822,6 @@ export class UserManagementComponent implements OnInit {
   userPermissionPopUpOpen(userId: string) {
     this.user = this.userCredentials.find((user) => userId === user.userId);
     if (this.user) {
-      console.log('User found:', this.user.userName);
       // Fetch user permissions and update the state
       this.fetchUserPermissions(this.user.userId);
       this.setAlteredProjectList();

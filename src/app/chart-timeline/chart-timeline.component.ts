@@ -89,25 +89,24 @@ export class ChartTimelineComponent implements OnInit {
   networkTimeInterval: any | null = null;
   idleTimeInterval: any | null = null;
   errTimeInterval: any | null = null;
-  selectedMetric: string = 'CPU Utilization'; // Initialize with an empty string or a default value
-
+  selectedMetric: string = "cpuUtilization"; // Initialize with an empty string or a default value
   metrics = {
     Overall: [
-      { key: 'data1', label: 'CPU Utilization' },
-      { key: 'data2', label: 'Robot Utilization' },
-      { key: 'data3', label: 'Memory' },
-      { key: 'data4', label: 'Network' },
-      { key: 'data5', label: 'Idle Time' },
-      { key: 'data6', label: 'Error' },
-      { key: 'data7', label: 'Battery' },
+      { key: 'data1', label: this.getTranslation("cpuUtilization")},
+      { key: 'data2', label: this.getTranslation("robotUtilization") },
+      { key: 'data3', label: this.getTranslation("memory") },
+      { key: 'data4', label: this.getTranslation("network") },
+      { key: 'data5', label: this.getTranslation("idleTime") },
+      { key: 'data6', label: this.getTranslation("error")},
+      { key: 'data7', label: this.getTranslation("battery")},
     ],
     robot: [
-      { key: 'data1', label: 'CPU Utilization' },
-      { key: 'data3', label: 'Memory' },
-      { key: 'data4', label: 'Network' },
-      { key: 'data5', label: 'Idle Time' },
-      { key: 'data6', label: 'Error' },
-      { key: 'data7', label: 'Battery' },
+      { key: 'data1', label: this.getTranslation("cpuUtilization")},
+      { key: 'data3', label: this.getTranslation("memory") },
+      { key: 'data4', label: this.getTranslation("network") },
+      { key: 'data5', label: this.getTranslation("idleTime") },
+      { key: 'data6', label: this.getTranslation("error")},
+      { key: 'data7', label: this.getTranslation("battery")},
     ],
   };
 

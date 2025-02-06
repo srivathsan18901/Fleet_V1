@@ -378,6 +378,15 @@ export class EnvmapComponent implements AfterViewInit {
   getTranslation(key: string) {
     return this.translationService.getEnvmapTranslation(key);
   }
+  getTranslatedActionType(actionType: string): string {
+    const translations: { [key: string]: string } = {
+      'Move': 'move',
+      'Dock': 'dock',
+      'Undock': 'undock'
+    };
+    return translations[actionType] || actionType;
+  }
+  
   updateTranslatedZoneTypes(): void {
     this.translatedZoneTypeList = this.zoneTypeList.map(zone => ({
       label: this.getTranslation(zone),
@@ -487,8 +496,8 @@ export class EnvmapComponent implements AfterViewInit {
   }
 
   orientationTypes = [
-    { label: 'Global', value: 'GLOBAL' },
-    { label: 'Tangential', value: 'Tangential' },
+    { label: this.getTranslation("global"), value: 'GLOBAL' },
+    { label: this.getTranslation("tangential"), value: 'Tangential' },
   ];
 
   ngAfterViewInit(): void {
