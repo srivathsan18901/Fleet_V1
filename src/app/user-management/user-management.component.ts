@@ -21,6 +21,7 @@ interface projectList {
   name: string;
   createdAt: string;
   assigned: boolean;
+  isDisabled: boolean;
 }
 @Component({
   selector: 'app-user-management',
@@ -80,7 +81,7 @@ export class UserManagementComponent implements OnInit {
     this.currUserName = user.name;
     this.fetchUsers();
     await this.fetchProjectList();
-    this.setPaginatedData();   
+    this.setPaginatedData();
   }
   getTranslation(key: string) {
     return this.translationService.getUserManagementTranslation(key);
@@ -139,7 +140,7 @@ export class UserManagementComponent implements OnInit {
     },
     {
       order: 1,
-      nameTag:  this.getTranslation('CONFIGURATION'),
+      nameTag: this.getTranslation('CONFIGURATION'),
       isOpen: false,
       general: 'Configuration',
     },
@@ -154,7 +155,7 @@ export class UserManagementComponent implements OnInit {
   changePage(order: any) {
     // alert(order)
     this.pages = this.pages.map((page: any) => {
-      page.nameTag = this.getTranslation((page.general).toUpperCase())
+      page.nameTag = this.getTranslation(page.general.toUpperCase());
       page.isOpen = false;
       return page;
     });
@@ -193,6 +194,7 @@ export class UserManagementComponent implements OnInit {
         name: project.projectName,
         createdAt: createdAt,
         assigned: false,
+        isDisabled: false,
       };
     });
   }
@@ -257,6 +259,8 @@ export class UserManagementComponent implements OnInit {
         if (proj.id == project.id) proj.assigned = true;
         return proj;
       });
+      this.fetchUserPermissions(this.user.userId);
+      this.updateProjectListState(this.user.userRole);
     }
 
     const data = await response.json();
@@ -293,6 +297,8 @@ export class UserManagementComponent implements OnInit {
       });
     }
     const data = await response.json();
+    this.fetchUserPermissions(this.user.userId);
+    this.updateProjectListState(this.user.userRole);
     // console.log(data);
     if (data.error) {
       console.log('Error occured in assigning project : ', data.error);
@@ -313,46 +319,54 @@ export class UserManagementComponent implements OnInit {
       nameTag: this.getTranslation('DASHBOARD'),
       icon: '../../assets/icons/dashboard_icon copy.svg',
       enabled: false,
-      description:
-        this.getTranslation('Control user access to dashboard data and performance insights.'),
+      description: this.getTranslation(
+        'Control user access to dashboard data and performance insights.'
+      ),
     },
     {
       order: 1,
       nameTag: this.getTranslation('STATISTICS'),
       icon: '../../assets/icons/Statistics.svg',
       enabled: false,
-      description: this.getTranslation('Manage access to statistical data and analytical reports.'),
+      description: this.getTranslation(
+        'Manage access to statistical data and analytical reports.'
+      ),
     },
     {
       order: 2,
       nameTag: this.getTranslation('ROBOTS'),
       icon: '../../assets/icons/Statistics_icon.svg',
       enabled: false,
-      description:
-        this.getTranslation('Grant control over robot monitoring and performance tracking.'),
+      description: this.getTranslation(
+        'Grant control over robot monitoring and performance tracking.'
+      ),
     },
     {
       order: 3,
       nameTag: this.getTranslation('error'),
       icon: '../../assets/icons/Logs_icons.svg',
       enabled: false,
-      description:
-        this.getTranslation('Manage permissions to view and resolve error logs and issues.'),
+      description: this.getTranslation(
+        'Manage permissions to view and resolve error logs and issues.'
+      ),
     },
     {
       order: 4,
       nameTag: this.getTranslation('Task'),
       icon: '../../assets/icons/Tasks_icons.svg',
       enabled: false,
-      description: this.getTranslation('Control user access to create, edit, and view tasks.'),
+      description: this.getTranslation(
+        'Control user access to create, edit, and view tasks.'
+      ),
     },
     {
       order: 5,
       nameTag: this.getTranslation('User Management'),
       icon: '../../assets/icons/Usermanagement_icons.svg',
       enabled: false,
-      description:
-        this.getTranslation('Administrator user roles and permissions within the system.'),
+      description: this.getTranslation(
+        'Administrator user roles and permissions within the system.'
+      ),
     },
   ];
 
@@ -812,9 +826,46 @@ export class UserManagementComponent implements OnInit {
       // Fetch user permissions and update the state
       this.fetchUserPermissions(this.user.userId);
       this.setAlteredProjectList();
+      this.updateProjectListState(this.user.userRole);
       this.userPermissionOCstate = !this.userPermissionOCstate;
     } else {
       console.error('User not found:', userId);
+    }
+  }
+
+  updateProjectListState(userRole: string) {
+    if (userRole == 'Administrator') {
+      this.projects = this.projects.map((project: projectList) => {
+        project.isDisabled = true;
+        return project;
+      });
+    } else if (userRole == 'User') {
+      let hasUnassignedProj = this.projects.some((project) => project.assigned);
+      this.projects = this.projects.map((project: projectList) => {
+        project.isDisabled = hasUnassignedProj ? !project.assigned : false;
+        return project;
+      });
+      // let totProjCount = 0;
+      // for (let proj of this.projects) {
+      //   if (!proj.assigned) totProjCount++;
+      // }
+      // if (!totProjCount) {
+      //   this.projects = this.projects.map((project: projectList) => {
+      //     project.isDisabled = false;
+      //     return project;
+      //   });
+      //   return;
+      // }
+      // this.projects = this.projects.map((project: projectList) => {
+      //   project.isDisabled = !project.assigned;
+      //   return project;
+      // });
+    }
+    if (this.user.userName == this.authService.getUser().name) {
+      this.projects = this.projects.map((project: projectList) => {
+        project.isDisabled = true;
+        return project;
+      });
     }
   }
 
