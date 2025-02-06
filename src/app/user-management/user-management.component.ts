@@ -445,11 +445,6 @@ export class UserManagementComponent implements OnInit {
       `Sub-option ${subOption.label} for ${config.title} is now ${subOption.enabled}`
     );
   }
-
-  setActiveTab(tab: string): void {
-    this.activeTab = tab;
-  }
-
   userCredentials: any[] = []; // Initialized as an empty array
 
   userPermissionStateFn(order: number, option: number) {
@@ -821,7 +816,8 @@ export class UserManagementComponent implements OnInit {
   // fetch user-permissions pop-up..
   userPermissionPopUpOpen(userId: string) {
     this.user = this.userCredentials.find((user) => userId === user.userId);
-    if (this.user) {
+    if (this.user) {      
+      console.log("open",this.activeTab);
       // Fetch user permissions and update the state
       this.fetchUserPermissions(this.user.userId);
       this.setAlteredProjectList();
@@ -931,6 +927,8 @@ export class UserManagementComponent implements OnInit {
   }
 
   userPermissionPopUpClose() {
+    // this.activeTab = this.pages[0].general;
+    // console.log("close",this.pages[0].isOpen);
     this.userPermissionOCstate = !this.userPermissionOCstate;    
   }
 
