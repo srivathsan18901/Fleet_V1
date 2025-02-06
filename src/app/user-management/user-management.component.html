@@ -218,7 +218,7 @@
               class="w-full font-semibold text-[14px] capitalize hover:bg-[#a3a3a3] p-2 rounded-md cursor-pointer pl-2"
               (click)="changeUserRole(user.order)"
             >
-              {{ user.userRole }}
+              {{ getTranslation(user.userRole) }}
             </p>
             }
           </span>
@@ -272,12 +272,14 @@
           <button
             (click)="createUser()"
             class="w-[120px] py-[8px] rounded-md bg-[#ff3333] text-[14px] text-white font-medium"
+            style=" width: auto; padding: 8px;"
           >
           {{getTranslation('Create User')}}
           </button>
           <button
             (click)="userCreatePopUpOpen(true)"
             class="w-[120px] py-[8px] rounded-md border-2 border-[#ff3333] text-[14px] text-[#ff3333] font-medium"
+            style=" width: auto; padding: 8px;"
           >
           {{getTranslation('Cancel')}}
           </button>

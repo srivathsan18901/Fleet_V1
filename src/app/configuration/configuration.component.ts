@@ -26,7 +26,7 @@ import { SessionService } from '../services/session.service';
 import { ProjectService } from '../services/project.service';
 import { UserPermissionService } from '../services/user-permission.service';
 import { TranslationService } from '../services/translation.service';
-import { map } from 'rxjs';
+import { map,Subscription } from 'rxjs';
 
 interface Poll {
   ip: string;
@@ -135,7 +135,7 @@ export class ConfigurationComponent implements AfterViewInit {
   paginatedData1: any[] = [];
   paginatedData2: any[] = [];
   simRobos: any;
-
+  private langSubscription!: Subscription;
   // loader
   editLoader: boolean = false;
   configurationPermissions: any;
@@ -161,6 +161,15 @@ export class ConfigurationComponent implements AfterViewInit {
   editButtonText: string = '';
   exportButtonText: string = '';
   async ngOnInit() {
+      this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+        // this.updateHeaderTranslation();
+        this.activeHeader = this.getTranslation(this.activeButton);
+        this.deleteButtonText = this.getTranslation('Delete');
+        this.editButtonText = this.getTranslation('edit');
+        this.exportButtonText = this.getTranslation('export');
+        this.cdRef.detectChanges();
+      });
+
     // const rawData = this.projectService.userManagementServiceGet();
     this.items = [
       {
@@ -331,6 +340,7 @@ export class ConfigurationComponent implements AfterViewInit {
   }
   getTranslation(key: string) {
     return this.translationService.getConfigurationTranslation(key);
+    
   }
 
   onFileSelected(event: any) {
@@ -466,7 +476,11 @@ export class ConfigurationComponent implements AfterViewInit {
         // this.filteredEnvData = [...this.EnvData];
         // this.paginatedData = [...this.EnvData];
         // this.cdRef.detectChanges();
-        alert(data.msg);
+        
+        this.messageService.add({
+          severity: 'warn',
+          summary: ` ${data.msg}`,
+        });
         await this.ngOnInit();
       }
       return false;
@@ -528,7 +542,11 @@ export class ConfigurationComponent implements AfterViewInit {
       );
 
       if (!this.selectedRobots.length) {
-        alert('no robos to sim');
+        
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'no robos to sim',
+        });
         return;
       }
 
@@ -653,8 +671,12 @@ export class ConfigurationComponent implements AfterViewInit {
   }
 
   async updateRobo() {
-    if (!this.currEditRobo.roboName) {
-      alert('seems robo not selected');
+    if (!this.formData.robotName) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Robot is not selected',
+        life: 4000,
+      });
       return;
     }
     let response = await fetch(
@@ -1430,7 +1452,10 @@ export class ConfigurationComponent implements AfterViewInit {
       let data = await response.json();
       if (data.isDeleted) return true;
       if (data.isMapExist === false) {
-        alert(data.msg);
+        this.messageService.add({
+          severity: 'warn',
+          summary: `${data.msg}`,
+        });
         return false;
       }
       return false;
@@ -1824,10 +1849,15 @@ export class ConfigurationComponent implements AfterViewInit {
     // roboName | serial Number, ip add, mac add, grossInfo
     let project = this.projectService.getSelectedProject();
     let currMap = this.projectService.getMapData();
+    
     if (!project || !currMap) {
-      alert('map not selected');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'map not selected',
+      });
       return;
     }
+
     if (this.isRoboInEdit) {
       this.updateRobo();
       return;
@@ -1850,8 +1880,12 @@ export class ConfigurationComponent implements AfterViewInit {
       macAdd: this.currentRoboDet.mac,
       grossInfo: this.formData,
     };
-    if (roboDetails.roboName === '' || this.formData.manufacturer === '') {
-      alert('Manufacturer or roboname should be there');
+    if (roboDetails.roboName === '' || this.formData.manufacturer === '') {      
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Warning',
+        detail: 'Manufacturer or roboname should be Entered',
+      });
       return;
     }
     try {
@@ -1875,10 +1909,20 @@ export class ConfigurationComponent implements AfterViewInit {
       if (data.error) return;
       else if (data.isIpMacExists) {
         console.log(data.msg);
-        alert('Ip | Mac seems already exists!');
+       
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'Ip | Mac seems already exists!',
+        });
         return;
       } else if (data.exists) {
-        alert('Robo Name already exists');
+        // alert('Robo Name already exists');
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Warning',
+          detail: 'Robo Name already exists',
+        });
         return;
       }
       if (data.robo) {
@@ -1942,7 +1986,10 @@ export class ConfigurationComponent implements AfterViewInit {
 
     if (!this.isMapAvailable()) {
       console.log('Map is not available, showing alert.');
-      alert('Please create or select a map to simulate the robots.');
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Please create or select a map to simulate the robots.',
+      });
       return;
     }
 
@@ -2088,7 +2135,10 @@ export class ConfigurationComponent implements AfterViewInit {
         (robot: { amrId: number }) => robot.amrId === amrId
       );
       if (!robotToDelete) {
-        alert(`Robot with ID ${amrId} not found.`);
+        this.messageService.add({
+          severity: 'warn',
+          summary: `Robot with ID ${amrId} not found.`,
+        });
         return;
       }
 
@@ -2099,8 +2149,10 @@ export class ConfigurationComponent implements AfterViewInit {
       // Update the backend with the updated list of robots
       let result = await this.updateSimInMap(updatedSimRobos);
       if (result) {
-        alert(`Robot with ID ${amrId} deleted!`);
-
+        this.messageService.add({
+          severity: 'warn',
+          summary: `Robot with ID ${amrId} deleted!`,
+        });
         // Update the local totalRobots count
         this.totalRobots = updatedSimRobos.length;
       } else {

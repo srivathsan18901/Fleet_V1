@@ -22,7 +22,7 @@
     </div>
     <div class="mainContent">
       <div class="header-section">
-        <h1 class="header-title">{{ this.getTranslation(activeHeader) }}</h1>
+        <h1 class="header-title">{{ activeHeader }}</h1>
         <div class="subheader-container">
           <div class="subheader-text">
             {{ getTranslation("Create and Edit Configuration") }}
@@ -526,6 +526,7 @@
                         configurationPermissions.robot.enabled === true &&
                         configurationPermissions.robot.edit === true
                       "
+                      [attr.data-content]="editButtonText"
                     >
                       <svg class="edit-svgIcon" viewBox="0 0 512 512">
                         <path
@@ -543,6 +544,7 @@
                         configurationPermissions.robot.enabled === true &&
                         configurationPermissions.robot.delete === true
                       "
+                      [attr.data-content]="deleteButtonText"
                     >
                       <svg class="delete-svgIcon" viewBox="0 0 448 512">
                         <path
@@ -798,7 +800,8 @@
                 ?.enabled == true
             "
           >
-            <p-speedDial
+            <p-speedDial 
+            *ngIf="currentTable === 'Environment'"
               [model]="items"
               direction="left"
               [style]="{

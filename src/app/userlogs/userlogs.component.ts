@@ -55,8 +55,9 @@ export class Userlogscomponent {
   robotLogInterval: ReturnType<typeof setInterval> | null = null;
   taskLogInterval: ReturnType<typeof setInterval> | null = null;
   fleetLogInterval: ReturnType<typeof setInterval> | null = null;
-
+  private langSubscription!: Subscription;
   constructor(
+    private cdRef: ChangeDetectorRef,
     private exportService: ExportService,
     private projectService: ProjectService,
     private modeService: ModeService,
@@ -67,6 +68,10 @@ export class Userlogscomponent {
   }
 
   async ngOnInit() {
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      this.activeHeader=this.getTranslation(this.activeButton);
+      this.cdRef.detectChanges();
+    });
     this.mapData = this.projectService.getMapData();
     if (!this.mapData) {
       console.log('Seems no map has been selected');

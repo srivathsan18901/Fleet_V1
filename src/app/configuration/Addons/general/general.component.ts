@@ -27,8 +27,8 @@ export class GeneralComponent {
   disableOtherFields: boolean = true;
 
   fleetModes = [
-    { name: 'Fleet Mode', value: 0 },
-    { name: 'Simulation Mode', value: 1 },
+    { name: this.getTranslation("fleet_mode"), value: 0 },
+    { name: this.getTranslation("simulation_mode"), value: 1 },
   ];
 
   onFleetModeChange() {

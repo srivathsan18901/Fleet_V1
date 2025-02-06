@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -351,6 +352,7 @@ export class TranslationService {
       robotState: "Robot State",
       overall: "Overall",
       cpuUtilization: "CPU Utilization",
+      "CPU Utilization": "CPU Utilization",
       memory: "Memory",
       battery: "Battery",
       network: "Network",
@@ -406,6 +408,7 @@ export class TranslationService {
       description: '説明',
       Overall: "全体",
       cpuUtilization: "CPU使用率",
+      "CPU Utilization": "CPU使用率",
       memory: "メモリ",
       battery: "バッテリー",
       network: "ネットワーク",
@@ -461,6 +464,7 @@ export class TranslationService {
       description: 'Description',
       Overall: "Global",
       cpuUtilization: "Utilisation du CPU",
+      "CPU Utilization": "Utilisation du CPU",
       memory: "Mémoire",
       battery: "Batterie",
       network: "Réseau",
@@ -516,6 +520,7 @@ export class TranslationService {
       description: 'Beschreibung',
       Overall: "Gesamt",
       cpuUtilization: "CPU-Auslastung",
+      "CPU Utilization": "CPU-Auslastung",
       memory: "Speicher",
       battery: "Batterie",
       network: "Netzwerk",
@@ -771,6 +776,9 @@ export class TranslationService {
       "Task": "Task",
       "Robot": "Robot",
       "Fleet": "Fleet",
+      "task": "Task",
+      "robot": "Robot",
+      "fleet": "Fleet",
       "Search For Logs...": "Search For Logs...",
       "Date and time": "Date and time",
       "Module Name": "Module Name",
@@ -796,6 +804,9 @@ export class TranslationService {
       "Task": "タスク",
       "Robot": "ロボット",
       "Fleet": "フリート",
+      "task": "タスク",
+      "robot": "ロボット",
+      "fleet": "フリート",
       "Search For Logs...": "ログを検索...",
       "Date and time": "日時",
       "Module Name": "モジュール名",
@@ -821,6 +832,9 @@ export class TranslationService {
       "Task": "Tâche",
       "Robot": "Robot",
       "Fleet": "Flotte",
+      "task": "Tâche",
+      "robot": "Robot",
+      "fleet": "Flotte",
       "Search For Logs...": "Rechercher des journaux...",
       "Date and time": "Date et heure",
       "Module Name": "Nom du module",
@@ -846,6 +860,9 @@ export class TranslationService {
       "Task": "Aufgabe",
       "Robot": "Roboter",
       "Fleet": "Flotte",
+      "task": "Aufgabe",
+      "robot": "Roboter",
+      "fleet": "Flotte",
       "Search For Logs...": "Protokolle suchen...",
       "Date and time": "Datum und Uhrzeit",
       "Module Name": "Modulname",
@@ -868,7 +885,9 @@ export class TranslationService {
     ENG: {
       "Environment": "Environment",
       "Robot": "Robot",
+      "robot": "Robot",
       "Fleet": "Fleet",
+      "fleet": "Fleet",
       "Create and Edit Configuration": "Create and Edit Configuration",
       "Search for Something...": "Search for Something...",
       "Start Date:": "Start Date:",
@@ -898,6 +917,8 @@ export class TranslationService {
       "Option": "Option",
       "General": "General",
       "Simulation": "Simulation",
+      'fleet_mode': 'Fleet Mode',
+      'simulation_mode': 'Simulation Mode',
       "Enter the Robots for Simulation": "Enter the Robots for Simulation",
       "Number of Robots:": "Number of Robots:",
       "Add": "Add",
@@ -985,7 +1006,9 @@ export class TranslationService {
     JAP: {
       "Environment": "環境",
       "Robot": "ロボット",
+      "robot": "ロボット",
       "Fleet": "フリート",
+      "fleet": "フリート",
       "Create and Edit Configuration": "設定の作成と編集",
       "Search for Something...": "何かを検索...",
       "Start Date:": "開始日:",
@@ -1011,6 +1034,8 @@ export class TranslationService {
       "No Data found": "データが見つかりません",
       "IP": "IP",
       "MAC": "MAC",
+      'fleet_mode': 'フリートモード',
+      'simulation_mode': 'シミュレーションモード',
       "Hostname": "ホスト名",
       "Ping": "Ping",
       "Status": "ステータス",
@@ -1102,7 +1127,9 @@ export class TranslationService {
     FRE: {
       "Environment": "Environnement",
       "Robot": "Robot",
+      "robot": "Robot",
       "Fleet": "Flotte",
+      "fleet": "Flotte",
       "Create and Edit Configuration": "Créer et modifier la configuration",
       "Search for Something...": "Rechercher quelque chose...",
       "Start Date:": "Date de début:",
@@ -1122,6 +1149,8 @@ export class TranslationService {
       "AMR ID": "ID AMR",
       "UUID": "UUID",
       "AMR Name": "Nom AMR",
+      'fleet_mode': 'Mode Flotte',
+      'simulation_mode': 'Mode Simulation',
       "IP Range": "Plage IP",
       "Stop": "Arrêter",
       "No Data found": "Aucune donnée trouvée",
@@ -1220,6 +1249,8 @@ export class TranslationService {
       "Environment": "Umgebung",
       "Robot": "Roboter",
       "Fleet": "Flotte",
+      "robot": "Roboter",
+      "fleet": "Flotte",
       "Create and Edit Configuration": "Konfiguration erstellen und bearbeiten",
       "Search for Something...": "Nach etwas suchen...",
       "Start Date:": "Startdatum:",
@@ -1241,6 +1272,8 @@ export class TranslationService {
       "UUID": "UUID",
       "AMR Name": "AMR-Name",
       "IP Range": "IP-Bereich",
+      'fleet_mode': 'Flottenmodus',
+      'simulation_mode': 'Simulationsmodus',
       "Stop": "Stopp",
       "No Data found": "Keine Daten gefunden",
       "IP": "IP",
@@ -1738,6 +1771,29 @@ export class TranslationService {
       'max_tolerance_at_goal_x_undock': 'Max Tolerance at Goal X (Undock):',
       'max_tolerance_at_goal_y_undock': 'Max Tolerance at Goal Y (Undock):',
       'max_tolerance_at_goal_orientation_undock': 'Max Tolerance at Goal Orientation (Undock):',
+      'edge_details': 'Edge Details',
+      'edge_id': 'Edge ID',
+      'sequence_id': 'Sequence ID',
+      'description': 'Description',
+      'start_node_id': 'Start Node ID',
+      'end_node_id': 'End Node ID',
+      'released': 'Released',
+      'rotation_allowed': 'Rotation Allowed',
+      'max_speed': 'Max Speed (m/s)',
+      'max_height': 'Max Height (m)',
+      'min_height': 'Min Height (m)',
+      'orientation1': 'Orientation (rad)',
+      'orientation_type': 'Orientation Type',
+      'direction': 'Direction',
+      'max_rotation_speed': 'Max Rotation (rad/s)',
+      'length': 'Length',
+      'delete': 'Delete',
+      'error_message': 'All required fields must be provided.',
+      'global': 'Global',
+      'tangential': 'Tangential',
+      'uni_directional': 'Uni-directional',
+      'select_orientation_type': 'Select Orientation Type',
+      'bi_directional': 'Bi-directional'
     },
     JAP: {
       "SavingMap": "マップを保存しています...",
@@ -1770,6 +1826,7 @@ export class TranslationService {
       "DisableRotate": "回転を無効にする",
       'node_type': 'ノードタイプ',
       'intermediate_node': '中間ノード',
+      'select_orientation_type': '方向タイプを選択',
       'waiting_node': '待機ノード',
       'charge_node': '充電ノード',
       'dock_node': 'ドックノード',
@@ -1863,6 +1920,28 @@ export class TranslationService {
        'max_tolerance_at_goal_x_undock': '目標Xでの最大許容誤差（アンドック）:',
        'max_tolerance_at_goal_y_undock': '目標Yでの最大許容誤差（アンドック）:',
        'max_tolerance_at_goal_orientation_undock': '目標方向での最大許容誤差（アンドック）:',
+       'edge_details': 'エッジの詳細',
+       'edge_id': 'エッジ ID',
+       'sequence_id': 'シーケンス ID',
+       'description': '説明',
+       'start_node_id': '開始ノード ID',
+       'end_node_id': '終了ノード ID',
+       'released': '解放済み',
+       'rotation_allowed': '回転許可',
+       'max_speed': '最大速度 (m/s)',
+       'max_height': '最大高さ (m)',
+       'min_height': '最小高さ (m)',
+       'orientation1': '方向 (rad)',
+       'orientation_type': '方向タイプ',
+       'direction': '方向',
+       'max_rotation_speed': '最大回転速度 (rad/s)',
+       'length': '長さ',
+       'delete': '削除',
+       'error_message': 'すべての必須フィールドを入力してください。',
+       'global': 'グローバル',
+       'tangential': '接線方向',
+       'uni_directional': '一方向',
+       'bi_directional': '双方向'
        
     },
     FRE: {
@@ -1880,6 +1959,7 @@ export class TranslationService {
       'waiting_node': 'Nœud d’attente',
       'charge_node': 'Nœud de charge',
       'dock_node': 'Nœud d’amarrage',
+      'select_orientation_type': 'Sélectionnez le type d’orientation',
       "Origin": "Origine",
       'actions': 'Actions',
       "X": "X",
@@ -1989,6 +2069,29 @@ export class TranslationService {
       'max_tolerance_at_goal_x_undock': 'Tolérance maximale à l\'objectif X (Désamarrer) :',
       'max_tolerance_at_goal_y_undock': 'Tolérance maximale à l\'objectif Y (Désamarrer) :',
       'max_tolerance_at_goal_orientation_undock': 'Tolérance maximale à l\'objectif orientation (Désamarrer) :',
+
+    'edge_details': 'Détails du bord',
+    'edge_id': 'ID du bord',
+    'sequence_id': 'ID de séquence',
+    'description': 'Description',
+    'start_node_id': 'ID du nœud de départ',
+    'end_node_id': 'ID du nœud de fin',
+    'released': 'Libéré',
+    'rotation_allowed': 'Rotation autorisée',
+    'max_speed': 'Vitesse max (m/s)',
+    'max_height': 'Hauteur max (m)',
+    'min_height': 'Hauteur min (m)',
+    'orientation1': 'Orientation (rad)',
+    'orientation_type': 'Type d’orientation',
+    'direction': 'Direction',
+    'max_rotation_speed': 'Vitesse de rotation max (rad/s)',
+    'length': 'Longueur',
+    'delete': 'Supprimer',
+    'error_message': 'Tous les champs requis doivent être fournis.',
+    'global': 'Global',
+    'tangential': 'Tangentiel',
+    'uni_directional': 'Uni-directionnel',
+    'bi_directional': 'Bi-directionnel'
     },
     GER: {
       "SavingMap": "Karte wird gespeichert...",
@@ -2010,6 +2113,7 @@ export class TranslationService {
       "X": "X",
       "Y": "Y",
       "Theta": "θ",
+      'select_orientation_type': 'Ausrichtungstyp auswählen',
       "EnterDistance": "Geben Sie die Entfernung zwischen den Punkten ein",
       "DistanceInMeters": "Entfernung in Metern",
       "Enter": "Eingeben",
@@ -2113,6 +2217,29 @@ export class TranslationService {
       'max_tolerance_at_goal_x_undock': 'Maximale Toleranz bei Ziel X (Abdockung):',
       'max_tolerance_at_goal_y_undock': 'Maximale Toleranz bei Ziel Y (Abdockung):',
       'max_tolerance_at_goal_orientation_undock': 'Maximale Toleranz bei Zielorientierung (Abdockung):',
+      'edge_details': 'Kantendetails',
+      'edge_id': 'Kanten-ID',
+      'sequence_id': 'Sequenz-ID',
+      'description': 'Beschreibung',
+      'start_node_id': 'Startknoten-ID',
+      'end_node_id': 'Endknoten-ID',
+      'released': 'Freigegeben',
+      'rotation_allowed': 'Rotation erlaubt',
+      'max_speed': 'Maximale Geschwindigkeit (m/s)',
+      'max_height': 'Maximale Höhe (m)',
+      'min_height': 'Minimale Höhe (m)',
+      'orientation1': 'Ausrichtung (rad)',
+      'orientation_type': 'Ausrichtungstyp',
+      'direction': 'Richtung',
+      'max_rotation_speed': 'Maximale Rotationsgeschwindigkeit (rad/s)',
+      'length': 'Länge',
+      'actions': 'Aktionen',
+      'delete': 'Löschen',
+      'error_message': 'Alle erforderlichen Felder müssen ausgefüllt werden.',
+      'global': 'Global',
+      'tangential': 'Tangential',
+      'uni_directional': 'Unidirektional',
+      'bi_directional': 'Bidirektional'
     }
   };
   private userManagementTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
@@ -2329,44 +2456,50 @@ export class TranslationService {
       'Administrator user roles and permissions within the system.': 'Administratorbenutzerrollen und -berechtigungen im System verwalten.'
   }
   };
-  private currentLanguage: 'ENG' | 'JAP' | 'FRE' | 'GER' = 'ENG';
+  // private currentLanguage: 'ENG' | 'JAP' | 'FRE' | 'GER' = 'ENG';
+  private currentLanguage: BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'> = new BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'>('ENG');
+
+  // Observable for language changes
+  currentLanguage$ = this.currentLanguage.asObservable();
+
   setLanguage(lang: 'ENG' | 'JAP' | 'FRE' | 'GER') {
-    this.currentLanguage = lang;
+    // this.currentLanguage = lang;
+    this.currentLanguage.next(lang);
   }
   getCurrentLang(){
-    return this.currentLanguage;
+    return this.currentLanguage.value;
   }
   getsideNavTranslation(key: string): string {
-    return this.sideNavtranslations[this.currentLanguage][key] || key;
+    return this.sideNavtranslations[this.currentLanguage.value][key] || key;
   }
   getDashboardTranslation(key: string): string {
-    return this.dashboardTranslations[this.currentLanguage][key] || key;
+    return this.dashboardTranslations[this.currentLanguage.value][key] || key;
   }
   getStatisticsTranslation(key: string): string {
-    return this.statisticsTranslations[this.currentLanguage][key] || key;
+    return this.statisticsTranslations[this.currentLanguage.value][key] || key;
   }
   getRobotsTranslation(key: string): string {
-    return this.robotsTranslations[this.currentLanguage][key] || key;
+    return this.robotsTranslations[this.currentLanguage.value][key] || key;
   }
   getTasksTranslation(key: string): string {
-    return this.tasksTranslations[this.currentLanguage][key] || key;
+    return this.tasksTranslations[this.currentLanguage.value][key] || key;
   }
   getErrorTranslation(key: string): string {
-    return this.errorLogsTranslations[this.currentLanguage][key] || key;
+    return this.errorLogsTranslations[this.currentLanguage.value][key] || key;
   }
   getConfigurationTranslation(key: string): string {
-    return this.configurationTranslations[this.currentLanguage][key] || key;
+    return this.configurationTranslations[this.currentLanguage.value][key] || key;
   }
   getUserManagementTranslation(key: string): string {
-    return this.userManagementTranslations[this.currentLanguage][key] || key;
+    return this.userManagementTranslations[this.currentLanguage.value][key] || key;
   }
   getEnvmapTranslation(key: string): string {
-    return this.envMapTranslations[this.currentLanguage][key] || key;
+    return this.envMapTranslations[this.currentLanguage.value][key] || key;
   }
   getLoginTranslation(key: string): string {
-    return this.loginTranslations[this.currentLanguage][key] || key;
+    return this.loginTranslations[this.currentLanguage.value][key] || key;
   }
   getProjectSetupTranslation(key: string): string {
-    return this.projectSetupTranslations[this.currentLanguage][key] || key;
+    return this.projectSetupTranslations[this.currentLanguage.value][key] || key;
   }
 }

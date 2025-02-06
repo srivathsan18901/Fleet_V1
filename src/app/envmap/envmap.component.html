@@ -410,7 +410,7 @@
             <div class="action-buttons">
               <div *ngFor="let action of actions; let i = index" class="action-item">
                 <button class="action-button" (click)="openActionForm(action)" >
-                  {{ getTranslation(action.actionType) }}
+                  {{ getTranslation(getTranslatedActionType(action.actionType)) }}
                 </button>
                 <span class="delete-icon" (click)="deleteActionFromNode(action)">X</span>
               </div>
@@ -494,31 +494,31 @@
           <div *ngIf="selectedAction === 'Move' && isMoveActionFormVisible" class="move-action-form">
             <p>{{getTranslation('move_action_parameters')}}</p>
             <div class="input-groupg">
-              <label>Max Linear Velocity:</label>
+              <label>{{getTranslation('max_linear_velocity')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxLinearVelocity" /><br />
 
-              <label>Max Angular Velocity:</label>
+              <label>{{getTranslation('max_angular_velocity')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxAngularVelocity" /><br />
             </div>
             <div class="input-groupg">
-              <label>Max Tolerance at Goal X:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxToleranceAtGoalX" /><br />
 
-              <label>Max Tolerance at Goal Y:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxToleranceAtGoalY" /><br />
             </div>
             <div class="input-groupg">
-              <label>Max Tolerance at Goal Orientation:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParameters.maxToleranceAtGoalOrientation" /><br />
 
-              <label>End Point Orientation:</label>
+              <label>{{getTranslation('end_point_orientation')}}</label>
               <input type="checkbox" [(ngModel)]="moveParameters.endPointOrientation" style="height: 20px;" /><br />
             </div>
             <div class="input-groupg">
-              <label>Auto Robot Operation Mode:</label>
+              <label>{{getTranslation('auto_robot_operation_mode')}}:</label>
               <select [(ngModel)]="moveParameters.autoRobotMode" style="margin-right: 20.1rem; padding: 6px; border: 1px solid #ccc;">
-                <option value="mode1">Mode 1</option>
-                <option value="mode2">Mode 2</option>
+                <option value="mode1">{{getTranslation('mode1')}}</option>
+                <option value="mode2">{{getTranslation('mode2')}}</option>
               </select><br/>
             </div>
               <button class="actionBTN" (click)="addAction()">{{getTranslation('add')}}</button>
@@ -529,31 +529,31 @@
           <div *ngIf="selectedAction === 'Dock' && isDockActionFormVisible" class="move-action-form">
             <p>{{getTranslation('dock_action_parameters')}}</p>
             <div class="input-groupg">
-              <label>Max Linear Velocity:</label>
+              <label>{{getTranslation('max_linear_velocity')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxLinearVelocity" /><br />
 
-              <label>Max Tolerance at Goal X:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxToleranceAtGoalX" /><br />
             </div>
             <div class="input-groupg">
-              <label>Max Tolerance at Goal Y:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxToleranceAtGoalY" /><br />
 
-              <label>Max Tolerance at Goal Orientation:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.maxToleranceAtGoalOrientation" /><br />
             </div>
             <div class="input-groupg">
-              <label>Goal Offset X:</label>
+              <label>{{getTranslation('goal_offset_x')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.goalOffsetX" /><br />
 
-              <label>Goal Offset Y:</label>
+              <label>{{getTranslation('goal_offset_y')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.goalOffsetY" /><br />
             </div>
             <div class="input-groupg">
-              <label>Goal Offset Orientation:</label>
+              <label>{{getTranslation('goal_offset_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParameters.goalOffsetOrientation" /><br />
 
-              <label>End Point Orientation:</label>
+              <label>{{getTranslation('end_point_orientation')}}</label>
               <input type="checkbox" [(ngModel)]="dockParameters.endPointOrientation" style="height: 20px;" /><br />
             </div>
             <!-- <div class="input-groupg">
@@ -569,7 +569,7 @@
               ></p-dropdown><br />
             </div> -->
             <div class="input-groupg">
-              <label>Docking Type:</label>
+              <label>{{getTranslation('docking_type')}}</label>
               <select [(ngModel)]="dockParameters.dockingType" style="margin-right: 20.2rem; border: 1px solid #ccc;" placeholder="Select Docking Type">
                 <option value="mode1">Mode 1</option>
                 <option value="mode2">Mode 2</option>
@@ -582,28 +582,28 @@
           <div *ngIf="selectedAction === 'Undock' && isUndockActionFormVisible" class="move-action-form">
             <p>{{getTranslation('undock_action_parameters')}}</p>
             <div class="input-groupg">
-              <label>Max Linear Velocity:</label>
+              <label>{{getTranslation('max_linear_velocity')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxLinearVelocity" /><br />
 
-              <label>Max Angular Velocity:</label>
+              <label>{{getTranslation('max_angular_velocity')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxAngularVelocity" /><br />
             </div>
             <div class="input-groupg">
-              <label style="margin-right: .8rem;">Max Tolerance at Goal X:</label>
+              <label style="margin-right: .8rem;">{{getTranslation('max_tolerance_at_goal_x')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxToleranceAtGoalX" /><br />
 
-              <label>Max Tolerance at Goal Y:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxToleranceAtGoalY" /><br />
             </div>
             <div class="input-groupg">
-              <label>Max Tolerance at Goal Orientation:</label>
+              <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.maxToleranceAtGoalOrientation" /><br />
 
-              <label>End Point Orientation:</label>
+              <label>{{getTranslation('end_point_orientation')}}</label>
               <input type="checkbox" [(ngModel)]="undockParameters.endPointOrientation" style="height: 20px;" /><br />
             </div>
             <div class="input-groupg">
-              <label>Undocking Distance:</label>
+              <label>{{getTranslation('end_point_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="undockParameters.undockingDistance" style="margin-right: 20rem;"/><br />
             </div>
               <button class="actionBTN" (click)="addAction()">{{getTranslation('add')}}</button>
@@ -714,12 +714,12 @@
 
 <div *ngIf="showPopup" class="popup-overlay1">
   <div class="popup-content1">
-    <h2>Edge Details</h2>
+    <h2>{{getTranslation("edge_details")}}</h2>
     <div class="flex-items">
       <div class="first">
         <!-- <form (ngSubmit)="submitEdgeDetails()"> -->
         <div class="form-row">
-          <label for="edgeId" style="padding-right: 3rem;">Edge ID:</label>
+          <label for="edgeId" style="padding-right: 3rem;">{{getTranslation("edge_id")}}:</label>
           <input pInputText
             id="edgeId"
             [(ngModel)]="currentEdge.edgeId"
@@ -728,7 +728,7 @@
           />
         </div>
         <div class="form-row">
-          <label for="sequenceId" style="padding-right: .7rem;">Sequence ID:</label>
+          <label for="sequenceId" style="padding-right: .7rem;">{{getTranslation("sequence_id")}}:</label>
           <input pInputText
             id="sequenceId"
             type="number"
@@ -741,7 +741,7 @@
         </div>
 
         <div class="form-row">
-          <label for="edgeDescription" style="padding-right: 1.2rem;">Description:</label>
+          <label for="edgeDescription" style="padding-right: 1.2rem;">{{getTranslation("description")}}:</label>
           <input pInputText
             id="edgeDescription"
             [(ngModel)]="currentEdge.edgeDescription"
@@ -750,7 +750,7 @@
         </div>
 
         <div class="form-row">
-          <label for="startNodeId" style="padding-right: .2rem;">Start Node ID:</label>
+          <label for="startNodeId" style="padding-right: .2rem;">{{getTranslation("start_node_id")}}:</label>
           <input pInputText
             id="startNodeId"
             [(ngModel)]="currentEdge.startNodeId"
@@ -760,7 +760,7 @@
         </div>
 
         <div class="form-row">
-          <label for="released" style="padding-right: 5rem;">Released:</label>
+          <label for="released" style="padding-right: 5rem;">{{getTranslation("released")}}:</label>
           <input
             id="released"
             type="checkbox"
@@ -770,7 +770,7 @@
         </div>
 
         <div class="form-row">
-          <label for="rotationAllowed" style="padding-right: 1.3rem;">Rotation Allowed:</label>
+          <label for="rotationAllowed" style="padding-right: 1.3rem;">{{getTranslation("rotation_allowed")}}:</label>
           <input
             id="rotationAllowed"
             type="checkbox"
@@ -781,7 +781,7 @@
       </div>
       <div class="third">
         <div class="form-row">
-          <label for="endNodeId" style="padding-right: 2.2rem;">End Node ID:</label>
+          <label for="endNodeId" style="padding-right: 2.2rem;">{{getTranslation("end_node_id")}}:</label>
           <input pInputText
             id="endNodeId"
             [(ngModel)]="currentEdge.endNodeId"
@@ -791,7 +791,7 @@
         </div>
 
         <div class="form-row">
-          <label for="maxSpeed">Max Speed (m/s):</label>
+          <label for="maxSpeed">{{getTranslation("max_speed")}}:</label>
           <input pInputText
             id="maxSpeed"
             type="number"
@@ -803,7 +803,7 @@
         </div>
 
         <div class="form-row">
-          <label for="maxHeight" style="padding-right: .8rem;">Max Height (m):</label>
+          <label for="maxHeight" style="padding-right: .8rem;">{{getTranslation("max_height")}}:</label>
           <input pInputText
             id="maxHeight"
             type="number"
@@ -815,7 +815,7 @@
         </div>
 
           <div class="form-row1">
-            <label for="minHeight" style="padding-right: 1.2rem;">Min Height (m):</label>
+            <label for="minHeight" style="padding-right: 1.2rem;">{{getTranslation("min_height")}}:</label>
             <input pInputText
               id="minHeight"
               type="number"
@@ -827,7 +827,7 @@
           </div>
 
           <div class="form-row1">
-            <label for="orientation" style="padding-right: .5rem;">Orientation (rad):</label>
+            <label for="orientation" style="padding-right: .5rem;">{{getTranslation("orientation1")}}:</label>
             <input pInputText
               id="orientation"
               type="number"
@@ -840,32 +840,32 @@
         </div>
         <div class="second">
           <div class="form-row1">
-            <label for="orientationType" style="padding-right: 5rem;">Orientation Type:</label>
+            <label for="orientationType" style="padding-right: 5rem;">{{getTranslation("orientation_type")}}:</label>
             
             <!-- PrimeNG Dropdown -->
             <p-dropdown 
               [options]="orientationTypes" 
               [(ngModel)]="currentEdge.orientationType" 
               name="orientationType" 
-              placeholder="Select Orientation Type">
+              placeholder="{{getTranslation('select_orientation_type')}}">
             </p-dropdown>
           </div>
           
 
           <div class="form-row1">
-            <label for="direction" style="padding-right: 8.5rem;">Direction:</label>
+            <label for="direction" style="padding-right: 8.5rem;">{{getTranslation("direction")}}:</label>
             <select pInputText
               id="direction"
               [(ngModel)]="currentEdge.direction"
               name="direction"
             >
-              <option value="UN_DIRECTIONAL">Uni-directional</option>
-              <option value="BI_DIRECTIONAL">Bi-directional</option>
+              <option value="UN_DIRECTIONAL">{{getTranslation("uni_directional")}}</option>
+              <option value="BI_DIRECTIONAL">{{getTranslation("bi_directional")}}</option>
             </select>
           </div>
 
           <div class="form-row1">
-            <label for="maxRotationSpeed" style="margin-right: 3rem;">Max Rotation (rad/s):</label>
+            <label for="maxRotationSpeed" style="margin-right: 3rem;">{{getTranslation("max_rotation_speed")}}:</label>
             <input pInputText
               id="maxRotationSpeed"
               type="number"
@@ -877,7 +877,7 @@
           </div>
 
           <div class="form-row1">
-            <label for="length" style="padding-right: 9.8rem;">Length:</label>
+            <label for="length" style="padding-right: 9.8rem;">{{getTranslation("length")}}:</label>
             <input pInputText
               id="length"
               type="number"
@@ -890,7 +890,7 @@
           </div>
 
           <div class="form-row1">
-            <label for="action" style="padding-right: 9.5rem;">Actions:</label>
+            <label for="action" style="padding-right: 9.5rem;">{{getTranslation("actions")}}:</label>
             <input pInputText id="action" [(ngModel)]="currentEdge.action" name="action" />
           </div>
 
@@ -898,11 +898,11 @@
       </div>
     <div class="form-buttonss">
       <div *ngIf="showEdgeError" class="error-message">
-        All required fields must be provided.
+        {{getTranslation("error_message")}}
       </div>
-      <button type="button" id="formBTN" (click)="deleteEdge()">Delete</button>
-      <button type="submit" id="formBTN" (click)="updateEdge()">Save</button>
-      <button type="button" id="formBTN" (click)="cancelEdge()">Cancel</button>
+      <button type="button" id="formBTN" (click)="deleteEdge()">{{getTranslation("delete")}}</button>
+      <button type="submit" id="formBTN" (click)="updateEdge()">{{getTranslation("save")}}</button>
+      <button type="button" id="formBTN" (click)="cancelEdge()">{{getTranslation("cancel")}}</button>
     </div>  
   </div>
 </div>
