@@ -933,6 +933,7 @@ export class UserManagementComponent implements OnInit {
 
   userPermissionPopUpClose() {
     this.userPermissionOCstate = !this.userPermissionOCstate;
+    this.fetchUsers();
   }
 
   changeUserPermission(option: number, i: number) {
