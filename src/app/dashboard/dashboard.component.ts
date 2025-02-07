@@ -366,16 +366,16 @@ export class DashboardComponent implements AfterViewInit {
     if(this.isClicked){
       this.messageService.add({
         severity: 'warn',
-        summary: 'Paused',
-        detail: 'Fleet Has been Paused',
+        summary: this.getTranslation("Paused"),
+        detail: this.getTranslation('Fleet Has been Paused'),
         life: 4000,
       });
     }
     if(!this.isClicked){
       this.messageService.add({
         severity: 'success',
-        summary: 'Resumed',
-        detail: 'Fleet Has been Resumed',
+        summary:  this.getTranslation('Resumed'),
+        detail:  this.getTranslation('Fleet Has been Resumed'),
         life: 4000,
       });
     }
@@ -573,8 +573,7 @@ export class DashboardComponent implements AfterViewInit {
         // alert('robo Initialized!');
         this.messageService.add({
           severity: 'info',
-          summary: 'robo Initialized!',
-          detail: 'Robot',
+          summary:  this.getTranslation('Robot Initialized!'),
           life: 4000,
         });
         return;
@@ -595,15 +594,15 @@ export class DashboardComponent implements AfterViewInit {
     if (this.isShowPath) {
       this.messageService.add({
         severity: 'info',
-        summary: 'Robot Path is Visible',
-        detail: 'Path for all robots are now visible',
+        summary:  this.getTranslation('Robot Path is Visible'),
+        detail: this.getTranslation('Path for all robots are now visible'),
         life: 4000,
       });
     } else {
       this.messageService.add({
         severity: 'info',
-        summary: 'Robot Path is disable',
-        detail: 'Path for all robots are not visible',
+        summary: this.getTranslation('Robot Path is disable'),
+        detail: this.getTranslation('Path for all robots are not visible'),
         life: 4000,
       });
     }
@@ -726,8 +725,8 @@ export class DashboardComponent implements AfterViewInit {
     if (this.nodeGraphService.getAssignTask()) {
       this.messageService.add({
         severity: 'info',
-        summary: 'Enabled Task Assigning',
-        detail: 'Task Assigning Option has been Enabled',
+        summary: this.getTranslation('Enabled Task Assigning'),
+        detail: this.getTranslation('Task Assigning Option has been Enabled'),
         life: 2000,
       });
     }
@@ -754,8 +753,8 @@ export class DashboardComponent implements AfterViewInit {
       // this.showModelCanvas use instead..
       this.messageService.add({
         severity: 'info',
-        summary: 'Map options',
-        detail: 'Map options are now visible',
+        summary: this.getTranslation('Map options'),
+        detail: this.getTranslation('Map options are now visible'),
         life: 2000,
       });
     }
@@ -1000,8 +999,8 @@ export class DashboardComponent implements AfterViewInit {
     if (!this.isFleetUp) {
       this.messageService.add({
         severity: 'error',
-        summary: `Fleet not engaged!`,
-        detail: 'Fleet Server has not been engaged!',
+        summary: this.getTranslation(`Fleet not engaged!`),
+        detail: this.getTranslation('Fleet Server has not been engaged!'),
         life: 4000,
       });
       return;
@@ -1009,8 +1008,8 @@ export class DashboardComponent implements AfterViewInit {
     if (!this.taskAction || !this.roboToAssign || !this.sourceLocation) {
       this.messageService.add({
         severity: 'error',
-        summary: `Data not sent`,
-        detail: 'data not sufficient!',
+        summary: this.getTranslation(`Data not sent`),
+        detail: this.getTranslation('data not sufficient!'),
         life: 4000,
       });
       return;
@@ -1433,10 +1432,10 @@ export class DashboardComponent implements AfterViewInit {
     if (data.isRoboEnabled) {
       this.messageService.add({
         severity: 'info',
-        summary: `${
+        summary:`${
           robot.roboName || robot.roboDet.roboName
-        } has been enabled.`,
-        detail: 'Robot has been Enabled',
+        } `,
+        detail: this.getTranslation('Robot has been Enabled'),
         life: 4000,
       });
     } else {
@@ -1444,8 +1443,8 @@ export class DashboardComponent implements AfterViewInit {
         severity: 'error',
         summary: `${
           robot.roboName || robot.roboDet.roboName
-        } has not been enabled.`,
-        detail: 'The robot is not initialized, so it cannot be Enabled',
+        }`,
+        detail: this.getTranslation('The robot is not initialized, so it cannot be Enabled'),
         life: 4000,
       });
     }
@@ -2551,8 +2550,8 @@ export class DashboardComponent implements AfterViewInit {
   async captureCanvas() {
     this.messageService.add({
       severity: 'info',
-      summary: 'Capturing Screen',
-      detail: 'Screen Capturing Turned On ',
+      summary: this.getTranslation('Capturing Screen'),
+      detail: this.getTranslation('Screen Capturing Turned On'),
       life: 4000,
     });
     try {
@@ -2598,8 +2597,8 @@ export class DashboardComponent implements AfterViewInit {
     if (this.showDashboard) {
       this.messageService.add({
         severity: 'info',
-        summary: 'Dashboard',
-        detail: 'Dashboard is visible',
+        summary: this.getTranslation('Dashboard'),
+        detail: this.getTranslation('Dashboard is visible'),
         life: 2000,
       });
     }
@@ -2611,16 +2610,16 @@ export class DashboardComponent implements AfterViewInit {
       this.startRecording();
       this.messageService.add({
         severity: 'info',
-        summary: 'Recording on',
-        detail: 'Screen recording Turned On ',
+        summary: this.getTranslation('Recording on'),
+        detail: this.getTranslation('Screen recording Turned On'),
         life: 4000,
       });
     } else {
       this.stopRecording();
       this.messageService.add({
         severity: 'info',
-        summary: 'Recording off',
-        detail: 'Screen recording Turned Off ',
+        summary: this.getTranslation('Recording off'),
+        detail: this.getTranslation('Screen recording Turned Off'),
         life: 4000,
       });
     }

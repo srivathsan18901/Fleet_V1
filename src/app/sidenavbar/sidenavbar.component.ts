@@ -54,7 +54,7 @@ export class SidenavbarComponent implements OnInit {
   filteredRobotActivities = this.robotActivities;
   filteredNotifications = this.notifications;
   userManagementData: any;
-
+  private langSubscription!: Subscription;
   fleetStatusInterval: ReturnType<typeof setInterval> | null = null;
   notificationInterval: ReturnType<typeof setInterval> | null = null;
   sessionCheck: ReturnType<typeof setInterval> | null = null;
@@ -77,6 +77,11 @@ export class SidenavbarComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      // this.updateHeaderTranslation();
+      this.userrole = this.getTranslation(user.role);
+      this.cdRef.detectChanges();
+    });
     for(let flag of this.flags){
       if(flag.nameTag === this.translationService.getCurrentLang()){
         this.flagSvg = flag.flagComp;
@@ -140,8 +145,10 @@ export class SidenavbarComponent implements OnInit {
     const user = this.authService.getUser();
     if (user) {
       this.username = user.name;
-      this.userrole = user.role;
+      this.userrole = this.getTranslation(user.role);
     }
+    console.log(this.getTranslation(user.role));
+    
     this.cookieValue = JSON.parse(this.cookieService.get('_user'));
     this.selectedMap = this.projectService.getMapData();
 

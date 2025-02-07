@@ -351,8 +351,8 @@ export class ConfigurationComponent implements AfterViewInit {
     ) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Selection Error',
-        detail: 'File type not valid',
+        summary: this.getTranslation('Selection Error'),
+        detail: this.getTranslation('File type not valid'),
         life: 3000, // Duration the toast will be visible
       });
       return;
@@ -378,7 +378,7 @@ export class ConfigurationComponent implements AfterViewInit {
     if (!this.selectedFile) {
       this.messageService.add({
         severity: 'error',
-        summary: 'No file Selected to Import',
+        summary: this.getTranslation('No file Selected to Import'),
         life: 3000, // Duration the toast will be visible
       });
       return;
@@ -436,7 +436,7 @@ export class ConfigurationComponent implements AfterViewInit {
       } else if (data.error) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Try Submitting again',
+          summary: this.getTranslation('Try Submitting again'),
           life: 3000, // Duration the toast will be visible
         });
         return;
@@ -545,7 +545,7 @@ export class ConfigurationComponent implements AfterViewInit {
         
         this.messageService.add({
           severity: 'warn',
-          summary: 'no robos to sim',
+          summary: this.getTranslation('no robos to sim'),
         });
         return;
       }
@@ -627,8 +627,8 @@ export class ConfigurationComponent implements AfterViewInit {
         console.log('Invalid map id, which request to fetch robots');
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Invalid map id, which request to fetch robots',
+          summary: this.getTranslation('Error'),
+          detail: this.getTranslation('Invalid map id'),
           life: 4000,
         });
         return;
@@ -674,7 +674,7 @@ export class ConfigurationComponent implements AfterViewInit {
     if (!this.formData.robotName) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Robot is not selected',
+        summary: this.getTranslation('Robot is not selected'),
         life: 4000,
       });
       return;
@@ -700,8 +700,8 @@ export class ConfigurationComponent implements AfterViewInit {
     if (data.roboExists === true) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Already exists!',
-        detail: 'robo with this name already exists!',
+        summary: this.getTranslation('Already exists!'),
+        detail: this.getTranslation('robo with this name already exists!'),
         life: 4000,
       });
       // return;
@@ -709,8 +709,8 @@ export class ConfigurationComponent implements AfterViewInit {
       // alert('robo updated');
       this.messageService.add({
         severity: 'success',
-        summary: 'Updated',
-        detail: 'Robo Details Udated Successfully',
+        summary: this.getTranslation('Updated'),
+        detail: this.getTranslation('Robo Details Udated Successfully'),
         life: 4000,
       });
       this.fetchRobos();
@@ -864,8 +864,8 @@ export class ConfigurationComponent implements AfterViewInit {
       localStorage.setItem('selectedMapId', this.selectedMap.id); // no need any more ig..
       this.messageService.add({
         severity: 'success',
-        summary: 'Map Selected',
-        detail: `Successfully loaded map: ${map.mapName}`,
+        summary: `${map.mapName}`,
+        detail: this.getTranslation('Map Successfully loaded'),
       });
     } else {
       localStorage.removeItem('selectedMapId');
@@ -987,8 +987,8 @@ export class ConfigurationComponent implements AfterViewInit {
       this.setPaginatedData();
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Enter valid IP',
+        summary: this.getTranslation('Error'),
+        detail: this.getTranslation('Enter valid IP'),
       });
       return;
     }
@@ -998,8 +998,8 @@ export class ConfigurationComponent implements AfterViewInit {
     if (!ipv4Regex.test(this.startIP) || !ipv4Regex.test(this.EndIP)) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Not valid IP. Try again',
+        summary: this.getTranslation('Error'),
+        detail: this.getTranslation('Not valid IP. Try again'),
       });
       return;
     }
@@ -1012,8 +1012,8 @@ export class ConfigurationComponent implements AfterViewInit {
       // alert(`Ip range is too large`);
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warning',
-        detail: 'Ip range is too large',
+        summary: this.getTranslation('Warning'),
+        detail: this.getTranslation('IP range is too large'),
       });
       return;
     }
@@ -1046,8 +1046,8 @@ export class ConfigurationComponent implements AfterViewInit {
         console.error('Error parsing SSE data:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: `Error parsing SSE data ${error}`,
+          summary: this.getTranslation('Error'),
+          detail: `${error}`,
         });
       }
     };
@@ -1057,8 +1057,8 @@ export class ConfigurationComponent implements AfterViewInit {
       this.eventSource.close();
       this.messageService.add({
         severity: 'success',
-        summary: 'Completed',
-        detail: 'Scanning Completed',
+        summary: this.getTranslation('Completed'),
+        detail: this.getTranslation('Scanning Completed'),
       });
       this.isScanning = false;
       this.cdRef.detectChanges();
@@ -1067,8 +1067,8 @@ export class ConfigurationComponent implements AfterViewInit {
     if (this.isScanning)
       this.messageService.add({
         severity: 'info',
-        summary: 'Info',
-        detail: 'Started scanning',
+        summary: this.getTranslation('Info'),
+        detail: this.getTranslation('Started scanning'),
       });
   }
   stopScanning() {
@@ -1076,8 +1076,8 @@ export class ConfigurationComponent implements AfterViewInit {
     this.eventSource.close();
     this.messageService.add({
       severity: 'error',
-      summary: 'Info',
-      detail: 'Scanning Stopped',
+      summary: this.getTranslation('Info'),
+      detail: this.getTranslation('Scanning Stopped'),
     });
     return;
   }
@@ -1358,8 +1358,8 @@ export class ConfigurationComponent implements AfterViewInit {
         if (!data.map) {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Warning',
-            detail: 'Map does not exist.',
+            summary: this.getTranslation('Warning'),
+            detail: this.getTranslation('Map does not exist.'),
           });
           return;
         }
@@ -1367,8 +1367,8 @@ export class ConfigurationComponent implements AfterViewInit {
         if (data.error) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: `Error fetching map: ${data.error}`,
+            summary: this.getTranslation('Error fetching map'),
+            detail: `${data.error}`,
           });
           return;
         }
@@ -1398,17 +1398,17 @@ export class ConfigurationComponent implements AfterViewInit {
 
             this.messageService.add({
               severity: 'success',
-              summary: 'Success',
-              detail: 'Map data loaded successfully.',
+              summary: this.getTranslation('Success'),
+              detail: this.getTranslation('Map data loaded successfully.'),
             });
           })
           .catch(() => {
             // Handle the case where the image fails to load
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
+              summary: this.getTranslation('Error'),
               detail:
-                'Failed to load map image. Please check the image URL or cookies.',
+                this.getTranslation('Failed to load map image. Please check the image URL or cookies.'),
             });
           });
       })
@@ -1416,8 +1416,8 @@ export class ConfigurationComponent implements AfterViewInit {
         console.log(err);
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'An error occurred while fetching map data.',
+          summary: this.getTranslation('Error'),
+          detail: this.getTranslation('An error occurred while fetching map data.'),
         });
       });
   }
@@ -1464,8 +1464,8 @@ export class ConfigurationComponent implements AfterViewInit {
       console.error('Error occurred: ', error);
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'An error occurred while deleting the map.',
+        summary: this.getTranslation('Error'),
+        detail: this.getTranslation('An error occurred while deleting the map.'),
       });
       return false;
     }
@@ -1510,8 +1510,8 @@ export class ConfigurationComponent implements AfterViewInit {
           if (data.isRoboExists) {
             this.messageService.add({
               severity: 'success',
-              summary: 'Success',
-              detail: 'Robot deleted successfully!',
+              summary: this.getTranslation('Success'),
+              detail: this.getTranslation('Robot deleted successfully!'),
               life: 4000,
             });
             this.fetchRobos(); // Refresh the list of robots
@@ -1520,8 +1520,8 @@ export class ConfigurationComponent implements AfterViewInit {
           } else {
             this.messageService.add({
               severity: 'error',
-              summary: 'Error',
-              detail: 'Failed to delete the robot.',
+              summary: this.getTranslation('Error'),
+              detail: this.getTranslation('Failed to delete the robot.'),
               life: 4000,
             });
           }
@@ -1530,8 +1530,8 @@ export class ConfigurationComponent implements AfterViewInit {
           console.error(error);
           this.messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'An error occurred while deleting the robot.',
+            summary: this.getTranslation('Error'),
+            detail: this.getTranslation('An error occurred while deleting the robot.'),
             life: 4000,
           });
         });
@@ -1588,8 +1588,8 @@ export class ConfigurationComponent implements AfterViewInit {
         // console.log(this.paginatedData1,'2page data')
         this.messageService.add({
           severity: 'success',
-          summary: 'Deleted',
-          detail: 'Item successfully deleted!',
+          summary: this.getTranslation('Deleted'),
+          detail: this.getTranslation('Item successfully deleted!'),
         });
       }
     });
@@ -1599,8 +1599,8 @@ export class ConfigurationComponent implements AfterViewInit {
     console.log('Add item:', item);
     this.messageService.add({
       severity: 'info',
-      summary: 'Add Item',
-      detail: 'Item added successfully.',
+      summary: this.getTranslation('Add Item'),
+      detail: this.getTranslation('Item added successfully.'),
     });
   }
 
@@ -1608,8 +1608,8 @@ export class ConfigurationComponent implements AfterViewInit {
     console.log('Block item:', item);
     this.messageService.add({
       severity: 'warn',
-      summary: 'Block Item',
-      detail: 'Item blocked.',
+      summary: this.getTranslation('Block Item'),
+      detail: this.getTranslation('Item blocked.'),
     });
   }
 
@@ -1853,7 +1853,7 @@ export class ConfigurationComponent implements AfterViewInit {
     if (!project || !currMap) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'map not selected',
+        summary: this.getTranslation('Map not selected'),
       });
       return;
     }
@@ -1883,8 +1883,8 @@ export class ConfigurationComponent implements AfterViewInit {
     if (roboDetails.roboName === '' || this.formData.manufacturer === '') {      
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warning',
-        detail: 'Manufacturer or roboname should be Entered',
+        summary: this.getTranslation('Warning'),
+        detail: this.getTranslation('Manufacturer or roboname should be Entered'),
       });
       return;
     }
@@ -1912,16 +1912,16 @@ export class ConfigurationComponent implements AfterViewInit {
        
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
-          detail: 'Ip | Mac seems already exists!',
+          summary: this.getTranslation('Warning'),
+          detail: this.getTranslation('IP | Mac seems already exists!'),
         });
         return;
       } else if (data.exists) {
         // alert('Robo Name already exists');
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
-          detail: 'Robo Name already exists',
+          summary: this.getTranslation('Warning'),
+          detail: this.getTranslation('Robo Name already exists'),
         });
         return;
       }
@@ -1933,8 +1933,8 @@ export class ConfigurationComponent implements AfterViewInit {
         this.cdRef.detectChanges();
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Robo Added to Database Successfully!.',
+          summary: this.getTranslation('Success'),
+          detail: this.getTranslation('Robo Added to Database Successfully!.'),
         });
         return;
       }
@@ -1988,7 +1988,7 @@ export class ConfigurationComponent implements AfterViewInit {
       console.log('Map is not available, showing alert.');
       this.messageService.add({
         severity: 'warn',
-        summary: 'Please create or select a map to simulate the robots.',
+        summary: this.getTranslation('Please create or select a map to simulate the robots.'),
       });
       return;
     }
@@ -2034,8 +2034,8 @@ export class ConfigurationComponent implements AfterViewInit {
     if (this.robotCount + this.totalRobots > 10) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Total robots cannot exceed 10.',
+        summary: this.getTranslation('Error'),
+        detail: this.getTranslation('Total robots cannot exceed 10.'),
         life: 4000,
       });
 
@@ -2066,8 +2066,8 @@ export class ConfigurationComponent implements AfterViewInit {
     if (sims) {
       this.messageService.add({
         severity: 'info',
-        summary: 'Info',
-        detail: 'Robots are added for Simulation',
+        summary: this.getTranslation('Info'),
+        detail: this.getTranslation('Robots are added for Simulation'),
         life: 4000,
       });
     }
@@ -2085,8 +2085,8 @@ export class ConfigurationComponent implements AfterViewInit {
       if (this.totalRobots === 0) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No Robots to Delete',
+          summary: this.getTranslation('Error'),
+          detail: this.getTranslation('No Robots to Delete'),
           life: 4000,
         });
         return;
@@ -2100,8 +2100,8 @@ export class ConfigurationComponent implements AfterViewInit {
       if (result) {
         this.messageService.add({
           severity: 'info',
-          summary: 'Info',
-          detail: 'All robots deleted!',
+          summary: this.getTranslation('Info'),
+          detail: this.getTranslation('All robots deleted!'),
           life: 4000,
         });
 
@@ -2120,8 +2120,8 @@ export class ConfigurationComponent implements AfterViewInit {
       if (this.totalRobots === 0) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'No Robots to Delete',
+          summary: this.getTranslation('Error'),
+          detail: this.getTranslation('No Robots to Delete'),
           life: 4000,
         });
         return;

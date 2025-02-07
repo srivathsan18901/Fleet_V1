@@ -231,8 +231,8 @@ export class UserManagementComponent implements OnInit {
     if (this.user.userRole == 'Administrator') {
       this.messageService.add({
         severity: 'warn',
-        summary: `Project cannot be Assigned`,
-        detail: 'Project cannot be assigned to other administrator',
+        summary: this.getTranslation(`Project cannot be Assigned`),
+        detail: this.getTranslation('Project cannot be assigned to other administrator'),
         life: 4000,
       });
 
@@ -660,7 +660,7 @@ export class UserManagementComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: `${this.userName}`,
-          detail: 'User Created Successfully',
+          detail: this.getTranslation('User Created Successfully'),
           life: 4000,
         });
         console.log('User created successfully:', data);
@@ -697,8 +697,8 @@ export class UserManagementComponent implements OnInit {
       this.deleteUserPopUp();
       this.messageService.add({
         severity: 'error',
-        summary: 'Failed ',
-        detail: 'Should have atleast one admin',
+        summary: this.getTranslation('Failed'),
+        detail: this.getTranslation('Should have atleast one admin'),
         life: 5000,
       });
       return;
@@ -712,8 +712,8 @@ export class UserManagementComponent implements OnInit {
       console.error('User not found for deletion:', username);
       this.messageService.add({
         severity: 'error',
-        summary: 'Failed ',
-        detail: 'Should have atleast one admin',
+        summary: this.getTranslation('Failed'),
+        detail: this.getTranslation('Should have atleast one admin'),
         life: 5000,
       });
       this.setPaginatedData();
@@ -741,8 +741,8 @@ export class UserManagementComponent implements OnInit {
         // Successfully deleted user
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: `User ${username} has been deleted successfully`,
+          summary: this.getTranslation('User Successfully Deleted'),
+          detail: `${username}`,
           life: 5000,
         });
         this.setPaginatedData();
@@ -805,8 +805,8 @@ export class UserManagementComponent implements OnInit {
       // Display a toast indicating that the user creation was canceled
       this.messageService.add({
         severity: 'error',
-        summary: 'User Creation Failed',
-        detail: 'User creation process was canceled.',
+        summary: this.getTranslation('User Creation Failed'),
+        detail: this.getTranslation('User creation process was cancelled.'),
         life: 4000,
       });
     }
@@ -919,8 +919,8 @@ export class UserManagementComponent implements OnInit {
         console.error('Error fetching user permissions:', error);
         this.messageService.add({
           severity: 'error',
-          summary: 'Failed',
-          detail: 'Error fetching user permissions',
+          summary: this.getTranslation('Failed'),
+          detail: this.getTranslation('Error fetching user permissions'),
           life: 5000,
         });
       });
@@ -960,8 +960,8 @@ export class UserManagementComponent implements OnInit {
       console.error('No user selected for updating permissions');
       this.messageService.add({
         severity: 'error',
-        summary: 'Failed',
-        detail: 'No user selected for updating permissions',
+        summary: this.getTranslation('Failed'),
+        detail: this.getTranslation('No user selected for updating permissions'),
         life: 5000,
       });
       return;
@@ -1031,8 +1031,8 @@ export class UserManagementComponent implements OnInit {
         // Success toast
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: `User ${this.user.userName}'s permissions have been updated successfully`,
+          detail: this.getTranslation('User permissions have been updated successfully'),
+          summary: `${this.user.userName}`,
           life: 5000,
         });
         // Optionally refresh the user list or update the local user list
@@ -1043,8 +1043,8 @@ export class UserManagementComponent implements OnInit {
         // Error toast
         this.messageService.add({
           severity: 'error',
-          summary: 'Failed',
-          detail: 'Error updating user permissions',
+          summary: this.getTranslation('Failed'),
+          detail: this.getTranslation('Error updating user permissions'),
           life: 5000,
         });
       });
