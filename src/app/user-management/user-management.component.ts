@@ -76,9 +76,10 @@ export class UserManagementComponent implements OnInit {
     this.paginatorIntl.changes.next();
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
       // this.updateHeaderTranslation();
+      this.pages.nameTag=this.getTranslation(this.pages.nameTag)
       this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
       this.paginatorIntl.changes.next();
-      this.cdRef.detectChanges();
+      // this.cdRef.detectChanges();
     });
     if (!this.selectedProject && !this.selectedProject._id) {
       console.log('no project selected!');
@@ -828,8 +829,14 @@ export class UserManagementComponent implements OnInit {
   userPermissionPopUpOpen(userId: string) {
     this.user = this.userCredentials.find((user) => userId === user.userId);
     if (this.user) {      
-      console.log("open",this.activeTab);
+      console.log("open",this.getTranslation(this.activeTab));
       // Fetch user permissions and update the state
+      this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+        // this.updateHeaderTranslation();
+        
+        this.cdRef.detectChanges();
+      });
+      
       this.fetchUserPermissions(this.user.userId);
       this.setAlteredProjectList();
       this.updateProjectListState(this.user.userRole);
@@ -938,7 +945,7 @@ export class UserManagementComponent implements OnInit {
   }
 
   userPermissionPopUpClose() {
-    this.activeTab = this.pages[0].general;
+    // this.activeTab = this.pages[0].general;
     // console.log("close",this.pages[0].isOpen);
     this.userPermissionOCstate = !this.userPermissionOCstate;
     this.fetchUsers();
