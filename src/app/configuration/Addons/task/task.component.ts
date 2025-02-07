@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { ProjectService } from '../../../services/project.service';
 import { environment } from '../../../../environments/environment.development';
 import { MessageService } from 'primeng/api';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+
 @Component({
   selector: 'app-task',
   templateUrl: './task.component.html',
@@ -18,6 +20,7 @@ export class TaskComponent {
 
   constructor(private projectService: ProjectService,
     private messageService:MessageService,
+    private paginatorIntl: MatPaginatorIntl
   ) {
     
   }
@@ -34,6 +37,7 @@ export class TaskComponent {
     if (!response.ok) {
       console.log('Err with status code of ', response.status);
     }
+    
     let data = await response.json();
     const { Task } = data.project.fleetParams;
     if (!Task) return;

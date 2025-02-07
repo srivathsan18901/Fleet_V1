@@ -27,6 +27,7 @@ import { ProjectService } from '../services/project.service';
 import { UserPermissionService } from '../services/user-permission.service';
 import { TranslationService } from '../services/translation.service';
 import { map,Subscription } from 'rxjs';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 interface Poll {
   ip: string;
@@ -150,7 +151,8 @@ export class ConfigurationComponent implements AfterViewInit {
     private authService: AuthService,
     private cookieService: CookieService,
     private userPermissionService: UserPermissionService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private paginatorIntl: MatPaginatorIntl
   ) {
     this.filteredEnvData = [...this.EnvData];
     // this.filteredRobotData = [...this.robotData];
@@ -161,8 +163,12 @@ export class ConfigurationComponent implements AfterViewInit {
   editButtonText: string = '';
   exportButtonText: string = '';
   async ngOnInit() {
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
+    this.paginatorIntl.changes.next(); // Notify paginator about the change
       this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
         // this.updateHeaderTranslation();
+        this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
+        this.paginatorIntl.changes.next();
         this.activeHeader = this.getTranslation(this.activeButton);
         this.deleteButtonText = this.getTranslation('Delete');
         this.editButtonText = this.getTranslation('edit');

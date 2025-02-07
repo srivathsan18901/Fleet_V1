@@ -15,6 +15,8 @@ import { log } from 'node:console';
 import { stat } from 'node:fs';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { TranslationService } from '../services/translation.service';
+import { map,Subscription } from 'rxjs';
+import { MatPaginatorIntl } from '@angular/material/paginator';
 
 interface projectList {
   id: string;
@@ -35,6 +37,7 @@ export class UserManagementComponent implements OnInit {
     private messageService: MessageService,
     private projectService: ProjectService,
     private translationService: TranslationService,
+    private paginatorIntl: MatPaginatorIntl,
     private cdRef: ChangeDetectorRef
   ) {}
 
@@ -66,9 +69,17 @@ export class UserManagementComponent implements OnInit {
   pageSize: any = 0;
   pageNumber: any = 0;
   activeTab: string = 'General'; // Default tab
-
+  private langSubscription!: Subscription;
   async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
+    this.paginatorIntl.changes.next();
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      // this.updateHeaderTranslation();
+      this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
+      this.paginatorIntl.changes.next();
+      this.cdRef.detectChanges();
+    });
     if (!this.selectedProject && !this.selectedProject._id) {
       console.log('no project selected!');
       return;

@@ -5,6 +5,8 @@ import { ProjectService } from '../services/project.service';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MessageService } from 'primeng/api';
 import { TranslationService } from '../services/translation.service';
+import { MatPaginatorIntl } from '@angular/material/paginator';
+import { map,Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-tasks',
@@ -22,7 +24,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   paginatedData: any[] = [];
   selectedStatus: string = '';
   selectedRobot: string = '';
-
+  private langSubscription!: Subscription;
   onRobotFilter(event: any) {
     this.selectedRobot = event.target.value;
     this.applyFilters();
@@ -138,7 +140,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private exportService: ExportService,
     private projectService: ProjectService,
     private messageService: MessageService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private paginatorIntl: MatPaginatorIntl
+
   ) {}
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
@@ -149,7 +153,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
+    this.paginatorIntl.changes.next();
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
 
+      this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
+      this.paginatorIntl.changes.next();
+    });
     if (!this.mapData) return;
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
