@@ -164,6 +164,29 @@ export class UserManagementComponent implements OnInit {
     },
   ];
 
+  resetSection(){
+    this.pages = [
+      {
+        order: 0,
+        nameTag: this.getTranslation('GENERAL'),
+        isOpen: true,
+        general: 'General',
+      },
+      {
+        order: 1,
+        nameTag: this.getTranslation('CONFIGURATION'),
+        isOpen: false,
+        general: 'Configuration',
+      },
+      {
+        order: 2,
+        nameTag: this.getTranslation('PROJECT'),
+        isOpen: false,
+        general: 'PROJECT',
+      },
+    ];
+  }
+
   changePage(order: any) {
     // alert(order)
     this.pages = this.pages.map((page: any) => {
@@ -229,7 +252,7 @@ export class UserManagementComponent implements OnInit {
 
   // assign for a project
   async toggleAssign(project: projectList) {
-    if (this.user.userName == this.authService.getUser().name) {
+    if (this.user.userName == this.authService.getUser().name && this.user.userRole == this.authService.getUser().role) {
       alert('not allowed to assign yourself!');
       return;
     }
@@ -642,7 +665,13 @@ export class UserManagementComponent implements OnInit {
         username.toLowerCase() === this.userName.toLowerCase() &&
         userRole.toLowerCase() === this.userRole.toLowerCase()
       ) {
-        alert('User with this credential already exists');
+        // alert('User with this credential already exists');
+        this.messageService.add({
+          severity: 'warn',
+          summary: `${this.userName}`,
+          detail: this.getTranslation('User with this credential already exists'),
+          life: 4000,
+        });
         return;
       }
     });
@@ -666,7 +695,13 @@ export class UserManagementComponent implements OnInit {
       })
       .then((data) => {
         if (data.isExist) {
-          alert('Person with this credentials already exist');
+          // alert('Person with this credentials already exist');
+          this.messageService.add({
+            severity: 'warn',
+            summary: `${this.userName}`,
+            detail: this.getTranslation('Person with this credentials already exist'),
+            life: 4000,
+          });
           return;
         }
         this.messageService.add({
@@ -829,14 +864,11 @@ export class UserManagementComponent implements OnInit {
   userPermissionPopUpOpen(userId: string) {
     this.user = this.userCredentials.find((user) => userId === user.userId);
     if (this.user) {      
-      console.log("open",this.getTranslation(this.activeTab));
-      // Fetch user permissions and update the state
+      // console.log("open",this.getTranslation(this.activeTab));
       this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-        // this.updateHeaderTranslation();
-        
         this.cdRef.detectChanges();
       });
-      
+      this.activeTab = this.pages[0].general;
       this.fetchUserPermissions(this.user.userId);
       this.setAlteredProjectList();
       this.updateProjectListState(this.user.userRole);
@@ -848,33 +880,24 @@ export class UserManagementComponent implements OnInit {
 
   updateProjectListState(userRole: string) {
     if (userRole == 'Administrator') {
-      this.projects = this.projects.map((project: projectList) => {
-        project.isDisabled = true;
-        return project;
-      });
+        this.projects = this.projects.map((project: projectList) => {
+          project.isDisabled = true;
+          return project;
+        });
     } else if (userRole == 'User') {
       let hasUnassignedProj = this.projects.some((project) => project.assigned);
       this.projects = this.projects.map((project: projectList) => {
         project.isDisabled = hasUnassignedProj ? !project.assigned : false;
         return project;
       });
-      // let totProjCount = 0;
-      // for (let proj of this.projects) {
-      //   if (!proj.assigned) totProjCount++;
-      // }
-      // if (!totProjCount) {
-      //   this.projects = this.projects.map((project: projectList) => {
-      //     project.isDisabled = false;
-      //     return project;
-      //   });
-      //   return;
-      // }
-      // this.projects = this.projects.map((project: projectList) => {
-      //   project.isDisabled = !project.assigned;
-      //   return project;
-      // });
     }
-    if (this.user.userName == this.authService.getUser().name) {
+    // else if(userRole == 'Maintainer'){
+    //   this.projects = this.projects.map((project: projectList) => {
+    //     project.isDisabled = !project.assigned;
+    //     return project;
+    //   });
+    // }
+    if (this.user.userName == this.authService.getUser().name && this.user.userRole == this.authService.getUser().role) {
       this.projects = this.projects.map((project: projectList) => {
         project.isDisabled = true;
         return project;
@@ -945,10 +968,13 @@ export class UserManagementComponent implements OnInit {
   }
 
   userPermissionPopUpClose() {
-    // this.activeTab = this.pages[0].general;
-    // console.log("close",this.pages[0].isOpen);
     this.userPermissionOCstate = !this.userPermissionOCstate;
-    this.fetchUsers();
+    this.projects = this.projects.map((project: projectList) => {
+      project.isDisabled = false;
+      return project;
+    });
+    this.resetSection();
+    // this.fetchUsers(); // not used anymore..
   }
 
   changeUserPermission(option: number, i: number) {
@@ -1075,3 +1101,19 @@ export class UserManagementComponent implements OnInit {
     this.deleteUserOCstate = !this.deleteUserOCstate;
   }
 }
+
+// let totProjCount = 0;
+// for (let proj of this.projects) {
+//   if (!proj.assigned) totProjCount++;
+// }
+// if (!totProjCount) {
+//   this.projects = this.projects.map((project: projectList) => {
+//     project.isDisabled = false;
+//     return project;
+//   });
+//   return;
+// }
+// this.projects = this.projects.map((project: projectList) => {
+//   project.isDisabled = !project.assigned;
+//   return project;
+// });
