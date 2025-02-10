@@ -1755,7 +1755,8 @@ export class TranslationService {
       "PROJECT_IN_USE": "Project already in use!",
       "PROJECT_OPENED": "Project Opened",
       "PROJECT_OPENED_SUCCESS": "Successfully opened project: {0}.",
-      "FETCH_PROJECT_ERROR_OPEN": "An error occurred while fetching the project."
+      "FETCH_PROJECT_ERROR_OPEN": "An error occurred while fetching the project.",
+      'session_almost_over': 'Heads up! Your session is almost over.', 
     },
     JAP: {
       "LOGIN": "ログイン",
@@ -1798,6 +1799,7 @@ export class TranslationService {
       "PROJECT_IN_USE": "プロジェクトはすでに使用中です！",
       "PROJECT_OPENED": "プロジェクトを開く",
       "PROJECT_OPENED_SUCCESS": "プロジェクト \"{0}\" を正常に開きました。",
+      'session_almost_over': '注意！ セッションがまもなく終了します。', 
       "FETCH_PROJECT_ERROR_OPEN": "プロジェクトの取得中にエラーが発生しました。"
     },
     FRE: {
@@ -1841,6 +1843,7 @@ export class TranslationService {
       "PROJECT_IN_USE": "Projet déjà en cours d'utilisation !",
       "PROJECT_OPENED": "Projet ouvert",
       "PROJECT_OPENED_SUCCESS": "Projet \"{0}\" ouvert avec succès.",
+      'session_almost_over': 'Attention ! Votre session est sur le point de se terminer.',
       "FETCH_PROJECT_ERROR_OPEN": "Une erreur s'est produite lors de la récupération du projet."
     },
     GER: {
@@ -1875,6 +1878,7 @@ export class TranslationService {
       "PROJECT_IN_USE": "Projekt wird bereits verwendet!",
       "PROJECT_OPENED": "Projekt geöffnet",
       "PROJECT_OPENED_SUCCESS": "Projekt \"{0}\" erfolgreich geöffnet.",
+      'session_almost_over': 'Achtung! Ihre Sitzung ist fast vorbei.', 
       "FETCH_PROJECT_ERROR_OPEN": "Ein Fehler ist beim Abrufen des Projekts aufgetreten."
     }
   };

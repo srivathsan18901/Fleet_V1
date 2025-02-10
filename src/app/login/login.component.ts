@@ -107,6 +107,9 @@ export class LoginComponent {
   getTranslation(key: string) {
     return this.translationService.getLoginTranslation(key);
   }
+  getProjectTranslation(key: string) {
+    return this.translationService.getProjectSetupTranslation(key);
+  }
   validateForm() {
     const username = (document.getElementById('username') as HTMLInputElement)
       .value;
@@ -281,7 +284,7 @@ export class LoginComponent {
               Swal.fire({
                 position: 'center',
                 icon: 'warning',
-                html: `<span style="font-size: 20px;">${'Project already in use!'}</span>`,
+                html: `<span style="font-size: 20px;">${this.getProjectTranslation("PROJECT_IN_USE")}</span>`,
                 showConfirmButton: true,
               });
               this.authService.logout(); // yet to look at it..

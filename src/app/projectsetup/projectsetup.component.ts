@@ -252,7 +252,7 @@ export class ProjectsetupComponent {
           Swal.fire({
             position: 'center',
             icon: 'warning',
-            html: `<span style="font-size: 20px;">${'Project already in use!'}</span>`,
+            html: `<span style="font-size: 20px;">${this.getTranslation("PROJECT_IN_USE")}</span>`,
             showConfirmButton: true,
           });
           return;

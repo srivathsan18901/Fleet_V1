@@ -150,7 +150,9 @@ export class TimerComponent {
   }
 
   triggerFiveMinuteAction() {}
-
+  getProjectTranslation(key: string) {
+    return this.translationService.getProjectSetupTranslation(key);
+  }
   logout() {
     if (this.isLogoutTriggered) return;
     clearInterval(this.logoutTimeout);
@@ -160,7 +162,7 @@ export class TimerComponent {
     Swal.fire({
       position: 'center',
       icon: 'warning',
-      html: `<span style="font-size: 20px;">Heads up! Your session is almost over.</span>`,
+      html: `<span style="font-size: 20px;">${this.getProjectTranslation("session_almost_over")}</span>`,
       showConfirmButton: true,
     });
     // clearInterval(this.trackSessionAge);

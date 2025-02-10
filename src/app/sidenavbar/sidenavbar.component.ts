@@ -75,7 +75,9 @@ export class SidenavbarComponent implements OnInit {
     this.userManagementData = this.userPermissionService.getPermissions();
     this.processedErrors = new Set<string>(); // yet to noify later..
   }
-
+  getProjectTranslation(key: string) {
+    return this.translationService.getProjectSetupTranslation(key);
+  }
   async ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
       // this.updateHeaderTranslation();
@@ -89,6 +91,7 @@ export class SidenavbarComponent implements OnInit {
         break;
       }
     }
+    
     this.renderer.listen('document', 'click', (event: Event) => {
       const target = event.target as HTMLElement;
       const notificationElement = this.eRef.nativeElement.querySelector('.notification-popup');
@@ -161,7 +164,7 @@ export class SidenavbarComponent implements OnInit {
         Swal.fire({
           position: 'center',
           icon: 'warning',
-          html: `<span style="font-size: 20px;">Heads up! Your session is almost over.</span>`,
+          html: `<span style="font-size: 20px;">${this.getProjectTranslation("session_almost_over")}</span>`,
           showConfirmButton: true,
         });
         this.logout();
