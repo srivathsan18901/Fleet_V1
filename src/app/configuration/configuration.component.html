@@ -290,20 +290,69 @@
                   "
                   [class.paused]="item.paused"
                 >
-                  <td title="{{ item.mapName }}">
-                    {{
-                      item.mapName.length > 10
-                        ? (item.mapName | slice : 0 : 10) + "..."
-                        : item.mapName
-                    }}
-                  </td>
-                  <td title="{{ item.siteName }}">
-                    {{
-                      item.siteName.length > 10
-                        ? (item.siteName | slice : 0 : 10) + "..."
-                        : item.siteName
-                    }}
-                  </td>
+                <td title="{{ item.mapName }}">
+                  <div *ngIf="editedRowIndex !== i; else editModeMap" class="flex items-center gap-2">
+                    <span>
+                      {{
+                        item.mapName.length > 10
+                          ? (item.mapName | slice : 0 : 10) + "..."
+                          : item.mapName
+                      }}
+                    </span>
+                    <button (click)="startEditingMap(i, item.mapName)" style="border: 0px; background: transparent;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z"/>
+                      </svg>
+                    </button>
+                    
+                  </div>
+              
+                  <ng-template #editModeMap>
+                    <div class="edit-container flex items-center gap-2">
+                      <input
+                        type="text"
+                        [(ngModel)]="editedMapName"
+                        (keydown.enter)="saveMapName(item)"
+                        (keydown.esc)="cancelEditingMap()"
+                        class="border px-2 py-1 rounded"
+                      />
+                      <button (click)="saveMapName(item)">✔</button>
+                      <button (click)="cancelEditingMap()">❌</button>
+                    </div>
+                  </ng-template>
+                </td>
+              
+                <!-- Site Name Column -->
+                <td title="{{ item.siteName }}">
+                  <div *ngIf="editedSiteRowIndex !== i; else editModeSite" class="flex items-center gap-2">
+                    <span>
+                      {{
+                        item.siteName.length > 10
+                          ? (item.siteName | slice : 0 : 10) + "..."
+                          : item.siteName
+                      }}
+                    </span>
+                    <button (click)="startEditingSite(i, item.siteName)" style="border: 0px; background: transparent;">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 17.25V21H6.75L17.81 9.94L14.06 6.19L3 17.25ZM20.71 7.04C21.1 6.65 21.1 6.02 20.71 5.63L18.37 3.29C17.98 2.9 17.35 2.9 16.96 3.29L15.13 5.12L18.88 8.87L20.71 7.04Z"/>
+                      </svg>
+                    </button>
+                  </div>
+              
+                  <ng-template #editModeSite>
+                    <div class="edit-container flex items-center gap-2">
+                      <input
+                        type="text"
+                        [(ngModel)]="editedSiteName"
+                        (keydown.enter)="saveSiteName(item)"
+                        (keydown.esc)="cancelEditingSite()"
+                        class="border px-2 py-1 rounded"
+                      />
+                      <button (click)="saveSiteName(item)">✔</button>
+                      <button (click)="cancelEditingSite()">❌</button>
+                    </div>
+                  </ng-template>
+                </td>
 
                   <td>
                     {{ item.date }}

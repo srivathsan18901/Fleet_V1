@@ -334,7 +334,42 @@ export class ConfigurationComponent implements AfterViewInit {
     return this.translationService.getConfigurationTranslation(key);
     
   }
-
+  editedRowIndex: number | null = null;
+  editedMapName: string = '';
+  
+  editedSiteRowIndex: number | null = null;
+  editedSiteName: string = '';
+  
+  startEditingMap(index: number, mapName: string) {
+    this.editedRowIndex = index;
+    this.editedMapName = mapName;
+  }
+  
+  cancelEditingMap() {
+    this.editedRowIndex = null;
+    this.editedMapName = '';
+  }
+  
+  saveMapName(item: any) {
+    item.mapName = this.editedMapName;
+    this.cancelEditingMap();
+  }
+  
+  startEditingSite(index: number, siteName: string) {
+    this.editedSiteRowIndex = index;
+    this.editedSiteName = siteName;
+  }
+  
+  cancelEditingSite() {
+    this.editedSiteRowIndex = null;
+    this.editedSiteName = '';
+  }
+  
+  saveSiteName(item: any) {
+    item.siteName = this.editedSiteName;
+    this.cancelEditingSite();
+  }
+  
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (
