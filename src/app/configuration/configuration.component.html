@@ -340,7 +340,7 @@
                   </div>
               
                   <ng-template #editModeSite>
-                    <div class="edit-container flex items-center gap-2">
+                    <div class="edit-container flex items-center gap-1">
                       <input
                         type="text"
                         [(ngModel)]="editedSiteName"
@@ -348,8 +348,10 @@
                         (keydown.esc)="cancelEditingSite()"
                         class="border px-2 py-1 rounded"
                       />
+                      <div>
                       <button (click)="saveSiteName(item)">✔</button>
                       <button (click)="cancelEditingSite()">❌</button>
+                      </div>
                     </div>
                   </ng-template>
                 </td>
