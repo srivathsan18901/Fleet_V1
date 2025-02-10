@@ -5,6 +5,8 @@ import {
   Output,
 } from '@angular/core';
 import { environment } from '../../environments/environment.development';
+import { TranslationService } from '../services/translation.service';
+import { MessageService } from 'primeng/api';
 
 interface Poll {
   ip: string;
@@ -21,7 +23,11 @@ interface Poll {
 })
 export class IPScannerComponent {
   @Output() close = new EventEmitter<void>();
-  constructor(private cdr: ChangeDetectorRef) {} // need to rem in later..
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private translationService: TranslationService,
+    private messageService:MessageService,
+  ) {} // need to rem in later..
   eventSource!: EventSource; // non-null assertion operator..
   startIP: string = '0.0.0.0';
   EndIP: string = '0.0.0.0';
@@ -31,6 +37,9 @@ export class IPScannerComponent {
 
   openIPScanner() {
     this.showIPScannerPopup = true;
+  }
+  getTranslation(key: string) {
+    return this.translationService.getConfigurationTranslation(key);
   }
   startScanning() {
     this.ipScanData = [];
@@ -42,12 +51,24 @@ export class IPScannerComponent {
     ).value;
     if (this.startIP === '' || this.EndIP === '') {
       alert('Enter valid Ip');
+      this.messageService.add({
+        severity: 'error',
+        summary: this.getTranslation('enter_valid_ip'),
+        // detail: this.getTranslation('File type not valid'),
+        life: 3000, // Duration the toast will be visible
+      });
       return;
     }
     const ipv4Regex =
       /^(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
     if (!ipv4Regex.test(this.startIP) || !ipv4Regex.test(this.EndIP)) {
-      alert('not valid IP. Try again');
+      // alert('not valid IP. Try again');
+      this.messageService.add({
+        severity: 'error',
+        // summary: this.getTranslation('Selection Error'),
+        detail: this.getTranslation('not_valid_ip'),
+        life: 3000, // Duration the toast will be visible
+      });
       return;
     }
 

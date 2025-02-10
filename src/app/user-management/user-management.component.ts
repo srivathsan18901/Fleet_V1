@@ -253,7 +253,13 @@ export class UserManagementComponent implements OnInit {
   // assign for a project
   async toggleAssign(project: projectList) {
     if (this.user.userName == this.authService.getUser().name && this.user.userRole == this.authService.getUser().role) {
-      alert('not allowed to assign yourself!');
+      // alert('not allowed to assign yourself!');
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.getTranslation(`not_allowed_ownself`),
+        // detail: this.getTranslation('Project cannot be assigned to other administrator'),
+        life: 4000,
+      });
       return;
     }
     let bodyData = {
@@ -669,7 +675,7 @@ export class UserManagementComponent implements OnInit {
         this.messageService.add({
           severity: 'warn',
           summary: `${this.userName}`,
-          detail: this.getTranslation('User with this credential already exists'),
+          detail: this.getTranslation('user_exists'),
           life: 4000,
         });
         return;
@@ -699,7 +705,7 @@ export class UserManagementComponent implements OnInit {
           this.messageService.add({
             severity: 'warn',
             summary: `${this.userName}`,
-            detail: this.getTranslation('Person with this credentials already exist'),
+            detail: this.getTranslation('person_exists'),
             life: 4000,
           });
           return;

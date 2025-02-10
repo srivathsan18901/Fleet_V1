@@ -1131,7 +1131,8 @@ export class TranslationService {
       "*Database Type is required.": "*Database Type is required.",
       "*Database Name is required.": "*Database Name is required.",
       "*Robot Manager Type is required.": "*Robot Manager Type is required.",
-
+      'enter_valid_ip': 'Enter valid IP',  
+      'not_valid_ip': 'Not valid IP. Try again',  
       'Selection Error': 'Selection Error',
       'File type not valid': 'File type not valid',
       'No file Selected to Import': 'No file Selected to Import',
@@ -1292,6 +1293,8 @@ export class TranslationService {
       "Enter IP": "IPを入力",
       "Enter Port": "ポートを入力",
       "Enter DB name": "データベース名を入力",
+      'enter_valid_ip': '有効なIPアドレスを入力してください',  
+      'not_valid_ip': '無効なIPアドレスです。もう一度お試しください',  
       
       // Error Messages
       "*Fleet Server Mode is required": "*フリートサーバーモードが必要です",
@@ -1456,7 +1459,8 @@ export class TranslationService {
       'cancel': 'Annuler',
       'Import Map': 'Importer la carte',
       'Export Map': 'Exporter la carte',
-      
+      'enter_valid_ip': 'Entrez une adresse IP valide',  
+      'not_valid_ip': 'Adresse IP non valide. Réessayez', 
     
       // Placeholders
       "Select Mode": "Sélectionner le mode",
@@ -1628,6 +1632,8 @@ export class TranslationService {
       'cancel': 'Abbrechen',
       'Import Map': 'Karte importieren',
       'Export Map': 'Karte exportieren',
+      'enter_valid_ip': 'Geben Sie eine gültige IP-Adresse ein',  
+      'not_valid_ip': 'Ungültige IP-Adresse. Versuchen Sie es erneut',  
     
       // Placeholders
       "Select Mode": "Modus auswählen",
@@ -2640,7 +2646,10 @@ export class TranslationService {
       'Error fetching user permissions': 'Error fetching user permissions',
       'No user selected for updating permissions': 'No user selected for updating permissions',
       'User permissions have been updated successfully': 'User permissions have been updated successfully',
-      'Error updating user permissions': 'Error updating user permissions'
+      'Error updating user permissions': 'Error updating user permissions',
+      'user_exists': 'User with this credential already exists',  
+      'person_exists': 'Person with these credentials already exists',  
+      'not_allowed_ownself': 'Not allowed to assign Ownself!',  
     },
     JAP: {
       'User Management': 'ユーザー管理',
@@ -2709,7 +2718,10 @@ export class TranslationService {
       'Error fetching user permissions': 'ユーザー権限の取得エラー',
       'No user selected for updating permissions': '権限を更新するユーザーが選択されていません',
       'User permissions have been updated successfully': 'ユーザーの権限が正常に更新されました',
-      'Error updating user permissions': 'ユーザー権限の更新エラー'
+      'Error updating user permissions': 'ユーザー権限の更新エラー',
+      'user_exists': 'この資格情報を持つユーザーは既に存在します',  
+      'person_exists': 'この資格情報を持つ人物は既に存在します',  
+      'not_allowed_ownself': '自分自身を割り当てることは許可されていません！',
 
     },
     FRE: {
@@ -2779,7 +2791,10 @@ export class TranslationService {
       'Error fetching user permissions': 'Erreur lors de la récupération des autorisations utilisateur',
       'No user selected for updating permissions': 'Aucun utilisateur sélectionné pour la mise à jour des autorisations',
       'User permissions have been updated successfully': 'Les autorisations de l’utilisateur ont été mises à jour avec succès',
-      'Error updating user permissions': 'Erreur lors de la mise à jour des autorisations utilisateur'
+      'Error updating user permissions': 'Erreur lors de la mise à jour des autorisations utilisateur',
+      'user_exists': 'Un utilisateur avec ces informations d’identification existe déjà',  
+      'person_exists': 'Une personne avec ces informations d’identification existe déjà',  
+      'not_allowed_ownself': 'Il n’est pas permis de s’assigner soi-même !',  
     },
     GER: {
       'User Management': 'Benutzerverwaltung',
@@ -2848,7 +2863,10 @@ export class TranslationService {
       'Error fetching user permissions': 'Fehler beim Abrufen der Benutzerberechtigungen',
       'No user selected for updating permissions': 'Kein Benutzer zur Aktualisierung der Berechtigungen ausgewählt',
       'User permissions have been updated successfully': 'Benutzerberechtigungen wurden erfolgreich aktualisiert',
-      'Error updating user permissions': 'Fehler beim Aktualisieren der Benutzerberechtigungen'
+      'Error updating user permissions': 'Fehler beim Aktualisieren der Benutzerberechtigungen',
+      'user_exists': 'Ein Benutzer mit diesen Anmeldeinformationen existiert bereits',  
+      'person_exists': 'Eine Person mit diesen Anmeldeinformationen existiert bereits',  
+      'not_allowed_ownself': 'Es ist nicht erlaubt, sich selbst zuzuweisen!',
   }
   };
   // private currentLanguage: 'ENG' | 'JAP' | 'FRE' | 'GER' = 'ENG';
