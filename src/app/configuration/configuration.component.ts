@@ -341,6 +341,9 @@ export class ConfigurationComponent implements AfterViewInit {
   editedSiteName: string = '';
   
   startEditingMap(index: number, mapName: string) {
+    // Close any open site name editor
+    this.cancelEditingSite();
+    
     this.editedRowIndex = index;
     this.editedMapName = mapName;
   }
@@ -356,6 +359,9 @@ export class ConfigurationComponent implements AfterViewInit {
   }
   
   startEditingSite(index: number, siteName: string) {
+    // Close any open map name editor
+    this.cancelEditingMap();
+    
     this.editedSiteRowIndex = index;
     this.editedSiteName = siteName;
   }
@@ -369,6 +375,7 @@ export class ConfigurationComponent implements AfterViewInit {
     item.siteName = this.editedSiteName;
     this.cancelEditingSite();
   }
+  
   
   onFileSelected(event: any) {
     const file = event.target.files[0];
