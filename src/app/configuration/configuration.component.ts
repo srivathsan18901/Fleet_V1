@@ -369,34 +369,51 @@ export class ConfigurationComponent implements AfterViewInit {
   }
 
   async saveMapName(item: any) {
-    item.mapName = this.editedMapName;
-    await this.updateEditMap(item);
+    // item.mapName = this.editedMapName;
+    if (this.editedMapName) await this.updateEditMap(item, true, false);
     this.cancelEditingMap();
   }
 
-  async updateEditMap(map: any) {
-    console.log(map.mapName);
-    return;
+  async updateEditMap(map: any, mapNameEdit: boolean, siteNameEdit: boolean) {
+    if (
+      this.editedMapName.toLocaleLowerCase() ==
+        map.mapName.toLocaleLowerCase() ||
+      this.editedSiteName.toLocaleLowerCase() ==
+        map.siteName.toLocaleLowerCase()
+    )
+      return;
+
+    let bodyData = {
+      newMapName: mapNameEdit ? this.editedMapName : null,
+      newSiteName: siteNameEdit ? this.editedSiteName : null,
+      mapNameWithSite: map.mapName,
+      projectName: this.mapData.projectName,
+    };
+    // console.log(bodyData);
+
     try {
       let response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/update-map/${this.mapData}`,
+        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/edit-MapSite-name/${map.mapName}`,
         {
           method: 'POST',
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({}),
+          body: JSON.stringify(bodyData),
         }
       );
       let data = await response.json();
 
-      const { updatedData } = data;
-
-      // Success Toast
-      this.messageService.add({
-        severity: 'success',
-        summary: 'Success',
-        detail: 'Map updated successfully!',
-      });
+      console.log(data);
+      if (data.nameUpdated) {
+        await this.ngOnInit();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Success',
+          detail: 'Map/Site Name updated successfully!',
+        });
+      }
+      if (data.error)
+        console.log('error while updating map/site name : ', data.error);
     } catch (error) {
       console.error('Error editing map name:', error);
 
@@ -421,8 +438,9 @@ export class ConfigurationComponent implements AfterViewInit {
     this.editedSiteName = '';
   }
 
-  saveSiteName(item: any) {
-    item.siteName = this.editedSiteName;
+  async saveSiteName(item: any) {
+    // item.siteName = this.editedSiteName;
+    if (this.editedSiteName) await this.updateEditMap(item, false, true);
     this.cancelEditingSite();
   }
 
