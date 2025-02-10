@@ -173,6 +173,20 @@ export class ConfigurationComponent implements AfterViewInit {
         this.deleteButtonText = this.getTranslation('Delete');
         this.editButtonText = this.getTranslation('edit');
         this.exportButtonText = this.getTranslation('export');
+        this.items = [
+          {
+              label: this.getTranslation('Create'),
+              icon: 'pi pi-plus',
+              command: () => this.openImageUploadPopup(),
+              tooltipOptions: { tooltipLabel: this.getTranslation('Create'), tooltipPosition: 'top' },
+          },
+          {
+              label: this.getTranslation('Import Map'),
+              icon: 'pi pi-download',
+              command: () => this.openMapImportPopup(),
+              tooltipOptions: { tooltipLabel: this.getTranslation('Import Map'), tooltipPosition: 'top' } 
+          }
+      ];
         this.cdRef.detectChanges();
       });
 
