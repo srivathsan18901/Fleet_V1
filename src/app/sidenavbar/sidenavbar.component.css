@@ -519,6 +519,7 @@
     font-family: "graphik", Arial,  sans-serif;
     transition: opacity 0.3s ease;
     opacity: 0;
+    margin-right: 10px;
   }
 
   .sidebar:hover .icons .label {
