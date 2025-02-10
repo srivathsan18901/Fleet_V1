@@ -26,7 +26,7 @@ import { SessionService } from '../services/session.service';
 import { ProjectService } from '../services/project.service';
 import { UserPermissionService } from '../services/user-permission.service';
 import { TranslationService } from '../services/translation.service';
-import { map,Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 
 interface Poll {
@@ -163,11 +163,14 @@ export class ConfigurationComponent implements AfterViewInit {
   editButtonText: string = '';
   exportButtonText: string = '';
   async ngOnInit() {
-    this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
+    this.paginatorIntl.itemsPerPageLabel =
+      this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next(); // Notify paginator about the change
-      this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
         // this.updateHeaderTranslation();
-        this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
+        this.paginatorIntl.itemsPerPageLabel =
+          this.getTranslation('Items per page');
         this.paginatorIntl.changes.next();
         this.activeHeader = this.getTranslation(this.activeButton);
         this.deleteButtonText = this.getTranslation('Delete');
@@ -175,20 +178,27 @@ export class ConfigurationComponent implements AfterViewInit {
         this.exportButtonText = this.getTranslation('export');
         this.items = [
           {
-              label: this.getTranslation('Create'),
-              icon: 'pi pi-plus',
-              command: () => this.openImageUploadPopup(),
-              tooltipOptions: { tooltipLabel: this.getTranslation('Create'), tooltipPosition: 'top' },
+            label: this.getTranslation('Create'),
+            icon: 'pi pi-plus',
+            command: () => this.openImageUploadPopup(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('Create'),
+              tooltipPosition: 'top',
+            },
           },
           {
-              label: this.getTranslation('Import Map'),
-              icon: 'pi pi-download',
-              command: () => this.openMapImportPopup(),
-              tooltipOptions: { tooltipLabel: this.getTranslation('Import Map'), tooltipPosition: 'top' } 
-          }
-      ];
+            label: this.getTranslation('Import Map'),
+            icon: 'pi pi-download',
+            command: () => this.openMapImportPopup(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('Import Map'),
+              tooltipPosition: 'top',
+            },
+          },
+        ];
         this.cdRef.detectChanges();
-      });
+      }
+    );
 
     // const rawData = this.projectService.userManagementServiceGet();
     this.items = [
@@ -196,15 +206,21 @@ export class ConfigurationComponent implements AfterViewInit {
         label: this.getTranslation('Create'),
         icon: 'pi pi-plus',
         command: () => this.openImageUploadPopup(),
-        tooltipOptions: { tooltipLabel: this.getTranslation('Create'), tooltipPosition: 'top' },
+        tooltipOptions: {
+          tooltipLabel: this.getTranslation('Create'),
+          tooltipPosition: 'top',
+        },
       },
       {
         label: this.getTranslation('Import Map'),
         icon: 'pi pi-download',
         command: () => this.openMapImportPopup(),
-        tooltipOptions: { tooltipLabel: this.getTranslation('Import Map'), tooltipPosition: 'top' } 
-      }
-    ];    
+        tooltipOptions: {
+          tooltipLabel: this.getTranslation('Import Map'),
+          tooltipPosition: 'top',
+        },
+      },
+    ];
     this.deleteButtonText = this.getTranslation('Delete');
     this.editButtonText = this.getTranslation('edit');
     this.exportButtonText = this.getTranslation('export');
@@ -329,47 +345,81 @@ export class ConfigurationComponent implements AfterViewInit {
     this.searchTerm = '';
     this.searchTermChanged();
   }
-  
+
   getTranslation(key: string) {
     return this.translationService.getConfigurationTranslation(key);
-    
   }
   editedRowIndex: number | null = null;
   editedMapName: string = '';
-  
+
   editedSiteRowIndex: number | null = null;
   editedSiteName: string = '';
-  
+
   startEditingMap(index: number, mapName: string) {
     this.editedRowIndex = index;
     this.editedMapName = mapName;
   }
-  
+
   cancelEditingMap() {
     this.editedRowIndex = null;
     this.editedMapName = '';
   }
-  
-  saveMapName(item: any) {
+
+  async saveMapName(item: any) {
     item.mapName = this.editedMapName;
+    await this.updateEditMap(item);
     this.cancelEditingMap();
   }
-  
+
+  async updateEditMap(map: any) {
+    console.log(map.mapName);
+    return;
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/update-map/${this.mapData}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        }
+      );
+      let data = await response.json();
+
+      const { updatedData } = data;
+
+      // Success Toast
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Map updated successfully!',
+      });
+    } catch (error) {
+      console.error('Error editing map name:', error);
+
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to edit the map name. Please try again later.',
+      });
+    }
+  }
+
   startEditingSite(index: number, siteName: string) {
     this.editedSiteRowIndex = index;
     this.editedSiteName = siteName;
   }
-  
+
   cancelEditingSite() {
     this.editedSiteRowIndex = null;
     this.editedSiteName = '';
   }
-  
+
   saveSiteName(item: any) {
     item.siteName = this.editedSiteName;
     this.cancelEditingSite();
   }
-  
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (
@@ -503,7 +553,7 @@ export class ConfigurationComponent implements AfterViewInit {
         // this.filteredEnvData = [...this.EnvData];
         // this.paginatedData = [...this.EnvData];
         // this.cdRef.detectChanges();
-        
+
         this.messageService.add({
           severity: 'warn',
           summary: ` ${data.msg}`,
@@ -569,7 +619,6 @@ export class ConfigurationComponent implements AfterViewInit {
       );
 
       if (!this.selectedRobots.length) {
-        
         this.messageService.add({
           severity: 'warn',
           summary: this.getTranslation('no robos to sim'),
@@ -1434,8 +1483,9 @@ export class ConfigurationComponent implements AfterViewInit {
             this.messageService.add({
               severity: 'error',
               summary: this.getTranslation('Error'),
-              detail:
-                this.getTranslation('Failed to load map image. Please check the image URL or cookies.'),
+              detail: this.getTranslation(
+                'Failed to load map image. Please check the image URL or cookies.'
+              ),
             });
           });
       })
@@ -1444,7 +1494,9 @@ export class ConfigurationComponent implements AfterViewInit {
         this.messageService.add({
           severity: 'error',
           summary: this.getTranslation('Error'),
-          detail: this.getTranslation('An error occurred while fetching map data.'),
+          detail: this.getTranslation(
+            'An error occurred while fetching map data.'
+          ),
         });
       });
   }
@@ -1492,7 +1544,9 @@ export class ConfigurationComponent implements AfterViewInit {
       this.messageService.add({
         severity: 'error',
         summary: this.getTranslation('Error'),
-        detail: this.getTranslation('An error occurred while deleting the map.'),
+        detail: this.getTranslation(
+          'An error occurred while deleting the map.'
+        ),
       });
       return false;
     }
@@ -1558,7 +1612,9 @@ export class ConfigurationComponent implements AfterViewInit {
           this.messageService.add({
             severity: 'error',
             summary: this.getTranslation('Error'),
-            detail: this.getTranslation('An error occurred while deleting the robot.'),
+            detail: this.getTranslation(
+              'An error occurred while deleting the robot.'
+            ),
             life: 4000,
           });
         });
@@ -1876,7 +1932,7 @@ export class ConfigurationComponent implements AfterViewInit {
     // roboName | serial Number, ip add, mac add, grossInfo
     let project = this.projectService.getSelectedProject();
     let currMap = this.projectService.getMapData();
-    
+
     if (!project || !currMap) {
       this.messageService.add({
         severity: 'warn',
@@ -1907,11 +1963,13 @@ export class ConfigurationComponent implements AfterViewInit {
       macAdd: this.currentRoboDet.mac,
       grossInfo: this.formData,
     };
-    if (roboDetails.roboName === '' || this.formData.manufacturer === '') {      
+    if (roboDetails.roboName === '' || this.formData.manufacturer === '') {
       this.messageService.add({
         severity: 'warn',
         summary: this.getTranslation('Warning'),
-        detail: this.getTranslation('Manufacturer or roboname should be Entered'),
+        detail: this.getTranslation(
+          'Manufacturer or roboname should be Entered'
+        ),
       });
       return;
     }
@@ -1936,7 +1994,7 @@ export class ConfigurationComponent implements AfterViewInit {
       if (data.error) return;
       else if (data.isIpMacExists) {
         console.log(data.msg);
-       
+
         this.messageService.add({
           severity: 'warn',
           summary: this.getTranslation('Warning'),
@@ -2015,7 +2073,9 @@ export class ConfigurationComponent implements AfterViewInit {
       console.log('Map is not available, showing alert.');
       this.messageService.add({
         severity: 'warn',
-        summary: this.getTranslation('Please create or select a map to simulate the robots.'),
+        summary: this.getTranslation(
+          'Please create or select a map to simulate the robots.'
+        ),
       });
       return;
     }
