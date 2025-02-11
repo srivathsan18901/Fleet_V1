@@ -389,7 +389,6 @@ export class ConfigurationComponent implements AfterViewInit {
       mapNameWithSite: map.mapName,
       projectName: this.mapData.projectName,
     };
-    // console.log(bodyData);
 
     try {
       let response = await fetch(
