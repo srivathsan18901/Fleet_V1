@@ -70,5 +70,5 @@ jobs:
         sudo docker pull $ECR_IMAGE
         # Run the Docker container
         echo "Running the new container..."
-        sudo docker run -d -p 3000:3000 --name fleet_container $ECR_IMAGE
+        sudo docker run -d -p 80:80--name fleet_container $ECR_IMAGE
         EOF
