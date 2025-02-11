@@ -1,65 +1,74 @@
-name: Deploy Angular App to Docker
+name: Deploy Angular App to Docker via ECR
 
 on:
   push:
     branches:
-      -  Feature # Branch to trigger the workflow
+      - Feature
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-#environment.....
+
     env:
-      AWS_REGION: ap-south-1  # Change to your region
+      AWS_REGION: ap-south-1
+      ECR_REPO_NAME: fleet_automation # Replace with your ECR repository name
 
     steps:
+    # Step 1: Checkout the code
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v1
+    # Step 2: Configure AWS Credentials
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ap-south-1 # Use explicit region here
 
-    - name: Build Docker image
+    # Step 3: Log in to Amazon ECR
+    - name: Log in to Amazon ECR
       run: |
-        docker build -t fleetui:latest .
-
-    - name: List Docker images
-      run: docker images
-
-    - name: Save Docker image as .tar file
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com
+    # Step 4: Build and Tag the Docker Image
+    - name: Build Docker Image
       run: |
-        docker save fleetui:latest -o fleetui.tar
+        docker build -t $ECR_REPO_NAME:latest .
+        docker tag $ECR_REPO_NAME:latest 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest
+    # Step 5: Push the Image to Amazon ECR
+    - name: Push Docker Image to ECR
+      run: docker push 207080927318.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO_NAME:latest
 
-    - name: Deploy to EC2
+    # Step 6: Deploy on EC2
+    - name: Deploy Docker Image on EC2
       env:
         PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
         HOST: ${{ secrets.EC2_HOST }}
         USER: ${{ secrets.EC2_USER }}
+        ECR_IMAGE: 207080927318.dkr.ecr.ap-south-1.amazonaws.com/fleet_automation:latest
       run: |
-        # Save the private key for SSH access to EC2
+        # Save the private key
         echo "$PRIVATE_KEY" > private_key.pem
         chmod 600 private_key.pem
-        
-        # SCP the Docker image file to EC2
-        scp -o StrictHostKeyChecking=no -i private_key.pem fleetui.tar "$USER@$HOST:~/fleetui.tar"
-
-        # SSH into the EC2 instance and deploy the Docker container
+        # SSH into EC2 and deploy the container
         ssh -o StrictHostKeyChecking=no -i private_key.pem "$USER@$HOST" << EOF
-
-         # Check for existing container and remove if it exists
+        # Log in to Amazon ECR from EC2
+        aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 207080927318.dkr.ecr.ap-south-1.amazonaws.com
+        # Stop and remove the existing container
         if [ "\$(sudo docker ps -aq -f name=fleet_container)" ]; then
           echo "Stopping and removing existing container..."
           sudo docker stop fleet_container || true
           sudo docker rm fleet_container || true
         fi
-        if [ "\$(sudo docker images -q fleetui:latest)" ]; then
+        # Remove the old Docker image
+        if [ "\$(sudo docker images -q $ECR_IMAGE)" ]; then
           echo "Removing existing image..."
-          sudo docker rmi fleetui:latest || true
+          sudo docker rmi $ECR_IMAGE || true
         fi
-
-        # Load the Docker image from the tar file
-        sudo docker load -i ~/fleetui.tar
-
+        # Pull the new Docker image from ECR
+        echo "Pulling the new image from ECR..."
+        sudo docker pull $ECR_IMAGE
         # Run the Docker container
-        sudo docker run -d -p 80:80 --name fleet_container fleetui:latest
+        echo "Running the new container..."
+        sudo docker run -d -p 3000:3000 --name fleet_container $ECR_IMAGE
         EOF
