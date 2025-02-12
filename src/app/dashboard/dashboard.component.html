@@ -418,14 +418,14 @@
     <div class="ONBtn2" *ngIf="isImage">
       <button
         class="AT-btn2"
-        [ngClass]="{ 'bg-red-500 text-white': !isClicked, 'bg-green-500 text-black': isClicked }"
+        [ngClass]="{ 'bg-red-500 text-white': !isPause, 'bg-green-500 text-black': isPause }"
         (click)="toggleButton()"
       >
         <img
-          [src]="isClicked ? '../../assets/pause.svg' : '../../assets/resume.svg'"
+          [src]="isPause ? '../../assets/pause.svg' : '../../assets/resume.svg'"
           style="float: left; margin-right: 0.5em"
         />
-        {{ !isClicked ? getTranslation('pauseText') : getTranslation('resumeText') }}
+        {{ !isPause ? getTranslation('pauseText') : getTranslation('resumeText') }}
       </button>
     </div>
     <div class="ONBtn" *ngIf="isImage">

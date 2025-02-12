@@ -359,28 +359,35 @@ export class DashboardComponent implements AfterViewInit {
       this.isInLive = true;
     }
   }
-  isClicked: boolean = false; // Tracks the clicked state of the button
+  isPause: boolean = false; // Tracks the clicked state of the button
 
   toggleButton() {
-    this.isClicked = !this.isClicked; // Toggles the clicked state
-    if(this.isClicked){
+    // console.log(this.isPause);
+    this.isPause = !this.isPause; // Toggles the clicked state
+    if (this.isPause) {
+      this.pauseFleet();
       this.messageService.add({
         severity: 'warn',
-        summary: this.getTranslation("Paused"),
+        summary: this.getTranslation('Paused'),
         detail: this.getTranslation('Fleet Has been Paused'),
         life: 4000,
       });
     }
-    if(!this.isClicked){
+    if (!this.isPause) {
+      this.resumeFleet();
       this.messageService.add({
         severity: 'success',
-        summary:  this.getTranslation('Resumed'),
-        detail:  this.getTranslation('Fleet Has been Resumed'),
+        summary: this.getTranslation('Resumed'),
+        detail: this.getTranslation('Fleet Has been Resumed'),
         life: 4000,
       });
     }
   }
-  
+
+  pauseFleet() {}
+
+  resumeFleet() {}
+
   updateUI() {
     // Example of adding a simple fade-in/out effect to a specific element
     const modeElement = document.querySelector('.mode-indicator');
@@ -573,7 +580,7 @@ export class DashboardComponent implements AfterViewInit {
         // alert('robo Initialized!');
         this.messageService.add({
           severity: 'info',
-          summary:  this.getTranslation('Robot Initialized!'),
+          summary: this.getTranslation('Robot Initialized!'),
           life: 4000,
         });
         return;
@@ -594,7 +601,7 @@ export class DashboardComponent implements AfterViewInit {
     if (this.isShowPath) {
       this.messageService.add({
         severity: 'info',
-        summary:  this.getTranslation('Robot Path is Visible'),
+        summary: this.getTranslation('Robot Path is Visible'),
         detail: this.getTranslation('Path for all robots are now visible'),
         life: 4000,
       });
@@ -1432,19 +1439,17 @@ export class DashboardComponent implements AfterViewInit {
     if (data.isRoboEnabled) {
       this.messageService.add({
         severity: 'info',
-        summary:`${
-          robot.roboName || robot.roboDet.roboName
-        } `,
+        summary: `${robot.roboName || robot.roboDet.roboName} `,
         detail: this.getTranslation('Robot has been Enabled'),
         life: 4000,
       });
     } else {
       this.messageService.add({
         severity: 'error',
-        summary: `${
-          robot.roboName || robot.roboDet.roboName
-        }`,
-        detail: this.getTranslation('The robot is not initialized, so it cannot be Enabled'),
+        summary: `${robot.roboName || robot.roboDet.roboName}`,
+        detail: this.getTranslation(
+          'The robot is not initialized, so it cannot be Enabled'
+        ),
         life: 4000,
       });
     }
