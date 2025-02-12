@@ -455,6 +455,30 @@
 .filter-img{
   margin-right: 10px;
 }
+
+
+.Assibtn-common {
+  display: inline-block;
+  width: 80px;
+  height: 30px;
+  border: 1px solid #3e703d;
+  overflow: hidden;
+  border-radius: 20px;
+  text-align: center;
+  margin-right: 10px;
+  position: relative;
+  cursor: pointer;
+}
+
+.Assibtn-cancel {
+  background-color: #3e703d; /* Red for cancel */
+  color: white;
+  margin-right: 20px;
+}
+.Assibtn-cancel:hover {
+  background-color: #4f874e;
+}
+  
 .filter{
   display: flex;
   position: absolute;

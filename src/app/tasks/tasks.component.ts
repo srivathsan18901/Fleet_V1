@@ -244,6 +244,25 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
 
+
+  robotList: string[] = ['Robot 1', 'Robot 2', 'Robot 3']; // Example robot names
+
+  assignRobot(task: any) {
+    if (task.selectedRobot) {
+      task.roboName = task.selectedRobot; // Assign the robot name
+      task.status = 'ASSIGNED'; // Update status
+    }
+  }
+  toggleDropdown(task: any) {
+    task.showDropdown = true;
+  }
+  reassignRobot(item: any) {
+    item.status = 'NOTASSIGNED';  // Change the status back to 'NOTASSIGNED'
+    item.selectedRobot = '';      // Clear the previously assigned robot
+    console.log(`Re-assigned Task ID: ${item.taskId}`);
+  }
+
+
   shouldShowPaginator(): boolean {
     return this.filteredTaskData.length > 0;
   }

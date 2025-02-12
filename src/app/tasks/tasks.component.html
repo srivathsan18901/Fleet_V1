@@ -110,6 +110,7 @@
                   <th>{{ getTranslation('Robot Name') }}</th>
                   <!-- <th>Source</th> -->
                   <th>{{ getTranslation('Destination') }}</th>
+                  <th>{{ getTranslation('Assign Robot') }}</th>    
                   <th>{{ getTranslation('Actions') }}</th>
                 </tr>
               </thead>
@@ -134,6 +135,43 @@
                   <td>{{ item.status }}</td>
                   <td>{{ item.roboName }}</td>
                   <td>{{ item.sourceLocation }}</td>
+                  <td>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                      <!-- If status is NOTASSIGNED, show dropdown & Assign button -->
+                      <ng-container *ngIf="item.status === 'NOTASSIGNED'; else assigned">
+                        <!-- Initially show only the Assign button -->
+                        <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
+                          Assign
+                        </button>
+                  
+                        <!-- Show dropdown & Assign button when showDropdown is true -->
+                        <ng-container *ngIf="item.showDropdown">
+                          <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
+                            <option value="" disabled selected>Select</option> <!-- Placeholder -->
+                            <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                          </select>
+                          <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                            Confirm
+                          </button>
+                        </ng-container>
+                      </ng-container>
+                  
+                      <!-- If status is ASSIGNED, show Re-assign button -->
+                      <ng-template #assigned>
+                        <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS' ; else inProgress">
+                          <button (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                            Re-assign
+                          </button>
+                        </ng-container>
+                      </ng-template>
+                  
+                      <!-- If status is not NOTASSIGNED or ASSIGNED, show In Progress -->
+                      <ng-template #inProgress>
+                        <span>{{item.status}}</span>
+                      </ng-template>
+                    </div>
+                  </td>
+
                   <!-- <td>{{ item.destinationLocation }}</td> -->
                   <td>
                     <!-- Switch Container -->
