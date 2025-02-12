@@ -26,7 +26,7 @@ import {
   Robot,
   RobotDetailPopupComponent,
 } from '../robot-detail-popup/robot-detail-popup.component';
-
+import { map,Subscription } from 'rxjs';
 interface Robo {
   roboName: string;
   roboId: number;
@@ -60,6 +60,7 @@ export class ChartTimelineComponent implements OnInit {
   selectedMap: any | null = null;
   currentFilter: any | null = null;
   selectedRobo: Robo | null = null;
+  private langSubscription!: Subscription;
   // Updated data sets..
   cpuUtilArr: number[] = [0];
   cpuXaxisSeries: string[] = [];
@@ -203,6 +204,27 @@ export class ChartTimelineComponent implements OnInit {
     return this.translationService.getStatisticsTranslation(key);
   }
   ngOnInit() {
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      this.metrics = {
+        Overall: [
+          { key: 'data1', label: this.getTranslation("cpuUtilization")},
+          { key: 'data2', label: this.getTranslation("robotUtilization") },
+          { key: 'data3', label: this.getTranslation("memory") },
+          { key: 'data4', label: this.getTranslation("network") },
+          { key: 'data5', label: this.getTranslation("idleTime") },
+          { key: 'data6', label: this.getTranslation("error")},
+          { key: 'data7', label: this.getTranslation("battery")},
+        ],
+        robot: [
+          { key: 'data1', label: this.getTranslation("cpuUtilization")},
+          { key: 'data3', label: this.getTranslation("memory") },
+          { key: 'data4', label: this.getTranslation("network") },
+          { key: 'data5', label: this.getTranslation("idleTime") },
+          { key: 'data6', label: this.getTranslation("error")},
+          { key: 'data7', label: this.getTranslation("battery")},
+        ],
+      };
+    });
     this.currentFilter = 'today';
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) {
