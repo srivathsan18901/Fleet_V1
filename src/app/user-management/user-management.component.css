@@ -210,7 +210,7 @@ p {
 }
 .edit-button::before {
   display: none;
-  content: "Edit";
+  content: attr(data-content);
   color: white;
   transition-duration: 0.3s;
   font-size: 2px;
@@ -271,7 +271,7 @@ p {
 }
 .delete-button::before {
   display: none;
-  content: "Delete";
+  content: attr(data-content);
   color: white;
   transition-duration: 0.3s;
   font-size: 2px;

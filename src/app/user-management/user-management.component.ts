@@ -70,12 +70,16 @@ export class UserManagementComponent implements OnInit {
   pageNumber: any = 0;
   activeTab: string = 'General'; // Default tab
   private langSubscription!: Subscription;
+  deleteButtonText: string = '';
+  editButtonText: string = '';
   async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
     this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
     this.paginatorIntl.changes.next();
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
       // this.updateHeaderTranslation();
+      this.deleteButtonText = this.getTranslation('Delete');
+      this.editButtonText = this.getTranslation('edit');
       this.pages.nameTag=this.getTranslation(this.pages.nameTag)
       this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
       this.paginatorIntl.changes.next();
@@ -737,7 +741,6 @@ export class UserManagementComponent implements OnInit {
         }, 5000);
       });
   }
-
   //Deleting the user credentials from the database
   deleteUser(username: any, userRole: any) {
     let findingAdmin = this.userCredentials.filter(
