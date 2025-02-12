@@ -361,11 +361,11 @@ export class DashboardComponent implements AfterViewInit {
   }
   isPause: boolean = false; // Tracks the clicked state of the button
 
-  toggleButton() {
+  async toggleButton() {
     // console.log(this.isPause);
     this.isPause = !this.isPause; // Toggles the clicked state
     if (this.isPause) {
-      this.pauseFleet();
+      // await this.pauseFleet();
       this.messageService.add({
         severity: 'warn',
         summary: this.getTranslation('Paused'),
@@ -374,7 +374,7 @@ export class DashboardComponent implements AfterViewInit {
       });
     }
     if (!this.isPause) {
-      this.resumeFleet();
+      // await this.resumeFleet();
       this.messageService.add({
         severity: 'success',
         summary: this.getTranslation('Resumed'),
@@ -384,9 +384,47 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  pauseFleet() {}
+  async pauseFleet() {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/pause-fleet`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }
+    );
 
-  resumeFleet() {}
+    let data = await response.json();
+
+    // this.messageService.add({
+    //   severity: 'warn',
+    //   summary: this.getTranslation('Paused'),
+    //   detail: this.getTranslation('Fleet Has been Paused'),
+    //   life: 4000,
+    // });
+  }
+
+  async resumeFleet() {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/resume-fleet`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      }
+    );
+
+    let data = await response.json();
+
+    // this.messageService.add({
+    //   severity: 'success',
+    //   summary: this.getTranslation('Resumed'),
+    //   detail: this.getTranslation('Fleet Has been Resumed'),
+    //   life: 4000,
+    // });
+  }
 
   updateUI() {
     // Example of adding a simple fade-in/out effect to a specific element
