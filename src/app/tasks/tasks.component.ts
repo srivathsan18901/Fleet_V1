@@ -258,7 +258,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
   reassignRobot(item: any) {
     item.status = 'NOTASSIGNED';  // Change the status back to 'NOTASSIGNED'
-    item.selectedRobot = '';      // Clear the previously assigned robot
+    item.selectedRobot = '';
+    item.showDropdown = true;      // Clear the previously assigned robot
     console.log(`Re-assigned Task ID: ${item.taskId}`);
   }
 
