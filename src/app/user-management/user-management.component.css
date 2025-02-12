@@ -192,7 +192,9 @@ p {
   fill: white;
 }
 .edit-button:hover {
-  width: 90px;
+  width: auto;
+  padding-left: 5px;
+  padding-right: 5px;
   border-radius: 50px;
   transition-duration: 0.3s;
   background-color: rgb(255, 69, 69);
@@ -253,7 +255,9 @@ p {
   fill: white;
 }
 .delete-button:hover {
-  width: 90px;
+  width: auto;
+  padding-left: 5px;
+  padding-right: 5px;
   border-radius: 50px;
   transition-duration: 0.3s;
   background-color: rgb(255, 69, 69);
