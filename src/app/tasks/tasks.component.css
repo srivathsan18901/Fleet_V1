@@ -459,12 +459,12 @@
   background: #f9f9f9;
   transition: height 0.3s ease-in-out;
 }
+
 .details-container {
   background: transparent;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  padding: 10px;
 }
+
 .arrow-btn {
   background: none;
   border: none;
@@ -475,7 +475,9 @@
 .expanded-row td {
   padding: 10px;
   background-color: #f8f9fa;
+  border-top: 1px solid #ddd;
 }
+
 .Assibtn-common {
   display: inline-block;
   width: 80px;

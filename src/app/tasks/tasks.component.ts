@@ -41,6 +41,15 @@ export class TasksComponent implements OnInit, AfterViewInit {
     });
     this.setPaginatedData(); // Update paginated data based on filtered results
   }
+  expandedRowMap: { [taskId: string]: boolean } = {};
+
+  toggleDetails(item: any) {
+    this.expandedRowMap[item.taskId] = !this.expandedRowMap[item.taskId];
+  }
+
+  trackByTaskId(index: number, item: any) {
+    return item.taskId;
+  }
   clearFilters() {
     this.selectedStatus = '';
     this.selectedRobot = '';
@@ -59,9 +68,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // Reapply filters to display all data
     this.applyFilters();
   }
-  trackByTaskId(index: number, item: any): number {
-    return item.taskId; // or any unique identifier like taskId
-  }
+
   onPause(item: any) {
     // Toggle the paused state of the task
     item.paused = !item.paused;
@@ -335,12 +342,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     this.setPaginatedData(); // Update paginated data after filtering
   }
-  expandedRow: boolean = false;
 
-  toggleDetails() {
-    this.expandedRow = !this.expandedRow;
-  }
-  
   exportData(format: string) {
     const data = this.tasks;
 

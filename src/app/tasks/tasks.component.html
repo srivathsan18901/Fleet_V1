@@ -130,79 +130,79 @@
                 <tr *ngIf="paginatedData.length === 0">
                   <!-- <td colspan="6" class="iconTable">No data found</td> -->
                 </tr>
-                <tr *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
-                  
-                  
-                  <td>{{ i + 1 }}</td>
-                  <td>{{ item.taskId }}</td>
-                  <td>{{ item.taskType }}</td>
-                  <td>{{ item.status }}</td>
-                  <td>{{ item.roboName }}</td>
-                  <td>{{ item.sourceLocation }}</td>
-                  <td>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                      <!-- If status is NOTASSIGNED, show dropdown & Assign button -->
-                      <ng-container *ngIf="item.status === 'NOTASSIGNED'; else assigned">
-                        <!-- Initially show only the Assign button -->
-                        <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
-                          {{ getTranslation('assign') }}
-                        </button>
-                  
-                        <!-- Show dropdown & Assign button when showDropdown is true -->
-                        <ng-container *ngIf="item.showDropdown">
-                          <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
-                            <option value="" disabled selected>{{ getTranslation('select') }}</option> <!-- Placeholder -->
-                            <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
-                          </select>
-                          <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
-                            {{ getTranslation('confirm') }}
-                          </button>
-                          <button *ngIf="item.selectedRobot" (click)="cancelAssign(item)" class="btn-common btn-cancel">
-                            {{ getTranslation('Cancel') }}
-                          </button>
-                        </ng-container>
-                      </ng-container>
-                  
-                      <!-- If status is ASSIGNED, show Re-assign button -->
-                      <ng-template #assigned>
-                        <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS' ; else inProgress">
-                          <button (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
-                            {{ getTranslation('re_assign') }}
-                          </button>
-                        </ng-container>
-                      </ng-template>
-                  
-                      <!-- If status is not NOTASSIGNED or ASSIGNED, show In Progress -->
-                      <ng-template #inProgress>
-                        <span>{{item.status}}</span>
-                      </ng-template>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="switch-container">
 
-                      <button
-                      [ngClass]="{'btn-disabled': isDisabled(item.status), 'btn-cancel': !isDisabled(item.status)}"
-                      [disabled]="isDisabled(item.status)"
-                      class="btn-common"
-                      (click)="!isDisabled(item.status) && onCancel(item)">
-                      {{ getTranslation('Cancel') }}
-                    </button>  
-                    <button class="arrow-btn" (click)="toggleDetails()">
-                      ▼
-                    </button>                 
-                   </div>
-                  </td>        
-                </tr>
-                <tr *ngIf="expandedRow" >
-                  <td colspan="8" class="expanded-row">
-                    <div class="details-container">
-                      <p><strong>Task Details</strong></p>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+    <!-- Display table rows -->
+    <ng-container *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId">
+      <tr [class.paused]="item.paused">
+        <td>{{ i + 1 }}</td>
+        <td>{{ item.taskId }}</td>
+        <td>{{ item.taskType }}</td>
+        <td>{{ item.status }}</td>
+        <td>{{ item.roboName }}</td>
+        <td>{{ item.sourceLocation }}</td>
+        <td>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <ng-container *ngIf="item.status === 'NOTASSIGNED'; else assigned">
+              <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
+                {{ getTranslation('assign') }}
+              </button>
+              <ng-container *ngIf="item.showDropdown">
+                <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
+                  <option value="" disabled selected>{{ getTranslation('select') }}</option>
+                  <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                </select>
+                <div>
+                  <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                    {{ getTranslation('confirm') }}
+                  </button>
+                  <button *ngIf="item.selectedRobot" (click)="cancelAssign(item)" class="btn-common btn-cancel">
+                    {{ getTranslation('Cancel') }}
+                  </button>
+                </div>
+              </ng-container>
+            </ng-container>
+            <ng-template #assigned>
+              <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS' ; else inProgress">
+                <button (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                  {{ getTranslation('re_assign') }}
+                </button>
+              </ng-container>
+            </ng-template>
+            <ng-template #inProgress>
+              <span>{{ item.status }}</span>
+            </ng-template>
+          </div>
+        </td>
+        <td>
+          <div class="switch-container">
+            <button
+              [ngClass]="{'btn-disabled': isDisabled(item.status), 'btn-cancel': !isDisabled(item.status)}"
+              [disabled]="isDisabled(item.status)"
+              class="btn-common"
+              (click)="!isDisabled(item.status) && onCancel(item)">
+              {{ getTranslation('Cancel') }}
+            </button>  
+            <button class="arrow-btn" (click)="toggleDetails(item)">
+              {{ expandedRowMap[item.taskId] ? '▲' : '▼' }}
+            </button>                 
+          </div>
+        </td>        
+      </tr>
+
+      <!-- Expanded Row -->
+      <tr *ngIf="expandedRowMap[item.taskId]">
+        <td colspan="8" class="expanded-row">
+          <div class="details-container">
+            <p><strong>Task Details</strong></p>
+            <p>Task Type: {{ item.taskType }}</p>
+            <p>Status: {{ item.status }}</p>
+            <p>Robot Name: {{ item.roboName }}</p>
+          </div>
+        </td>
+      </tr>
+    </ng-container>
+  </tbody>
+</table>
           </div>
         </div>
       </div>
