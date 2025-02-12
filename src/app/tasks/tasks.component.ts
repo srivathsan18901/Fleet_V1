@@ -253,6 +253,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
       task.status = 'ASSIGNED'; // Update status
     }
   }
+  cancelAssign(item: any){
+    item.showDropdown = false;   
+  }
   toggleDropdown(task: any) {
     task.showDropdown = true;
   }
@@ -260,7 +263,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     item.status = 'NOTASSIGNED';  // Change the status back to 'NOTASSIGNED'
     item.selectedRobot = '';
     item.showDropdown = true;      // Clear the previously assigned robot
-    console.log(`Re-assigned Task ID: ${item.taskId}`);
+    // console.log(`Re-assigned Task ID: ${item.taskId}`);
   }
 
 

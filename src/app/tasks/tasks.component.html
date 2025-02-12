@@ -157,7 +157,7 @@
                           <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
                             {{ getTranslation('confirm') }}
                           </button>
-                          <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="btn-common btn-cancel">
+                          <button *ngIf="item.selectedRobot" (click)="cancelAssign(item)" class="btn-common btn-cancel">
                             {{ getTranslation('Cancel') }}
                           </button>
                         </ng-container>
