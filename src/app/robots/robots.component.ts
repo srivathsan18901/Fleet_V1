@@ -96,7 +96,7 @@ export class RobotsComponent implements OnInit {
     this.mapDetails = this.projectService.getMapData();
     if (!this.mapDetails) return;
     // console.log(this.liveRobos,'====================================')
-    this.updateLiveRoboInfo();
+    // this.updateLiveRoboInfo();
     let grossFactSheet = await this.fetchAllRobos();
     this.robots = grossFactSheet.map((robo) => {
       robo.imageUrl = '../../assets/robots/agv1.png';
