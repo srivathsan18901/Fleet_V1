@@ -331,7 +331,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     this.setPaginatedData(); // Update paginated data after filtering
   }
+  expandedRow: boolean = false;
 
+  toggleDetails() {
+    this.expandedRow = !this.expandedRow;
+  }
+  
   exportData(format: string) {
     const data = this.tasks;
 

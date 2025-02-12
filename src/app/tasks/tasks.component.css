@@ -455,8 +455,27 @@
 .filter-img{
   margin-right: 10px;
 }
+.details-row {
+  background: #f9f9f9;
+  transition: height 0.3s ease-in-out;
+}
+.details-container {
+  background: transparent;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.arrow-btn {
+  background: none;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
 
-
+.expanded-row td {
+  padding: 10px;
+  background-color: #f8f9fa;
+}
 .Assibtn-common {
   display: inline-block;
   width: 80px;

@@ -103,6 +103,7 @@
             <table class="table">
               <thead >
                 <tr>
+                  
                   <th>{{ getTranslation('S.no') }}</th>
                   <th>{{ getTranslation('Task ID') }}</th>
                   <th>{{ getTranslation('Task Type') }}</th>
@@ -112,6 +113,7 @@
                   <th>{{ getTranslation('Destination') }}</th>
                   <th>{{ getTranslation('Assign Robot') }}</th>    
                   <th>{{ getTranslation('Actions') }}</th>
+                
                 </tr>
               </thead>
               <tbody>
@@ -129,6 +131,8 @@
                   <!-- <td colspan="6" class="iconTable">No data found</td> -->
                 </tr>
                 <tr *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
+                  
+                  
                   <td>{{ i + 1 }}</td>
                   <td>{{ item.taskId }}</td>
                   <td>{{ item.taskType }}</td>
@@ -171,34 +175,27 @@
                       </ng-template>
                     </div>
                   </td>
-
-                  <!-- <td>{{ item.destinationLocation }}</td> -->
                   <td>
-                    <!-- Switch Container -->
                     <div class="switch-container">
-                      <!-- Switch -->
-                      <!-- <label class="switch">
-                        <input type="checkbox" class="chbox" [checked]="!item.paused" (click)="onPause(item)">
-                        <span class="slider slider--0" [ngClass]="{ 'slider--0': !item.paused }">
-                          {{ item.paused ? 'Activate' : 'Pause' }}
-                        </span>
-                        <div class="slider slider--1">
-                          <div></div>
-                          <div></div>
-                        </div>
-                        <div class="slider slider--2"></div>
-                        <div class="slider slider--3"> Activate</div>
-                      </label> -->
-                      <!-- Cancel Button -->
+
                       <button
                       [ngClass]="{'btn-disabled': isDisabled(item.status), 'btn-cancel': !isDisabled(item.status)}"
                       [disabled]="isDisabled(item.status)"
                       class="btn-common"
                       (click)="!isDisabled(item.status) && onCancel(item)">
                       {{ getTranslation('Cancel') }}
-                    </button>
-                    
+                    </button>  
+                    <button class="arrow-btn" (click)="toggleDetails()">
+                      ▼
+                    </button>                 
                    </div>
+                  </td>        
+                </tr>
+                <tr *ngIf="expandedRow" >
+                  <td colspan="8" class="expanded-row">
+                    <div class="details-container">
+                      <p><strong>Task Details</strong></p>
+                    </div>
                   </td>
                 </tr>
               </tbody>
