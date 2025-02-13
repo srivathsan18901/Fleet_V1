@@ -14,7 +14,7 @@ jobs:
       ECR_REPO_NAME: fleet_automation # Replace with your ECR repository name
 
     steps:
-    # Step 1: Checkout the code
+    # Step 1: Checkout the code.
     - name: Checkout code
       uses: actions/checkout@v2
 
