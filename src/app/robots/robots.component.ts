@@ -191,7 +191,7 @@ export class RobotsComponent implements OnInit {
           robo.battery = liveRobo.battery.toFixed(2);
           robo.batteryPercentage = liveRobo.battery.toFixed(2);
           robo.currentTask = liveRobo.current_task;
-          robo.status = liveRobo.isConnected ? this.getTranslation("Active") : this.getTranslation("Inactive");
+          robo.status = liveRobo.isConnected ? this.getTranslation('Active') : this.getTranslation("Inactive");
           robo.isConnected = liveRobo.isConnected;
           robo.distance = liveRobo.DISTANCE;
           robo.temperature = liveRobo.robotTemperature;
