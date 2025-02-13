@@ -80,6 +80,7 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { BadgeModule } from "primeng/badge";
 import { SpeedDialModule } from 'primeng/speeddial';
 import { TooltipModule } from 'primeng/tooltip';
+import { StepperModule } from 'primeng/stepper';
 @NgModule({
   declarations: [
     AppComponent,
@@ -141,7 +142,9 @@ import { TooltipModule } from 'primeng/tooltip';
     EnvmapModule,
     MatDialogModule,
     MatPaginatorModule,
+    // StepperAllModule,
     // ConfigurationModule,
+    StepperModule,
     InputTextModule,
     ButtonModule,
     DropdownModule,
@@ -160,7 +163,7 @@ import { TooltipModule } from 'primeng/tooltip';
     BrowserAnimationsModule,
     NgxSpinnerModule,
     BadgeModule,
-    TooltipModule
+    TooltipModule,
     // TableModule
   ],
   providers: [

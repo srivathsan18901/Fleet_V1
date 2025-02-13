@@ -163,9 +163,23 @@
             </ng-container>
             <ng-template #assigned>
               <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS' ; else inProgress">
-                <button (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                <button  *ngIf="!item.showReassDropdown" (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
                   {{ getTranslation('re_assign') }}
                 </button>
+                <ng-container *ngIf="item.showReassDropdown">
+                  <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
+                    <option value="" disabled selected>{{ getTranslation('select') }}</option>
+                    <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                  </select>
+                  <div>
+                    <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                      {{ getTranslation('confirm') }}
+                    </button>
+                    <button *ngIf="item.selectedRobot" (click)="cancelAssign(item)" class="btn-common btn-cancel">
+                      {{ getTranslation('Cancel') }}
+                    </button>
+                  </div>
+                </ng-container>
               </ng-container>
             </ng-template>
             <ng-template #inProgress>
@@ -192,12 +206,26 @@
       <!-- Expanded Row -->
       <tr *ngIf="expandedRowMap[item.taskId]">
         <td colspan="8" class="expanded-row">
-          <div class="details-container">
-            <p><strong>Task Details</strong></p>
-            <p>Task Type: {{ item.taskType }}</p>
-            <p>Status: {{ item.status }}</p>
-            <p>Robot Name: {{ item.roboName }}</p>
-          </div>
+          <div class="card flex justify-center">
+            <p-stepper [value]="1" class="basis-[50rem]">
+                <p-step-list>
+                    <p-step [value]="1">Design</p-step>
+                    <p-step [value]="2">Development</p-step>
+                    <p-step [value]="3">QA</p-step>
+                </p-step-list>
+            </p-stepper>
+        </div>
+          <!-- <div class="iconWithLabel">
+            <ejs-stepper>
+              <e-steps>
+                <e-step label="Cart" iconCss="sf-icon-cart"></e-step>
+                <e-step label="Address" iconCss="sf-icon-user"></e-step>
+                <e-step label="Delivery" iconCss="sf-icon-transport"></e-step>
+                <e-step label="Payment" iconCss="sf-icon-payment"></e-step>
+                <e-step label="Ordered" iconCss="sf-icon-success"></e-step>
+            </e-steps>
+            </ejs-stepper>
+          </div> -->
         </td>
       </tr>
     </ng-container>

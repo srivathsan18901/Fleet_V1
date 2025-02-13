@@ -7,7 +7,6 @@ import { MessageService } from 'primeng/api';
 import { TranslationService } from '../services/translation.service';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { map,Subscription } from 'rxjs';
-
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -261,15 +260,15 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
   cancelAssign(item: any){
-    item.showDropdown = false;   
+    item.showDropdown = false;  
+    item.showReassDropdown = false; 
   }
   toggleDropdown(task: any) {
     task.showDropdown = true;
   }
-  reassignRobot(item: any) {
-    item.status = 'NOTASSIGNED';  // Change the status back to 'NOTASSIGNED'
+  reassignRobot(item: any) { 
     item.selectedRobot = '';
-    item.showDropdown = true;      // Clear the previously assigned robot
+    item.showReassDropdown = true;      // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
   }
 
