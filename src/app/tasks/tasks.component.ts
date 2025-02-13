@@ -291,9 +291,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   assignRobot(task: any) {
     if (task.selectedRobot) {
-      task.roboName = task.selectedRobot; // Assign the robot name
-      task.status = 'ASSIGNED'; // Update status
+      // task.roboName = task.selectedRobot; // Assign the robot name
+      // task.status = 'ASSIGNED'; // Update status
     }
+    this.cancelAssign(task)
   }
   cancelAssign(item: any){
     item.showDropdown = false;  
