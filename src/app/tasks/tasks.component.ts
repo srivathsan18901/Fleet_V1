@@ -6,7 +6,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MessageService } from 'primeng/api';
 import { TranslationService } from '../services/translation.service';
 import { MatPaginatorIntl } from '@angular/material/paginator';
-import { map,Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -19,6 +21,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   searchQuery: string = '';
   isPopupVisible: boolean = false;
   tasks: any[] = [];
+  robotList: number[] = [];
   filteredTaskData: any[] = [];
   paginatedData: any[] = [];
   selectedStatus: string = '';
@@ -147,8 +150,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private projectService: ProjectService,
     private messageService: MessageService,
     private translationService: TranslationService,
-    private paginatorIntl: MatPaginatorIntl
-
+    private paginatorIntl: MatPaginatorIntl,
+    private isFleetService: IsFleetService
   ) {}
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
@@ -159,13 +162,16 @@ export class TasksComponent implements OnInit, AfterViewInit {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
-    this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
+    this.paginatorIntl.itemsPerPageLabel =
+      this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-
-      this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
-      this.paginatorIntl.changes.next();
-    });
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.paginatorIntl.itemsPerPageLabel =
+          this.getTranslation('Items per page');
+        this.paginatorIntl.changes.next();
+      }
+    );
     if (!this.mapData) return;
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
@@ -180,19 +186,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
         }),
       }
     );
-    // if (!response.ok)
-    //   throw new Error(`Error with status code of : ${response.status}`);
     let data = await response.json();
     console.log(data, 'task data');
     if (!data.tasks) return;
     const { tasks } = data.tasks;
-    // if (!('tasks' in data.tasks)) {
-    //   this.messageService.add({
-    //     severity: 'warn',
-    //     summary: 'Warning',
-    //     detail: 'Task lists are empty.',
-    //   });
-    // }
 
     if (tasks)
       this.tasks = tasks.map((task: any) => {
@@ -212,15 +209,57 @@ export class TasksComponent implements OnInit, AfterViewInit {
       });
     this.filteredTaskData = this.tasks;
     // console.log(this.tasks);
-    this.setPaginatedData();
 
-    // Simulate some delay, such as an API call
+    let grossFactSheet = await this.fetchAllRobos();
+    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
+      // this.isFleet = status; // Update the value whenever it changes
+      if (status)
+        this.robotList = grossFactSheet.map((robo) => {
+          return robo.id;
+        });
+      else this.robotList = await this.getSimRobos();
+    });
+
+    this.setPaginatedData();
   }
 
   // Ensure the paginator is initialized before setting paginated data
   ngAfterViewInit() {
     this.setPaginatedData(); // Set initial paginated data after view is initialized
   }
+
+  async getSimRobos(): Promise<number[]> {
+    if (!this.mapData) return [];
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.mapData.mapName}`
+    );
+    if (!response.ok)
+      throw new Error(`Error with status code of ${response.status}`);
+    let data = await response.json();
+    if (!data.map) return [];
+    let map = data.map;
+
+    let simMode = map.simMode.map((robo: any) => {
+      return robo.amrId;
+    });
+    return simMode;
+  }
+
+  async fetchAllRobos(): Promise<any[]> {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-fms-amrs`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mapId: this.mapData.id }),
+      }
+    );
+
+    const data = await response.json();
+    return data.robots || [];
+  }
+
   isDisabled(status: string): boolean {
     return (
       status === 'COMPLETED' || status === 'CANCELLED' || status === 'FAILED'
@@ -250,9 +289,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
 
-
-  robotList: string[] = ['Robot 1', 'Robot 2', 'Robot 3']; // Example robot names
-
   assignRobot(task: any) {
     if (task.selectedRobot) {
       task.roboName = task.selectedRobot; // Assign the robot name
@@ -271,7 +307,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     item.showReassDropdown = true;      // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
   }
-
 
   shouldShowPaginator(): boolean {
     return this.filteredTaskData.length > 0;
