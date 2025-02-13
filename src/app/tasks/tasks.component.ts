@@ -27,6 +27,19 @@ export class TasksComponent implements OnInit, AfterViewInit {
   selectedStatus: string = '';
   selectedRobot: string = '';
   private langSubscription!: Subscription;
+  activeStep: number = 2; // Default active step
+
+  steps = [
+    { label: 'NOTASSIGNED', command: () => this.setStep(0) },
+    { label: 'ASSIGNED', command: () => this.setStep(1) },
+    { label: 'INPROGRESS', command: () => this.setStep(2) },
+    { label: 'COMPLETED', command: () => this.setStep(3) }
+  ];
+  
+  setStep(index: number) {
+    this.activeStep = index;
+  }
+  
   onRobotFilter(event: any) {
     this.selectedRobot = event.target.value;
     this.applyFilters();

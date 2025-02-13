@@ -81,6 +81,7 @@ import { BadgeModule } from "primeng/badge";
 import { SpeedDialModule } from 'primeng/speeddial';
 import { TooltipModule } from 'primeng/tooltip';
 import { StepperModule } from 'primeng/stepper';
+import { StepsModule } from 'primeng/steps';
 @NgModule({
   declarations: [
     AppComponent,
@@ -163,6 +164,7 @@ import { StepperModule } from 'primeng/stepper';
     BrowserAnimationsModule,
     NgxSpinnerModule,
     BadgeModule,
+    StepsModule,
     TooltipModule,
     // TableModule
   ],
