@@ -15,8 +15,9 @@ import { log } from 'node:console';
 import { stat } from 'node:fs';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { TranslationService } from '../services/translation.service';
-import { map,Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import Swal from 'sweetalert2';
 
 interface projectList {
   id: string;
@@ -72,15 +73,19 @@ export class UserManagementComponent implements OnInit {
   private langSubscription!: Subscription;
   async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
-    this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
+    this.paginatorIntl.itemsPerPageLabel =
+      this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-      // this.updateHeaderTranslation();
-      this.pages.nameTag=this.getTranslation(this.pages.nameTag)
-      this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
-      this.paginatorIntl.changes.next();
-      // this.cdRef.detectChanges();
-    });
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        // this.updateHeaderTranslation();
+        this.pages.nameTag = this.getTranslation(this.pages.nameTag);
+        this.paginatorIntl.itemsPerPageLabel =
+          this.getTranslation('Items per page');
+        this.paginatorIntl.changes.next();
+        // this.cdRef.detectChanges();
+      }
+    );
     if (!this.selectedProject && !this.selectedProject._id) {
       console.log('no project selected!');
       return;
@@ -164,7 +169,7 @@ export class UserManagementComponent implements OnInit {
     },
   ];
 
-  resetSection(){
+  resetSection() {
     this.pages = [
       {
         order: 0,
@@ -252,7 +257,10 @@ export class UserManagementComponent implements OnInit {
 
   // assign for a project
   async toggleAssign(project: projectList) {
-    if (this.user.userName == this.authService.getUser().name && this.user.userRole == this.authService.getUser().role) {
+    if (
+      this.user.userName == this.authService.getUser().name &&
+      this.user.userRole == this.authService.getUser().role
+    ) {
       alert('not allowed to assign yourself!');
       return;
     }
@@ -267,7 +275,9 @@ export class UserManagementComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: this.getTranslation(`Project cannot be Assigned`),
-        detail: this.getTranslation('Project cannot be assigned to other administrator'),
+        detail: this.getTranslation(
+          'Project cannot be assigned to other administrator'
+        ),
         life: 4000,
       });
 
@@ -330,6 +340,14 @@ export class UserManagementComponent implements OnInit {
         if (proj.id == bodyData.projectId) proj.assigned = false;
         return proj;
       });
+    } else if (response.status == 403) {
+      Swal.fire({
+        position: 'center',
+        icon: 'info',
+        html: `<span style="font-size: 20px;">${'Project is currently in use, please try again after they log out'}</span>`,
+        showConfirmButton: true,
+      });
+      return;
     }
     const data = await response.json();
     this.fetchUserPermissions(this.user.userId);
@@ -669,7 +687,9 @@ export class UserManagementComponent implements OnInit {
         this.messageService.add({
           severity: 'warn',
           summary: `${this.userName}`,
-          detail: this.getTranslation('User with this credential already exists'),
+          detail: this.getTranslation(
+            'User with this credential already exists'
+          ),
           life: 4000,
         });
         return;
@@ -699,7 +719,9 @@ export class UserManagementComponent implements OnInit {
           this.messageService.add({
             severity: 'warn',
             summary: `${this.userName}`,
-            detail: this.getTranslation('Person with this credentials already exist'),
+            detail: this.getTranslation(
+              'Person with this credentials already exist'
+            ),
             life: 4000,
           });
           return;
@@ -863,11 +885,12 @@ export class UserManagementComponent implements OnInit {
   // fetch user-permissions pop-up..
   userPermissionPopUpOpen(userId: string) {
     this.user = this.userCredentials.find((user) => userId === user.userId);
-    if (this.user) {      
+    if (this.user) {
       // console.log("open",this.getTranslation(this.activeTab));
-      this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-        this.cdRef.detectChanges();
-      });
+      this.langSubscription =
+        this.translationService.currentLanguage$.subscribe((val) => {
+          this.cdRef.detectChanges();
+        });
       this.activeTab = this.pages[0].general;
       this.fetchUserPermissions(this.user.userId);
       this.setAlteredProjectList();
@@ -880,10 +903,10 @@ export class UserManagementComponent implements OnInit {
 
   updateProjectListState(userRole: string) {
     if (userRole == 'Administrator') {
-        this.projects = this.projects.map((project: projectList) => {
-          project.isDisabled = true;
-          return project;
-        });
+      this.projects = this.projects.map((project: projectList) => {
+        project.isDisabled = true;
+        return project;
+      });
     } else if (userRole == 'User') {
       let hasUnassignedProj = this.projects.some((project) => project.assigned);
       this.projects = this.projects.map((project: projectList) => {
@@ -897,7 +920,10 @@ export class UserManagementComponent implements OnInit {
     //     return project;
     //   });
     // }
-    if (this.user.userName == this.authService.getUser().name && this.user.userRole == this.authService.getUser().role) {
+    if (
+      this.user.userName == this.authService.getUser().name &&
+      this.user.userRole == this.authService.getUser().role
+    ) {
       this.projects = this.projects.map((project: projectList) => {
         project.isDisabled = true;
         return project;
@@ -1005,7 +1031,9 @@ export class UserManagementComponent implements OnInit {
       this.messageService.add({
         severity: 'error',
         summary: this.getTranslation('Failed'),
-        detail: this.getTranslation('No user selected for updating permissions'),
+        detail: this.getTranslation(
+          'No user selected for updating permissions'
+        ),
         life: 5000,
       });
       return;
@@ -1075,7 +1103,9 @@ export class UserManagementComponent implements OnInit {
         // Success toast
         this.messageService.add({
           severity: 'success',
-          detail: this.getTranslation('User permissions have been updated successfully'),
+          detail: this.getTranslation(
+            'User permissions have been updated successfully'
+          ),
           summary: `${this.user.userName}`,
           life: 5000,
         });
