@@ -384,7 +384,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   onStatusFilter(event: Event): void {
     const selectedValue = (event.target as HTMLSelectElement).value;
-
     this.selectedStatus = selectedValue; // Store selected status
     this.filterTasks(); // Filter tasks based on selected status
   }
