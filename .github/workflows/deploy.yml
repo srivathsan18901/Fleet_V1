@@ -18,7 +18,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    # Step 2: Configure AWS Credentials.
+    # Step 2: Configure AWS Credentials..
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v3
       with:
