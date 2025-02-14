@@ -42,9 +42,9 @@ jobs:
     # Step 6: Deploy on EC2
     - name: Deploy Docker Image on EC2
       env:
-        PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
-        HOST: ${{ secrets.EC2_HOST }}
-        USER: ${{ secrets.EC2_USER }}
+        PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY_TESTING }}
+        HOST: ${{ secrets.EC2_HOST_TESTING }}
+        USER: ${{ secrets.EC2_USER_TESTING }}
         ECR_IMAGE: 207080927318.dkr.ecr.ap-south-1.amazonaws.com/fleet_automation:latest
       run: |
         # Save the private key
