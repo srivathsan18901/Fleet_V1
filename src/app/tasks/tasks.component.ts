@@ -8,7 +8,8 @@ import { TranslationService } from '../services/translation.service';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { map, Subscription } from 'rxjs';
 import { IsFleetService } from '../services/shared/is-fleet.service';
-
+import { NodeGraphService } from '../services/nodegraph.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -56,10 +57,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
   
   // Default steps
   defaultSteps = [
-    { label: 'Not Assigned', icon: '../../assets/Iconsfortask/NA.svg' },
-    { label: 'Assigned', icon: '../../assets/Iconsfortask/Ass.svg' },
-    { label: 'In-Progress', icon: '../../assets/Iconsfortask/IP.svg' },
-    { label: 'Completed', icon: '../../assets/Iconsfortask/Comp.svg' }
+    { label: this.getTranslation('Not Assigned'), icon: '../../assets/Iconsfortask/NA.svg' },
+    { label: this.getTranslation('assigned'), icon: '../../assets/Iconsfortask/Ass.svg' },
+    { label: this.getTranslation('In Progress'), icon: '../../assets/Iconsfortask/IP.svg' },
+    { label: this.getTranslation('Completed'), icon: '../../assets/Iconsfortask/Comp.svg' }
   ];
   
   // Function to get steps with cancellation tracking
@@ -68,7 +69,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   
     if (item.status === 'CANCELLED') {
       const prevStep = this.getPreviousStep(item); // Get previous step index
-      steps[prevStep] = { label: 'Cancelled', icon: '../../assets/Iconsfortask/Canc.svg' }; // Replace previous step with "Cancelled"
+      steps[prevStep] = { label: this.getTranslation('Cancelled'), icon: '../../assets/Iconsfortask/Canc.svg' }; // Replace previous step with "Cancelled"
     }
   
     return steps;
@@ -208,11 +209,14 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private messageService: MessageService,
     private translationService: TranslationService,
     private paginatorIntl: MatPaginatorIntl,
-    private isFleetService: IsFleetService
+    private isFleetService: IsFleetService,
+    private router: Router,
+    private nodeGraphService: NodeGraphService,
   ) {}
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
   }
+
   async ngOnInit() {
     this.mapData = this.projectService.getMapData();
     let establishedTime = new Date(this.mapData.createdAt); // created time of map..
@@ -224,8 +228,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.paginatorIntl.changes.next();
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
-        this.paginatorIntl.itemsPerPageLabel =
-          this.getTranslation('Items per page');
+        this.defaultSteps = [
+          { label: this.getTranslation('Not Assigned'), icon: '../../assets/Iconsfortask/NA.svg' },
+          { label: this.getTranslation('assigned'), icon: '../../assets/Iconsfortask/Ass.svg' },
+          { label: this.getTranslation('In Progress'), icon: '../../assets/Iconsfortask/IP.svg' },
+          { label: this.getTranslation('Completed'), icon: '../../assets/Iconsfortask/Comp.svg' }
+        ];
+        this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page');
         this.paginatorIntl.changes.next();
       }
     );
@@ -278,6 +287,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
     });
 
     this.setPaginatedData();
+  }
+  async toggleAssignTask() {
+    this.router.navigate(['/dashboard']);
+    if (this.nodeGraphService.getAssignTask()) {
+      this.messageService.add({
+        severity: 'info',
+        summary: this.getTranslation('Enabled Task Assigning'),
+        detail: this.getTranslation('Task Assigning Option has been Enabled'),
+        life: 2000,
+      });
+    }
   }
 
   // Ensure the paginator is initialized before setting paginated data

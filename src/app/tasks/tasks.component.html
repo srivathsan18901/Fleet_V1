@@ -69,6 +69,10 @@
           </div>
         </div> -->
       </div>
+      <div>
+      <div>
+        <button class="AT-btn" (click)="toggleAssignTask()" ><img src="../../assets/Task.svg" style="float:left;margin-right:0.5em">{{ getTranslation('assign_task') }}</button>
+      </div>
       <div class="filter">
         <img src="../../assets/filter.svg" class="filter-img">
       <div class="status-filter">
@@ -82,19 +86,9 @@
           <option value="NOTASSIGNED">{{ getTranslation('Not Assigned') }}</option>
         </select>
       </div>
-      
-      <!-- <div class="robot-filter">
-        <label for="robot-filter">Robot:</label>
-        <select id="robot-filter" (change)="onRobotFilter($event)">
-          <option value="">All</option>
-          <option *ngFor="let robot of uniqueRobotNames" [value]="robot">{{ robot }}</option>
-        </select>
-      </div> -->
-      
-      <!-- Clear Filters Button -->
       <button (click)="clearFilters()" class="clr-btn">{{ getTranslation('Clear') }}</button>
       </div>
-
+    </div>
       <!-- Table -->
       <div class="table-container">
         <div class="table-wrapper">
