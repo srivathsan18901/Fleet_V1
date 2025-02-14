@@ -202,10 +202,21 @@
           </div>
         </td>        
       </tr>
-
+      
       <tr *ngIf="expandedRowMap[item.taskId]">
         <td colspan="8" class="expanded-row">
-          <p-steps [model]="steps" [(activeIndex)]="activeStep" styleClass="custom-steps"></p-steps>
+          <div class="card bg-white justify-content-center ">
+            <p-stepper>
+                <p-stepperPanel header="Not Assigned">                    
+                </p-stepperPanel>
+                <p-stepperPanel header="Assigned">
+                </p-stepperPanel>
+                <p-stepperPanel header="Inprogress">
+                </p-stepperPanel>
+                <p-stepperPanel header="Completed">
+              </p-stepperPanel>
+            </p-stepper>
+          </div>
         </td>
       </tr>
       

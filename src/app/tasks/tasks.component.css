@@ -60,6 +60,23 @@
     max-height: 29rem;
     overflow-y: auto;
   }
+:host ::ng-deep .custom-stepper .p-stepper-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+:host ::ng-deep .custom-stepper .p-stepper-header i {
+  font-size: 24px; /* Adjust icon size */
+  margin-bottom: 5px; /* Space between icon and text */
+}
+
+:host ::ng-deep .step-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
 
   /* Table Styling */
   table {
@@ -74,7 +91,7 @@
     position: sticky;
     top: 0;
     background-color: #FFCDCD; /* Ensure the header has a background color */
-
+    z-index: 1000;
   }
   tbody {
     border-radius: 0 0 10px 10px; /* Bottom corners rounded */
@@ -435,6 +452,9 @@
 .iconWithLabel {
   margin-top: 30px;
   padding: 30px;
+}
+:host ::ng-deep .p-stepper-panels {
+  display: none !important;
 }
 
 .iconWithLabel [class^="sf-icon-"], .iconWithLabel [class*=" sf-icon-"] {

@@ -27,19 +27,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
   selectedStatus: string = '';
   selectedRobot: string = '';
   private langSubscription!: Subscription;
-  activeStep: number = 2; // Default active step
-
-  steps = [
-    { label: 'NOTASSIGNED', command: () => this.setStep(0) },
-    { label: 'ASSIGNED', command: () => this.setStep(1) },
-    { label: 'INPROGRESS', command: () => this.setStep(2) },
-    { label: 'COMPLETED', command: () => this.setStep(3) }
-  ];
-  
-  setStep(index: number) {
-    this.activeStep = index;
-  }
-  
   onRobotFilter(event: any) {
     this.selectedRobot = event.target.value;
     this.applyFilters();
@@ -56,11 +43,26 @@ export class TasksComponent implements OnInit, AfterViewInit {
     });
     this.setPaginatedData(); // Update paginated data based on filtered results
   }
-  expandedRowMap: { [taskId: string]: boolean } = {};
-
+  expandedRowMap: { [key: string]: boolean } = {}; // Track expanded rows
+  expandedRowId: string | null = null; // Track the currently open row
+  
   toggleDetails(item: any) {
-    this.expandedRowMap[item.taskId] = !this.expandedRowMap[item.taskId];
+    // If clicking the already open row, close it
+    if (this.expandedRowId === item.taskId) {
+      this.expandedRowMap[item.taskId] = false;
+      this.expandedRowId = null;
+    } else {
+      // Close the previously open row
+      if (this.expandedRowId) {
+        this.expandedRowMap[this.expandedRowId] = false;
+      }
+  
+      // Open the new row
+      this.expandedRowMap[item.taskId] = true;
+      this.expandedRowId = item.taskId;
+    }
   }
+  
 
   trackByTaskId(index: number, item: any) {
     return item.taskId;
