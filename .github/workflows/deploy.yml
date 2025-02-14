@@ -3,7 +3,7 @@ name: Deploy Angular App to Docker via ECR
 on:
   push:
     branches:
-      - Feature
+      - Testing
 
 jobs:
   build-and-deploy:
