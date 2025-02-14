@@ -197,33 +197,48 @@
               {{ getTranslation('Cancel') }}
             </button>  
             <button class="arrow-btn" (click)="toggleDetails(item)">
-              {{ expandedRowMap[item.taskId] ? '▲' : '▼' }}
-            </button>                 
+              <svg *ngIf="expandedRowMap[item.taskId]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="18 15 12 9 6 15"></polyline> <!-- Up Arrow -->
+              </svg>
+              <svg *ngIf="!expandedRowMap[item.taskId]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline> <!-- Down Arrow -->
+              </svg>
+            </button>
+                         
           </div>
         </td>        
       </tr>
-      
       <tr *ngIf="expandedRowMap[item.taskId]">
         <td colspan="8" class="expanded-row">
-          <div class="card bg-white justify-content-center ">
-            <p-stepper>
-                <p-stepperPanel header="Not Assigned">                    
-                </p-stepperPanel>
-                <p-stepperPanel header="Assigned">
-                </p-stepperPanel>
-                <p-stepperPanel header="Inprogress">
-                </p-stepperPanel>
-                <p-stepperPanel header="Completed">
-              </p-stepperPanel>
-            </p-stepper>
+          <div class="card bg-white justify-content-center p-3">
+            <div class="progress-container">
+              <div *ngFor="let step of getSteps(item); let i = index" class="step">
+                
+                <div class="circle-container">
+                  <div
+                    class="circle"
+                    [ngClass]="{
+                      'completed': i < getCurrentStep(item),
+                      'in-progress': i === getCurrentStep(item),
+                      'pending': i > getCurrentStep(item)
+                    }"
+                  >
+                    <img *ngIf="step.icon" [src]="step.icon" alt="{{ step.label }}" class="icon-img" />
+                  </div>
+                  <span class="step-label">{{ step.label }}</span>
+                </div>
+      
+                <!-- Line only between circles -->
+                <div *ngIf="i < getSteps(item).length - 1" class="line" [ngClass]="{'active': i < getCurrentStep(item)}"></div>
+              </div>
+            </div>
           </div>
         </td>
       </tr>
       
-      
-    </ng-container>
-  </tbody>
-</table>
+              </ng-container>
+            </tbody>
+            </table>
           </div>
         </div>
       </div>

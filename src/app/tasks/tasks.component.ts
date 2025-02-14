@@ -46,27 +46,69 @@ export class TasksComponent implements OnInit, AfterViewInit {
   expandedRowMap: { [key: string]: boolean } = {}; // Track expanded rows
   expandedRowId: string | null = null; // Track the currently open row
   
+  // Mapping statuses to step index
+  statusStepMap: { [key: string]: number } = {
+    NOTASSIGNED: 0,
+    ASSIGNED: 1,
+    INPROGRESS: 2,
+    COMPLETED: 3
+  };
+  
+  // Default steps
+  defaultSteps = [
+    { label: 'Not Assigned', icon: '../../assets/Iconsfortask/NA.svg' },
+    { label: 'Assigned', icon: '../../assets/Iconsfortask/Ass.svg' },
+    { label: 'In-Progress', icon: '../../assets/Iconsfortask/IP.svg' },
+    { label: 'Completed', icon: '../../assets/Iconsfortask/Comp.svg' }
+  ];
+  
+  // Function to get steps with cancellation tracking
+  getSteps(item: any) {
+    let steps = [...this.defaultSteps];
+  
+    if (item.status === 'CANCELLED') {
+      const prevStep = this.getPreviousStep(item); // Get previous step index
+      steps[prevStep] = { label: 'Cancelled', icon: '../../assets/Iconsfortask/Canc.svg' }; // Replace previous step with "Cancelled"
+    }
+  
+    return steps;
+  }
+  
+  // Function to determine the current step based on item.status
+  getCurrentStep(item: any): number {
+    if (item.status === 'CANCELLED') {
+      return this.getPreviousStep(item); // Set active step to the last valid step before cancellation
+    }
+    return this.statusStepMap[item.status] ?? 0;
+  }
+  
+  // Function to get the last step before cancellation
+  getPreviousStep(item: any): number {
+    if (item.previousStatus) {
+      return this.statusStepMap[item.previousStatus] ?? 3;
+    }
+    return 3;
+  }
+  
+  // Toggle row expansion
   toggleDetails(item: any) {
-    // If clicking the already open row, close it
     if (this.expandedRowId === item.taskId) {
       this.expandedRowMap[item.taskId] = false;
       this.expandedRowId = null;
     } else {
-      // Close the previously open row
       if (this.expandedRowId) {
         this.expandedRowMap[this.expandedRowId] = false;
       }
-  
-      // Open the new row
       this.expandedRowMap[item.taskId] = true;
       this.expandedRowId = item.taskId;
     }
   }
   
-
   trackByTaskId(index: number, item: any) {
     return item.taskId;
   }
+  
+  
   clearFilters() {
     this.selectedStatus = '';
     this.selectedRobot = '';
