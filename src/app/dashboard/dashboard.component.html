@@ -437,10 +437,10 @@
     <!-- Floor Selector -->
     <div class="FloorSelector" *ngIf="ONBtn"></div>
 
-    <div class="card" style="position: absolute; top: 825px; left: 10px;">
+    <!-- <div class="card" style="position: absolute; top: 825px; left: 10px;" *ngIf="isImage">
       <div style="height: 350px; position: relative;" class="speeddial-tooltip-demo">
   
-          <p-speedDial 
+          <p-speedDial
               [model]="tooltipItems" 
               class="speeddial-left" 
               direction="right" 
@@ -449,58 +449,59 @@
               [showIcon]="'pi pi-cog'"
               [hideIcon]="'pi pi-times'"
               [tooltipOptions]="{position: 'right',tooltipPosition: 'top'}"
+              [visible]="isVisible"
           /> 
       </div>
-    </div>
+    </div>  -->
 
     <!-- Canvas Options (Zoom, Pan, Capture, etc.) -->
-    <!-- <div class="CanvasOptions" *ngIf="isImage">
+    <div class="CanvasOptions" *ngIf="isImage">
       <span class="empty" (click)="toggleOptions()">
         <img src="../../assets/CanvasOptions/setting.svg" />
       </span>
-      <div class="options"> -->
+      <div class="options">
         <!-- Zoom In -->
-        <!-- <div class="tooltip">
+        <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Zoom.svg"
             class="Zoom"
             (click)="zoomIn()"
           />
-          <span class="tooltiptext">{{ getTranslation('zoomIn') }}</span>
-        </div> -->
+          <span class="tooltiptext">Zoom In</span>
+        </div>
 
         <!-- Zoom Out -->
-        <!-- <div class="tooltip">
+        <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/ZoomOut.svg"
             class="ZoomOut"
             (click)="zoomOut()"
           />
-          <span class="tooltiptext">{{ getTranslation('zoomOut') }}</span>
-        </div> -->
+          <span class="tooltiptext">Zoom Out</span>
+        </div>
 
         <!-- Pan -->
-        <!-- <div class="tooltip">
+        <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Pan.svg"
             class="Expand"
             (click)="togglePan()"
           />
-          <span class="tooltiptext">{{ getTranslation('pan') }}</span>
-        </div> -->
+          <span class="tooltiptext">Pan</span>
+        </div>
 
         <!-- Capture -->
-        <!-- <div class="tooltip">
+        <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Capture.svg"
             class="Capture"
             (click)="captureCanvas()"
           />
-          <span class="tooltiptext">{{ getTranslation('capture') }}</span>
-        </div> -->
+          <span class="tooltiptext">Capture</span>
+        </div>
 
         <!-- Record -->
-        <!-- <div class="tooltip">
+        <div class="tooltip">
           <img
             [src]="
               recording
@@ -511,51 +512,51 @@
             (click)="toggleRecording()"
           />
           <span class="tooltiptext">{{
-            recording ?  getTranslation('startRecording') : getTranslation('stopRecording')
+            recording ? "Stop Recording" : "Start Recording"
           }}</span>
-        </div> -->
+        </div>
 
         <!-- Dashboard -->
-        <!-- <div class="tooltip">
+        <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Dashboard.svg"
             class="Pointer"
             (click)="toggleDashboard()"
           />
-          <span class="tooltiptext">{{ getTranslation('dashboard') }}</span>
-        </div> -->
+          <span class="tooltiptext">Dashboard</span>
+        </div>
 
         <!-- Model Canvas -->
-        <!-- <div class="tooltip">
+        <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Showpath.svg"
             class="ModelCanvas"
             (click)="toggleShowPath()"
           />
-          <span class="tooltiptext">{{ getTranslation('showPath') }}</span>
+          <span class="tooltiptext">Show Path</span>
         </div>
         <div class="tooltip">
           <img
-            src="../../assets/CanvasOptions/Heatmap.svg" -->
-            <!-- class="ModelCanvas"
+            src="../../assets/CanvasOptions/Heatmap.svg"
+            class="ModelCanvas"
             (click)="toggleHeatmap()"
           />
-          <span class="tooltiptext">{{ getTranslation('heatMap') }}</span>
+          <span class="tooltiptext">Heat Map</span>
         </div>
         <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Model.svg"
             class="ModelCanvas"
-            (click)="toggleModelCanvas()" -->
-          <!-- />
-          <span class="tooltiptext">{{ getTranslation('mapOption') }}</span>
-         </div> -->
-      <!-- </div> --> 
+            (click)="toggleModelCanvas()"
+          />
+          <span class="tooltiptext">Map Option</span>
+        </div>
+      </div>
       <!-- <div class="tooltip">
         <img src="../../assets/CanvasOptions/live.svg" class="ModelCanvas" (click)="fetchlive()" />
         <span class="tooltiptext">Go Live</span>
       </div> -->
-    <!-- </div>  -->
+    </div>
 
     <!-- Dashboard Charts and Graphs -->
     <div class="GraphAndCharts" *ngIf="showDashboard">
