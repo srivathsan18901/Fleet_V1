@@ -56,7 +56,7 @@
   .table-container {
     width: 102%;
     border-radius: 10px;
-    margin-top: 60px;
+    margin-top: 100px;
     max-height: 29rem;
     overflow-y: auto;
   }
@@ -552,9 +552,9 @@
   border-radius: 8px;
   display: flex ;
   padding: 5px;
-  position: absolute;
+  /* position: absolute;
   top: 137px;
-  right: 350px;
+  right: 350px; */
   height: 46px;
   background-color: #f0453f;
   color: #ffffff;
@@ -640,9 +640,9 @@
   
 .filter{
   display: flex;
-  position: absolute;
+  /* position: absolute;
   top: 136px;
-  right: 22px;
+  right: 22px; */
   justify-content: end;
   background-color: #f7f7f7;
   padding:10px 15px;
