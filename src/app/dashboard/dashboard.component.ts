@@ -23,6 +23,7 @@ import { HeatmapService } from '../services/heatmap-service.service';
 import { log } from 'node:console';
 import { abort } from 'node:process';
 import html2canvas from 'html2canvas';
+import { MenuItem } from 'primeng/api';
 import { TranslationService } from '../services/translation.service';
 
 enum ZoneType {
@@ -92,6 +93,7 @@ export class DashboardComponent implements AfterViewInit {
   showChart2 = true; // Controls blur effect for Chart2
   showChart3 = true;
   assetImages: { [key: string]: HTMLImageElement } = {};
+  private langSubscription!: Subscription;
   zoneColors: { [key in ZoneType]: string } = {
     [ZoneType.HIGH_SPEED_ZONE]: 'rgba(255, 0, 0, 0.3)', // Red with 30% opacity
     [ZoneType.MEDIUM_SPEED_ZONE]: 'rgba(255, 165, 0, 0.3)', // Orange with 30% opacity
@@ -271,8 +273,183 @@ export class DashboardComponent implements AfterViewInit {
   get buttonClass(): string {
     return this.isFleet ? 'fleet-background' : 'simulation-background';
   }
+
+  tooltipItems: MenuItem[] = [
+    {
+      label: this.getTranslation('zoomIn'),
+      icon: 'pi pi-search-plus',
+      command: () => this.zoomIn(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('zoomIn'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('zoomOut'),
+      icon: 'pi pi-search-minus',
+      command: () => this.zoomOut(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('zoomOut'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('pan'),
+      icon: 'pi pi-arrows-alt',
+      command: () => this.togglePan(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('pan'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('capture'),
+      icon: 'pi pi-camera',
+      command: () => this.captureCanvas(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('capture'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.recording
+        ? this.getTranslation('startRecording')
+        : this.getTranslation('stopRecording'),
+      icon: this.recording ? 'pi pi-stop' : 'pi pi-video',
+      command: () => this.toggleRecording(),
+      tooltipOptions: {
+        tooltipLabel: this.recording ? this.getTranslation('startRecording') : this.getTranslation('stopRecording'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('dashboard'),
+      icon: 'pi pi-chart-bar',
+      command: () => this.toggleDashboard(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('dashboard'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('showPath'),
+      icon: 'pi pi-map',
+      command: () => this.toggleShowPath(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('showPath'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('heatMap'),
+      icon: 'pi pi-th-large',
+      command: () => this.toggleHeatmap(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('heatMap'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('mapOption'),
+      icon: 'pi pi-globe',
+      command: () => this.toggleModelCanvas(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('mapOption'),
+        tooltipPosition: 'top',
+      },
+    }
+  ];
+
   async ngOnInit() {
     this.isInLive = this.projectService.getInLive();
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.tooltipItems= [
+          {
+            label: this.getTranslation('zoomIn'),
+            icon: 'pi pi-search-plus',
+            command: () => this.zoomIn(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('zoomIn'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('zoomOut'),
+            icon: 'pi pi-search-minus',
+            command: () => this.zoomOut(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('zoomOut'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('pan'),
+            icon: 'pi pi-arrows-alt',
+            command: () => this.togglePan(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('pan'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('capture'),
+            icon: 'pi pi-camera',
+            command: () => this.captureCanvas(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('capture'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.recording
+              ? this.getTranslation('startRecording')
+              : this.getTranslation('stopRecording'),
+            icon: this.recording ? 'pi pi-stop' : 'pi pi-video',
+            command: () => this.toggleRecording(),
+            tooltipOptions: {
+              tooltipLabel: this.recording ? this.getTranslation('startRecording') : this.getTranslation('stopRecording'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('dashboard'),
+            icon: 'pi pi-chart-bar',
+            command: () => this.toggleDashboard(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('dashboard'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('showPath'),
+            icon: 'pi pi-map',
+            command: () => this.toggleShowPath(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('showPath'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('heatMap'),
+            icon: 'pi pi-th-large',
+            command: () => this.toggleHeatmap(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('heatMap'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('mapOption'),
+            icon: 'pi pi-globe',
+            command: () => this.toggleModelCanvas(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('mapOption'),
+              tooltipPosition: 'top',
+            },
+          }
+        ];
+      });
     const fleetSub = this.isFleetService.isFleet$.subscribe((status) => {
       this.isFleet = status;
       this.updateUI(); // Update UI based on the current state
