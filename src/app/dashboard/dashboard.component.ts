@@ -318,7 +318,7 @@ export class DashboardComponent implements AfterViewInit {
       this.canvasloader = false;
       this.canvasNoImage = true;
     }
-
+    console.log("hey",this.nodeGraphService.getImage());
     if (!this.projectService.getMapData()) return;
     const img = new Image();
     img.src = `http://${environment.API_URL}:${environment.PORT}/${this.selectedMap.imgUrl}`;
@@ -337,11 +337,11 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setIsShowRoboPath(this.roboPathIds.size);
     // this.roboPathIds.clear();
 
+
     await this.getMapDetails();
     // this.showModelCanvas = false;
     this.nodeGraphService.setShowModelCanvas(false);
     this.showModelCanvas = false; // no need in later..
-    this.nodeGraphService.setAssignTask(false);
     this.cdRef.detectChanges();
     this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
     if (!this.isInLive) this.initSimRoboPos();
@@ -815,6 +815,8 @@ export class DashboardComponent implements AfterViewInit {
       if (ctx) {
         // Load the background image
         this.isImage = true;
+        this.nodeGraphService.setImage(this.isImage);
+
         const img = new Image();
         img.src = `http://${environment.API_URL}:${environment.PORT}/${
           this.projectService.getMapData().imgUrl

@@ -216,15 +216,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
   }
-
+  isButtonDisabled: boolean = true;
   async ngOnInit() {
+    if (!JSON.parse(this.projectService.getInitializeMapSelected())) this.isButtonDisabled = false;
+    
     this.mapData = this.projectService.getMapData();
     let establishedTime = new Date(this.mapData.createdAt); // created time of map..
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
-    this.paginatorIntl.itemsPerPageLabel =
-      this.getTranslation('Items per page'); // Modify the text
+       
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
@@ -285,11 +287,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
         });
       else this.robotList = await this.getSimRobos();
     });
-
     this.setPaginatedData();
   }
   async toggleAssignTask() {
     this.router.navigate(['/dashboard']);
+    this.nodeGraphService.setAssignTask(true);
     if (this.nodeGraphService.getAssignTask()) {
       this.messageService.add({
         severity: 'info',

@@ -20,9 +20,17 @@ export class NodeGraphService {
   fleetRoboIDColor: Map<number, string> = new Map<number, string>();
   showModelCanvas: boolean = false;
   assignTask:boolean=false;
+  isImage:boolean=false;
 
   constructor() {}
 
+  setImage(isImage:boolean){
+    this.isImage= isImage;
+  }
+
+  getImage(): boolean{
+    return this.isImage;
+  }
   // Save data methods
   setNodes(nodes: any[]) {
     this.nodes = nodes;
