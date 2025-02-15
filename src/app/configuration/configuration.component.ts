@@ -136,7 +136,7 @@ export class ConfigurationComponent implements AfterViewInit {
   paginatedData1: any[] = [];
   paginatedData2: any[] = [];
   simRobos: any;
-  private langSubscription!: Subscription;
+  private langSubscription: String = 'ENG';
   // loader
   editLoader: boolean = false;
   configurationPermissions: any;
@@ -166,8 +166,35 @@ export class ConfigurationComponent implements AfterViewInit {
     this.paginatorIntl.itemsPerPageLabel =
       this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next(); // Notify paginator about the change
-    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+     this.translationService.currentLanguage$.subscribe(
       (val) => {
+        this.langSubscription = val;
+
+        let localeMapping: Record<string, string> = {
+          ENG: 'en-IN',
+          JAP: 'ja-JP',
+          FRE: 'fr-FR',
+          GER: 'de-DE'
+        };
+        this.EnvData = this.EnvData.map(map=>{
+          let date = new Date(map.createdAt);    
+          let createdAt = date.toLocaleString(localeMapping[`${this.langSubscription}`] || 'en-IN', {
+            month: 'short',
+            year: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+          });
+          
+          map.date = createdAt;
+          
+          return map;
+        })
+        this.filteredEnvData = [...this.EnvData];
+        // this.setPaginatedData();
+        // this.cdRef.detectChanges();
+
         // this.updateHeaderTranslation();
         this.paginatorIntl.itemsPerPageLabel =
           this.getTranslation('Items per page');
@@ -303,13 +330,23 @@ export class ConfigurationComponent implements AfterViewInit {
         .flatMap((sites: any) => {
           return sites.maps.map((map: any) => {
             let date = new Date(map?.createdAt);
-            let createdAt = date.toLocaleString('en-IN', {
+            
+            let localeMapping: Record<string, string> = {
+              ENG: 'en-IN',
+              JAP: 'ja-JP',
+              FRE: 'fr-FR',
+              GER: 'de-DE'
+            };
+            
+            let createdAt = date.toLocaleString(localeMapping[`${this.langSubscription}`] || 'en-IN', {
               month: 'short',
               year: 'numeric',
               day: 'numeric',
               hour: 'numeric',
               minute: 'numeric',
+              hour12: true
             });
+            
 
             return {
               id: map.mapId,
