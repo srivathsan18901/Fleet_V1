@@ -46,35 +46,50 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
   expandedRowMap: { [key: string]: boolean } = {}; // Track expanded rows
   expandedRowId: string | null = null; // Track the currently open row
-  
+
   // Mapping statuses to step index
   statusStepMap: { [key: string]: number } = {
     NOTASSIGNED: 0,
     ASSIGNED: 1,
     INPROGRESS: 2,
-    COMPLETED: 3
+    COMPLETED: 3,
   };
-  
+
   // Default steps
   defaultSteps = [
-    { label: this.getTranslation('Not Assigned'), icon: '../../assets/Iconsfortask/NA.svg' },
-    { label: this.getTranslation('assigned'), icon: '../../assets/Iconsfortask/Ass.svg' },
-    { label: this.getTranslation('In Progress'), icon: '../../assets/Iconsfortask/IP.svg' },
-    { label: this.getTranslation('Completed'), icon: '../../assets/Iconsfortask/Comp.svg' }
+    {
+      label: this.getTranslation('Not Assigned'),
+      icon: '../../assets/Iconsfortask/NA.svg',
+    },
+    {
+      label: this.getTranslation('assigned'),
+      icon: '../../assets/Iconsfortask/Ass.svg',
+    },
+    {
+      label: this.getTranslation('In Progress'),
+      icon: '../../assets/Iconsfortask/IP.svg',
+    },
+    {
+      label: this.getTranslation('Completed'),
+      icon: '../../assets/Iconsfortask/Comp.svg',
+    },
   ];
-  
+
   // Function to get steps with cancellation tracking
   getSteps(item: any) {
     let steps = [...this.defaultSteps];
-  
+
     if (item.status === 'CANCELLED') {
       const prevStep = this.getPreviousStep(item); // Get previous step index
-      steps[prevStep] = { label: this.getTranslation('Cancelled'), icon: '../../assets/Iconsfortask/Canc.svg' }; // Replace previous step with "Cancelled"
+      steps[prevStep] = {
+        label: this.getTranslation('Cancelled'),
+        icon: '../../assets/Iconsfortask/Canc.svg',
+      }; // Replace previous step with "Cancelled"
     }
-  
+
     return steps;
   }
-  
+
   // Function to determine the current step based on item.status
   getCurrentStep(item: any): number {
     if (item.status === 'CANCELLED') {
@@ -82,7 +97,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
     return this.statusStepMap[item.status] ?? 0;
   }
-  
+
   // Function to get the last step before cancellation
   getPreviousStep(item: any): number {
     if (item.previousStatus) {
@@ -90,7 +105,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
     return 3;
   }
-  
+
   // Toggle row expansion
   toggleDetails(item: any) {
     if (this.expandedRowId === item.taskId) {
@@ -104,12 +119,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.expandedRowId = item.taskId;
     }
   }
-  
+
   trackByTaskId(index: number, item: any) {
     return item.taskId;
   }
-  
-  
+
   clearFilters() {
     this.selectedStatus = '';
     this.selectedRobot = '';
@@ -211,7 +225,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private paginatorIntl: MatPaginatorIntl,
     private isFleetService: IsFleetService,
     private router: Router,
-    private nodeGraphService: NodeGraphService,
+    private nodeGraphService: NodeGraphService
   ) {}
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
@@ -229,12 +243,25 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
         this.defaultSteps = [
-          { label: this.getTranslation('Not Assigned'), icon: '../../assets/Iconsfortask/NA.svg' },
-          { label: this.getTranslation('assigned'), icon: '../../assets/Iconsfortask/Ass.svg' },
-          { label: this.getTranslation('In Progress'), icon: '../../assets/Iconsfortask/IP.svg' },
-          { label: this.getTranslation('Completed'), icon: '../../assets/Iconsfortask/Comp.svg' }
+          {
+            label: this.getTranslation('Not Assigned'),
+            icon: '../../assets/Iconsfortask/NA.svg',
+          },
+          {
+            label: this.getTranslation('assigned'),
+            icon: '../../assets/Iconsfortask/Ass.svg',
+          },
+          {
+            label: this.getTranslation('In Progress'),
+            icon: '../../assets/Iconsfortask/IP.svg',
+          },
+          {
+            label: this.getTranslation('Completed'),
+            icon: '../../assets/Iconsfortask/Comp.svg',
+          },
         ];
-        this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page');
+        this.paginatorIntl.itemsPerPageLabel =
+          this.getTranslation('Items per page');
         this.paginatorIntl.changes.next();
       }
     );
@@ -366,23 +393,45 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
 
-  assignRobot(task: any) {
+  async assignRobot(task: any) {
     if (task.selectedRobot) {
       // task.roboName = task.selectedRobot; // Assign the robot name
       // task.status = 'ASSIGNED'; // Update status
+      let bodyData = {
+        taskId: task.taskId,
+        robotId: parseInt(task.selectedRobot),
+      };
+      await this.assignTask(bodyData);
     }
-    this.cancelAssign(task)
+    this.cancelAssign(task);
   }
-  cancelAssign(item: any){
-    item.showDropdown = false;  
-    item.showReassDropdown = false; 
+
+  async assignTask(bodyData: any) {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/assign-task`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    let data = await response.json();
+    console.log(data);
+    if (data.error) return;
+  }
+
+  cancelAssign(item: any) {
+    item.showDropdown = false;
+    item.showReassDropdown = false;
   }
   toggleDropdown(task: any) {
     task.showDropdown = true;
   }
-  reassignRobot(item: any) { 
+  reassignRobot(item: any) {
     item.selectedRobot = '';
-    item.showReassDropdown = true;      // Clear the previously assigned robot
+    item.showReassDropdown = true; // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
   }
 

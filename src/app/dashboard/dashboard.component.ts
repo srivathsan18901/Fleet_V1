@@ -359,71 +359,66 @@ export class DashboardComponent implements AfterViewInit {
       this.isInLive = true;
     }
   }
-  isPause: boolean = false; // Tracks the clicked state of the button
+  isPause: boolean = false;
 
   async toggleButton() {
-    // console.log(this.isPause);
-    this.isPause = !this.isPause; // Toggles the clicked state
-    if (this.isPause) {
-      // await this.pauseFleet();
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.getTranslation('Paused'),
-        detail: this.getTranslation('Fleet Has been Paused'),
-        life: 4000,
-      });
-    }
-    if (!this.isPause) {
-      // await this.resumeFleet();
-      this.messageService.add({
-        severity: 'success',
-        summary: this.getTranslation('Resumed'),
-        detail: this.getTranslation('Fleet Has been Resumed'),
-        life: 4000,
-      });
-    }
+    // this.isPause = !this.isPause;
+    let bodyData = { status: true };
+    if (this.isPause) await this.pauseFleet(bodyData);
+    else if (!this.isPause) await this.resumeFleet(bodyData);
   }
 
-  async pauseFleet() {
+  async pauseFleet(bodyData: any) {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/pause-fleet`,
       {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify(bodyData),
       }
     );
 
     let data = await response.json();
+    console.log(data);
+    if (data.error) {
+      this.toastPopup('error', 'Error', 'Error whlie pausing fleet');
+      return;
+    }
 
-    // this.messageService.add({
-    //   severity: 'warn',
-    //   summary: this.getTranslation('Paused'),
-    //   detail: this.getTranslation('Fleet Has been Paused'),
-    //   life: 4000,
-    // });
+    this.isPause = !this.isPause; // yet to modify the state, depends upon the returned state..
+    this.toastPopup('warn', 'Paused', 'Fleet Has been Paused');
   }
 
-  async resumeFleet() {
+  async resumeFleet(bodyData: any) {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/resume-fleet`,
       {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({}),
+        body: JSON.stringify(bodyData),
       }
     );
 
     let data = await response.json();
+    console.log(data);
+    if (data.error) {
+      this.toastPopup('error', 'Error', 'Error whlie resuming fleet');
+      return;
+    }
 
-    // this.messageService.add({
-    //   severity: 'success',
-    //   summary: this.getTranslation('Resumed'),
-    //   detail: this.getTranslation('Fleet Has been Resumed'),
-    //   life: 4000,
-    // });
+    this.isPause = !this.isPause;
+    this.toastPopup('success', 'Resumed', 'Fleet Has been Resumed');
+  }
+
+  toastPopup(severity: string, summary: string, detail: string) {
+    this.messageService.add({
+      severity: severity,
+      summary: this.getTranslation(summary),
+      detail: this.getTranslation(detail),
+      life: 4000,
+    });
   }
 
   updateUI() {
