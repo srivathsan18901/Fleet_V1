@@ -6,8 +6,10 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MessageService } from 'primeng/api';
 import { TranslationService } from '../services/translation.service';
 import { MatPaginatorIntl } from '@angular/material/paginator';
-import { map,Subscription } from 'rxjs';
-
+import { map, Subscription } from 'rxjs';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+import { NodeGraphService } from '../services/nodegraph.service';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -20,6 +22,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   searchQuery: string = '';
   isPopupVisible: boolean = false;
   tasks: any[] = [];
+  robotList: number[] = [];
   filteredTaskData: any[] = [];
   paginatedData: any[] = [];
   selectedStatus: string = '';
@@ -41,6 +44,86 @@ export class TasksComponent implements OnInit, AfterViewInit {
     });
     this.setPaginatedData(); // Update paginated data based on filtered results
   }
+  expandedRowMap: { [key: string]: boolean } = {}; // Track expanded rows
+  expandedRowId: string | null = null; // Track the currently open row
+
+  // Mapping statuses to step index
+  statusStepMap: { [key: string]: number } = {
+    NOTASSIGNED: 0,
+    ASSIGNED: 1,
+    INPROGRESS: 2,
+    COMPLETED: 3,
+  };
+
+  // Default steps
+  defaultSteps = [
+    {
+      label: this.getTranslation('Not Assigned'),
+      icon: '../../assets/Iconsfortask/NA.svg',
+    },
+    {
+      label: this.getTranslation('assigned'),
+      icon: '../../assets/Iconsfortask/Ass.svg',
+    },
+    {
+      label: this.getTranslation('In Progress'),
+      icon: '../../assets/Iconsfortask/IP.svg',
+    },
+    {
+      label: this.getTranslation('Completed'),
+      icon: '../../assets/Iconsfortask/Comp.svg',
+    },
+  ];
+
+  // Function to get steps with cancellation tracking
+  getSteps(item: any) {
+    let steps = [...this.defaultSteps];
+
+    if (item.status === 'CANCELLED') {
+      const prevStep = this.getPreviousStep(item); // Get previous step index
+      steps[prevStep] = {
+        label: this.getTranslation('Cancelled'),
+        icon: '../../assets/Iconsfortask/Canc.svg',
+      }; // Replace previous step with "Cancelled"
+    }
+
+    return steps;
+  }
+
+  // Function to determine the current step based on item.status
+  getCurrentStep(item: any): number {
+    if (item.status === 'CANCELLED') {
+      return this.getPreviousStep(item); // Set active step to the last valid step before cancellation
+    }
+    return this.statusStepMap[item.status] ?? 0;
+  }
+
+  // Function to get the last step before cancellation
+  getPreviousStep(item: any): number {
+    if (item.previousStatus) {
+      return this.statusStepMap[item.previousStatus] ?? 3;
+    }
+    return 3;
+  }
+
+  // Toggle row expansion
+  toggleDetails(item: any) {
+    if (this.expandedRowId === item.taskId) {
+      this.expandedRowMap[item.taskId] = false;
+      this.expandedRowId = null;
+    } else {
+      if (this.expandedRowId) {
+        this.expandedRowMap[this.expandedRowId] = false;
+      }
+      this.expandedRowMap[item.taskId] = true;
+      this.expandedRowId = item.taskId;
+    }
+  }
+
+  trackByTaskId(index: number, item: any) {
+    return item.taskId;
+  }
+
   clearFilters() {
     this.selectedStatus = '';
     this.selectedRobot = '';
@@ -59,9 +142,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // Reapply filters to display all data
     this.applyFilters();
   }
-  trackByTaskId(index: number, item: any): number {
-    return item.taskId; // or any unique identifier like taskId
-  }
+
   onPause(item: any) {
     // Toggle the paused state of the task
     item.paused = !item.paused;
@@ -141,25 +222,51 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private projectService: ProjectService,
     private messageService: MessageService,
     private translationService: TranslationService,
-    private paginatorIntl: MatPaginatorIntl
-
+    private paginatorIntl: MatPaginatorIntl,
+    private isFleetService: IsFleetService,
+    private router: Router,
+    private nodeGraphService: NodeGraphService
   ) {}
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
   }
+  isButtonDisabled: boolean = true;
   async ngOnInit() {
+    if (!JSON.parse(this.projectService.getInitializeMapSelected())) this.isButtonDisabled = false;
+    
     this.mapData = this.projectService.getMapData();
     let establishedTime = new Date(this.mapData.createdAt); // created time of map..
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
-    this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page"); // Modify the text
+       
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-
-      this.paginatorIntl.itemsPerPageLabel = this.getTranslation("Items per page");
-      this.paginatorIntl.changes.next();
-    });
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.defaultSteps = [
+          {
+            label: this.getTranslation('Not Assigned'),
+            icon: '../../assets/Iconsfortask/NA.svg',
+          },
+          {
+            label: this.getTranslation('assigned'),
+            icon: '../../assets/Iconsfortask/Ass.svg',
+          },
+          {
+            label: this.getTranslation('In Progress'),
+            icon: '../../assets/Iconsfortask/IP.svg',
+          },
+          {
+            label: this.getTranslation('Completed'),
+            icon: '../../assets/Iconsfortask/Comp.svg',
+          },
+        ];
+        this.paginatorIntl.itemsPerPageLabel =
+          this.getTranslation('Items per page');
+        this.paginatorIntl.changes.next();
+      }
+    );
     if (!this.mapData) return;
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
@@ -174,19 +281,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
         }),
       }
     );
-    // if (!response.ok)
-    //   throw new Error(`Error with status code of : ${response.status}`);
     let data = await response.json();
     console.log(data, 'task data');
     if (!data.tasks) return;
     const { tasks } = data.tasks;
-    // if (!('tasks' in data.tasks)) {
-    //   this.messageService.add({
-    //     severity: 'warn',
-    //     summary: 'Warning',
-    //     detail: 'Task lists are empty.',
-    //   });
-    // }
 
     if (tasks)
       this.tasks = tasks.map((task: any) => {
@@ -206,15 +304,68 @@ export class TasksComponent implements OnInit, AfterViewInit {
       });
     this.filteredTaskData = this.tasks;
     // console.log(this.tasks);
-    this.setPaginatedData();
 
-    // Simulate some delay, such as an API call
+    let grossFactSheet = await this.fetchAllRobos();
+    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
+      // this.isFleet = status; // Update the value whenever it changes
+      if (status)
+        this.robotList = grossFactSheet.map((robo) => {
+          return robo.id;
+        });
+      else this.robotList = await this.getSimRobos();
+    });
+    this.setPaginatedData();
+  }
+  async toggleAssignTask() {
+    this.router.navigate(['/dashboard']);
+    this.nodeGraphService.setAssignTask(true);
+    if (this.nodeGraphService.getAssignTask()) {
+      this.messageService.add({
+        severity: 'info',
+        summary: this.getTranslation('Enabled Task Assigning'),
+        detail: this.getTranslation('Task Assigning Option has been Enabled'),
+        life: 2000,
+      });
+    }
   }
 
   // Ensure the paginator is initialized before setting paginated data
   ngAfterViewInit() {
     this.setPaginatedData(); // Set initial paginated data after view is initialized
   }
+
+  async getSimRobos(): Promise<number[]> {
+    if (!this.mapData) return [];
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.mapData.mapName}`
+    );
+    if (!response.ok)
+      throw new Error(`Error with status code of ${response.status}`);
+    let data = await response.json();
+    if (!data.map) return [];
+    let map = data.map;
+
+    let simMode = map.simMode.map((robo: any) => {
+      return robo.amrId;
+    });
+    return simMode;
+  }
+
+  async fetchAllRobos(): Promise<any[]> {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-fms-amrs`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mapId: this.mapData.id }),
+      }
+    );
+
+    const data = await response.json();
+    return data.robots || [];
+  }
+
   isDisabled(status: string): boolean {
     return (
       status === 'COMPLETED' || status === 'CANCELLED' || status === 'FAILED'
@@ -244,6 +395,48 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
 
+  async assignRobot(task: any) {
+    if (task.selectedRobot) {
+      // task.roboName = task.selectedRobot; // Assign the robot name
+      // task.status = 'ASSIGNED'; // Update status
+      let bodyData = {
+        taskId: task.taskId,
+        robotId: parseInt(task.selectedRobot),
+      };
+      await this.assignTask(bodyData);
+    }
+    this.cancelAssign(task);
+  }
+
+  async assignTask(bodyData: any) {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/assign-task`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    let data = await response.json();
+    console.log(data);
+    if (data.error) return;
+  }
+
+  cancelAssign(item: any) {
+    item.showDropdown = false;
+    item.showReassDropdown = false;
+  }
+  toggleDropdown(task: any) {
+    task.showDropdown = true;
+  }
+  reassignRobot(item: any) {
+    item.selectedRobot = '';
+    item.showReassDropdown = true; // Clear the previously assigned robot
+    // console.log(`Re-assigned Task ID: ${item.taskId}`);
+  }
+
   shouldShowPaginator(): boolean {
     return this.filteredTaskData.length > 0;
   }
@@ -262,7 +455,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   onStatusFilter(event: Event): void {
     const selectedValue = (event.target as HTMLSelectElement).value;
-
     this.selectedStatus = selectedValue; // Store selected status
     this.filterTasks(); // Filter tasks based on selected status
   }

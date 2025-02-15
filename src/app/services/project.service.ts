@@ -160,7 +160,7 @@ export class ProjectService {
   }
 
   getInitializeMapSelected() {
-    // console.log('get initialize called and status -->',this.cookieService.get('mapInitializeStatus'))
+    // console.log('get initialize called and status -->',this.cookieService.get('mapInitializeStatus'));
     return this.cookieService.get('mapInitializeStatus');
   }
 

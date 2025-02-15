@@ -28,7 +28,8 @@ export class Userlogscomponent {
   isPopupVisible: boolean | undefined;
   isTransitioning: boolean = false;
   activeButton: string = 'task'; // Default active button
-  activeHeader: string = this.getTranslation("Task Logs"); // Default header
+  // activeHeader: string = this.getTranslation("Task Logs"); // Default header
+  // private activeHeaderKey: string = this.getTranslation("Task Logs");
   currentTable = 'task';
   currentTab: any;
   filteredTaskData: any[] = [];
@@ -66,12 +67,10 @@ export class Userlogscomponent {
   ) {
     this.mapData = this.projectService.getMapData();
   }
-
+  activeHeaderKey: string = "Task Logs"; // Store the key instead
+  activeHeader: string = this.getTranslation(this.activeHeaderKey);
+  
   async ngOnInit() {
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-      this.activeHeader=this.getTranslation(this.activeButton);
-      this.cdRef.detectChanges();
-    });
     this.mapData = this.projectService.getMapData();
     if (!this.mapData) {
       console.log('Seems no map has been selected');
@@ -104,6 +103,10 @@ export class Userlogscomponent {
     this.fleetLogInterval = setInterval(async () => {
       await this.getFleetLogs();
     }, 1000 * 3);
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {      
+      this.activeHeader = this.getTranslation(this.activeHeaderKey);
+      this.cdRef.detectChanges();
+    });
   }
   getTranslation(key: string) {
     return this.translationService.getErrorTranslation(key);
@@ -482,13 +485,23 @@ export class Userlogscomponent {
   onTabChange(arg0: string) {
     throw new Error('Method not implemented.');
   }
-
+  
+  getHeaderKey(button: string): string {
+    switch (button) {
+      case 'task': return "Task Logs";
+      case 'robot': return "Robot Logs";
+      case 'fleet': return "Fleet Logs";
+      default: return "Task Logs";
+    }
+  }
+  
   setActiveButton(button: string) {
     this.activeButton = button;
     this.isTransitioning = true;
     setTimeout(() => {
       this.activeButton = button;
-      this.activeHeader = this.getHeader(button);
+      this.activeHeaderKey = this.getHeaderKey(button); // Store key instead of translated string
+      this.activeHeader = this.getTranslation(this.activeHeaderKey);
       this.isTransitioning = false;
     }, 200); // 300ms matches the CSS transition duration
   }

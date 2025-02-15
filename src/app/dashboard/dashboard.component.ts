@@ -23,6 +23,7 @@ import { HeatmapService } from '../services/heatmap-service.service';
 import { log } from 'node:console';
 import { abort } from 'node:process';
 import html2canvas from 'html2canvas';
+import { MenuItem } from 'primeng/api';
 import { TranslationService } from '../services/translation.service';
 
 enum ZoneType {
@@ -92,6 +93,7 @@ export class DashboardComponent implements AfterViewInit {
   showChart2 = true; // Controls blur effect for Chart2
   showChart3 = true;
   assetImages: { [key: string]: HTMLImageElement } = {};
+  private langSubscription!: Subscription;
   zoneColors: { [key in ZoneType]: string } = {
     [ZoneType.HIGH_SPEED_ZONE]: 'rgba(255, 0, 0, 0.3)', // Red with 30% opacity
     [ZoneType.MEDIUM_SPEED_ZONE]: 'rgba(255, 165, 0, 0.3)', // Orange with 30% opacity
@@ -271,8 +273,183 @@ export class DashboardComponent implements AfterViewInit {
   get buttonClass(): string {
     return this.isFleet ? 'fleet-background' : 'simulation-background';
   }
+
+  tooltipItems: MenuItem[] = [
+    {
+      label: this.getTranslation('zoomIn'),
+      icon: 'pi pi-search-plus',
+      command: () => this.zoomIn(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('zoomIn'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('zoomOut'),
+      icon: 'pi pi-search-minus',
+      command: () => this.zoomOut(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('zoomOut'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('pan'),
+      icon: 'pi pi-arrows-alt',
+      command: () => this.togglePan(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('pan'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('capture'),
+      icon: 'pi pi-camera',
+      command: () => this.captureCanvas(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('capture'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.recording
+        ? this.getTranslation('startRecording')
+        : this.getTranslation('stopRecording'),
+      icon: this.recording ? 'pi pi-stop' : 'pi pi-video',
+      command: () => this.toggleRecording(),
+      tooltipOptions: {
+        tooltipLabel: this.recording ? this.getTranslation('startRecording') : this.getTranslation('stopRecording'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('dashboard'),
+      icon: 'pi pi-chart-bar',
+      command: () => this.toggleDashboard(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('dashboard'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('showPath'),
+      icon: 'pi pi-map',
+      command: () => this.toggleShowPath(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('showPath'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('heatMap'),
+      icon: 'pi pi-th-large',
+      command: () => this.toggleHeatmap(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('heatMap'),
+        tooltipPosition: 'top',
+      },
+    },
+    {
+      label: this.getTranslation('mapOption'),
+      icon: 'pi pi-globe',
+      command: () => this.toggleModelCanvas(),
+      tooltipOptions: {
+        tooltipLabel: this.getTranslation('mapOption'),
+        tooltipPosition: 'top',
+      },
+    }
+  ];
+
   async ngOnInit() {
     this.isInLive = this.projectService.getInLive();
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.tooltipItems= [
+          {
+            label: this.getTranslation('zoomIn'),
+            icon: 'pi pi-search-plus',
+            command: () => this.zoomIn(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('zoomIn'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('zoomOut'),
+            icon: 'pi pi-search-minus',
+            command: () => this.zoomOut(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('zoomOut'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('pan'),
+            icon: 'pi pi-arrows-alt',
+            command: () => this.togglePan(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('pan'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('capture'),
+            icon: 'pi pi-camera',
+            command: () => this.captureCanvas(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('capture'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.recording
+              ? this.getTranslation('startRecording')
+              : this.getTranslation('stopRecording'),
+            icon: this.recording ? 'pi pi-stop' : 'pi pi-video',
+            command: () => this.toggleRecording(),
+            tooltipOptions: {
+              tooltipLabel: this.recording ? this.getTranslation('startRecording') : this.getTranslation('stopRecording'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('dashboard'),
+            icon: 'pi pi-chart-bar',
+            command: () => this.toggleDashboard(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('dashboard'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('showPath'),
+            icon: 'pi pi-map',
+            command: () => this.toggleShowPath(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('showPath'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('heatMap'),
+            icon: 'pi pi-th-large',
+            command: () => this.toggleHeatmap(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('heatMap'),
+              tooltipPosition: 'top',
+            },
+          },
+          {
+            label: this.getTranslation('mapOption'),
+            icon: 'pi pi-globe',
+            command: () => this.toggleModelCanvas(),
+            tooltipOptions: {
+              tooltipLabel: this.getTranslation('mapOption'),
+              tooltipPosition: 'top',
+            },
+          }
+        ];
+      });
     const fleetSub = this.isFleetService.isFleet$.subscribe((status) => {
       this.isFleet = status;
       this.updateUI(); // Update UI based on the current state
@@ -318,7 +495,7 @@ export class DashboardComponent implements AfterViewInit {
       this.canvasloader = false;
       this.canvasNoImage = true;
     }
-
+    console.log("hey",this.nodeGraphService.getImage());
     if (!this.projectService.getMapData()) return;
     const img = new Image();
     img.src = `http://${environment.API_URL}:${environment.PORT}/${this.selectedMap.imgUrl}`;
@@ -337,11 +514,11 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setIsShowRoboPath(this.roboPathIds.size);
     // this.roboPathIds.clear();
 
+
     await this.getMapDetails();
     // this.showModelCanvas = false;
     this.nodeGraphService.setShowModelCanvas(false);
     this.showModelCanvas = false; // no need in later..
-    this.nodeGraphService.setAssignTask(false);
     this.cdRef.detectChanges();
     this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
     if (!this.isInLive) this.initSimRoboPos();
@@ -359,28 +536,68 @@ export class DashboardComponent implements AfterViewInit {
       this.isInLive = true;
     }
   }
-  isClicked: boolean = false; // Tracks the clicked state of the button
+  isPause: boolean = false;
 
-  toggleButton() {
-    this.isClicked = !this.isClicked; // Toggles the clicked state
-    if(this.isClicked){
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.getTranslation("Paused"),
-        detail: this.getTranslation('Fleet Has been Paused'),
-        life: 4000,
-      });
-    }
-    if(!this.isClicked){
-      this.messageService.add({
-        severity: 'success',
-        summary:  this.getTranslation('Resumed'),
-        detail:  this.getTranslation('Fleet Has been Resumed'),
-        life: 4000,
-      });
-    }
+  async toggleButton() {
+    // this.isPause = !this.isPause;
+    let bodyData = { status: true };
+    if (this.isPause) await this.pauseFleet(bodyData);
+    else if (!this.isPause) await this.resumeFleet(bodyData);
   }
-  
+
+  async pauseFleet(bodyData: any) {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/pause-fleet`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    let data = await response.json();
+    console.log(data);
+    if (data.error) {
+      this.toastPopup('error', 'Error', 'Error whlie pausing fleet');
+      return;
+    }
+
+    this.isPause = !this.isPause; // yet to modify the state, depends upon the returned state..
+    this.toastPopup('warn', 'Paused', 'Fleet Has been Paused');
+  }
+
+  async resumeFleet(bodyData: any) {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/resume-fleet`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    let data = await response.json();
+    console.log(data);
+    if (data.error) {
+      this.toastPopup('error', 'Error', 'Error whlie resuming fleet');
+      return;
+    }
+
+    this.isPause = !this.isPause;
+    this.toastPopup('success', 'Resumed', 'Fleet Has been Resumed');
+  }
+
+  toastPopup(severity: string, summary: string, detail: string) {
+    this.messageService.add({
+      severity: severity,
+      summary: this.getTranslation(summary),
+      detail: this.getTranslation(detail),
+      life: 4000,
+    });
+  }
+
   updateUI() {
     // Example of adding a simple fade-in/out effect to a specific element
     const modeElement = document.querySelector('.mode-indicator');
@@ -573,7 +790,7 @@ export class DashboardComponent implements AfterViewInit {
         // alert('robo Initialized!');
         this.messageService.add({
           severity: 'info',
-          summary:  this.getTranslation('Robot Initialized!'),
+          summary: this.getTranslation('Robot Initialized!'),
           life: 4000,
         });
         return;
@@ -594,7 +811,7 @@ export class DashboardComponent implements AfterViewInit {
     if (this.isShowPath) {
       this.messageService.add({
         severity: 'info',
-        summary:  this.getTranslation('Robot Path is Visible'),
+        summary: this.getTranslation('Robot Path is Visible'),
         detail: this.getTranslation('Path for all robots are now visible'),
         life: 4000,
       });
@@ -770,6 +987,8 @@ export class DashboardComponent implements AfterViewInit {
       if (ctx) {
         // Load the background image
         this.isImage = true;
+        this.nodeGraphService.setImage(this.isImage);
+
         const img = new Image();
         img.src = `http://${environment.API_URL}:${environment.PORT}/${
           this.projectService.getMapData().imgUrl
@@ -1432,19 +1651,17 @@ export class DashboardComponent implements AfterViewInit {
     if (data.isRoboEnabled) {
       this.messageService.add({
         severity: 'info',
-        summary:`${
-          robot.roboName || robot.roboDet.roboName
-        } `,
+        summary: `${robot.roboName || robot.roboDet.roboName} `,
         detail: this.getTranslation('Robot has been Enabled'),
         life: 4000,
       });
     } else {
       this.messageService.add({
         severity: 'error',
-        summary: `${
-          robot.roboName || robot.roboDet.roboName
-        }`,
-        detail: this.getTranslation('The robot is not initialized, so it cannot be Enabled'),
+        summary: `${robot.roboName || robot.roboDet.roboName}`,
+        detail: this.getTranslation(
+          'The robot is not initialized, so it cannot be Enabled'
+        ),
         life: 4000,
       });
     }

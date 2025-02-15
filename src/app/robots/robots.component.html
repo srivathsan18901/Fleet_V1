@@ -1878,9 +1878,9 @@
                       <p>{{ getTranslation("ID") }} :{{ robot.id }}</p> <!-- Display ID -->
                       <p>{{ getTranslation("S.No") }} : {{ robot.serialNumber }}</p> <!-- Display Serial Number -->
                       <p>{{ getTranslation("Status") }} : 
-              <span [ngStyle]="{'color': robot.status === 'ACTIVE' ? 'green' : 'red'}">
-                {{ robot.status }}
-              </span>
+                      <span [ngStyle]="{'color': robot.status == 'ACTIVE' ? 'green' : 'red'}">
+                        {{ robot.status }}
+                      </span>
               </p>
                     </div>
 

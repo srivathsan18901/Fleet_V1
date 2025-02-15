@@ -17,6 +17,20 @@ app-sidenavbar{
   background-color: white; /* Change background color to white */
   transition: background-color 0.3s ease; /* Smooth transition effect */
 }
+:host ::ng-deep .custom-speeddial .p-speeddial-button {
+  background-color: #ff7373 !important; /* Primary button */
+  border: none;
+  color: #ffffff;
+}
+
+:host ::ng-deep .custom-speeddial .p-speeddial-action {
+  background-color: lightgrey !important; /* Other action buttons */
+  color: black !important;
+}
+
+:host ::ng-deep .custom-speeddial .p-speeddial-action:hover {
+  background-color: #d3d3d3 !important; /* Slightly darker grey on hover */
+}
 
 .mainContent {
   flex-grow: 1;  

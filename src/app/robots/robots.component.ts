@@ -96,7 +96,7 @@ export class RobotsComponent implements OnInit {
     this.mapDetails = this.projectService.getMapData();
     if (!this.mapDetails) return;
     // console.log(this.liveRobos,'====================================')
-    this.updateLiveRoboInfo();
+    // this.updateLiveRoboInfo();
     let grossFactSheet = await this.fetchAllRobos();
     this.robots = grossFactSheet.map((robo) => {
       robo.imageUrl = '../../assets/robots/agv1.png';
@@ -110,7 +110,8 @@ export class RobotsComponent implements OnInit {
     // Subscribe to the isFleet$ observable
     const fleetSub = this.isFleetService.isFleet$.subscribe(
       (status: boolean) => {
-        this.isFleet = status; // Update the value whenever it changes
+        // this.isFleet = status; // Update the value whenever it changes
+        this.isFleet = true;
       }
     );
 
@@ -191,7 +192,7 @@ export class RobotsComponent implements OnInit {
           robo.battery = liveRobo.battery.toFixed(2);
           robo.batteryPercentage = liveRobo.battery.toFixed(2);
           robo.currentTask = liveRobo.current_task;
-          robo.status = liveRobo.isConnected ? this.getTranslation("Active") : this.getTranslation("Inactive");
+          robo.status = liveRobo.isConnected ? this.getTranslation('Active') : this.getTranslation("Inactive");
           robo.isConnected = liveRobo.isConnected;
           robo.distance = liveRobo.DISTANCE;
           robo.temperature = liveRobo.robotTemperature;
