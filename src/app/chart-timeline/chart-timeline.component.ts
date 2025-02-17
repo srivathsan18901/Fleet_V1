@@ -133,6 +133,12 @@ export class ChartTimelineComponent implements OnInit {
         zoom: {
           autoScaleYaxis: true,
         },
+        toolbar: {
+          show: true, // Keep the toolbar visible
+          tools: {
+            download: false, // Disable only the download menu
+          },
+        },
       },
       // colors: ['#77B6EA', '#545454'],
       dataLabels: {
@@ -162,10 +168,27 @@ export class ChartTimelineComponent implements OnInit {
         },
       },
       tooltip: {
+        enabled: true,
+        theme: 'dark',
         x: {
-          format: 'dd MMM yyyy',
+          format: 'dd MMM',
+        },
+        custom: ({ seriesIndex, dataPointIndex, w }) => {
+          const value = w.config.series[seriesIndex].data[dataPointIndex];
+          const category = w.config.xaxis.categories[dataPointIndex];
+
+          // Find the corresponding metric translation
+          const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
+          const translatedMetric = this.getTranslation(metricKey) || metricKey; 
+      
+          return `
+            <div style="padding: 10px; background: #333; color: #fff;">
+              <strong>${translatedMetric}</strong>: ${value}<br>
+            </div>
+          `;
         },
       },
+      
       fill: {
         type: 'gradient',
         gradient: {
@@ -203,6 +226,8 @@ export class ChartTimelineComponent implements OnInit {
   getTranslation(key: string) {
     return this.translationService.getStatisticsTranslation(key);
   }
+  private langSubscription!: Subscription;
+
   ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
       this.metrics = {
@@ -224,6 +249,8 @@ export class ChartTimelineComponent implements OnInit {
           { key: 'data7', label: this.getTranslation("battery")},
         ],
       };
+      
+      this.cdRef.detectChanges();
     });
     this.currentFilter = 'today';
     this.selectedMap = this.projectService.getMapData();
@@ -289,9 +316,8 @@ export class ChartTimelineComponent implements OnInit {
       console.log('No map has been selected!');
       return;
     }
-
     this.selectedMetric = metricName; // Update the displayed metric name
-
+    
     const updateFunctions: { [key: string]: () => void } = {
       data1: this.updateCpuUtil.bind(this),
       data2: this.updateRoboUtil.bind(this),

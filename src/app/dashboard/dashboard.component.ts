@@ -24,6 +24,7 @@ import { log } from 'node:console';
 import { abort } from 'node:process';
 import html2canvas from 'html2canvas';
 import { MenuItem } from 'primeng/api';
+import { Router } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
 
 enum ZoneType {
@@ -228,6 +229,7 @@ export class DashboardComponent implements AfterViewInit {
     private messageService: MessageService,
     private isFleetService: IsFleetService,
     private modeService: ModeService,
+    private router: Router,
     private nodeGraphService: NodeGraphService,
     private heatmapService: HeatmapService,
     private translationService: TranslationService
@@ -343,7 +345,6 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setIsShowPath(this.isShowPath);
     this.nodeGraphService.setIsShowRoboPath(this.roboPathIds.size);
     // this.roboPathIds.clear();
-
 
     await this.getMapDetails();
     // this.showModelCanvas = false;
@@ -761,6 +762,16 @@ export class DashboardComponent implements AfterViewInit {
     this.showEdges = !this.showEdges;
     this.redrawCanvas();
   }
+  get isTaskAssigned(): boolean {
+    return this.nodeGraphService.getAssignTask();
+  }
+  get isLocalize(): boolean {
+    return this.nodeGraphService.getLocalize();
+  }
+
+  get isTaskAssignedOrIsLocalize():boolean{
+    return this.nodeGraphService.getAssignTask() || this.nodeGraphService.getLocalize();
+  }
 
   async toggleAssignTask() {
     this.nodeGraphService.setShowModelCanvas(false);
@@ -787,9 +798,8 @@ export class DashboardComponent implements AfterViewInit {
   }
   async toggleModelCanvas() {
     this.nodeGraphService.setAssignTask(false);
-    this.nodeGraphService.setShowModelCanvas(
-      !this.nodeGraphService.getShowModelCanvas()
-    );
+    this.nodeGraphService.setLocalize(false);
+    this.nodeGraphService.setShowModelCanvas( !this.nodeGraphService.getShowModelCanvas() );
     this.showModelCanvas = this.nodeGraphService.getShowModelCanvas();
     if (this.isInLive) {
       // this.initSimRoboPos();
@@ -947,6 +957,16 @@ export class DashboardComponent implements AfterViewInit {
       ctx.restore();
       // return;
     }
+
+    if (this.nodeGraphService.getLocalize()) {
+      this.nodes.forEach((node) => {
+        const transformedY = img.height - node.nodePosition.y;
+        this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
+      });
+      ctx.restore();
+      // return;
+    }
+
     if (!this.nodeGraphService.getShowModelCanvas()) {
       ctx.restore();
       return;
@@ -955,6 +975,7 @@ export class DashboardComponent implements AfterViewInit {
       const transformedY = img.height - node.nodePosition.y;
       this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
     });
+
     if (this.showEdges)
       this.edges.forEach((edge) => {
         const startNode = this.nodes.find((n) => n.nodeId === edge.startNodeId);
@@ -1044,6 +1065,20 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.top = `${y}px`;
     }
   }
+  showLocPopup(x: number, y: number) {
+    const popup = document.getElementById('Localize-popup');
+    if (popup) {
+      popup.style.display = 'block';
+      popup.style.left = `${x}px`;
+      popup.style.top = `${y}px`;
+    }
+  }
+  Localize(){
+    this.router.navigate(['/robots'])
+  }
+  cancelLocalize(){
+    this.router.navigate(['/robots'])
+  }
   async sendAction() {
     if (!this.isFleetUp) {
       this.messageService.add({
@@ -1095,6 +1130,7 @@ export class DashboardComponent implements AfterViewInit {
       detail: `${data.msg}`,
       life: 4000,
     });
+    this.router.navigate(['/tasks']);
   }
 
   cancelATAction() {
@@ -1156,7 +1192,7 @@ export class DashboardComponent implements AfterViewInit {
       if (event.button === 2) {
         return;
       }
-
+      const localize = this.nodeGraphService.getLocalize();
       const assignTask = this.nodeGraphService.getAssignTask();
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -1194,6 +1230,27 @@ export class DashboardComponent implements AfterViewInit {
             imgY <= nodeY + nodeRadius
           ) {
             this.showATPopup(event.clientX, event.clientY);
+            this.sourceLocation = node.nodeId;
+            return;
+          }
+        }
+      }
+      if (localize) {
+        for (let node of this.nodes) {
+          const nodeX = node.nodePosition.x;
+          const nodeY = node.nodePosition.y;
+          const nodeRadius = 15; // Define a radius to detect clicks near the node (adjust as needed)
+          // console.log('offset', this.offsetX, this.offsetY);
+          // console.log('nodepos', nodeX, nodeY);
+          // console.log('mousepos', imgX, imgY);
+
+          if (
+            imgX >= nodeX - nodeRadius &&
+            imgX <= nodeX + nodeRadius &&
+            imgY >= nodeY - nodeRadius &&
+            imgY <= nodeY + nodeRadius
+          ) {
+            this.showLocPopup(event.clientX, event.clientY);
             this.sourceLocation = node.nodeId;
             return;
           }
@@ -2406,32 +2463,40 @@ export class DashboardComponent implements AfterViewInit {
     ctx.fill();
   }
 
-  drawNode(ctx: CanvasRenderingContext2D, x: number, y: number, label: string) {
+drawNode(ctx: CanvasRenderingContext2D, x: number, y: number, label: string) {
     const isAssignTask = this.nodeGraphService.getAssignTask();
+    const isLocalise = this.nodeGraphService.getLocalize();
 
     // Set node size and color conditionally
-    const nodeColor = isAssignTask ? '#f00' : '#00f'; // Red for Assign Task, Blue otherwise
-    const nodeRadius = isAssignTask ? 6 : 4; // Larger radius for Assign Task, default otherwise
-    if (isAssignTask) {
-      const outerCircleRadius = nodeRadius + 4; // Outer circle is slightly larger than the node
-      ctx.beginPath();
-      ctx.arc(x, y, outerCircleRadius, 0, 2 * Math.PI); // Outer circle
-      ctx.strokeStyle = '#ff7373'; // Color for the outer circle (can be customized)
-      ctx.lineWidth = 2; // Thickness of the outer circle's border
-      ctx.stroke();
+    let nodeColor = isAssignTask ? '#f00' : '#00f'; // Red for Assign Task, Blue otherwise
+    let nodeRadius = isAssignTask ? 6 : 4; // Larger radius for Assign Task, default otherwise
+    let outerCircleColor = '#ff7373'; // Default outer circle color
+    let outerCircleRadius = nodeRadius + 4;
+
+    // If isLocalise is true, override node and outer circle color
+    if (isLocalise) {
+        nodeColor = '#3b82f6'; // Sky blue color for node
+        nodeRadius = 5; // Set a fixed radius when localised
+        outerCircleColor = '#3b82f6'; // Sky blue color for outer circle
+        outerCircleRadius = nodeRadius + 4; // Outer circle slightly larger
     }
+
+    // Draw outer circle if applicable
+    if (isAssignTask || isLocalise) {
+        ctx.beginPath();
+        ctx.arc(x, y, outerCircleRadius, 0, 2 * Math.PI); // Outer circle
+        ctx.strokeStyle = outerCircleColor; // Use appropriate color
+        ctx.lineWidth = 2; // Thickness of the outer circle's border
+        ctx.stroke();
+    }
+
+    // Draw node
     ctx.beginPath();
     ctx.arc(x, y, nodeRadius, 0, 2 * Math.PI); // Draw circle with the specified radius
     ctx.fillStyle = nodeColor; // Use the determined color
     ctx.fill();
-
-    // Add a label to the node
-    // if(isAssignTask){
-    // ctx.fillStyle = '#000'; // Black text color
-    // ctx.font = '14px Arial';
-    // ctx.fillText(label, x + 5, y+20); // Place label slightly right to the node
-    // }
   }
+
 
   drawPathNode(
     ctx: CanvasRenderingContext2D,

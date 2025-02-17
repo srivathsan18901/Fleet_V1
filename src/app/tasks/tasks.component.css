@@ -56,8 +56,8 @@
   .table-container {
     width: 102%;
     border-radius: 10px;
-    margin-top: 60px;
-    max-height: 29rem;
+    margin-top: 80px;
+    max-height: 35rem;
     overflow-y: auto;
   }
   .progress-container {
@@ -165,7 +165,7 @@
     position: sticky;
     top: 0;
     background-color: #FFCDCD; /* Ensure the header has a background color */
-    z-index: 1000;
+    /* z-index: 1000; */
   }
   tbody {
     border-radius: 0 0 10px 10px; /* Bottom corners rounded */
@@ -552,9 +552,9 @@
   border-radius: 8px;
   display: flex ;
   padding: 5px;
-  position: absolute;
+  /* position: absolute;
   top: 137px;
-  right: 350px;
+  right: 350px; */
   height: 46px;
   background-color: #f0453f;
   color: #ffffff;
@@ -640,9 +640,9 @@
   
 .filter{
   display: flex;
-  position: absolute;
+  /* position: absolute;
   top: 136px;
-  right: 22px;
+  right: 22px; */
   justify-content: end;
   background-color: #f7f7f7;
   padding:10px 15px;
@@ -651,6 +651,7 @@
 }
 .status-filter{
   margin-right: 15px;
+  display: flex;
 }
 .status-filter label{
   font-family: 'graphik', Arial, sans-serif;

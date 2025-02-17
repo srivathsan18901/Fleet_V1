@@ -288,7 +288,12 @@
     <!-- enable robots dropdown -->
     <div class="dropdown" *ngIf="isImage">
       <!-- Dropdown Button with Arrow -->
-      <button class="dropdown-button" (click)="toggleDropdown()">
+      <button
+      class="dropdown-button"
+      (click)="toggleDropdown()"
+      [disabled]="isTaskAssignedOrIsLocalize"
+      [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize, 'active-button': !isTaskAssignedOrIsLocalize}"
+      >
         {{ getTranslation('enableRobot') }}
         <svg
           [ngClass]="{ rotate: isDropdownOpen }"
@@ -415,9 +420,11 @@
       <button class="AT-btn1" (click)="toggleShowEdges()"><img src="../../assets/edges.svg" style="float:left;margin-right:0.5em">{{ getTranslation('showEdges') }}</button>
     </div>
     <div class="btnSet">
-    <div class="ONBtn2" *ngIf="isImage">
+    <div class="ONBtn2" *ngIf="isImage" >
       <button
         class="AT-btn2"
+        *ngIf="!isTaskAssigned"           
+        [disabled]="isTaskAssignedOrIsLocalize"     
         [ngClass]="{ 'bg-red-500 text-white': !isPause, 'bg-green-500 text-black': isPause }"
         (click)="toggleButton()"
       >
@@ -467,7 +474,7 @@
             class="Zoom"
             (click)="zoomIn()"
           />
-          <span class="tooltiptext">Zoom In</span>
+          <span class="tooltiptext">{{getTranslation("zoomIn")}}</span>
         </div>
 
         <!-- Zoom Out -->
@@ -477,7 +484,7 @@
             class="ZoomOut"
             (click)="zoomOut()"
           />
-          <span class="tooltiptext">Zoom Out</span>
+          <span class="tooltiptext">{{getTranslation("zoomOut")}}</span>
         </div>
 
         <!-- Pan -->
@@ -487,7 +494,7 @@
             class="Expand"
             (click)="togglePan()"
           />
-          <span class="tooltiptext">Pan</span>
+          <span class="tooltiptext">{{getTranslation("pan")}}</span>
         </div>
 
         <!-- Capture -->
@@ -497,7 +504,7 @@
             class="Capture"
             (click)="captureCanvas()"
           />
-          <span class="tooltiptext">Capture</span>
+          <span class="tooltiptext">{{getTranslation("capture")}}</span>
         </div>
 
         <!-- Record -->
@@ -511,9 +518,10 @@
             class="Save"
             (click)="toggleRecording()"
           />
-          <span class="tooltiptext">{{
-            recording ? "Stop Recording" : "Start Recording"
-          }}</span>
+          <span class="tooltiptext">
+            {{ recording ? getTranslation('stopRecording') : getTranslation('startRecording') }}
+          </span>
+          
         </div>
 
         <!-- Dashboard -->
@@ -523,7 +531,7 @@
             class="Pointer"
             (click)="toggleDashboard()"
           />
-          <span class="tooltiptext">Dashboard</span>
+          <span class="tooltiptext">{{getTranslation('dashboard')}}</span>
         </div>
 
         <!-- Model Canvas -->
@@ -533,7 +541,7 @@
             class="ModelCanvas"
             (click)="toggleShowPath()"
           />
-          <span class="tooltiptext">Show Path</span>
+          <span class="tooltiptext">{{getTranslation('showPath')}}</span>
         </div>
         <div class="tooltip">
           <img
@@ -541,7 +549,7 @@
             class="ModelCanvas"
             (click)="toggleHeatmap()"
           />
-          <span class="tooltiptext">Heat Map</span>
+          <span class="tooltiptext">{{getTranslation('heatMap')}}</span>
         </div>
         <div class="tooltip">
           <img
@@ -549,7 +557,7 @@
             class="ModelCanvas"
             (click)="toggleModelCanvas()"
           />
-          <span class="tooltiptext">Map Option</span>
+          <span class="tooltiptext">{{getTranslation('mapOption')}}</span>
         </div>
       </div>
       <!-- <div class="tooltip">
@@ -643,3 +651,17 @@
   </div>
 </div>
 
+<div id="Localize-popup" style="position: absolute; display: none; padding: 10px;background: linear-gradient(#6496e6b2, #ffffff71);;backdrop-filter: blur(5px); border: 1px solid #ccc; border-radius: 8px;filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404)); z-index: 1000;">
+  <div class="ATactions">
+  <div>
+  <label class="idlabel" for="robot-select">{{ getTranslation('robotID') }}: </label>
+  </div>
+  <div>
+  <label class="idlabel" for="robot-select">X:,Y:,Z:</label>
+  </div>
+</div>
+  <div class="ATbtn-set">
+  <button class="sendATbtn" (click)="Localize()">{{ getTranslation('localize') }}</button>
+  <button class="cancelATbtn" (click)="cancelLocalize()">{{ getTranslation('cancel') }}</button>
+  </div>
+</div>

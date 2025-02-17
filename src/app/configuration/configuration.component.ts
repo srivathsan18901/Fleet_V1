@@ -203,6 +203,7 @@ export class ConfigurationComponent implements AfterViewInit {
         this.deleteButtonText = this.getTranslation('Delete');
         this.editButtonText = this.getTranslation('edit');
         this.exportButtonText = this.getTranslation('export');
+        this.selectedFileName = this.getTranslation('import_map_file');
         this.items = [
           {
             label: this.getTranslation('Create'),

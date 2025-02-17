@@ -460,7 +460,7 @@ h2 {
   top: 50%;
   transform: translateY(-40%);
   width: 6vw; /* Adjust the width of the chart */
-  height: 7vw; /* Keep height proportional to the width */
+  height: 3.5vw; /* Keep height proportional to the width */
 }
 
 .loading svg polyline {

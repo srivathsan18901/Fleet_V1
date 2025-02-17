@@ -273,7 +273,7 @@ h2 {
 }
 .Res1{
   display: flex;
-  align-items: flex-start;
+  align-items: center;
 }
 #resolution{
   /* width: 120px;
@@ -282,10 +282,10 @@ h2 {
   /* border-bottom:1px solid #000000; */
   margin-right: 5px;
 }
-.OpenandLocate{
+/* .OpenandLocate{
   margin-left: 5px;
   margin-top: 5px;
-}
+} */
 #X,#Y,#θ{
   width: 50px;
   margin-top: 10px;
@@ -1021,10 +1021,10 @@ button {
   right: 100px; Position it to the left of the Save button
 } */
 .OpenandLocate{
-  padding: 10.5px;
+  padding: 7px;
   background-color: #ff3333;
   color: #fff;
-  font-size: 13px;
+  font-size: 12px;
   font-family: "graphik", Arial,  sans-serif;
   border: none;
   border-radius: 5px;

@@ -71,7 +71,7 @@
         <label for="origin">{{getTranslation('Origin')}}</label>
         <div
           class="origin-coor"
-          style="display: flex; align-items: center; gap: 10px"
+          style="display: flex;align-items: center;gap: 10px;width: max-content;"
         >
         <input pInputText type="number" id="X" placeholder="X" #originX [(ngModel)]="origin.x" (keyup.enter)="open()" />
         <input pInputText type="number" id="Y" placeholder="Y" #originY [(ngModel)]="origin.y" (keyup.enter)="open()" />
@@ -679,8 +679,8 @@
         {{ validationError }}
       </div>
       <div class="button-container">
-      <button *ngIf="fileName && !showImage" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }" (click)="open()">Open</button>
-      <button (click)="close()" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }">Close</button>
+      <button *ngIf="fileName && !showImage" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }" (click)="open()">{{getTranslation('Open')}}</button>
+      <button (click)="close()" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }">{{getTranslation('Close')}}</button>
     </div>
     </div>
   </div>
@@ -965,11 +965,11 @@
   <div class="popup-content1">
     <div class="flex h-40px">
     <div>
-    <p>Enter Number of Nodes</p>
+    <p>{{getTranslation('enter_number_of_nodes')}}<p>
     <input pInputText
       type="number"
       [(ngModel)]="numberOfIntermediateNodes"
-      placeholder="Number of nodes"
+      placeholder="{{getTranslation('number_of_nodes')}}"
       min="0"
       (ngModelChange)="onInputChanged()"
       class="InNode"
@@ -977,11 +977,11 @@
   </div>
   <div class="node-separator"></div>
   <div>
-    <p>Select Direction</p>
+    <p>{{getTranslation('select_direction')}}</p>
     <select class="direction" [(ngModel)]="direction">
-      <option value="" disabled selected>Select a Direction</option>
-      <option value="uni">Uni-Direction</option>
-      <option value="bi">Bi-Direction</option>
+      <option value="" disabled selected>{{getTranslation('select_a_direction')}}</option>
+      <option value="uni">{{getTranslation('uni_direction')}}</option>
+      <option value="bi">{{getTranslation('bi_direction')}}</option>
     </select>
   </div>
   
@@ -990,7 +990,7 @@
     <p style="color: red;">Please select a direction.</p>
   </div>
     <button *ngIf="isEnterButtonVisible" (click)="plotIntermediateNodes()">
-      Enter
+      {{getTranslation('enter')}}
     </button>
   </div>
 </div>

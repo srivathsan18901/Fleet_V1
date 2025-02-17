@@ -88,6 +88,12 @@ export class AreaChartComponent implements OnInit {
         height: 250,
         type: 'area',
         background: '#FFFFFF',
+        toolbar: {
+          show: true, // Keep the toolbar visible
+          tools: {
+            download: false, // Disable only the download menu
+          },
+        },
       },
       xaxis: {
         categories: [], // Your default categories
@@ -140,6 +146,19 @@ export class AreaChartComponent implements OnInit {
         theme: 'dark',
         x: {
           format: 'dd MMM',
+        },
+        custom: ({ seriesIndex, dataPointIndex, w }) => {
+          const value = w.config.series[seriesIndex].data[dataPointIndex];
+          const category = w.config.xaxis.categories[dataPointIndex];
+  
+          // Assuming 'metricName' is translated dynamically, here's how you can use it:
+          const translatedMetric = this.getTranslation(this.selectedMetric); // Get translation for the metric
+  
+          return `
+            <div style="padding: 10px; background: #333; color: #fff;">
+              <strong>${translatedMetric}</strong>: ${value}<br>
+            </div>
+          `;
         },
       },
       grid: {

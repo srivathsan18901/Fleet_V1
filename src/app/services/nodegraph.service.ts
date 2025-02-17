@@ -21,7 +21,7 @@ export class NodeGraphService {
   showModelCanvas: boolean = false;
   assignTask:boolean=false;
   isImage:boolean=false;
-
+  localize:boolean=false;
   constructor() {}
 
   setImage(isImage:boolean){
@@ -80,6 +80,13 @@ export class NodeGraphService {
     return this.assignTask;
   }
 
+  setLocalize(state: boolean) {
+    this.localize = state;
+  }
+
+  getLocalize(): boolean {
+    return this.localize;
+  }
   setsimMode(simMode: any[]) {
     this.simMode = simMode;
   }
