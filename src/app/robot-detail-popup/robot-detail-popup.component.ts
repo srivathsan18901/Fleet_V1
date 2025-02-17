@@ -4,6 +4,8 @@ import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { Subscription } from 'rxjs';
 import { TranslationService } from '../services/translation.service';
+import { Router } from '@angular/router';
+import { NodeGraphService } from '../services/nodegraph.service';
 
 export interface Robot {
   isCharging: boolean;
@@ -84,7 +86,10 @@ export class RobotDetailPopupComponent {
     //   const checkbox = event.target as HTMLInputElement;
     //   this.isEmergencyStop = !checkbox.checked; // Toggle the state
     // }
-
+  localize(){   
+    this.nodeGraphService.setLocalize(true);
+    this.router.navigate(['/dashboard']);
+  }
   onEmergencyStop() {
     alert('Emergency Stop Pressed!');
   }
@@ -118,6 +123,8 @@ export class RobotDetailPopupComponent {
     public dialogRef: MatDialogRef<RobotDetailPopupComponent>,
     private projectService: ProjectService,
     private translationService: TranslationService,
+    private router:Router,
+    private nodeGraphService:NodeGraphService,
     @Inject(MAT_DIALOG_DATA) public data: Robot
   ) {
 

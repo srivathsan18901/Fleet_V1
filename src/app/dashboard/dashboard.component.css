@@ -13,6 +13,15 @@
 app-sidenavbar{
   z-index: 12;
 }
+.disabled-button {
+  pointer-events: none;  /* Disable clicking */
+  filter: blur(2px);   
+}
+
+.active-button {
+  opacity: 1;            /* Keep normal opacity */
+}
+
 .state-container:hover {
   background-color: white; /* Change background color to white */
   transition: background-color 0.3s ease; /* Smooth transition effect */

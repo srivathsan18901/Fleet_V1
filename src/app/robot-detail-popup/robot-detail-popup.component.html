@@ -46,9 +46,13 @@
       <span class="status-text">{{ data.isConnected ? getTranslation("Active") : getTranslation("Inactive") }}</span>
     </div>
 
+    <button class="Loc-BTN" (click)="localize()">
+      {{ getTranslation('localize') }}
+    </button>
+
     <!-- connect button -->
     <button
-      class="status-button absolute z-50 top-[0px] w-[10vw] h-[8vh]
+      class="status-button absolute z-50 top-[0px] 
       {{ data.isConnected ? 'connected' : '' }}"
       (click)="toggleConnection()">
       {{ data.isConnected ?  getTranslation("Disconnect") :  getTranslation("Connect") }}

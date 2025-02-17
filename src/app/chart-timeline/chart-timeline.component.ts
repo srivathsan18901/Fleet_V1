@@ -88,7 +88,7 @@ export class ChartTimelineComponent implements OnInit {
   networkTimeInterval: any | null = null;
   idleTimeInterval: any | null = null;
   errTimeInterval: any | null = null;
-  selectedMetric: string = ""; // Initialize with an empty string or a default value
+  selectedMetric: string = "cpuUtilization"; // Initialize with an empty string or a default value
   metrics = {
     Overall: [
       { key: 'data1', label: this.getTranslation("cpuUtilization")},
@@ -174,7 +174,7 @@ export class ChartTimelineComponent implements OnInit {
         custom: ({ seriesIndex, dataPointIndex, w }) => {
           const value = w.config.series[seriesIndex].data[dataPointIndex];
           const category = w.config.xaxis.categories[dataPointIndex];
-      
+
           // Find the corresponding metric translation
           const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
           const translatedMetric = this.getTranslation(metricKey) || metricKey; 
@@ -225,11 +225,9 @@ export class ChartTimelineComponent implements OnInit {
     return this.translationService.getStatisticsTranslation(key);
   }
   private langSubscription!: Subscription;
-  
+
   ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-      this.selectedMetric=this.getTranslation(this.selectedMetric);
-      console.log("hey",this.selectedMetric);      
       this.metrics = {
         Overall: [
           { key: 'data1', label: this.getTranslation("cpuUtilization")},
@@ -248,7 +246,8 @@ export class ChartTimelineComponent implements OnInit {
           { key: 'data6', label: this.getTranslation("error")},
           { key: 'data7', label: this.getTranslation("battery")},
         ],
-      };      
+      };
+      
       this.cdRef.detectChanges();
     });
     this.currentFilter = 'today';
