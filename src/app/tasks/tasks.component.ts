@@ -27,7 +27,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
   paginatedData: any[] = [];
   selectedStatus: string = '';
   selectedRobot: string = '';
+
+  liveTasksInterval: ReturnType<typeof setInterval> | null = null;
+  tasksSignalController: AbortController | null = null;
+
   private langSubscription!: Subscription;
+
   onRobotFilter(event: any) {
     this.selectedRobot = event.target.value;
     this.applyFilters();
@@ -232,15 +237,15 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
   isButtonDisabled: boolean = true;
   async ngOnInit() {
-    if (!JSON.parse(this.projectService.getInitializeMapSelected())) this.isButtonDisabled = false;
-    
+    if (!JSON.parse(this.projectService.getInitializeMapSelected()))
+      this.isButtonDisabled = false;
+
     this.mapData = this.projectService.getMapData();
-    let establishedTime = new Date(this.mapData.createdAt); // created time of map..
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
-       
-    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
+
+    this.paginatorIntl.itemsPerPageLabel =
+      this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
@@ -268,6 +273,32 @@ export class TasksComponent implements OnInit, AfterViewInit {
       }
     );
     if (!this.mapData) return;
+    await this.fetchTasks();
+
+    let grossFactSheet = await this.fetchAllRobos();
+    this.setPaginatedData();
+
+    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
+      // this.isFleet = status; // Update the value whenever it changes
+      if (status)
+        this.robotList = grossFactSheet.map((robo) => {
+          return robo.id;
+        });
+      else this.robotList = await this.getSimRobos();
+    });
+
+    this.liveTasksInterval = setInterval(async () => {
+      if (this.tasksSignalController) this.tasksSignalController.abort();
+      await this.fetchTasks();
+      this.setPaginatedData();
+    }, 1000 * 4);
+  }
+
+  async fetchTasks() {
+    this.tasksSignalController = new AbortController();
+
+    let establishedTime = new Date(this.mapData.createdAt); // created time of map..
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
       {
@@ -279,10 +310,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
+        signal: this.tasksSignalController.signal,
       }
     );
     let data = await response.json();
-    console.log(data, 'task data');
+    // console.log(data, 'task data');
     if (!data.tasks) return;
     const { tasks } = data.tasks;
 
@@ -303,19 +335,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
         };
       });
     this.filteredTaskData = this.tasks;
-    // console.log(this.tasks);
-
-    let grossFactSheet = await this.fetchAllRobos();
-    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
-      // this.isFleet = status; // Update the value whenever it changes
-      if (status)
-        this.robotList = grossFactSheet.map((robo) => {
-          return robo.id;
-        });
-      else this.robotList = await this.getSimRobos();
-    });
-    this.setPaginatedData();
   }
+
   async toggleAssignTask() {
     this.router.navigate(['/dashboard']);
     this.nodeGraphService.setAssignTask(true);
@@ -594,5 +615,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   onClose() {
     this.isPopupVisible = false;
+  }
+
+  ngOnDestroy() {
+    if (this.liveTasksInterval) clearInterval(this.liveTasksInterval);
   }
 }
