@@ -1,4 +1,10 @@
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  AfterViewInit,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { ExportService } from '../export.service';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
@@ -230,7 +236,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private paginatorIntl: MatPaginatorIntl,
     private isFleetService: IsFleetService,
     private router: Router,
-    private nodeGraphService: NodeGraphService
+    private nodeGraphService: NodeGraphService,
+    private cdRef: ChangeDetectorRef
   ) {}
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
@@ -290,7 +297,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.liveTasksInterval = setInterval(async () => {
       if (this.tasksSignalController) this.tasksSignalController.abort();
       await this.fetchTasks();
-      this.setPaginatedData();
+      this.cdRef.detectChanges();
+      // this.setPaginatedData();
     }, 1000 * 4);
   }
 
@@ -424,12 +432,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
         taskId: task.taskId,
         robotId: parseInt(task.selectedRobot),
       };
-      await this.assignTask(bodyData);
+      let isTaskAssigned = await this.assignTask(bodyData);
+      if (isTaskAssigned) task.status = 'ASSIGNED';
     }
     this.cancelAssign(task);
   }
 
-  async assignTask(bodyData: any) {
+  async assignTask(bodyData: any): Promise<boolean> {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/assign-task`,
       {
@@ -442,7 +451,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     let data = await response.json();
     console.log(data);
-    if (data.error) return;
+    if (data.taskAssigned) {
+      alert('task sent');
+      return true;
+    }
+    // if (data.error) return false;
+    return false;
   }
 
   cancelAssign(item: any) {
