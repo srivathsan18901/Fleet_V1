@@ -13,6 +13,8 @@ import {
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { TranslationService } from '../services/translation.service';
+import { Subscription } from 'rxjs';
+
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -71,7 +73,7 @@ export class ThroughputComponent {
     this.chartOptions = {
       series: [
         {
-          name: 'Picks',
+          name: this.getTranslation("picks"),
           data: this.throughputArr,
           color: '#F71717', // Using preferred color
         },
@@ -139,7 +141,80 @@ export class ThroughputComponent {
   getTranslation(key: string) {
     return this.translationService.getDashboardTranslation(key);
   }
+  private langSubscription!: Subscription;
+  
   async ngOnInit() {
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.chartOptions = {
+          series: [
+            {
+              name: this.getTranslation("picks"),
+              data: this.throughputArr,
+              color: '#F71717', // Using preferred color
+            },
+          ],
+          chart: {
+            type: 'area',
+            height: 225, // Set height
+            width: 520, // Set width
+            offsetY: 5,
+            offsetX: 10,
+            zoom: {
+              enabled: false,
+            },
+            toolbar: {
+              show: true, // Keep the toolbar visible
+              tools: {
+                download: false, // Disable only the download menu
+              },
+            },
+          },
+          dataLabels: {
+            enabled: false,
+          },
+          stroke: {
+            curve: 'smooth',
+          },
+          title: {
+            text: this.getTranslation('throughput'),
+            align: 'left',
+            style: {
+              fontFamily: 'Arial, Helvetica, sans-serif',
+              fontWeight: 'bold',
+              fontSize: '20px',
+            },
+          },
+          subtitle: {
+            text: this.getTranslation('picksPerHour'),
+            align: 'left',
+            style: {
+              fontFamily: 'Arial, Helvetica, sans-serif',
+              fontWeight: 'semibold',
+              fontSize: '12px',
+              color: '#959494',
+            },
+          },
+          // labels: seriesData.hourlyDataSeries1.datestime,
+          xaxis: {
+            type: 'datetime',
+            tickAmount: 10,
+            labels: {
+              format: 'HH:mm',
+            },
+          },
+          yaxis: {
+            opposite: true,
+          },
+          legend: {
+            horizontalAlign: 'left',
+            fontFamily: 'Arial, Helvetica, sans-serif',
+            fontWeight: 'bold',
+            fontSize: '8px',
+          },
+        };
+        this.cdRef.detectChanges();
+      });
     this.selectedMap = this.projectService.getMapData();
     this.isInLive = this.projectService.getInLive();
     if (!this.isInLive) return;
