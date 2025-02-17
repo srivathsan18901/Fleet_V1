@@ -70,14 +70,39 @@ export class UserManagementComponent implements OnInit {
   pageSize: any = 0;
   pageNumber: any = 0;
   activeTab: string = 'General'; // Default tab
-  private langSubscription!: Subscription;
+  private languageSubscription!: Subscription;
+  private langSubscription: String = 'ENG';
   async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
     this.paginatorIntl.itemsPerPageLabel =
       this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
-    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+    this.translationService.currentLanguage$.subscribe(
       (val) => {
+        this.langSubscription = val;
+        this.projects = this.projects.map((project: any) => {
+          let date = new Date(project.createdAt);
+          let localeMapping: Record<string, string> = {
+            ENG: 'en-IN',
+            JAP: 'ja-JP',
+            FRE: 'fr-FR',
+            GER: 'de-DE'
+          };
+          
+          let createdAt = date.toLocaleString(localeMapping[`${this.langSubscription}`] ||'en-IN', {
+            month: 'short',
+            year: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+          });
+
+          project.createdAt = createdAt;
+          return project;
+        });
+        console.log(this.projects);
+        
         // this.updateHeaderTranslation();
         this.pages.nameTag = this.getTranslation(this.pages.nameTag);
         this.paginatorIntl.itemsPerPageLabel =
@@ -221,12 +246,20 @@ export class UserManagementComponent implements OnInit {
 
     this.projects = data.projects.map((project: any) => {
       let date = new Date(project.createdAt);
-      let createdAt = date.toLocaleString('en-IN', {
+      let localeMapping: Record<string, string> = {
+        ENG: 'en-IN',
+        JAP: 'ja-JP',
+        FRE: 'fr-FR',
+        GER: 'de-DE'
+      };
+      
+      let createdAt = date.toLocaleString(localeMapping[`${this.langSubscription}`] ||'en-IN', {
         month: 'short',
         year: 'numeric',
         day: 'numeric',
         hour: 'numeric',
         minute: 'numeric',
+        hour12: true
       });
 
       return {
@@ -887,7 +920,7 @@ export class UserManagementComponent implements OnInit {
     this.user = this.userCredentials.find((user) => userId === user.userId);
     if (this.user) {
       // console.log("open",this.getTranslation(this.activeTab));
-      this.langSubscription =
+      this.languageSubscription =
         this.translationService.currentLanguage$.subscribe((val) => {
           this.cdRef.detectChanges();
         });

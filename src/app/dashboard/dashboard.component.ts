@@ -24,6 +24,7 @@ import { log } from 'node:console';
 import { abort } from 'node:process';
 import html2canvas from 'html2canvas';
 import { MenuItem } from 'primeng/api';
+import { Router } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
 
 enum ZoneType {
@@ -228,6 +229,7 @@ export class DashboardComponent implements AfterViewInit {
     private messageService: MessageService,
     private isFleetService: IsFleetService,
     private modeService: ModeService,
+    private router: Router,
     private nodeGraphService: NodeGraphService,
     private heatmapService: HeatmapService,
     private translationService: TranslationService
@@ -1095,6 +1097,7 @@ export class DashboardComponent implements AfterViewInit {
       detail: `${data.msg}`,
       life: 4000,
     });
+    this.router.navigate(['/tasks']);
   }
 
   cancelATAction() {
