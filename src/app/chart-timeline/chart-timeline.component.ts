@@ -24,6 +24,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslationService } from '../services/translation.service';
 import { Robot, RobotDetailPopupComponent, } from '../robot-detail-popup/robot-detail-popup.component';
 import { Subscription } from 'rxjs';
+import { log } from 'node:console';
 
 interface Robo {
   roboName: string;
@@ -87,7 +88,7 @@ export class ChartTimelineComponent implements OnInit {
   networkTimeInterval: any | null = null;
   idleTimeInterval: any | null = null;
   errTimeInterval: any | null = null;
-  selectedMetric: string = "cpuUtilization"; // Initialize with an empty string or a default value
+  selectedMetric: string = ""; // Initialize with an empty string or a default value
   metrics = {
     Overall: [
       { key: 'data1', label: this.getTranslation("cpuUtilization")},
@@ -165,10 +166,27 @@ export class ChartTimelineComponent implements OnInit {
         },
       },
       tooltip: {
+        enabled: true,
+        theme: 'dark',
         x: {
-          format: 'dd MMM yyyy',
+          format: 'dd MMM',
+        },
+        custom: ({ seriesIndex, dataPointIndex, w }) => {
+          const value = w.config.series[seriesIndex].data[dataPointIndex];
+          const category = w.config.xaxis.categories[dataPointIndex];
+      
+          // Find the corresponding metric translation
+          const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
+          const translatedMetric = this.getTranslation(metricKey) || metricKey; 
+      
+          return `
+            <div style="padding: 10px; background: #333; color: #fff;">
+              <strong>${translatedMetric}</strong>: ${value}<br>
+            </div>
+          `;
         },
       },
+      
       fill: {
         type: 'gradient',
         gradient: {
@@ -210,6 +228,8 @@ export class ChartTimelineComponent implements OnInit {
   
   ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      this.selectedMetric=this.getTranslation(this.selectedMetric);
+      console.log("hey",this.selectedMetric);      
       this.metrics = {
         Overall: [
           { key: 'data1', label: this.getTranslation("cpuUtilization")},
@@ -295,9 +315,8 @@ export class ChartTimelineComponent implements OnInit {
       console.log('No map has been selected!');
       return;
     }
-
     this.selectedMetric = metricName; // Update the displayed metric name
-
+    
     const updateFunctions: { [key: string]: () => void } = {
       data1: this.updateCpuUtil.bind(this),
       data2: this.updateRoboUtil.bind(this),
