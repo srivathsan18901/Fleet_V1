@@ -80,8 +80,31 @@ export class UserManagementComponent implements OnInit {
     this.translationService.currentLanguage$.subscribe(
       (val) => {
         this.langSubscription = val;
+        this.userCredentials = this.userCredentials.map((user: any) => {
+          const dateString = new Date(user.createdAt);
+
+          let localeMapping: Record<string, string> = {
+            ENG: 'en-IN',
+            JAP: 'ja-JP',
+            FRE: 'fr-FR',
+            GER: 'de-DE'
+          };
+          
+          let createdOn = dateString.toLocaleString(localeMapping[`${this.langSubscription}`] || 'en-IN', {
+            month: 'short',
+            year: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+          });
+          user.createdOn = createdOn;
+
+          return user;
+        });
+
         this.projects = this.projects.map((project: any) => {
-          let date = new Date(project.createdAt);
+          let date = new Date(project.createdOn);
           let localeMapping: Record<string, string> = {
             ENG: 'en-IN',
             JAP: 'ja-JP',
@@ -97,12 +120,11 @@ export class UserManagementComponent implements OnInit {
             minute: 'numeric',
             hour12: true
           });
+          project.createdAt =  createdAt;
 
-          project.createdAt = createdAt;
           return project;
         });
-        console.log(this.projects);
-        
+
         // this.updateHeaderTranslation();
         this.pages.nameTag = this.getTranslation(this.pages.nameTag);
         this.paginatorIntl.itemsPerPageLabel =
@@ -265,9 +287,10 @@ export class UserManagementComponent implements OnInit {
       return {
         id: project._id,
         name: project.projectName,
-        createdAt: createdAt,
         assigned: false,
         isDisabled: false,
+        createdAt: createdAt,
+        createdOn: project.createdAt,
       };
     });
   }
@@ -558,20 +581,35 @@ export class UserManagementComponent implements OnInit {
 
         this.userCredentials = users.map((user: any) => {
           const dateString = new Date(user.createdAt);
-          // let createdOn = dateString.getDate() + "/" + dateString.getMonth() + "/" + dateString.getFullYear()
-          let createdDate = dateString.toLocaleDateString('en-IN', {
-            day: '2-digit',
+
+          // let createdDate = dateString.toLocaleDateString('en-IN', {
+          //   day: '2-digit',
+          //   month: 'short',
+          //   year: 'numeric',
+          // });
+
+          // let createdTime = dateString.toLocaleTimeString('en-IN', {
+          //   hour: '2-digit',
+          //   minute: '2-digit',
+          //   hour12: true, // Use 12-hour format with AM/PM
+          // });
+          // let formattedDate = `${createdDate}, ${createdTime}`;
+
+          let localeMapping: Record<string, string> = {
+            ENG: 'en-IN',
+            JAP: 'ja-JP',
+            FRE: 'fr-FR',
+            GER: 'de-DE'
+          };
+          
+          let createdOn = dateString.toLocaleString(localeMapping[`${this.langSubscription}`] || 'en-IN', {
             month: 'short',
             year: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
           });
-
-          // Format the time in "11:34 PM" format (12-hour format with AM/PM)
-          let createdTime = dateString.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true, // Use 12-hour format with AM/PM
-          });
-          let formattedDate = `${createdDate}, ${createdTime}`;
 
           return {
             userId: user._id,
@@ -580,7 +618,9 @@ export class UserManagementComponent implements OnInit {
             projects: user.projects,
             // userPermissions: user.permissions, // user permission..
             createdBy: user.createdBy,
-            createdOn: formattedDate,
+            // createdOn: formattedDate,
+            createdOn: createdOn,
+            createdAt: user.createdAt
           };
         });
         // console.log(this.userCredentials);  //prints the user credentials
@@ -1164,19 +1204,3 @@ export class UserManagementComponent implements OnInit {
     this.deleteUserOCstate = !this.deleteUserOCstate;
   }
 }
-
-// let totProjCount = 0;
-// for (let proj of this.projects) {
-//   if (!proj.assigned) totProjCount++;
-// }
-// if (!totProjCount) {
-//   this.projects = this.projects.map((project: projectList) => {
-//     project.isDisabled = false;
-//     return project;
-//   });
-//   return;
-// }
-// this.projects = this.projects.map((project: projectList) => {
-//   project.isDisabled = !project.assigned;
-//   return project;
-// });

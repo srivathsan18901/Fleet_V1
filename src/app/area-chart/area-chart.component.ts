@@ -88,6 +88,12 @@ export class AreaChartComponent implements OnInit {
         height: 250,
         type: 'area',
         background: '#FFFFFF',
+        toolbar: {
+          show: true, // Keep the toolbar visible
+          tools: {
+            download: false, // Disable only the download menu
+          },
+        },
       },
       xaxis: {
         categories: [], // Your default categories

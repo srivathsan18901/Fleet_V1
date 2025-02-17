@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   OnInit,
   Input,
@@ -18,6 +19,7 @@ import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { TranslationService } from '../services/translation.service';
+import { Subscription } from 'rxjs';
 
 export type ChartOptions = {
   series: ApexNonAxisChartSeries;
@@ -52,6 +54,7 @@ export class RadialChartComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private isFleetService: IsFleetService,
+    private cdRef: ChangeDetectorRef,
     private translationService: TranslationService,
   ) {
     this.chartOptions = {
@@ -93,8 +96,46 @@ export class RadialChartComponent implements OnInit {
   getTranslation(key: string) {
     return this.translationService.getStatisticsTranslation(key);
   }
-  
+  private langSubscription!: Subscription;
   async ngOnInit() {
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      this.chartOptions = {
+        series: this.roboStatePie,
+        chart: {
+          height: 345,
+          type: 'radialBar',
+        },
+        plotOptions: {
+          radialBar: {
+            dataLabels: {
+              name: {
+                fontSize: '30px',
+              },
+              value: {
+                fontSize: '26px',
+                fontWeight: 600,
+              },
+              total: {
+                show: true,
+                label: this.getTranslation('total'),
+                formatter: () => this.totCount, // Dynamic total count
+              },
+            },
+            track: {
+              background: '#e0e0e0', // Track background color (grayish)
+            },
+          },
+        },
+        fill: {
+          colors: ['#59ED9D', '#FECC6A', '#FF6E6E'], // Green, Yellow, Red
+        },
+        stroke: {
+          lineCap: 'round', // Rounded end of bars for better visual
+        },
+        labels: ['Active', 'Inactive', 'Error'], // Label names
+      };
+      this.cdRef.detectChanges();
+    });
     // this.isFleetService.isFleet$.subscribe((value) => { // use for later..
     //   this.isFleet = value; // React to changes
     //   console.log('isFleet in RadialChartComponent:', this.isFleet);

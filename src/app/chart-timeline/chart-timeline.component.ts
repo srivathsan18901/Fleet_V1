@@ -22,10 +22,8 @@ import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslationService } from '../services/translation.service';
-import {
-  Robot,
-  RobotDetailPopupComponent,
-} from '../robot-detail-popup/robot-detail-popup.component';
+import { Robot, RobotDetailPopupComponent, } from '../robot-detail-popup/robot-detail-popup.component';
+import { Subscription } from 'rxjs';
 
 interface Robo {
   roboName: string;
@@ -132,6 +130,12 @@ export class ChartTimelineComponent implements OnInit {
         zoom: {
           autoScaleYaxis: true,
         },
+        toolbar: {
+          show: true, // Keep the toolbar visible
+          tools: {
+            download: false, // Disable only the download menu
+          },
+        },
       },
       // colors: ['#77B6EA', '#545454'],
       dataLabels: {
@@ -202,7 +206,31 @@ export class ChartTimelineComponent implements OnInit {
   getTranslation(key: string) {
     return this.translationService.getStatisticsTranslation(key);
   }
+  private langSubscription!: Subscription;
+  
   ngOnInit() {
+    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      this.metrics = {
+        Overall: [
+          { key: 'data1', label: this.getTranslation("cpuUtilization")},
+          { key: 'data2', label: this.getTranslation("robotUtilization") },
+          { key: 'data3', label: this.getTranslation("memory") },
+          { key: 'data4', label: this.getTranslation("network") },
+          { key: 'data5', label: this.getTranslation("idleTime") },
+          { key: 'data6', label: this.getTranslation("error")},
+          { key: 'data7', label: this.getTranslation("battery")},
+        ],
+        robot: [
+          { key: 'data1', label: this.getTranslation("cpuUtilization")},
+          { key: 'data3', label: this.getTranslation("memory") },
+          { key: 'data4', label: this.getTranslation("network") },
+          { key: 'data5', label: this.getTranslation("idleTime") },
+          { key: 'data6', label: this.getTranslation("error")},
+          { key: 'data7', label: this.getTranslation("battery")},
+        ],
+      };      
+      this.cdRef.detectChanges();
+    });
     this.currentFilter = 'today';
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) {

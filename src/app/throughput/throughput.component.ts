@@ -85,6 +85,12 @@ export class ThroughputComponent {
         zoom: {
           enabled: false,
         },
+        toolbar: {
+          show: true, // Keep the toolbar visible
+          tools: {
+            download: false, // Disable only the download menu
+          },
+        },
       },
       dataLabels: {
         enabled: false,

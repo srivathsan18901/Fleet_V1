@@ -2149,7 +2149,15 @@ export class TranslationService {
       'tangential': 'Tangential',
       'uni_directional': 'Uni-directional',
       'select_orientation_type': 'Select Orientation Type',
-      'bi_directional': 'Bi-directional'
+      'bi_directional': 'Bi-directional',
+      'enter_number_of_nodes': 'Enter Number of Nodes',
+      'number_of_nodes': 'Number of Nodes',
+      'select_direction': 'Select Direction',
+      'select_a_direction': 'Select a Direction',
+      'uni_direction': 'Uni-Direction',
+      'bi_direction': 'Bi-Direction',
+      'enter': 'Enter',
+      'submit': 'Submit',
     },
     JAP: {
       "SavingMap": "マップを保存しています...",
@@ -2297,7 +2305,15 @@ export class TranslationService {
        'global': 'グローバル',
        'tangential': '接線方向',
        'uni_directional': '一方向',
-       'bi_directional': '双方向'
+       'bi_directional': '双方向',
+       'enter_number_of_nodes': 'ノード数を入力',
+       'number_of_nodes': 'ノード数',
+       'select_direction': '方向を選択',
+       'select_a_direction': '方向を選択してください',
+       'uni_direction': '単方向',
+       'bi_direction': '双方向',
+       'enter': '入力',
+       'submit': '送信',
        
     },
     FRE: {
@@ -2447,7 +2463,15 @@ export class TranslationService {
     'global': 'Global',
     'tangential': 'Tangentiel',
     'uni_directional': 'Uni-directionnel',
-    'bi_directional': 'Bi-directionnel'
+    'bi_directional': 'Bi-directionnel',
+    'enter_number_of_nodes': 'Entrez le nombre de nœuds',
+    'number_of_nodes': 'Nombre de nœuds',
+    'select_direction': 'Sélectionner la direction',
+    'select_a_direction': 'Sélectionnez une direction',
+    'uni_direction': 'Uni-direction',
+    'bi_direction': 'Bi-direction',
+    'enter': 'Entrer',
+    'submit': 'Soumettre',
     },
     GER: {
       "SavingMap": "Karte wird gespeichert...",
@@ -2595,7 +2619,15 @@ export class TranslationService {
       'global': 'Global',
       'tangential': 'Tangential',
       'uni_directional': 'Unidirektional',
-      'bi_directional': 'Bidirektional'
+      'bi_directional': 'Bidirektional',
+      'enter_number_of_nodes': 'Anzahl der Knoten eingeben',
+      'number_of_nodes': 'Anzahl der Knoten',
+      'select_direction': 'Richtung auswählen',
+      'select_a_direction': 'Wählen Sie eine Richtung',
+      'uni_direction': 'Einseitig',
+      'bi_direction': 'Zweiseitig',
+      'enter': 'Eingeben',
+      'submit': 'Absenden',
     }
   };
   private userManagementTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {

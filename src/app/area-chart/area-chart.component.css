@@ -12,7 +12,47 @@
   width: 100%;
   flex-grow: 1;
 }
+.apexcharts-menu-item:nth-child(1)::after {
+  content: "Download as SVG";
+}
 
+.apexcharts-menu-item:nth-child(2)::after {
+  content: "Download as PNG";
+}
+
+.apexcharts-menu-item:nth-child(3)::after {
+  content: "Download as CSV";
+}
+
+/* Hide original text */
+.apexcharts-menu-item span {
+  display: none;
+}
+.custom-download-menu {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 8px;
+  list-style: none;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+.custom-download-menu ul {
+  padding: 0;
+  margin: 0;
+}
+.custom-download-menu li {
+  padding: 8px 12px;
+  cursor: pointer;
+}
+.custom-download-menu li:hover {
+  background: #f0f0f0;
+}
+.custom-toolbar-icon {
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px;
+}
 
 
 /* Specific chart adjustments if needed */

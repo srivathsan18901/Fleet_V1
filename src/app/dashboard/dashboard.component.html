@@ -467,7 +467,7 @@
             class="Zoom"
             (click)="zoomIn()"
           />
-          <span class="tooltiptext">Zoom In</span>
+          <span class="tooltiptext">{{getTranslation("zoomIn")}}</span>
         </div>
 
         <!-- Zoom Out -->
@@ -477,7 +477,7 @@
             class="ZoomOut"
             (click)="zoomOut()"
           />
-          <span class="tooltiptext">Zoom Out</span>
+          <span class="tooltiptext">{{getTranslation("zoomOut")}}</span>
         </div>
 
         <!-- Pan -->
@@ -487,7 +487,7 @@
             class="Expand"
             (click)="togglePan()"
           />
-          <span class="tooltiptext">Pan</span>
+          <span class="tooltiptext">{{getTranslation("pan")}}</span>
         </div>
 
         <!-- Capture -->
@@ -497,7 +497,7 @@
             class="Capture"
             (click)="captureCanvas()"
           />
-          <span class="tooltiptext">Capture</span>
+          <span class="tooltiptext">{{getTranslation("capture")}}</span>
         </div>
 
         <!-- Record -->
@@ -511,9 +511,10 @@
             class="Save"
             (click)="toggleRecording()"
           />
-          <span class="tooltiptext">{{
-            recording ? "Stop Recording" : "Start Recording"
-          }}</span>
+          <span class="tooltiptext">
+            {{ recording ? getTranslation('stopRecording') : getTranslation('startRecording') }}
+          </span>
+          
         </div>
 
         <!-- Dashboard -->
@@ -523,7 +524,7 @@
             class="Pointer"
             (click)="toggleDashboard()"
           />
-          <span class="tooltiptext">Dashboard</span>
+          <span class="tooltiptext">{{getTranslation('dashboard')}}</span>
         </div>
 
         <!-- Model Canvas -->
@@ -533,7 +534,7 @@
             class="ModelCanvas"
             (click)="toggleShowPath()"
           />
-          <span class="tooltiptext">Show Path</span>
+          <span class="tooltiptext">{{getTranslation('showPath')}}</span>
         </div>
         <div class="tooltip">
           <img
@@ -541,7 +542,7 @@
             class="ModelCanvas"
             (click)="toggleHeatmap()"
           />
-          <span class="tooltiptext">Heat Map</span>
+          <span class="tooltiptext">{{getTranslation('heatMap')}}</span>
         </div>
         <div class="tooltip">
           <img
@@ -549,7 +550,7 @@
             class="ModelCanvas"
             (click)="toggleModelCanvas()"
           />
-          <span class="tooltiptext">Map Option</span>
+          <span class="tooltiptext">{{getTranslation('mapOption')}}</span>
         </div>
       </div>
       <!-- <div class="tooltip">
