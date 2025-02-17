@@ -226,7 +226,6 @@ export class ChartTimelineComponent implements OnInit {
   getTranslation(key: string) {
     return this.translationService.getStatisticsTranslation(key);
   }
-  private langSubscription!: Subscription;
 
   ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {

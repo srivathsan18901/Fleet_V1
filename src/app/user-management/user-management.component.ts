@@ -70,9 +70,10 @@ export class UserManagementComponent implements OnInit {
   pageSize: any = 0;
   pageNumber: any = 0;
   activeTab: string = 'General'; // Default tab
-  private langSubscription!: Subscription;
   deleteButtonText: string = '';
   editButtonText: string = '';
+  private languageSubscription!: Subscription;
+  private langSubscription: String = 'ENG';
   async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
     this.paginatorIntl.itemsPerPageLabel =
