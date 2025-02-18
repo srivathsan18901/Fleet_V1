@@ -88,6 +88,7 @@ export class RobotDetailPopupComponent {
     // }
   localize(){   
     this.nodeGraphService.setLocalize(true);
+    this.nodeGraphService.setAssignTask(false);
     this.router.navigate(['/dashboard']);
   }
   onEmergencyStop() {
