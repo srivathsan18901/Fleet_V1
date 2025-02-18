@@ -651,10 +651,10 @@
 <div id="Localize-popup" style="position: absolute; display: none; padding: 10px;background: linear-gradient(#6496e6b2, #ffffff71);;backdrop-filter: blur(5px); border: 1px solid #ccc; border-radius: 8px;filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404)); z-index: 1000;">
   <div class="ATactions">
   <div>
-  <label class="idlabel" for="robot-select">{{ getTranslation('robotID') }}: </label>
+  <label class="idlabel" for="robot-select">{{ getTranslation('robotID') }}: {{roboToLocalize}}</label>
   </div>
   <div>
-  <label class="idlabel" for="robot-select">X:,Y:,Z:</label>
+  <label class="idlabel" for="robot-select">X: {{localizationPos.x}}, Y: {{localizationPos.y}}, Z: {{localizationPos.yaw}}</label>
   </div>
 </div>
   <div class="ATbtn-set">
