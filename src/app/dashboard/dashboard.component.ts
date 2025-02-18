@@ -1085,9 +1085,13 @@ export class DashboardComponent implements AfterViewInit {
   }
   Localize(){
     this.router.navigate(['/robots'])
+    this.nodeGraphService.setAssignTask(false);
+    this.nodeGraphService.setLocalize(false);
   }
   cancelLocalize(){
     this.router.navigate(['/robots'])
+    this.nodeGraphService.setAssignTask(false);
+    this.nodeGraphService.setLocalize(false);
   }
   async sendAction() {
     if (!this.isFleetUp) {
@@ -1146,6 +1150,10 @@ export class DashboardComponent implements AfterViewInit {
   cancelATAction() {
     this.roboToAssign = 'Default'; // Reset the dropdown to default value
     this.taskAction = 'MOVE';
+    this.router.navigate(['/tasks'])
+    this.nodeGraphService.setAssignTask(false);
+    this.nodeGraphService.setLocalize(false);
+    this.redrawCanvas();
     this.hideATPopup();
   }
 

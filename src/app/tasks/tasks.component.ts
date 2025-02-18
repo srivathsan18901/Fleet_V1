@@ -347,7 +347,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   async toggleAssignTask() {
     this.router.navigate(['/dashboard']);
-    this.nodeGraphService.setAssignTask(true);
+    this.nodeGraphService.setAssignTask(true);    
+    this.nodeGraphService.setLocalize(false);
     if (this.nodeGraphService.getAssignTask()) {
       this.messageService.add({
         severity: 'info',
