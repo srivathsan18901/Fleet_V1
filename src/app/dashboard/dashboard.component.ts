@@ -375,12 +375,13 @@ export class DashboardComponent implements AfterViewInit {
 
   async toggleButton() {
     // this.isPause = !this.isPause;
-    let bodyData = { status: true };
-    if (this.isPause) await this.pauseFleet(bodyData);
-    else if (!this.isPause) await this.resumeFleet(bodyData);
+    let bodyData = { status: !this.isPause };
+    // if (this.isPause)
+    let isStatusUpdated = await this.pauseFleet(bodyData);
+    if (isStatusUpdated) this.isPause = !this.isPause;
   }
 
-  async pauseFleet(bodyData: any) {
+  async pauseFleet(bodyData: any): Promise<boolean> {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/pause-fleet`,
       {
@@ -395,33 +396,12 @@ export class DashboardComponent implements AfterViewInit {
     console.log(data);
     if (data.error) {
       this.toastPopup('error', 'Error', 'Error whlie pausing fleet');
-      return;
+      return false;
     }
 
-    this.isPause = !this.isPause; // yet to modify the state, depends upon the returned state..
+    // this.isPause = !this.isPause; // yet to modify the state, depends upon the returned state..
     this.toastPopup('warn', 'Paused', 'Fleet Has been Paused');
-  }
-
-  async resumeFleet(bodyData: any) {
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/resume-fleet`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyData),
-      }
-    );
-
-    let data = await response.json();
-    console.log(data);
-    if (data.error) {
-      this.toastPopup('error', 'Error', 'Error whlie resuming fleet');
-      return;
-    }
-
-    this.isPause = !this.isPause;
-    this.toastPopup('success', 'Resumed', 'Fleet Has been Resumed');
+    return true;
   }
 
   toastPopup(severity: string, summary: string, detail: string) {
