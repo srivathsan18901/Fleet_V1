@@ -15,20 +15,21 @@ export class NodeGraphService {
   private offsetY: number = 0;
   private isShowPath: boolean = false;
   private isShowRoboPath: number = 0;
+  private roboToLocalize: number | null = null;
   private draggingRobo: any = null;
   roboIDColor: Map<number, string> = new Map<number, string>(); // check...
   fleetRoboIDColor: Map<number, string> = new Map<number, string>();
   showModelCanvas: boolean = false;
-  assignTask:boolean=false;
-  isImage:boolean=false;
-  localize:boolean=false;
+  assignTask: boolean = false;
+  isImage: boolean = false;
+  localize: boolean = false;
   constructor() {}
 
-  setImage(isImage:boolean){
-    this.isImage= isImage;
+  setImage(isImage: boolean) {
+    this.isImage = isImage;
   }
 
-  getImage(): boolean{
+  getImage(): boolean {
     return this.isImage;
   }
   // Save data methods
@@ -87,6 +88,15 @@ export class NodeGraphService {
   getLocalize(): boolean {
     return this.localize;
   }
+
+  setRoboToLocalize(robotId: number) {
+    this.roboToLocalize = robotId;
+  }
+
+  getRoboToLocalize(): number | null {
+    return this.roboToLocalize;
+  }
+
   setsimMode(simMode: any[]) {
     this.simMode = simMode;
   }
@@ -96,7 +106,10 @@ export class NodeGraphService {
     return this.simMode;
   }
 
-  setRoboIdClr(roboIDColor: Map<number, string>, fleetRoboIDColor: Map<number, string>) {
+  setRoboIdClr(
+    roboIDColor: Map<number, string>,
+    fleetRoboIDColor: Map<number, string>
+  ) {
     this.roboIDColor = roboIDColor;
     this.fleetRoboIDColor = fleetRoboIDColor;
   }

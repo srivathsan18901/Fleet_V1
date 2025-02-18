@@ -1084,9 +1084,9 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
   Localize(){
-    this.router.navigate(['/robots'])
-    this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
+    this.nodeGraphService.setAssignTask(false);
+    this.router.navigate(['/robots'])
   }
   cancelLocalize(){
     this.router.navigate(['/robots'])
@@ -1349,7 +1349,7 @@ export class DashboardComponent implements AfterViewInit {
         for (let robo of this.robos) {
           const roboX = robo.pos.x;
           const roboY = this.mapImageHeight - robo.pos.y;
-          console.log('robo pos:', roboX * this.ratio, roboY * this.ratio);
+          // console.log('robo pos:', roboX * this.ratio, roboY * this.ratio);
 
           // Assuming the robot image is a square, check if the click is within the image bounds
           const imageSize = 25; // Adjust this to the size of the robot image
@@ -1442,9 +1442,10 @@ export class DashboardComponent implements AfterViewInit {
               this.offsetY +
               this.mapImageY; // Y position on the canvas
 
+            let localizeRoboId = this.nodeGraphService.getRoboToLocalize();
             robottooltip.style.left = `${robotScreenX - 30}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${robotScreenY - 45}px`; // Above the robot's Y position
-            robottooltip.innerHTML = `Robot ID: ${robotId}`;
+            robottooltip.innerHTML = `Robot ID: ${localizeRoboId}`;
             robottooltip.style.display = 'block';
             break; // Exit the loop after finding the first robot
           }
@@ -1471,9 +1472,10 @@ export class DashboardComponent implements AfterViewInit {
               (this.mapImageHeight / this.zoomLevel - roboY) * this.zoomLevel +
               this.mapImageY; // Y position on the canvas
 
+            let localizeRoboId = this.nodeGraphService.getRoboToLocalize();
             robottooltip.style.left = `${robotScreenX - 30}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${robotScreenY - 45}px`; // Above the robot's Y position
-            robottooltip.innerHTML = `Robot ID: ${robotId}`;
+            robottooltip.innerHTML = `Robot ID: ${localizeRoboId}`;
             robottooltip.style.display = 'block';
             break; // Exit the loop after finding the first robot
           }
