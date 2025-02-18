@@ -72,6 +72,7 @@ export class UserManagementComponent implements OnInit {
   activeTab: string = 'General'; // Default tab
   deleteButtonText: string = '';
   editButtonText: string = '';
+  
   private languageSubscription!: Subscription;
   private langSubscription: String = 'ENG';
   async ngOnInit(): Promise<void> {
@@ -79,10 +80,14 @@ export class UserManagementComponent implements OnInit {
     this.paginatorIntl.itemsPerPageLabel =
       this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
+    this.deleteButtonText = this.getTranslation('Delete');
+    this.editButtonText = this.getTranslation('edit');
     this.translationService.currentLanguage$.subscribe(
       (val) => {
         this.langSubscription = val;
         this.userCredentials = this.userCredentials.map((user: any) => {
+          this.deleteButtonText = this.getTranslation('Delete');
+          this.editButtonText = this.getTranslation('edit');
           const dateString = new Date(user.createdAt);
 
           let localeMapping: Record<string, string> = {
