@@ -782,29 +782,30 @@ export class DashboardComponent implements AfterViewInit {
     return this.nodeGraphService.getAssignTask() || this.nodeGraphService.getLocalize();
   }
 
-  async toggleAssignTask() {
-    this.nodeGraphService.setShowModelCanvas(false);
-    this.showModelCanvas = false;
-    this.nodeGraphService.setAssignTask(!this.nodeGraphService.getAssignTask());
-    if (this.isInLive) {
-      await this.getLivePos();
-    }
-    if (this.nodeGraphService.getAssignTask()) {
-      this.messageService.add({
-        severity: 'info',
-        summary: this.getTranslation('Enabled Task Assigning'),
-        detail: this.getTranslation('Task Assigning Option has been Enabled'),
-        life: 2000,
-      });
-    }
+  // async toggleAssignTask() {
+  //   this.nodeGraphService.setShowModelCanvas(false);
+  //   this.showModelCanvas = false;
+  //   this.nodeGraphService.setAssignTask(!this.nodeGraphService.getAssignTask());
+  //   if (this.isInLive) {
+  //     await this.getLivePos();
+  //   }
+  //   if (this.nodeGraphService.getAssignTask()) {
+  //     this.messageService.add({
+  //       severity: 'info',
+  //       summary: this.getTranslation('Enabled Task Assigning'),
+  //       detail: this.getTranslation('Task Assigning Option has been Enabled'),
+  //       life: 2000,
+  //     });
+  //   }
 
-    this.loadCanvas(); // Redraw the canvas based on the updated state
-    if (!this.isFleet) {
-      this.currentRoboList = this.simMode.map((robo) => robo.amrId);
-      return;
-    }
-    this.currentRoboList = this.robos.map((robo) => robo.roboDet.id);
-  }
+  //   this.loadCanvas(); // Redraw the canvas based on the updated state
+  //   if (!this.isFleet) {
+  //     this.currentRoboList = this.simMode.map((robo) => robo.amrId);
+  //     return;
+  //   }
+  //   this.currentRoboList = this.robos.map((robo) => robo.roboDet.id);
+  // }
+
   async toggleModelCanvas() {
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
