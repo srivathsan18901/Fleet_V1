@@ -1,0 +1,11 @@
+/* General container styling */
+.container1 {
+    border: 1px solid #000;
+    border-radius: 15px;
+    padding-top: 2%;
+    padding: 20px;
+  }
+.content-fluid1 {
+    flex-direction: column;
+    align-items: center;
+}

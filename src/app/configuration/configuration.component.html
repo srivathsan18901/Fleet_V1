@@ -792,13 +792,19 @@
               >
                 {{ getTranslation("General") }}
               </li>
+              <li
+              [class.active]="fleetTab === 'robot'"
+              (click)="setFleetTab('robot')"
+              >
+              {{ getTranslation("Robot") }} 
+              </li>
               <!-- <li
                   [class.active]="fleetTab === 'planner'"
                   (click)="setFleetTab('planner')"
                 >
                 Planner
               </li>
-                <li
+              <li
                   [class.active]="fleetTab === 'task'"
                   (click)="setFleetTab('task')"
                 >
@@ -820,9 +826,14 @@
 
             <div *ngIf="fleetTab === 'general'">
               <h2>{{ getTranslation("Edit The Fleet Parameters") }}</h2>
-              {{ getTranslation("Add content for the General tab.") }}
+              <!-- {{ getTranslation("Add content for the General tab.") }} -->
               <app-general></app-general>
             </div>
+            <div *ngIf="fleetTab === 'robot'">
+              <h2>{{getTranslation('EDIT_THE_ROBOT_PARAMETERS')}}</h2>
+              <app-robot></app-robot>
+            </div>
+
             <div *ngIf="fleetTab === 'planner'">
               <h2>Planner Settings</h2>
               Add content for the Planner tab

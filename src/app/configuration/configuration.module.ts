@@ -31,7 +31,6 @@ import { SpeedDialModule } from 'primeng/speeddial';
             //  TaskComponent,
             //  BatteryComponent,
             //  CommunicationComponent,
-
   ],
   imports: [
     CommonModule,

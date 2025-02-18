@@ -41,7 +41,7 @@
     </div>
 
     <!-- Status container -->
-    <div class="status-container z-50 top-[0px]  w-[10vw] h-[8vh]">
+    <div class="status-container">
       <span class="status-indicator" [ngClass]="data.isConnected ? 'active' : 'inactive'"></span>
       <span class="status-text">{{ data.isConnected ? getTranslation("Active") : getTranslation("Inactive") }}</span>
     </div>

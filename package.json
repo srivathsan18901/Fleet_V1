@@ -23,6 +23,7 @@
     "@angular/platform-server": "^18.0.0",
     "@angular/router": "^18.0.0",
     "@angular/ssr": "^18.0.5",
+    "@coreui/angular": "^2.18.0",
     "@ffmpeg/ffmpeg": "^0.12.10",
     "@mobiscroll/angular-lite": "^4.10.9",
     "animate": "^1.0.0",

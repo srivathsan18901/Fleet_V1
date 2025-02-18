@@ -69,6 +69,7 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 // import { BrowserModule } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {MatRadioModule} from '@angular/material/radio';
+import { MatTabGroup, MatTab } from '@angular/material/tabs';
 import { BatteryComponent } from './configuration/Addons/battery/battery.component';
 import { GeneralComponent } from './configuration/Addons/general/general.component';
 import { PlannerComponent } from './configuration/Addons/planner/planner.component';
@@ -82,6 +83,9 @@ import { SpeedDialModule } from 'primeng/speeddial';
 import { TooltipModule } from 'primeng/tooltip';
 import { StepperModule } from 'primeng/stepper';
 import { StepsModule } from 'primeng/steps';
+import { RobotComponent } from './configuration/Addons/robot/robot.component';
+import { TabViewModule } from 'primeng/tabview';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -124,6 +128,7 @@ import { StepsModule } from 'primeng/steps';
     // NotAuthorizedComponent,
     BatteryComponent,
     GeneralComponent,
+    RobotComponent,
     PlannerComponent,
     CommunicationComponent,
     TaskComponent,
@@ -157,6 +162,8 @@ import { StepsModule } from 'primeng/steps';
     InputGroupModule,
     InputSwitchModule,
     InputTextareaModule,
+    MatTabGroup,
+    MatTab,
     InputMaskModule,
     InputGroupAddonModule,
     TableModule,
@@ -166,6 +173,7 @@ import { StepsModule } from 'primeng/steps';
     BadgeModule,
     StepsModule,
     TooltipModule,
+    TabViewModule,
     // TableModule
   ],
   providers: [
