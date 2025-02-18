@@ -9,3 +9,33 @@
     flex-direction: column;
     align-items: center;
 }
+.input-groupgbtn{
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;  
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+.input-groupg {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.input-groupg label {
+  flex-basis: 30%; /* Adjust width of labels */
+  min-width: 150px; /* Minimum width for labels */
+}
+
+.input-groupg input,
+.input-groupg select {
+  height: 32px;
+  flex-basis: 18%;
+  min-width: 3px;
+  width: 6rem;
+}
+
+
