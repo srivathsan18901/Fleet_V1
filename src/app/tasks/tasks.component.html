@@ -130,8 +130,8 @@
       <tr [class.paused]="item.paused">
         <td>{{ i + 1 }}</td>
         <td>{{ item.taskId }}</td>
-        <td>{{ item.taskType }}</td>
-        <td>{{ item.status }}</td>
+        <td>{{ getTranslation(item.taskType) }}</td>
+        <td>{{ getTranslation(item.status) }}</td>
         <td>{{ item.roboName }}</td>
         <td>{{ item.sourceLocation }}</td>
         <td>
