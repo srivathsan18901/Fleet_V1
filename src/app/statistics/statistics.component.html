@@ -203,9 +203,9 @@
 
               <tr *ngFor="let activity of filteredOperationActivities | slice:0:10">
                 <td>{{ activity.taskId }}</td>
-                <td>{{ activity.taskName }}</td>
+                <td>{{ getTaskTranslation(activity.taskName) }}</td>
                 <td>{{ activity.robotName }}</td>
-                <td>{{ activity.status }}</td>
+                <td>{{ getTaskTranslation(activity.status) }}</td>
               </tr>
             </tbody>
           </table>

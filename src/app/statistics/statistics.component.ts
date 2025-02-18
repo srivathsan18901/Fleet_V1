@@ -76,7 +76,9 @@ export class StatisticsComponent {
       this.router.navigate(['/statistics/operation']);
     }
   }
-
+  getTaskTranslation(key: string) {
+    return this.translationService.getTasksTranslation(key);
+  }
   async ngOnInit() {
     const fleetSub = this.projectService.isFleetUp$.subscribe((status) => {
       this.isFleet = status;

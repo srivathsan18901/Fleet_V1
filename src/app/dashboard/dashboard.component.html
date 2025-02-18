@@ -287,7 +287,6 @@
 
     <!-- enable robots dropdown -->
     <div class="dropdown" *ngIf="isImage">
-      <!-- Dropdown Button with Arrow -->
       <button
       class="dropdown-button"
       (click)="toggleDropdown()"
@@ -422,9 +421,7 @@
     <div class="btnSet">
     <div class="ONBtn2" *ngIf="isImage" >
       <button
-        class="AT-btn2"
-        *ngIf="!isTaskAssigned"           
-        [disabled]="isTaskAssignedOrIsLocalize"     
+        class="AT-btn2"      
         [ngClass]="{ 'bg-red-500 text-white': !isPause, 'bg-green-500 text-black': isPause }"
         (click)="toggleButton()"
       >

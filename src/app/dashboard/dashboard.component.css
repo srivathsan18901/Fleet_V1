@@ -16,7 +16,9 @@ app-sidenavbar{
 .disabled-button {
   pointer-events: none;  /* Disable clicking */
   filter: blur(2px);   
+  opacity: 0.6;         /* Make it look disabled */
 }
+
 
 .active-button {
   opacity: 1;            /* Keep normal opacity */
