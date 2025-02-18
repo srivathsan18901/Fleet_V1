@@ -327,7 +327,7 @@ export class DashboardComponent implements AfterViewInit {
       this.canvasloader = false;
       this.canvasNoImage = true;
     }
-    console.log("hey",this.nodeGraphService.getImage());
+    // console.log("hey",this.nodeGraphService.getImage());
     if (!this.projectService.getMapData()) return;
     const img = new Image();
     img.src = `http://${environment.API_URL}:${environment.PORT}/${this.selectedMap.imgUrl}`;
@@ -353,6 +353,7 @@ export class DashboardComponent implements AfterViewInit {
     this.cdRef.detectChanges();
     this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
     if (!this.isInLive) this.initSimRoboPos();
+    if (this.nodeGraphService.getAssignTask()) this.updateCurrentRoboList();
     this.loadCanvas();
     if (this.posEventSource || this.assetEventSource) {
       this.posEventSource.close();
@@ -467,6 +468,14 @@ export class DashboardComponent implements AfterViewInit {
 
     this.assetImages['docking'].src = 'assets/Asseticon/docking-station.svg';
     this.assetImages['charging'].src = 'assets/Asseticon/charging-station.svg';
+  }
+
+  updateCurrentRoboList(){
+    if (!this.isFleet) {
+      this.currentRoboList = this.simMode.map((robo) => robo.amrId);
+      return;
+    }
+    this.currentRoboList = this.robos.map((robo) => robo.roboDet.id); 
   }
 
   isStateDivVisible: boolean = false;
