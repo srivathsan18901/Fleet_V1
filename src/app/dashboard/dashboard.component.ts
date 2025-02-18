@@ -1099,16 +1099,46 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.top = `${y}px`;
     }
   }
-  Localize() {
+  async Localize(robotId: any, pos: any) {
+    let bodyData = {
+      robotId: robotId,
+      pos: pos,
+    };
+    let isRoboLocalized = await this.localizeRobo(bodyData);
+    if (!isRoboLocalized) {
+      alert('localization falied!');
+      return;
+    }
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
     this.router.navigate(['/robots']);
   }
+
   cancelLocalize() {
     this.router.navigate(['/robots']);
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
   }
+
+  async localizeRobo(bodyData: any): Promise<boolean> {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/localize`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    let data = await response.json();
+    console.log(data);
+
+    if (data.error) return false;
+    else if (data.localized) return true;
+    return false;
+  }
+
   async sendAction() {
     if (!this.isFleetUp) {
       this.messageService.add({
