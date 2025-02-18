@@ -16,7 +16,7 @@ export interface Robot {
   currentSpeed: any;
   averageSpeed: any;
   distanceLeft: string;
-  isConnected : boolean;
+  isConnected: boolean;
   id: number;
   name: string;
   imageUrl: string;
@@ -43,7 +43,7 @@ export interface Robot {
   maximumspeed: string;
   averagetransfertime: string;
   averagedockingtime: string;
-  distance:number;
+  distance: number;
 }
 
 @Component({
@@ -52,7 +52,6 @@ export interface Robot {
   styleUrls: ['./robot-detail-popup.component.scss'],
 })
 export class RobotDetailPopupComponent {
-
   currentFilter: string = 'today'; // To track the selected filter
   metrics: { title: string; value: string; icon: string }[] = [];
   // batteryData: any[] = [];
@@ -65,28 +64,30 @@ export class RobotDetailPopupComponent {
   isConnected: boolean = true;
   robotUtilization: string = '0';
   pick: any;
-  specific : any;
+  specific: any;
   distance: any;
 
   toggleConnection() {
-    console.log('toggle is clicked')
-    this.data.isConnected=!this.data.isConnected;
+    console.log('toggle is clicked');
+    this.data.isConnected = !this.data.isConnected;
     // console.log(this.data);
     this.isConnected = !this.isConnected;
   }
-// active & Inactive
+  // active & Inactive
   isActive: boolean = false; // Initially true
 
   toggleStatus() {
     this.isActive = !this.isActive; // Toggle between true and false
   }
 
-    // // Method to handle toggle
-    // onToggle(event: Event): void {
-    //   const checkbox = event.target as HTMLInputElement;
-    //   this.isEmergencyStop = !checkbox.checked; // Toggle the state
-    // }
-  localize(){   
+  // // Method to handle toggle
+  // onToggle(event: Event): void {
+  //   const checkbox = event.target as HTMLInputElement;
+  //   this.isEmergencyStop = !checkbox.checked; // Toggle the state
+  // }
+
+  localize() {
+    this.nodeGraphService.setRoboToLocalize(this.data.id);
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);
     this.router.navigate(['/dashboard']);
@@ -101,13 +102,10 @@ export class RobotDetailPopupComponent {
     }
     return valueString; // Return the whole string if 3 or fewer digits
   }
-  
-  
+
   getClassForCircle(percentage: number, threshold: number): string {
     return percentage >= threshold ? 'filled' : '';
   }
-
-
 
   // Function to get battery color
 
@@ -124,12 +122,10 @@ export class RobotDetailPopupComponent {
     public dialogRef: MatDialogRef<RobotDetailPopupComponent>,
     private projectService: ProjectService,
     private translationService: TranslationService,
-    private router:Router,
-    private nodeGraphService:NodeGraphService,
+    private router: Router,
+    private nodeGraphService: NodeGraphService,
     @Inject(MAT_DIALOG_DATA) public data: Robot
-  ) {
-
-  }
+  ) {}
 
   getBatteryColor(batteryPercentage: number): string {
     if (batteryPercentage >= 75) {
@@ -163,25 +159,29 @@ export class RobotDetailPopupComponent {
     this.populatedRobo();
     // console.log(this.populatedRobo)
     this.fetchLiveRobosData();
-    this.projectService.getRobotUtilization(this.mapId, timeStamp1, timeStamp2).subscribe(
-      (data) => {
-        if (data && data.robots && data.robots.length > 0) {
-          this.robotUtilization = data.robots[0].utilization_percentage;
+    this.projectService
+      .getRobotUtilization(this.mapId, timeStamp1, timeStamp2)
+      .subscribe(
+        (data) => {
+          if (data && data.robots && data.robots.length > 0) {
+            this.robotUtilization = data.robots[0].utilization_percentage;
+          }
+        },
+        (error) => {
+          console.error('Error fetching robot utilization:', error);
         }
-      },
-      (error) => {
-        console.error('Error fetching robot utilization:', error);
-      }
-    );
+      );
     // console.log(this.robotUtilization,"---------------robot utilization ------------");
-   }
-   truncateNumber(value: number): string {
+  }
+  truncateNumber(value: number): string {
     const numberString = value.toString();
     // Limit visible characters, truncate after a few digits and add '...'
-    return numberString.length > 5 ? numberString.substring(0, 4) + '..' : numberString;
-    }
-  
-   fetchChartData(): Promise<any> {
+    return numberString.length > 5
+      ? numberString.substring(0, 4) + '..'
+      : numberString;
+  }
+
+  fetchChartData(): Promise<any> {
     const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     // console.log(timeSpan, 'time span robot');
 
@@ -197,7 +197,7 @@ export class RobotDetailPopupComponent {
           timeStamp2: timeStamp2,
         }),
       }
-    ).then(response => {
+    ).then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -221,7 +221,7 @@ export class RobotDetailPopupComponent {
           timeStamp2: timeStamp2,
         }),
       }
-    ).then(response => {
+    ).then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -238,9 +238,9 @@ export class RobotDetailPopupComponent {
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
       {
         method: 'GET',
-        credentials: 'include'
+        credentials: 'include',
       }
-    ).then(response => {
+    ).then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -248,22 +248,24 @@ export class RobotDetailPopupComponent {
     });
   }
 
-
-   populatedRobo():void{
-    fetch(`http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`, {
-      method: 'GET',
-      credentials: 'include',
-    })
+  populatedRobo(): void {
+    fetch(
+      `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    )
       .then((response) => response.json())
       .then((data) => {
         // Handle the data
-        console.log(data,"kjgiugjjgkklhktgiuhkn");
+        // console.log(data);
       })
       .catch((error) => {
         // Handle errors
         console.error('Error fetching robo configuration:', error);
       });
-   }
+  }
 
   onClose(): void {
     this.dialogRef.close();
@@ -277,14 +279,12 @@ export class RobotDetailPopupComponent {
   getTimeStampsOfDay() {
     let currentTime = Math.floor(new Date().getTime() / 1000);
     let startTimeOfDay;
-    if(this.currentFilter == 'week'){
-       startTimeOfDay = this.weekStartOfDay()
-    }
-    else if(this.currentFilter == 'month'){
-      startTimeOfDay = this.monthStartOfDay()
-    }
-    else{
-      startTimeOfDay= this.getStartOfDay()
+    if (this.currentFilter == 'week') {
+      startTimeOfDay = this.weekStartOfDay();
+    } else if (this.currentFilter == 'month') {
+      startTimeOfDay = this.monthStartOfDay();
+    } else {
+      startTimeOfDay = this.getStartOfDay();
     }
 
     return {
@@ -295,28 +295,25 @@ export class RobotDetailPopupComponent {
   getStartOfDay() {
     return Math.floor(new Date().setHours(0, 0, 0) / 1000);
   }
-  weekStartOfDay(){
-
+  weekStartOfDay() {
     let currentDate = new Date();
 
     // Subtract 7 days (last week) from the current date
     let lastWeekDate = new Date();
     lastWeekDate.setDate(currentDate.getDate() - 7);
 
-    return(Math.floor(new Date(lastWeekDate).setHours(0,0,0)/1000))
+    return Math.floor(new Date(lastWeekDate).setHours(0, 0, 0) / 1000);
   }
 
-  monthStartOfDay(){
+  monthStartOfDay() {
     // Get the current date
     let currentDate = new Date();
 
     // Subtract 1 month from the current date
     let lastMonthDate = new Date();
     lastMonthDate.setMonth(currentDate.getMonth() - 1);
-    return(Math.floor(new Date(lastMonthDate).setHours(0,0,0)/1000))
-      }
-
-
+    return Math.floor(new Date(lastMonthDate).setHours(0, 0, 0) / 1000);
+  }
 
   mapSignalToClass(signal: string): string {
     switch (signal) {
@@ -335,26 +332,30 @@ export class RobotDetailPopupComponent {
     }
   }
 
-    // Fetch live robot data and check for "EMERGENCY STOP"
-    fetchLiveRobosData(): void {
-      const apiUrl = `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`;
+  // Fetch live robot data and check for "EMERGENCY STOP"
+  fetchLiveRobosData(): void {
+    const apiUrl = `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`;
 
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          const robot = data.robos?.robots?.[0];
-          if (robot && robot.robot_errors && robot.robot_errors['EMERGENCY STOP']) {
-            this.isEmergencyStop = true; // Set to "Stop" if "EMERGENCY STOP" exists
-          } else {
-            this.isEmergencyStop = false; // Default to "Run"
-          }
-        })
-        .catch((err) => {
-          console.error('Error fetching live robos data:', err);
-        });
-    }
+    fetch(apiUrl)
+      .then((response) => response.json())
+      .then((data) => {
+        const robot = data.robos?.robots?.[0];
+        if (
+          robot &&
+          robot.robot_errors &&
+          robot.robot_errors['EMERGENCY STOP']
+        ) {
+          this.isEmergencyStop = true; // Set to "Stop" if "EMERGENCY STOP" exists
+        } else {
+          this.isEmergencyStop = false; // Default to "Run"
+        }
+      })
+      .catch((err) => {
+        console.error('Error fetching live robos data:', err);
+      });
+  }
 
-      // Method to handle toggle
+  // Method to handle toggle
   onToggle(event: Event): void {
     const checkbox = event.target as HTMLInputElement;
     this.isEmergencyStop = !checkbox.checked; // Toggle the state
@@ -362,5 +363,4 @@ export class RobotDetailPopupComponent {
       `Emergency Stop toggled to: ${this.isEmergencyStop ? 'Stop' : 'Run'}`
     );
   }
-
 }
