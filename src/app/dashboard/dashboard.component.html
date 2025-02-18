@@ -32,7 +32,9 @@
     </div>
     <div
     *ngIf="isImage"
-      (click)="toggleStateDiv()"
+      (click)="toggleStateDiv()"      
+      [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+      [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
       style="
         position: absolute;
         text-align: center;
@@ -421,7 +423,8 @@
     <div class="btnSet">
     <div class="ONBtn2" *ngIf="isImage" >
       <button
-        class="AT-btn2"      
+        class="AT-btn2"
+        *ngIf="!isTaskAssignedOrIsLocalize"      
         [ngClass]="{ 'bg-red-500 text-white': !isPause, 'bg-green-500 text-black': isPause }"
         (click)="toggleButton()"
       >
@@ -497,11 +500,13 @@
         <!-- Capture -->
         <div class="tooltip">
           <img
-            src="../../assets/CanvasOptions/Capture.svg"
-            class="Capture"
-            (click)="captureCanvas()"
+          src="../../assets/CanvasOptions/Capture.svg"
+          class="Capture"
+          (click)="captureCanvas()"
+          [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+          [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
           />
-          <span class="tooltiptext">{{getTranslation("capture")}}</span>
+          <span class="tooltiptext"  *ngIf="!isTaskAssignedOrIsLocalize" >{{getTranslation("capture")}}</span>
         </div>
 
         <!-- Record -->
@@ -514,8 +519,11 @@
             "
             class="Save"
             (click)="toggleRecording()"
+            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
+            
           />
-          <span class="tooltiptext">
+          <span class="tooltiptext"  *ngIf="!isTaskAssignedOrIsLocalize">
             {{ recording ? getTranslation('stopRecording') : getTranslation('startRecording') }}
           </span>
           
@@ -527,8 +535,10 @@
             src="../../assets/CanvasOptions/Dashboard.svg"
             class="Pointer"
             (click)="toggleDashboard()"
+            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
           />
-          <span class="tooltiptext">{{getTranslation('dashboard')}}</span>
+          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('dashboard')}}</span>
         </div>
 
         <!-- Model Canvas -->
@@ -537,24 +547,30 @@
             src="../../assets/CanvasOptions/Showpath.svg"
             class="ModelCanvas"
             (click)="toggleShowPath()"
+            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
           />
-          <span class="tooltiptext">{{getTranslation('showPath')}}</span>
+          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('showPath')}}</span>
         </div>
         <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Heatmap.svg"
             class="ModelCanvas"
             (click)="toggleHeatmap()"
+            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
           />
-          <span class="tooltiptext">{{getTranslation('heatMap')}}</span>
+          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('heatMap')}}</span>
         </div>
         <div class="tooltip">
           <img
             src="../../assets/CanvasOptions/Model.svg"
             class="ModelCanvas"
             (click)="toggleModelCanvas()"
+            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
           />
-          <span class="tooltiptext">{{getTranslation('mapOption')}}</span>
+          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('mapOption')}}</span>
         </div>
       </div>
       <!-- <div class="tooltip">
@@ -654,7 +670,7 @@
   <label class="idlabel" for="robot-select">{{ getTranslation('robotID') }}: </label>
   </div>
   <div>
-  <label class="idlabel" for="robot-select">X:,Y:,Z:</label>
+  <label class="idlabel" for="robot-select">X:,Y:,θ:</label>
   </div>
 </div>
   <div class="ATbtn-set">
