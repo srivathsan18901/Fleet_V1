@@ -2063,6 +2063,10 @@ export class DashboardComponent implements AfterViewInit {
         this.nodes = this.nodeGraphService.getNodes();
         this.drawnodesonAT(ctx, mapImage, centerX, centerY, this.zoomLevel);
       }
+      if (this.nodeGraphService.getLocalize()) {
+        this.nodes = this.nodeGraphService.getNodes();
+        this.drawnodesonAT(ctx, mapImage, centerX, centerY, this.zoomLevel);
+      }
       if (this.isFleet) {
         this.robos = this.robos.map((robo) => {
           if (robo.roboDet.id === parseInt(robotId)) {
