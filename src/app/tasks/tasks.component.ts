@@ -343,11 +343,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
         };
       });
     this.filteredTaskData = this.tasks;
+    // this.setPaginatedData();
   }
 
   async toggleAssignTask() {
     this.router.navigate(['/dashboard']);
-    this.nodeGraphService.setAssignTask(true);    
+    this.nodeGraphService.setAssignTask(true);
     this.nodeGraphService.setLocalize(false);
     if (this.nodeGraphService.getAssignTask()) {
       this.messageService.add({

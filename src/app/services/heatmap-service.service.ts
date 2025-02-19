@@ -122,7 +122,7 @@ export class HeatmapService {
     if (coors.x == null || coors.y == null) return;
     this.accumulatedData.push(coors);
 
-    if (this.accumulatedData.length >= 1000) {
+    if (this.accumulatedData.length >= 150) {
       this.accumulatedData.forEach((point) => {
         let existingCoor = this.accumulatedSet.find(
           (coor) => coor.x === point.x && coor.y === point.y
