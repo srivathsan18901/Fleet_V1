@@ -38,8 +38,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
   tasksSignalController: AbortController | null = null;
 
   private langSubscription!: Subscription;
+
   isFilterApplied: boolean = false;
   isOnSearchApplied: boolean = false;
+  isTaskDropDowned: boolean = false;
 
   onRobotFilter(event: any) {
     this.selectedRobot = event.target.value;
@@ -346,15 +348,24 @@ export class TasksComponent implements OnInit, AfterViewInit {
       });
     // this.filteredTaskData = this.tasks;
 
-    if (this.isFilterApplied || this.isOnSearchApplied)
+    if (
+      (this.isFilterApplied || this.isOnSearchApplied) &&
+      !this.isTaskDropDowned
+    ) {
       this.filteredTaskData = this.tasks.filter((updatedTask) => {
         for (let task of this.filteredTaskData) {
           if (task.taskId == updatedTask.taskId) return true;
         }
         return false;
       });
+      this.setPaginatedData();
+    }
     // else
-    else if (!this.isFilterApplied && !this.isOnSearchApplied) {
+    else if (
+      !this.isFilterApplied &&
+      !this.isOnSearchApplied &&
+      !this.isTaskDropDowned
+    ) {
       this.filteredTaskData = this.tasks;
       this.setPaginatedData();
     }
@@ -478,14 +489,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
   cancelAssign(item: any) {
     item.showDropdown = false;
     item.showReassDropdown = false;
+    this.isTaskDropDowned = false;
   }
   toggleDropdown(task: any) {
     task.showDropdown = true;
+    this.isTaskDropDowned = true;
   }
   reassignRobot(item: any) {
     item.selectedRobot = '';
     item.showReassDropdown = true; // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
+    this.isTaskDropDowned = true;
   }
 
   shouldShowPaginator(): boolean {
