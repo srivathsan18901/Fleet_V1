@@ -22,6 +22,8 @@ export class NodeGraphService {
   showModelCanvas: boolean = false;
   assignTask: boolean = false;
   isImage: boolean = false;
+
+  
   localize: boolean = false;
   constructor() {}
 

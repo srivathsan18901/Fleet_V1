@@ -128,7 +128,7 @@
     <!-- Display table rows -->
     <ng-container *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId">
       <tr [class.paused]="item.paused">
-        <td>{{ i + 1 }}</td>
+        <td>{{ item.sNo }}</td>
         <td>{{ item.taskId }}</td>
         <td>{{ getTranslation(item.taskType) }}</td>
         <td>{{ getTranslation(item.status) }}</td>

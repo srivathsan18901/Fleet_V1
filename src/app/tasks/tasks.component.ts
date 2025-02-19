@@ -39,6 +39,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   private langSubscription!: Subscription;
 
+  isFilterApplied: boolean = false;
+  isOnSearchApplied: boolean = false;
+  isTaskDropDowned: boolean = false;
+
   onRobotFilter(event: any) {
     this.selectedRobot = event.target.value;
     this.applyFilters();
@@ -283,7 +287,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     await this.fetchTasks();
 
     let grossFactSheet = await this.fetchAllRobos();
-    this.setPaginatedData();
+    // this.setPaginatedData();
 
     this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
       // this.isFleet = status; // Update the value whenever it changes
@@ -297,8 +301,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.liveTasksInterval = setInterval(async () => {
       if (this.tasksSignalController) this.tasksSignalController.abort();
       await this.fetchTasks();
-      this.cdRef.detectChanges();
-      // this.setPaginatedData();
     }, 1000 * 4);
   }
 
@@ -326,10 +328,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (!data.tasks) return;
     const { tasks } = data.tasks;
 
+    let sNo = 1;
     if (tasks)
       this.tasks = tasks.map((task: any) => {
         // if(task.task_status.status === "COMPLETED")
         return {
+          sNo: sNo++,
           taskId: task.task_id,
           taskType: task.sub_task[0]?.task_type
             ? task.sub_task[0]?.task_type
@@ -342,14 +346,35 @@ export class TasksComponent implements OnInit, AfterViewInit {
           destinationLocation: 'N/A',
         };
       });
-    this.filteredTaskData = this.tasks;
-    // this.setPaginatedData();
+    // this.filteredTaskData = this.tasks;
+
+    if (
+      (this.isFilterApplied || this.isOnSearchApplied) &&
+      !this.isTaskDropDowned
+    ) {
+      this.filteredTaskData = this.tasks.filter((updatedTask) => {
+        for (let task of this.filteredTaskData) {
+          if (task.taskId == updatedTask.taskId) return true;
+        }
+        return false;
+      });
+      this.setPaginatedData();
+    }
+    // else
+    else if (
+      !this.isFilterApplied &&
+      !this.isOnSearchApplied &&
+      !this.isTaskDropDowned
+    ) {
+      this.filteredTaskData = this.tasks;
+      this.setPaginatedData();
+    }
   }
 
   async toggleAssignTask() {
-    this.router.navigate(['/dashboard']);
-    this.nodeGraphService.setAssignTask(true);
     this.nodeGraphService.setLocalize(false);
+    this.nodeGraphService.setAssignTask(true);
+    this.router.navigate(['/dashboard']);
     if (this.nodeGraphService.getAssignTask()) {
       this.messageService.add({
         severity: 'info',
@@ -464,14 +489,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
   cancelAssign(item: any) {
     item.showDropdown = false;
     item.showReassDropdown = false;
+    this.isTaskDropDowned = false;
   }
   toggleDropdown(task: any) {
     task.showDropdown = true;
+    this.isTaskDropDowned = true;
   }
   reassignRobot(item: any) {
     item.selectedRobot = '';
     item.showReassDropdown = true; // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
+    this.isTaskDropDowned = true;
   }
 
   shouldShowPaginator(): boolean {
@@ -513,6 +541,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
       return matchesSearchQuery && matchesStatus;
     });
 
+    if (!this.isFilterApplied) this.isFilterApplied = true;
+
     // Reset the paginator and update paginated data
     if (this.paginator) {
       this.paginator.firstPage();
@@ -526,12 +556,14 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     if (!inputValue) {
       this.filteredTaskData = this.tasks;
+      this.isOnSearchApplied = false;
     } else {
       this.filteredTaskData = this.tasks.filter((item) =>
         Object.values(item).some((val) =>
           String(val).toLowerCase().includes(inputValue)
         )
       );
+      this.isOnSearchApplied = true;
     }
 
     // Reset the paginator after filtering
