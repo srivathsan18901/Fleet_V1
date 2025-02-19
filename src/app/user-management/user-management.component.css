@@ -76,7 +76,7 @@
 
 /* Header section styles */
 .header-section {
-  margin-bottom: 0px;
+  margin-bottom: 15px;
 }
 
 p {
@@ -88,7 +88,7 @@ p {
   font-family: "graphik", Arial, sans-serif;
   font-weight: bold;
   color: #da2127;
-  margin: 0;
+  margin: 15px 0px;
 }
 
 .subheader-container {
