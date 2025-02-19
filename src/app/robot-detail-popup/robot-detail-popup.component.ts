@@ -109,9 +109,7 @@ export class RobotDetailPopupComponent {
 
   // Function to get battery color
 
-  // get batteryPercentage(): number {
-  //   return Number(this.data.batteryPercentage);
-  // }
+
 
   // Getter for isCharging status
   // get isCharging(): boolean {
@@ -128,6 +126,7 @@ export class RobotDetailPopupComponent {
   ) {}
 
   getBatteryColor(batteryPercentage: number): string {
+    console.log("hey",batteryPercentage);    
     if (batteryPercentage >= 75) {
       return 'high'; // Green for high battery
     } else if (batteryPercentage >= 40) {
@@ -135,6 +134,9 @@ export class RobotDetailPopupComponent {
     } else {
       return 'low'; // Red for low battery
     }
+  }
+  get batteryPercentage(): number {
+    return Number(this.data.batteryPercentage);
   }
   getTranslation(key: string) {
     return this.translationService.getRobotsTranslation(key);
@@ -273,7 +275,6 @@ export class RobotDetailPopupComponent {
 
   setSignalStrength(signal: string): void {
     this.currentSignalClass = this.mapSignalToClass(signal);
-    console.log('POpup Current Signal Class: ', this.currentSignalClass);
   }
 
   getTimeStampsOfDay() {

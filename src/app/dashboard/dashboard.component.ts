@@ -1440,10 +1440,7 @@ export class DashboardComponent implements AfterViewInit {
         let newY = (mouseY - this.mapImageY) / this.zoomLevel;
         // Update the position of the robot being dragged
         newX = Math.max(0, Math.min(newX, this.mapImageWidth / this.zoomLevel));
-        newY = Math.max(
-          0,
-          Math.min(newY, this.mapImageHeight / this.zoomLevel)
-        );
+        newY = Math.max( 0, Math.min(newY, this.mapImageHeight / this.zoomLevel) );
 
         // console.log("mouseXY",newX, newY);
         // Update the robot's position
@@ -1456,6 +1453,8 @@ export class DashboardComponent implements AfterViewInit {
       }
       let isOverRobot = false;
       let robotId = null;
+      let battery=null;
+      let taskId="";
       if (!this.isFleet) {
         for (let robo of this.simMode) {
           const roboX = robo.pos.x;
@@ -1470,19 +1469,20 @@ export class DashboardComponent implements AfterViewInit {
           ) {
             isOverRobot = true;
             robotId = robo.amrId;
-
+            battery = 100;
+            taskId = "t1";
             // Position the robot tooltip above the robot
-            const robotScreenX =
-              roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
-            const robotScreenY =
-              (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) *
-                this.zoomLevel +
-              this.offsetY +
-              this.mapImageY; // Y position on the canvas
+            const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
+            const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
 
-            robottooltip.style.left = `${robotScreenX - 30}px`; // Slightly to the left of the robot's X position
-            robottooltip.style.top = `${robotScreenY - 45}px`; // Above the robot's Y position
-            robottooltip.innerHTML = `Robot ID: ${robotId}`;
+            robottooltip.style.left = `${robotScreenX }px`; // Slightly to the left of the robot's X position
+            robottooltip.style.top = `${robotScreenY - 80}px`; // Above the robot's Y position
+            robottooltip.innerHTML = 
+            `       <div class="ATactions">
+                        <div><label class="idlabel">Robot ID: ${robotId}</label></div>
+                        <div><label class="idlabel">Battery: ${battery}%</label></div>
+                        <div><label class="idlabel">Task: ${taskId}</label></div>
+                    </div>`;
             robottooltip.style.display = 'block';
             break; // Exit the loop after finding the first robot
           }

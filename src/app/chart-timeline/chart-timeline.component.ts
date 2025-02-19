@@ -90,7 +90,7 @@ export class ChartTimelineComponent implements OnInit {
   networkTimeInterval: any | null = null;
   idleTimeInterval: any | null = null;
   errTimeInterval: any | null = null;
-  selectedMetric: string = "cpuUtilization"; // Initialize with an empty string or a default value
+  selectedMetric: string = ""; // Initialize with an empty string or a default value
   metrics = {
     Overall: [
       { key: 'data1', label: this.getTranslation("cpuUtilization")},
@@ -229,6 +229,7 @@ export class ChartTimelineComponent implements OnInit {
 
   ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
+      console.log("hey",this.getTranslation(this.selectedMetric));
       this.metrics = {
         Overall: [
           { key: 'data1', label: this.getTranslation("cpuUtilization")},
@@ -248,7 +249,7 @@ export class ChartTimelineComponent implements OnInit {
           { key: 'data7', label: this.getTranslation("battery")},
         ],
       };
-      
+
       this.cdRef.detectChanges();
     });
     this.currentFilter = 'today';

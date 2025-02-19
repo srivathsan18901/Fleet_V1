@@ -80,8 +80,9 @@
     <div class="battery-container">
       <div class="battery">
         <div class="battery-level"
-             [ngStyle]="{'height': data.batteryPercentage | number:'1.2-2' + '%'}"
-             [ngClass]="getBatteryColor(data.batteryPercentage)">
+             [ngClass]="getBatteryColor(data.batteryPercentage)"
+             [ngStyle]="{'height': data.batteryPercentage + '%'}"
+             >
         </div>
         <!-- Charging icon will only show if charging is true -->
         <div *ngIf="data.isCharging" class="charging-icon">
