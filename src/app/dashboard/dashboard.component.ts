@@ -1469,8 +1469,8 @@ export class DashboardComponent implements AfterViewInit {
           ) {
             isOverRobot = true;
             robotId = robo.amrId;
-            battery = 100;
-            taskId = "t1";
+            battery = 0;
+            taskId = "N/A";
             // Position the robot tooltip above the robot
             const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
             const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas

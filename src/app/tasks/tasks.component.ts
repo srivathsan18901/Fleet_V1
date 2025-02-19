@@ -215,9 +215,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     let data = await response.json();
 
+    let sNo = 1;
     if (data.tasks) {
       const { tasks } = data.tasks;
       this.tasks = tasks.map((task: any) => ({
+        sNo: sNo++,
         taskId: task.task_id,
         taskType: task.sub_task[0]?.task_type || 'N/A',
         status: task.task_status.status,
