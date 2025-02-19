@@ -215,9 +215,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
     let data = await response.json();
 
+    let sNo = 1;
     if (data.tasks) {
       const { tasks } = data.tasks;
       this.tasks = tasks.map((task: any) => ({
+        sNo: sNo++,
         taskId: task.task_id,
         taskType: task.sub_task[0]?.task_type || 'N/A',
         status: task.task_status.status,
@@ -225,7 +227,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
         sourceLocation: task.sub_task[0]?.source_location || 'N/A',
         destinationLocation: 'N/A',
       }));
-      this.filteredTaskData = this.tasks;
+      // this.filteredTaskData = this.tasks;
       this.updateData(); // Ensure pagination and filtered data are updated
     }
   }
@@ -508,10 +510,32 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   updateData() {
     // This should be called after data change (e.g., after filtering or sorting)
-    if (this.paginator) {
-      this.paginator.pageIndex = 0; // Reset to the first page
+    // if (this.paginator) {
+    //   this.paginator.pageIndex = 0; // Reset to the first page
+    // }
+    // this.setPaginatedData(); // Update paginated data
+    //...
+    if (
+      (this.isFilterApplied || this.isOnSearchApplied) &&
+      !this.isTaskDropDowned
+    ) {
+      this.filteredTaskData = this.tasks.filter((updatedTask) => {
+        for (let task of this.filteredTaskData) {
+          if (task.taskId == updatedTask.taskId) return true;
+        }
+        return false;
+      });
+      this.setPaginatedData();
     }
-    this.setPaginatedData(); // Update paginated data
+    // else
+    else if (
+      !this.isFilterApplied &&
+      !this.isOnSearchApplied &&
+      !this.isTaskDropDowned
+    ) {
+      this.filteredTaskData = this.tasks;
+      this.setPaginatedData();
+    }
   }
 
   onPageChange(event: PageEvent) {
