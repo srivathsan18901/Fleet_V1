@@ -136,7 +136,7 @@
         <td>{{ item.sourceLocation }}</td>
         <td>
           <div style="display: flex; align-items: center; gap: 10px;">
-            <ng-container *ngIf="item.status === 'NOTASSIGNED'; else assigned">
+            <ng-container *ngIf="item.status === 'NOTASSIGNED' || item.status === 'ACCEPTED'; else assigned">
               <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
                 {{ getTranslation('assign') }}
               </button>

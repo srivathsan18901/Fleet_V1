@@ -413,7 +413,7 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Slight shadow for 3D effect */
 
 .battery-level {
   width: 100%; /* Full width */
-height: 100%; /* Full height, starts from bottom */
+// height: 100%; /* Full height, starts from bottom */
 /* background-color: #76c7c0; */
 transition: height 0.3s ease-in-out;
 position: absolute;
@@ -1168,8 +1168,8 @@ border-radius: 15px; /* Rounded edges matching the container */
 
 .speed-container {
   display: flex;
-  position: relative;
-  top: 200px;
+  position: absolute;
+  top: 370px;
   left: 953px;
   flex-direction: column;
   justify-content: flex-start;
@@ -1507,8 +1507,8 @@ border-radius: 15px; /* Rounded edges matching the container */
   // connect
   .status-container {
     position: absolute;
-    left: 150px;
-    top: 35px;
+    left: 190px;
+    top: 30px;
     display: flex;
     align-items: center;
     gap: 0px;
