@@ -93,11 +93,13 @@ canvas {
 }
 .AT-btn2{
   border-radius: 8px;
-  display: flex;
+  display: flex ;
   padding: 5px;
-  height: 30px;
+  height: 40px;
+  width: 100px;
   color: #ffffff;
-  font-size: 12px;
+  justify-content: center;
+  font-size: 15px;
   filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
   align-items: center;
 }

@@ -4,24 +4,24 @@
             <p-tabPanel header="{{getTranslation('MOVE')}}">
                 <div class="input-groupg">
                     <label>{{getTranslation('max_linear_velocity')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}"/><br />
       
                     <label>{{getTranslation('max_angular_velocity')}}</label>
-                    <input pInputText type="number" min="0" max="1000" /><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_angular_velocity')}}" /><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000"  /><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
       
                     <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000" /><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000" /><br />
+                    <input pInputText type="number" min="0" max="1000"placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
       
                     <label>{{getTranslation('end_point_orientation')}}</label>
-                    <input type="checkbox"style="height: 20px;" /><br />
+                    <input type="checkbox"style="height: 20px;"/><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('auto_robot_operation_mode')}}:</label>
@@ -32,7 +32,7 @@
                   </div>
                   <div class="input-groupgbtn">
                   <p-button
-                  label="{{getTranslation('Submit')}}"
+                  label="{{getTranslation('submit')}}"
                   type="submit"
                   class="block mt-1 pt-2"
                   styleClass="p-button-danger p-button1"
@@ -42,31 +42,31 @@
             <p-tabPanel header="{{getTranslation('DOCK')}}">
                 <div class="input-groupg">
                     <label>{{getTranslation('max_linear_velocity')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}"/><br />
       
                     <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
       
                     <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000"  /><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('goal_offset_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000" /><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_goal_offset_x')}}" /><br />
       
                     <label>{{getTranslation('goal_offset_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_goal_offset_y')}}"/><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('goal_offset_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_goal_offset_orientation')}}"/><br />
       
                     <label>{{getTranslation('end_point_orientation')}}</label>
-                    <input type="checkbox"  style="height: 20px;" /><br />
+                    <input type="checkbox"  style="height: 20px;"/><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('docking_type')}}</label>
@@ -79,7 +79,7 @@
                   </div>
                   <div class="input-groupgbtn">
                   <p-button
-                  label="{{getTranslation('Submit')}}"
+                  label="{{getTranslation('submit')}}"
                   type="submit"
                   class="block mt-1 pt-2"
                   styleClass="p-button-danger p-button1"
@@ -89,32 +89,32 @@
             <p-tabPanel header="{{getTranslation('UNDOCK')}}">
             <div class="input-groupg">
               <label>{{getTranslation('max_linear_velocity')}}</label>
-              <input pInputText type="number" min="0" max="1000" /><br />
+              <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}" /><br />
 
               <label>{{getTranslation('max_angular_velocity')}}</label>
-              <input pInputText type="number" min="0" max="1000"  /><br />
+              <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_angular_velocity')}}"  /><br />
             </div>
             <div class="input-groupg">
               <label style="margin-right: .8rem;">{{getTranslation('max_tolerance_at_goal_x')}}</label>
-              <input pInputText type="number" min="0" max="1000"  /><br />
+              <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
 
               <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-              <input pInputText type="number" min="0" max="1000" /><br />
+              <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
             </div>
             <div class="input-groupg">
               <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-              <input pInputText type="number" min="0" max="1000"  /><br />
+              <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
 
               <label>{{getTranslation('end_point_orientation')}}</label>
-              <input type="checkbox"  style="height: 20px;" /><br />
+              <input type="checkbox"  style="height: 20px;"/><br />
             </div>
-            <div class="input-groupg">
+            <!-- <div class="input-groupg">
               <label>{{getTranslation('end_point_orientation')}}</label>
-              <input pInputText type="number" min="0" max="1000" /><br />
-            </div>
+              <input pInputText type="number" min="0" max="1000" placeholder="Enter Maximum Linear Velocity" /><br />
+            </div> -->
             <div class="input-groupgbtn">
             <p-button
-            label="{{getTranslation('Submit')}}"
+            label="{{getTranslation('submit')}}"
             type="submit"
             class="block mt-1 pt-2"
             styleClass="p-button-danger p-button1"
@@ -124,35 +124,35 @@
             <p-tabPanel header="{{getTranslation('CHARGE')}}">
                 <div class="input-groupg">
                     <label>{{getTranslation('max_linear_velocity')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}"/><br />
       
                     <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
       
                     <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000"  /><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('goal_offset_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000" /><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_goal_offset_x')}}" /><br />
       
                     <label>{{getTranslation('goal_offset_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_goal_offset_y')}}"/><br />
                   </div>
                   <div class="input-groupg">
                     <label>{{getTranslation('goal_offset_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_goal_offset_orientation')}}"/><br />
       
                     <label>{{getTranslation('end_point_orientation')}}</label>
-                    <input type="checkbox"  style="height: 20px;" /><br />
+                    <input type="checkbox"  style="height: 20px;"/><br />
                   </div>
-                  <div class="input-groupg">
+                  <div class="input-groupg"> 
                     <label>{{getTranslation('docking_type')}}</label>
-                    <select  style="margin-right: 20.2rem; border: 1px solid #ccc;" placeholder="Select Docking Type">
+                    <select  style="margin-right: 20.2rem; border: 1px solid #ccc;">
                       <option value="0">0</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -161,7 +161,7 @@
                   </div>
                   <div class="input-groupgbtn">
                   <p-button
-                  label="{{getTranslation('Submit')}}"
+                  label="{{getTranslation('submit')}}"
                   type="submit"
                   class="block mt-1 pt-2"
                   styleClass="p-button-danger p-button1"
@@ -171,37 +171,43 @@
             <p-tabPanel header="{{getTranslation('GEOMETRY')}}">
                 <div class="input-groupg">
                     <label>{{getTranslation('WIDTH')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_width')}}"/><br />
                     <label>{{getTranslation('LENGTH')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_length')}}"/><br />
                 </div>
-                <div class="input-groupg">
+                <div class="newdiv">
+                  <div style="font-weight: bold;margin-bottom: 10px;">
                     <label>{{getTranslation('SAFETY_ZONES_NORMAL')}}</label>
-      
+                  </div> 
+                  <div class="input-groupg">
                     <label>{{getTranslation('FRONT')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_front')}}"/><br />
                     <label>{{getTranslation('REAR')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_rear')}}"/><br />
                     <label>{{getTranslation('LEFT')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_left')}}"/><br />
                     <label>{{getTranslation('RIGHT')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_right')}}"/><br />
+                  </div>
                 </div>
-                <div class="input-groupg">
+                <div class="newdiv">
+                  <div style="font-weight: bold;margin-bottom: 10px;">
                     <label>{{getTranslation('SAFETY_ZONES_WITH_LOAD')}}</label>
-      
+                  </div>
+                  <div class="input-groupg">
                     <label>{{getTranslation('FRONT')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_front')}}"/><br />
                     <label>{{getTranslation('REAR')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_rear')}}"/><br />
                     <label>{{getTranslation('LEFT')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_left')}}"/><br />
                     <label>{{getTranslation('RIGHT')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_right')}}"/><br />
+                  </div>
                   </div>
                   <div class="input-groupgbtn">
                   <p-button
-                  label="{{getTranslation('Submit')}}"
+                  label="{{getTranslation('submit')}}"
                   type="submit"
                   class="block mt-1 pt-2"
                   styleClass="p-button-danger p-button1"
@@ -211,32 +217,32 @@
             <p-tabPanel header="{{getTranslation('BATTERY')}}">
                 <div class="input-groupg">
                     <label>{{getTranslation('MINIMUM_BATTERY')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_minimum_battery')}}"/><br />
       
                     <label>{{getTranslation('MAXIMUM_BATTERY')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_battery')}}"/><br />
                 </div>
                 <div class="input-groupg">
                     <label>{{getTranslation('WARNING_BATTERY')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_warning_battery')}}"/><br />
       
                     <label>{{getTranslation('WARNING_VOLTAGE')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_warning_voltage')}}"/><br />
                 </div>
                 <div class="input-groupg">
                     <label>{{getTranslation('MINIMUM_VOLTAGE')}}</label>
-                    <input pInputText type="number" min="0" max="1000"/><br />
+                    <input pInputText type="number" min="0" max="1000" placeholder="{{getTranslation('enter_maximum_voltage')}}"/><br />
       
                     <label>{{getTranslation('USE_ONLY_PERCENTAGE')}}</label>
-                    <input type="checkbox"  style="height: 20px;" /><br />
+                    <input type="checkbox"  style="height: 20px;"/><br />
                 </div>
                 <div class="input-groupg">
                     <label>{{getTranslation('USE_CURRENT')}}</label>
-                    <input type="checkbox"  style="height: 20px;" /><br />
+                    <input type="checkbox"  style="height: 20px;"  /><br />
                 </div>
                 <div class="input-groupgbtn">
                 <p-button
-                label="{{getTranslation('Submit')}}"
+                label="{{getTranslation('submit')}}"
                 type="submit"
                 class="block mt-1 pt-2"
                 styleClass="p-button-danger p-button1"
