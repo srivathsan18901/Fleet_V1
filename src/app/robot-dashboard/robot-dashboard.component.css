@@ -242,7 +242,7 @@ h2 {
   width: 100%;
   height: auto;
 }
- 
+
 /* Specific styling for Stat Card 1 (red color) */
 .stat-card-1 .loading svg polyline#back {
   stroke: #ff4d5033;
