@@ -90,24 +90,25 @@ export class ChartTimelineComponent implements OnInit {
   networkTimeInterval: any | null = null;
   idleTimeInterval: any | null = null;
   errTimeInterval: any | null = null;
+  selectedValue:string="";
   selectedMetric: string = ""; // Initialize with an empty string or a default value
   metrics = {
     Overall: [
-      { key: 'data1', label: this.getTranslation("cpuUtilization")},
-      { key: 'data2', label: this.getTranslation("robotUtilization") },
-      { key: 'data3', label: this.getTranslation("memory") },
-      { key: 'data4', label: this.getTranslation("network") },
-      { key: 'data5', label: this.getTranslation("idleTime") },
-      { key: 'data6', label: this.getTranslation("error")},
-      { key: 'data7', label: this.getTranslation("battery")},
+      { key: 'data1', label:'CPU Utilization', name: this.getTranslation("CPU Utilization")},
+      { key: 'data2', label:'Robot Utilization', name: this.getTranslation("Robot Utilization")},
+      { key: 'data3', label:'Memory' , name:this.getTranslation("Memory")},
+      { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
+      { key: 'data5', label:'Idletime' , name:this.getTranslation("Idletime")},
+      { key: 'data6', label:'Error', name:this.getTranslation("Error")},
+      { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
     ],
     robot: [
-      { key: 'data1', label: this.getTranslation("cpuUtilization")},
-      { key: 'data3', label: this.getTranslation("memory") },
-      { key: 'data4', label: this.getTranslation("network") },
-      { key: 'data5', label: this.getTranslation("idleTime") },
-      { key: 'data6', label: this.getTranslation("error")},
-      { key: 'data7', label: this.getTranslation("battery")},
+      { key: 'data1', label:'CPU Utilization', name:this.getTranslation("CPU Utilization")},
+      { key: 'data3', label:'Memory', name:this.getTranslation("Memory") },
+      { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
+      { key: 'data5', label:'Idletime', name:this.getTranslation("Idletime") },
+      { key: 'data6', label:'Error', name:this.getTranslation("Error")},
+      { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
     ],
   };
 
@@ -229,25 +230,43 @@ export class ChartTimelineComponent implements OnInit {
 
   ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-      console.log("hey",this.getTranslation(this.selectedMetric));
-      this.metrics = {
-        Overall: [
-          { key: 'data1', label: this.getTranslation("cpuUtilization")},
-          { key: 'data2', label: this.getTranslation("robotUtilization") },
-          { key: 'data3', label: this.getTranslation("memory") },
-          { key: 'data4', label: this.getTranslation("network") },
-          { key: 'data5', label: this.getTranslation("idleTime") },
-          { key: 'data6', label: this.getTranslation("error")},
-          { key: 'data7', label: this.getTranslation("battery")},
-        ],
-        robot: [
-          { key: 'data1', label: this.getTranslation("cpuUtilization")},
-          { key: 'data3', label: this.getTranslation("memory") },
-          { key: 'data4', label: this.getTranslation("network") },
-          { key: 'data5', label: this.getTranslation("idleTime") },
-          { key: 'data6', label: this.getTranslation("error")},
-          { key: 'data7', label: this.getTranslation("battery")},
-        ],
+      console.log("hey",this.selectedMetric,this.selectedValue,this.getTranslation(this.selectedMetric));
+        this.selectedMetric=this.getTranslation(this.selectedValue);
+        this.metrics = {
+          Overall: [
+            { key: 'data1', label:'CPU Utilization', name: this.getTranslation("CPU Utilization")},
+            { key: 'data2', label:'Robot Utilization', name: this.getTranslation("Robot Utilization")},
+            { key: 'data3', label:'Memory' , name:this.getTranslation("Memory")},
+            { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
+            { key: 'data5', label:'Idletime' , name:this.getTranslation("Idletime")},
+            { key: 'data6', label:'Error', name:this.getTranslation("Error")},
+            { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
+          ],
+          robot: [
+            { key: 'data1', label:'CPU Utilization', name:this.getTranslation("CPU Utilization")},
+            { key: 'data3', label:'Memory', name:this.getTranslation("Memory") },
+            { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
+            { key: 'data5', label:'Idletime', name:this.getTranslation("Idletime") },
+            { key: 'data6', label:'Error', name:this.getTranslation("Error")},
+            { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
+          ],
+        // Overall: [
+        //   { key: 'data1', label: this.getTranslation("cpuUtilization"),name: 'CPU Utilization'},
+        //   { key: 'data2', label: this.getTranslation("robotUtilization"),name:'Robot Utilization' },
+        //   { key: 'data3', label: this.getTranslation("memory"),name:'Memory' },
+        //   { key: 'data4', label: this.getTranslation("network"),name:'Network' },
+        //   { key: 'data5', label: this.getTranslation("idleTime"),name:'Idletime' },
+        //   { key: 'data6', label: this.getTranslation("error"),name:'Error'},
+        //   { key: 'data7', label: this.getTranslation("battery"),name:'Battery'},
+        // ],
+        // robot: [
+        //   { key: 'data1', label: this.getTranslation("cpuUtilization"),name: 'CPU Utilization'},
+        //   { key: 'data3', label: this.getTranslation("memory"),name:'Memory' },
+        //   { key: 'data4', label: this.getTranslation("network"),name:'Network' },
+        //   { key: 'data5', label: this.getTranslation("idleTime"),name:'Idletime' },
+        //   { key: 'data6', label: this.getTranslation("error"),name:'Error'},
+        //   { key: 'data7', label: this.getTranslation("battery"),name:'Battery'},
+        // ],
       };
 
       this.cdRef.detectChanges();
@@ -316,7 +335,8 @@ export class ChartTimelineComponent implements OnInit {
       console.log('No map has been selected!');
       return;
     }
-    this.selectedMetric = metricName; // Update the displayed metric name
+    this.selectedValue = metricName;
+    this.selectedMetric = metricName;
     
     const updateFunctions: { [key: string]: () => void } = {
       data1: this.updateCpuUtil.bind(this),

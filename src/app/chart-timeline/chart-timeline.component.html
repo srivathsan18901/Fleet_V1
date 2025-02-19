@@ -35,7 +35,7 @@
   <div class="menu">
     <div class="item">
       <a href="javascript:void(0);" class="link" id="selectedMetric">
-        <span>{{ selectedMetric }}</span>
+        <span>{{getTranslation(selectedMetric)}}</span>
         <svg viewBox="0 0 360 360" xml:space="preserve">
           <g id="SVGRepo_iconCarrier">
             <path
@@ -50,7 +50,7 @@
       <!-- Metric Options -->
       <div class="submenu">
         <div class="submenu-item" *ngFor="let metric of getMetrics(selectedType)">
-          <a href="javascript:void(0);" class="submenu-link" (click)="updateChart(metric.key, metric.label)">{{ metric.label }}</a>
+          <a href="javascript:void(0);" class="submenu-link" (click)="updateChart(metric.key, metric.label)">{{ metric.name }}</a>
         </div>
       </div>
     </div>
