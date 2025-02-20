@@ -142,6 +142,18 @@ export class ProjectService {
     this.isFleetUp.next(value);
   }
 
+  async getIsFleetHalted(): Promise<boolean> {
+    let project = this.getSelectedProject();
+    if (!project) return false;
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-isFleetHalted/${project._id}`,
+      { credentials: 'include' }
+    );
+    let data = await response.json();
+    if (data.isFleetHalted) return true;
+    return false;
+  }
+
   getRobotUtilization(
     mapId: string,
     timeStamp1: number,

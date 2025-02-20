@@ -288,6 +288,7 @@ export class DashboardComponent implements AfterViewInit {
     this.isFleetService.abortFleetStatusSignal(); // remove if interrupting opts...
 
     this.roboToLocalize = this.nodeGraphService.getRoboToLocalize();
+    this.isPause = await this.projectService.getIsFleetHalted();
 
     if (savedIsFleet !== null) {
       this.isFleet = savedIsFleet === 'true'; // Convert string to boolean
