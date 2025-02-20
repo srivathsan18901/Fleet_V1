@@ -10,19 +10,11 @@ import {
   Renderer2,
   Input,
 } from '@angular/core';
-import { formatDate } from '@angular/common';
 import { environment } from '../../environments/environment.development';
-import { saveAs } from 'file-saver';
 import { ProjectService } from '../services/project.service';
-import { sequence } from '@angular/animations';
-import { parse } from 'path';
-import { response } from 'express';
-import { CookieService } from 'ngx-cookie-service';
 import { CheckboxModule } from 'primeng/checkbox';
 import { MessageService } from 'primeng/api';
 import { SessionService } from '../services/session.service';
-import { map } from 'rxjs';
-import { Dropdown } from 'primeng/dropdown';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 // import { NodeGraphService } from '../services/nodegraph.service';
@@ -124,8 +116,10 @@ export class EnvmapComponent implements AfterViewInit {
   overlayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('imagePopupCanvas', { static: false })
   imagePopupCanvas!: ElementRef<HTMLCanvasElement>;
-  @ViewChild('OriginPopupCanvas', { static: false }) OriginPopupCanvas!: ElementRef<HTMLCanvasElement>;  
-  @ViewChild('OriginOverlayCanvas', { static: false }) OriginOverlayCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('OriginPopupCanvas', { static: false })
+  OriginPopupCanvas!: ElementRef<HTMLCanvasElement>;
+  @ViewChild('OriginOverlayCanvas', { static: false })
+  OriginOverlayCanvas!: ElementRef<HTMLCanvasElement>;
   @ViewChild('resolutionInput') resolutionInput!: ElementRef<HTMLInputElement>;
   @ViewChild('xInput') xInput!: ElementRef<HTMLInputElement>;
   @ViewChild('yInput') yInput!: ElementRef<HTMLInputElement>;
@@ -135,7 +129,7 @@ export class EnvmapComponent implements AfterViewInit {
   projData: any;
   form: FormData | null = null;
   selectedImage: File | null = null;
-  anotherFileName : string | null = null;
+  anotherFileName: string | null = null;
   fileName: string | null = null;
   public mapName: string = '';
   public siteName: string = '';
@@ -143,7 +137,7 @@ export class EnvmapComponent implements AfterViewInit {
   width: number | null = null;
   showImage: boolean = false;
   public imageSrc: string | null = null;
-  public anotherImageSrc : string | null = null;
+  public anotherImageSrc: string | null = null;
   showOptionsLayer: boolean = false;
   orientationAngle: number = 0;
   public nodes: Node[] = []; // Org_nodes
@@ -380,17 +374,17 @@ export class EnvmapComponent implements AfterViewInit {
   }
   getTranslatedActionType(actionType: string): string {
     const translations: { [key: string]: string } = {
-      'Move': 'move',
-      'Dock': 'dock',
-      'Undock': 'undock'
+      Move: 'move',
+      Dock: 'dock',
+      Undock: 'undock',
     };
     return translations[actionType] || actionType;
   }
-  
+
   updateTranslatedZoneTypes(): void {
-    this.translatedZoneTypeList = this.zoneTypeList.map(zone => ({
+    this.translatedZoneTypeList = this.zoneTypeList.map((zone) => ({
       label: this.getTranslation(zone),
-      value: zone
+      value: zone,
     }));
   }
   ngOnInit() {
@@ -496,8 +490,8 @@ export class EnvmapComponent implements AfterViewInit {
   }
 
   orientationTypes = [
-    { label: this.getTranslation("global"), value: 'GLOBAL' },
-    { label: this.getTranslation("tangential"), value: 'Tangential' },
+    { label: this.getTranslation('global'), value: 'GLOBAL' },
+    { label: this.getTranslation('tangential'), value: 'Tangential' },
   ];
 
   ngAfterViewInit(): void {
@@ -1092,7 +1086,7 @@ export class EnvmapComponent implements AfterViewInit {
   inputX: number | null = 0;
   inputY: number | null = 0;
   private startPoint: { x: number; y: number } | null = null; // Store the initial point
-  showOriginCanvas = false; 
+  showOriginCanvas = false;
   // imageBase64: string | null = null;
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -1116,7 +1110,7 @@ export class EnvmapComponent implements AfterViewInit {
     if (input.files && input.files[0]) {
       const file = input.files[0];
       this.anotherFileName = file.name; // Store file name separately
-  
+
       if (file.type === '.x-portable-graymap' || file.name.endsWith('.pgm')) {
         const reader = new FileReader();
         reader.onload = (e: ProgressEvent<FileReader>) => {
@@ -1138,7 +1132,7 @@ export class EnvmapComponent implements AfterViewInit {
           summary: 'Invalid File Type',
           detail: 'Please upload a valid PGM file.',
         });
-  
+
         // Reset the input field and file name
         input.value = '';
         this.anotherFileName = '';
@@ -1150,22 +1144,27 @@ export class EnvmapComponent implements AfterViewInit {
     const dataView = new DataView(buffer);
     const decoder = new TextDecoder('ascii');
     const header = decoder.decode(buffer.slice(0, 100)); // Read first 100 bytes (to get the header)
-    const lines = header.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-  
+    const lines = header
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+
     const format = lines[0];
     if (format !== 'P5') {
       console.log('Invalid PGM format. Expected P5, but got', format);
       return '';
     }
-  
-    let width = 0, height = 0, maxVal = 0;
+
+    let width = 0,
+      height = 0,
+      maxVal = 0;
     let offset = header.length + 1; // Skip header to find image data
-  
+
     // Parse header lines for width, height, and maxVal
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
       if (line.startsWith('#')) continue; // Skip comments
-  
+
       const parts = line.split(' ');
       if (parts.length === 2) {
         // Width and height
@@ -1177,41 +1176,43 @@ export class EnvmapComponent implements AfterViewInit {
         break;
       }
     }
-  
+
     if (width === 0 || height === 0 || maxVal === 0) {
-      console.log('Invalid PGM header: missing width, height, or max pixel value');
+      console.log(
+        'Invalid PGM header: missing width, height, or max pixel value'
+      );
       return '';
     }
-  
+
     // Read pixel data
     const imageData = new Uint8Array(buffer, offset);
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
-  
+
     canvas.width = width;
     canvas.height = height;
-  
+
     const imgData = ctx.createImageData(width, height);
     for (let i = 0; i < imageData.length; i++) {
       const value = imageData[i];
-      imgData.data[i * 4] = value;     // Red
+      imgData.data[i * 4] = value; // Red
       imgData.data[i * 4 + 1] = value; // Green
       imgData.data[i * 4 + 2] = value; // Blue
-      imgData.data[i * 4 + 3] = 255;   // Alpha
+      imgData.data[i * 4 + 3] = 255; // Alpha
     }
     ctx.putImageData(imgData, 0, 0);
-  
+
     return canvas.toDataURL(); // Return the base64 string
   }
   renderOverlayCanvas(): void {
     const overlayCanvas = this.OriginOverlayCanvas.nativeElement;
     const ctx = overlayCanvas.getContext('2d');
-  
+
     if (!ctx || !this.anotherImageSrc) return;
-  
+
     const img = new Image();
     img.src = this.anotherImageSrc;
-  
+
     img.onload = () => {
       overlayCanvas.width = img.width;
       overlayCanvas.height = img.height;
@@ -1247,7 +1248,6 @@ export class EnvmapComponent implements AfterViewInit {
     this.openOriginPopup();
   }
   openOriginPopup(): void {
-    
     if (!this.ratio) {
       this.messageService.add({
         severity: 'error',
@@ -1271,56 +1271,79 @@ export class EnvmapComponent implements AfterViewInit {
 
     if (this.imageSrc) {
       this.showOriginPopup = true;
-      this.isPanning=!this.isPanning;
-      this.isRotating=!this.isRotating;
+      this.isPanning = !this.isPanning;
+      this.isRotating = !this.isRotating;
       this.cdRef.detectChanges();
-  
+
       const originCanvas = this.OriginPopupCanvas?.nativeElement;
       const overlayCanvas = this.OriginOverlayCanvas?.nativeElement;
-  
+
       if (!originCanvas || !overlayCanvas) {
         console.error('Canvas elements not found');
         return;
       }
-  
+
       const originCtx = originCanvas.getContext('2d');
       const overlayCtx = overlayCanvas.getContext('2d');
       const originImg = new Image();
       const overlayImg = new Image();
-  
+
       originImg.src = this.imageSrc; // Use the original file input's image
       if (this.anotherImageSrc) {
         overlayImg.src = this.anotherImageSrc;
-      } 
-  
+      }
+
       originImg.onload = () => {
         // Set canvas sizes to match the image dimensions
         originCanvas.width = originImg.width;
         originCanvas.height = originImg.height;
-  
+
         // Clear the origin canvas and draw the image
         originCtx!.globalAlpha = 0.5;
         originCtx!.clearRect(0, 0, originCanvas.width, originCanvas.height);
-        originCtx!.drawImage(originImg, 0, 0, originCanvas.width, originCanvas.height);
-  
+        originCtx!.drawImage(
+          originImg,
+          0,
+          0,
+          originCanvas.width,
+          originCanvas.height
+        );
+
         overlayImg.onload = () => {
           // Set overlay canvas sizes to match the image dimensions
           overlayCanvas.width = originImg.width;
           overlayCanvas.height = originImg.height;
-  
+
           // Clear the overlay canvas and draw the image with 50% opacity
-          overlayCtx!.clearRect(0, 0, overlayCanvas.width, overlayCanvas.height);          
-          overlayCtx!.drawImage(overlayImg, 0, 0, overlayCanvas.width, overlayCanvas.height);
-  
+          overlayCtx!.clearRect(
+            0,
+            0,
+            overlayCanvas.width,
+            overlayCanvas.height
+          );
+          overlayCtx!.drawImage(
+            overlayImg,
+            0,
+            0,
+            overlayCanvas.width,
+            overlayCanvas.height
+          );
+
           // Disable interactions on overlay canvas
           overlayCanvas.style.pointerEvents = 'none';
         };
       };
-  
+
       // Add event listeners for interaction on the origin canvas
-      originCanvas.addEventListener('mousedown', (event) => this.onCanvasMouseDown(event));
-      originCanvas.addEventListener('mousemove', (event) => this.onCanvasMouseMove(event));
-      originCanvas.addEventListener('mouseup', (event) => this.onCanvasMouseUp(event));
+      originCanvas.addEventListener('mousedown', (event) =>
+        this.onCanvasMouseDown(event)
+      );
+      originCanvas.addEventListener('mousemove', (event) =>
+        this.onCanvasMouseMove(event)
+      );
+      originCanvas.addEventListener('mouseup', (event) =>
+        this.onCanvasMouseUp(event)
+      );
     } else {
       this.messageService.add({
         severity: 'error',
@@ -1329,7 +1352,7 @@ export class EnvmapComponent implements AfterViewInit {
       });
     }
   }
-  enablePlotOrigin(){
+  enablePlotOrigin() {
     this.plotOrigin = !this.plotOrigin;
   }
   private getMapImageOBB(
@@ -1339,51 +1362,55 @@ export class EnvmapComponent implements AfterViewInit {
   ): { inside: boolean; relativeX: number; relativeY: number } {
     const img = new Image();
     img.src = this.imageSrc!;
-  
+
     const scaleX = this.zoomLevel;
     const scaleY = this.zoomLevel;
-  
+
     const imageWidth = img.width * scaleX;
     const imageHeight = img.height * scaleY;
-  
+
     const angle = this.rotationAngle * (Math.PI / 180);
     const cosAngle = Math.cos(angle);
     const sinAngle = Math.sin(angle);
-  
+
     // Calculate center of the image on the canvas
     const canvasWidth = ctx.canvas.width;
     const canvasHeight = ctx.canvas.height;
-  
+
     const centerX = canvasWidth / 2 + this.panOffset.x;
     const centerY = canvasHeight / 2 + this.panOffset.y;
-  
+
     // Translate mouse coordinates to the image's rotated coordinate space
     const dx = mouseX - centerX;
     const dy = mouseY - centerY;
-  
+
     const rotatedX = dx * cosAngle + dy * sinAngle;
     const rotatedY = -dx * sinAngle + dy * cosAngle;
-  
+
     // Check if the mouse is within the original (unrotated) image bounds
     const inside =
-      Math.abs(rotatedX) <= imageWidth / 2 && Math.abs(rotatedY) <= imageHeight / 2;
-  
+      Math.abs(rotatedX) <= imageWidth / 2 &&
+      Math.abs(rotatedY) <= imageHeight / 2;
+
     // Calculate relative coordinates in the original image space
     const relativeX = (rotatedX + imageWidth / 2) / this.zoomLevel;
     const relativeY = (imageHeight / 2 - rotatedY) / this.zoomLevel;
-  
+
     return { inside, relativeX, relativeY };
   }
   private onCanvasMouseDown(event: MouseEvent): void {
     const canvas = this.OriginPopupCanvas.nativeElement;
     const rect = canvas.getBoundingClientRect();
     if (this.isRotating) {
-      this.rotationStart = Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2);
+      this.rotationStart = Math.atan2(
+        event.clientY - rect.top - rect.height / 2,
+        event.clientX - rect.left - rect.width / 2
+      );
       return;
     }
     if (this.isPanning) {
       this.panStart = { x: event.clientX, y: event.clientY };
-    } else { 
+    } else {
       let x = (event.clientX - rect.left) * (canvas.width / rect.width);
       let y = (event.clientY - rect.top) * (canvas.height / rect.height);
       const ctx = canvas.getContext('2d');
@@ -1391,8 +1418,12 @@ export class EnvmapComponent implements AfterViewInit {
       const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
       const mapImageBounds = this.getMapImageOBB(ctx!, mouseX, mouseY);
       if (mapImageBounds.inside) {
-        this.origin.x = parseFloat((mapImageBounds.relativeX * this.ratio!).toFixed(2));
-        this.origin.y = parseFloat((mapImageBounds.relativeY * this.ratio!).toFixed(2));
+        this.origin.x = parseFloat(
+          (mapImageBounds.relativeX * this.ratio!).toFixed(2)
+        );
+        this.origin.y = parseFloat(
+          (mapImageBounds.relativeY * this.ratio!).toFixed(2)
+        );
       }
       this.startPoint = { x, y };
       this.isDrawing = true;
@@ -1401,7 +1432,7 @@ export class EnvmapComponent implements AfterViewInit {
       ctx!.fillStyle = 'red';
       ctx!.fill();
     }
-  }  
+  }
   private onCanvasMouseMove(event: MouseEvent): void {
     const canvas = this.OriginPopupCanvas.nativeElement;
     const rect = canvas.getBoundingClientRect();
@@ -1409,21 +1440,26 @@ export class EnvmapComponent implements AfterViewInit {
     if (!ctx) return;
     const mouseX = (event.clientX - rect.left) * (canvas.width / rect.width);
     const mouseY = (event.clientY - rect.top) * (canvas.height / rect.height);
-    
+
     const mapImageBounds = this.getMapImageOBB(ctx, mouseX, mouseY);
     if (mapImageBounds.inside) {
       const tooltip = this.tooltip.nativeElement;
-      tooltip.textContent = `(x: ${(mapImageBounds.relativeX * this.ratio!).toFixed(
+      tooltip.textContent = `(x: ${(
+        mapImageBounds.relativeX * this.ratio!
+      ).toFixed(2)}, y: ${(mapImageBounds.relativeY * this.ratio!).toFixed(
         2
-      )}, y: ${(mapImageBounds.relativeY * this.ratio!).toFixed(2)})`;
+      )})`;
     }
 
     if (this.isRotating && this.rotationStart !== null) {
-      const currentAngle = Math.atan2(event.clientY - rect.top - rect.height / 2, event.clientX - rect.left - rect.width / 2);
+      const currentAngle = Math.atan2(
+        event.clientY - rect.top - rect.height / 2,
+        event.clientX - rect.left - rect.width / 2
+      );
       const deltaAngle = currentAngle - this.rotationStart;
       this.rotationAngle += deltaAngle * (180 / Math.PI);
       this.rotationStart = currentAngle;
-      
+
       this.renderCanvas();
       return;
     }
@@ -1443,12 +1479,17 @@ export class EnvmapComponent implements AfterViewInit {
     const img = new Image();
     img.src = this.imageSrc!;
     img.onload = () => {
-      
       ctx!.beginPath();
       ctx!.arc(this.startPoint!.x, this.startPoint!.y, 6, 0, 2 * Math.PI);
       ctx!.fillStyle = 'red';
       ctx!.fill();
-      this.drawArrow(ctx!, this.startPoint!.x, this.startPoint!.y, mouseX, mouseY);
+      this.drawArrow(
+        ctx!,
+        this.startPoint!.x,
+        this.startPoint!.y,
+        mouseX,
+        mouseY
+      );
     };
   }
   private onCanvasMouseUp(event: MouseEvent): void {
@@ -1457,7 +1498,7 @@ export class EnvmapComponent implements AfterViewInit {
       return;
     }
     if (this.isRotating) {
-      this.rotationStart = null;      
+      this.rotationStart = null;
       return;
     }
     // if(this.plotOrigin){
@@ -1465,18 +1506,22 @@ export class EnvmapComponent implements AfterViewInit {
     //   return;
     // }
     if (!this.isDrawing || !this.startPoint) return;
-  
+
     const canvas = this.OriginPopupCanvas.nativeElement;
     const rect = canvas.getBoundingClientRect();
-    
-    const finalX = ((event.clientX - rect.left - this.panOffset.x) / this.zoomLevel) * (canvas.width / rect.width);
-    const finalY = ((event.clientY - rect.top - this.panOffset.y) / this.zoomLevel) * (canvas.height / rect.height);
+
+    const finalX =
+      ((event.clientX - rect.left - this.panOffset.x) / this.zoomLevel) *
+      (canvas.width / rect.width);
+    const finalY =
+      ((event.clientY - rect.top - this.panOffset.y) / this.zoomLevel) *
+      (canvas.height / rect.height);
     const dx = this.startPoint.x - finalX;
     const dy = this.startPoint.y - finalY;
     const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-  
+
     console.log('X:', finalX, 'Y:', canvas.height - finalY, 'Angle:', angle);
-  
+
     this.origin.w = angle;
     // this.origin = {
     //   x: this.startPoint.x * this.ratio!,
@@ -1492,18 +1537,18 @@ export class EnvmapComponent implements AfterViewInit {
     this.panStart = null;
     this.rotationStart = null;
     this.resetZoom();
-    this.rotationAngle=0;
-  }  
+    this.rotationAngle = 0;
+  }
   closeImagePopup(): void {
     if ((this.showOriginPopup = true)) {
       this.showOriginPopup = false;
       this.showOriginCanvas = false;
       this.anotherFileName = '';
-      this.rotationAngle=0;  
+      this.rotationAngle = 0;
       this.panStart = null;
       this.rotationStart = null;
-      this.isPanning=false;
-      this.isRotating=false;
+      this.isPanning = false;
+      this.isRotating = false;
     }
     this.showImagePopup = false;
     this.points = [];
@@ -1519,26 +1564,26 @@ export class EnvmapComponent implements AfterViewInit {
   private renderCanvas(): void {
     const originCanvas = this.OriginPopupCanvas.nativeElement;
     const ctx = originCanvas.getContext('2d');
-  
+
     if (!ctx || !this.imageSrc) return;
-  
+
     const img = new Image();
     img.src = this.imageSrc;
-  
+
     img.onload = () => {
       ctx.clearRect(0, 0, originCanvas.width, originCanvas.height);
       ctx.save();
-  
+
       const centerX = originCanvas.width / 2;
       const centerY = originCanvas.height / 2;
-  
+
       // Apply transformations
       ctx.translate(this.panOffset.x, this.panOffset.y);
       ctx.translate(centerX, centerY);
       ctx.scale(this.zoomLevel, this.zoomLevel);
       ctx.rotate((this.rotationAngle * Math.PI) / 180);
       ctx.translate(-centerX, -centerY);
-  
+
       // Draw image and overlay content
       ctx.drawImage(img, 0, 0, originCanvas.width, originCanvas.height);
       this.redrawCanvasContent(ctx);
@@ -1546,14 +1591,19 @@ export class EnvmapComponent implements AfterViewInit {
     };
   }
   private redrawCanvasContent(ctx: CanvasRenderingContext2D): void {
-    this.Originpoints.forEach(point => {
+    this.Originpoints.forEach((point) => {
       ctx.beginPath();
       ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
       ctx.fillStyle = 'red';
       ctx.fill();
     });
   }
-  private drawArrow( ctx: CanvasRenderingContext2D, fromX: number, fromY: number, toX: number, toY: number
+  private drawArrow(
+    ctx: CanvasRenderingContext2D,
+    fromX: number,
+    fromY: number,
+    toX: number,
+    toY: number
   ): void {
     const headLength = 10; // Length of the arrowhead
     const maxLength = 50; // Maximum length of the arrow
@@ -1643,7 +1693,6 @@ export class EnvmapComponent implements AfterViewInit {
   }
 
   updateEditedMap() {
-
     this.isFleetService.abortFleetStatusSignal();
 
     this.nodes = this.nodes.map((node) => {
@@ -1861,7 +1910,6 @@ export class EnvmapComponent implements AfterViewInit {
     })
       .then((response) => response.json())
       .then((data) => {
-
         this.spinner.hide();
 
         if (data.exists === true || data.isFileExist === false) {
@@ -2200,7 +2248,9 @@ export class EnvmapComponent implements AfterViewInit {
 
   @HostListener('document:contextmenu', ['$event'])
   onRightClick(event: MouseEvent): void {
-    if(this.isNodeDetailsPopupVisible){return}
+    if (this.isNodeDetailsPopupVisible) {
+      return;
+    }
     if (this.isMultiNodePlotting) {
       event.preventDefault(); // Block right-click interaction
       this.messageService.add({
@@ -2288,11 +2338,20 @@ export class EnvmapComponent implements AfterViewInit {
         );
         this.actionOptions = [];
         if (!actionOpt.includes('Move'))
-          this.actionOptions.push({ label: this.getTranslation('move'), value: 'Move' });
+          this.actionOptions.push({
+            label: this.getTranslation('move'),
+            value: 'Move',
+          });
         if (!actionOpt.includes('Dock'))
-          this.actionOptions.push({ label: this.getTranslation('dock'), value: 'Dock' });
+          this.actionOptions.push({
+            label: this.getTranslation('dock'),
+            value: 'Dock',
+          });
         if (!actionOpt.includes('Undock'))
-          this.actionOptions.push({ label: this.getTranslation('undock'), value: 'Undock' });
+          this.actionOptions.push({
+            label: this.getTranslation('undock'),
+            value: 'Undock',
+          });
 
         this.showNodeDetailsPopup();
         return;
@@ -3823,7 +3882,9 @@ export class EnvmapComponent implements AfterViewInit {
   originalNodePosition: { x: number; y: number } | null = null;
   @HostListener('mousedown', ['$event'])
   onMouseDown(event: MouseEvent): void {
-    if(this.isNodeDetailsPopupVisible){return}
+    if (this.isNodeDetailsPopupVisible) {
+      return;
+    }
     if (event.button !== 0) {
       return; // Do nothing if it's not a left mouse button click
     }
@@ -3976,9 +4037,7 @@ export class EnvmapComponent implements AfterViewInit {
         this.selectedRobo = null;
         // this.redrawCanvas()x; // Redraw the canvas after deselecting the robot
       }
-
       // Handle other types of clicks like zone plotting, asset dragging, etc.
-
       // Check if the first node is clicked
       if (
         this.firstNode &&
@@ -4043,7 +4102,9 @@ export class EnvmapComponent implements AfterViewInit {
 
   @HostListener('mousemove', ['$event'])
   onMouseMove(event: MouseEvent): void {
-    if(this.isNodeDetailsPopupVisible){return}
+    if (this.isNodeDetailsPopupVisible) {
+      return;
+    }
     const tooltip = this.pixTooltip.nativeElement;
     if (!tooltip) {
       console.warn('Tooltip element not found');
@@ -4143,7 +4204,9 @@ export class EnvmapComponent implements AfterViewInit {
 
   @HostListener('mouseup', ['$event'])
   onMouseUp(event: MouseEvent): void {
-    if(this.isNodeDetailsPopupVisible){return}
+    if (this.isNodeDetailsPopupVisible) {
+      return;
+    }
     const canvas = this.overlayCanvas.nativeElement;
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
@@ -4175,8 +4238,6 @@ export class EnvmapComponent implements AfterViewInit {
           nodeY - radius <= maxY
         );
       });
-
-      console.log('Nodes selected for deletion:', this.nodesToDelete);
 
       // Show confirmation dialog if nodes are selected
       if (this.nodesToDelete.length > 0) {
@@ -4617,19 +4678,6 @@ export class EnvmapComponent implements AfterViewInit {
   }
 
   updateEdge() {
-    // if (
-    //   !this.currentEdge.edgeId ||
-    //   !this.currentEdge.sequenceId ||
-    //   !this.currentEdge.minHeight ||
-    //   !this.currentEdge.orientation ||
-    //   !this.currentEdge.orientationType ||
-    //   !this.currentEdge.maxRotationSpeed
-    // ) {
-    //   this.showEdgeError = true; // Show error message
-    //   return; // Stop saving if validation fails
-    // }
-
-    // If validation passes, hide the error message
     this.showEdgeError = false;
 
     if (this.currentEdge) {
@@ -4646,7 +4694,6 @@ export class EnvmapComponent implements AfterViewInit {
       this.savedEdge = { ...this.currentEdge };
       this.redrawCanvas();
     }
-    console.log(this.edges);
     this.showPopup = false;
   }
 
@@ -4669,8 +4716,6 @@ export class EnvmapComponent implements AfterViewInit {
 
     this.showPopup = false;
     this.showEdgeError = false;
-    console.log(this.currentEdge);
-    console.log(this.originalEdgeDetails);
   }
 
   // Method to delete the edge
@@ -4680,11 +4725,7 @@ export class EnvmapComponent implements AfterViewInit {
       this.edges = this.edges.filter(
         (edge) => edge.edgeId !== this.currentEdge?.edgeId
       );
-
-      // Redraw the canvas
       this.redrawCanvas();
-
-      // Hide the popup
       this.cancelEdge();
     }
   }
