@@ -419,15 +419,23 @@ td{
 //   z-index: 1; /* Make sure it appears on top if overlapping other elements */
 //   position: relative;
 // }
-.sel-btn{
+.sel-btn {
   border: 1px solid rgba(96, 90, 90, 0.451);
   padding: 5px;
   width: 100px;
-  // width: 80px;
   border-radius: 7px;
   background-color: transparent;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
+  transition: background-color 0.3s ease;
 }
+
+.deselect-btn {
+  transition: background-color 0.3s ease;
+  border: 1px solid #ff7373;
+  background-color: #ff7373; /* Change this to any color you want */
+  color: white;
+}
+
 th {
   background-color: #FFCDCD;
   padding: 10px 20px;

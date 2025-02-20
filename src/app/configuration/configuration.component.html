@@ -405,15 +405,17 @@
                     </div>
                   </td>
                   <td class="iconTable">
-                    <button class="sel-btn" (click)="selectMap(item)" >
-                      <!-- [disabled]="isButtonDisabled(item)" -->
-                      <!-- SELECT -->
-                      {{
-                        item.mapName === this.selectedMap?.mapName
-                          ? getTranslation("Deselect")
-                          : getTranslation("Select")
-                      }}
-                    </button>
+                    <button 
+                    class="sel-btn" 
+                    [ngClass]="{'deselect-btn': item.mapName === this.selectedMap?.mapName}" 
+                    (click)="selectMap(item)">
+                    {{
+                      item.mapName === this.selectedMap?.mapName
+                        ? getTranslation("Deselect")
+                        : getTranslation("Select")
+                    }}
+                  </button>
+                  
                   </td>
                   <td class="iconTable">
                     <div class="exportBtn">
