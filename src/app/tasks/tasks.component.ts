@@ -257,8 +257,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
 
-    this.paginatorIntl.itemsPerPageLabel =
-      this.getTranslation('Items per page'); // Modify the text
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
@@ -280,8 +279,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
             icon: '../../assets/Iconsfortask/Comp.svg',
           },
         ];
-        this.paginatorIntl.itemsPerPageLabel =
-          this.getTranslation('Items per page');
+        this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page');
         this.paginatorIntl.changes.next();
       }
     );
@@ -304,8 +302,22 @@ export class TasksComponent implements OnInit, AfterViewInit {
       if (this.tasksSignalController) this.tasksSignalController.abort();
       await this.fetchTasks();
     }, 1000 * 4);
-  }
 
+    // Auto-update search and filters every second
+    this.autoRefreshInterval = setInterval(() => {
+      this.autoRefreshTasks();
+    }, 1000);
+  }
+  autoRefreshInterval: any;
+
+  autoRefreshTasks() {
+    if (this.isFilterApplied || this.isOnSearchApplied) {
+      this.filterTasks(); // Reapply filters
+    } else {
+      this.setPaginatedData(); // Just update the paginated data
+    }
+  }
+  
   async fetchTasks() {
     this.tasksSignalController = new AbortController();
 
@@ -576,27 +588,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
   // Search method
   onSearch(event: Event): void {
-    const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
-
-    if (!inputValue) {
-      this.filteredTaskData = this.tasks;
-      this.isOnSearchApplied = false;
-    } else {
-      this.filteredTaskData = this.tasks.filter((item) =>
-        Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(inputValue)
-        )
-      );
-      this.isOnSearchApplied = true;
-    }
-
-    // Reset the paginator after filtering
-    if (this.paginator) {
-      this.paginator.firstPage();
-    }
-
-    this.setPaginatedData(); // Update paginated data after filtering
+    this.searchQuery = (event.target as HTMLInputElement).value.toLowerCase();
+    this.filterTasks(); // Call filterTasks to apply search and filter together
   }
+
 
   exportData(format: string) {
     const data = this.tasks;
