@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslationService } from '../../../services/translation.service';
+import { environment } from '../../../../environments/environment.development';
+import { ProjectService } from '../../../services/project.service';
 
 @Component({
   selector: 'app-robot',
@@ -145,7 +147,27 @@ export class RobotComponent {
     useCurrent: 0,
   };
 
-  constructor(private translationService: TranslationService) {}
+  constructor(
+    private translationService: TranslationService,
+    private projectService: ProjectService
+  ) {}
+
+  async ngOnInit() {
+    await this.fetchRoboParams();
+  }
+
+  async fetchRoboParams() {
+    let project = this.projectService.getSelectedProject();
+    if (!project) return;
+
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/config-fleet-params/get-robot-params/${project._id}`,
+      { method: 'GET', credentials: 'include' }
+    );
+
+    let data = await response.json();
+    console.log(data);
+  }
 
   getTranslation(key: string) {
     return this.translationService.getEnvmapTranslation(key);
@@ -230,5 +252,38 @@ export class RobotComponent {
 
   savBATTERY() {
     console.log('Battery Form Data:', this.batteryParams);
+  }
+
+  async saveGrossRoboParams() {
+    let bodyData = {
+      RobotParams: {
+        DockParam: this.dockParams,
+        UnDockParam: this.unDockParams,
+        ChargeParam: this.chargeParams,
+        MoveParam: this.moveParams,
+        BatteryParam: this.batteryParams,
+        GeometryParams: this.geometryParams,
+      },
+    };
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/config-fleet-params/robot`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    let data = await response.json();
+
+    if (data.error) {
+      alert('Error while configuring Robot Params');
+      return;
+    }
+
+    if (data.isRoboParamsConfigured) {
+      alert('Robot parameters configured!');
+    } else alert('Robot parameters not configured yet!');
   }
 }
