@@ -27,47 +27,7 @@
             />
           </button>
         </div>
-        <!-- Options Container -->
-        <!-- <div class="options-container">
-          <div class="filter-options">
-            <button
-              [class.active]="activeFilter === 'today'"
-              (click)="setActiveFilter('today')"
-            >
-              Today
-            </button>
-            <button
-              [class.active]="activeFilter === 'week'"
-              (click)="setActiveFilter('week')"
-            >
-              Week
-            </button>
-            <button
-              [class.active]="activeFilter === 'month'"
-              (click)="setActiveFilter('month')"
-            >
-              Month
-            </button>
-          </div>
 
-          <div class="date-inputs">
-            <label for="start-date" class="date-label"></label>
-            <input
-              type="date"
-              id="start-date"
-              (change)="onDateChange($event)"
-              class="date-input"
-            />
-
-            <label for="end-date" class="date-label"></label>
-            <input
-              type="date"
-              id="end-date"
-              (change)="onDateChange($event)"
-              class="date-input"
-            />
-          </div>
-        </div> -->
       </div>
       <div style="display: flex ; position: absolute; gap: 10px;top: 140px; right: 20px;">
       <div *ngIf="isButtonDisabled">
