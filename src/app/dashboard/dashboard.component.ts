@@ -369,7 +369,9 @@ export class DashboardComponent implements AfterViewInit {
 
   async toggleButton() {
     // this.isPause = !this.isPause;
-    let bodyData = { status: !this.isPause };
+    let project = this.projectService.getSelectedProject();
+    if (!project) return;
+    let bodyData = { status: !this.isPause, projectId: project._id };
     let isStatusUpdated = await this.pauseFleet(bodyData);
     if (isStatusUpdated) this.isPause = !this.isPause;
   }
