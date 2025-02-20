@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { TranslationService } from '../../../services/translation.service';
+import { environment } from '../../../../environments/environment.development';
 
 @Component({
   selector: 'app-robot',
@@ -230,5 +231,38 @@ export class RobotComponent {
 
   savBATTERY() {
     console.log('Battery Form Data:', this.batteryParams);
+  }
+
+  async saveGrossRoboParams() {
+    let bodyData = {
+      RobotParams: {
+        DockParam: this.dockParams,
+        UnDockParam: this.unDockParams,
+        ChargeParam: this.chargeParams,
+        MoveParam: this.moveParams,
+        BatteryParam: this.batteryParams,
+        GeometryParams: this.geometryParams,
+      },
+    };
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/config-fleet-params/robot`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+
+    let data = await response.json();
+
+    if (data.error) {
+      alert('Error while configuring Robot Params');
+      return;
+    }
+
+    if (data.isRoboParamsConfigured) {
+      alert('Robot parameters configured!');
+    } else alert('Robot parameters not configured yet!');
   }
 }
