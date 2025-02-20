@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { TranslationService } from '../../../services/translation.service';
 import { environment } from '../../../../environments/environment.development';
+import { ProjectService } from '../../../services/project.service';
 
 @Component({
   selector: 'app-robot',
@@ -146,7 +147,27 @@ export class RobotComponent {
     useCurrent: 0,
   };
 
-  constructor(private translationService: TranslationService) {}
+  constructor(
+    private translationService: TranslationService,
+    private projectService: ProjectService
+  ) {}
+
+  async ngOnInit() {
+    await this.fetchRoboParams();
+  }
+
+  async fetchRoboParams() {
+    let project = this.projectService.getSelectedProject();
+    if (!project) return;
+
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/config-fleet-params/get-robot-params/${project._id}`,
+      { method: 'GET', credentials: 'include' }
+    );
+
+    let data = await response.json();
+    console.log(data);
+  }
 
   getTranslation(key: string) {
     return this.translationService.getEnvmapTranslation(key);
