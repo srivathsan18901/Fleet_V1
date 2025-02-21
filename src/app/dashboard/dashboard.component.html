@@ -499,7 +499,7 @@
         </div>
 
         <!-- Capture -->
-        <div class="tooltip">
+        <div class="tooltip" [ngClass]="{ 'active-dashboard': capture }">
           <img
           src="../../assets/CanvasOptions/Capture.svg"
           class="Capture"
@@ -511,7 +511,7 @@
         </div>
 
         <!-- Record -->
-        <div class="tooltip">
+        <div class="tooltip" [ngClass]="{ 'active-dashboard': recording }">
           <img
             [src]="
               recording
@@ -531,7 +531,7 @@
         </div>
 
         <!-- Dashboard -->
-        <div class="tooltip">
+        <div class="tooltip" [ngClass]="{ 'active-dashboard': showDashboard }">
           <img
             src="../../assets/CanvasOptions/Dashboard.svg"
             class="Pointer"
@@ -539,11 +539,14 @@
             [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
             [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
           />
-          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('dashboard')}}</span>
+          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">
+            {{ getTranslation('dashboard') }}
+          </span>
         </div>
+        
 
         <!-- Model Canvas -->
-        <div class="tooltip">
+        <div class="tooltip" [ngClass]="{ 'active-dashboard': isShowPath }">
           <img
             src="../../assets/CanvasOptions/Showpath.svg"
             class="ModelCanvas"
@@ -553,7 +556,7 @@
           />
           <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('showPath')}}</span>
         </div>
-        <div class="tooltip">
+        <div class="tooltip" [ngClass]="{ 'active-dashboard': showHeatMap }">
           <img
             src="../../assets/CanvasOptions/Heatmap.svg"
             class="ModelCanvas"
@@ -563,7 +566,7 @@
           />
           <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('heatMap')}}</span>
         </div>
-        <div class="tooltip">
+        <div class="tooltip" [ngClass]="{ 'active-dashboard': showModelCanvas }">
           <img
             src="../../assets/CanvasOptions/Model.svg"
             class="ModelCanvas"
