@@ -739,7 +739,6 @@ export class DashboardComponent implements AfterViewInit {
 
   cancelAction() {
     this.hidePopup();
-
   }
 
   enableMove() {
@@ -1065,11 +1064,11 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.left = `${x}px`;
       popup.style.top = `${y}px`;
     }
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-          this.hideATPopup();
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        this.hideATPopup();
       }
-  });
+    });
   }
   showLocPopup(x: number, y: number) {
     const popup = document.getElementById('Localize-popup');
@@ -1078,13 +1077,13 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.left = `${x}px`;
       popup.style.top = `${y}px`;
     }
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-          this.hideLOCPopup();
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        this.hideLOCPopup();
       }
-  });
+    });
   }
-  
+
   hideLOCPopup() {
     const popup = document.getElementById('Localize-popup');
     if (popup) {
@@ -1196,7 +1195,6 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   hideATPopup() {
-
     const popup = document.getElementById('assignTask-popup');
     if (popup) {
       popup.style.display = 'none';
@@ -2719,9 +2717,9 @@ export class DashboardComponent implements AfterViewInit {
   //     });
   //   }
   // }
-  capture:boolean=false;
+  capture: boolean = false;
   async captureCanvas() {
-    this.capture=!this.capture;
+    this.capture = !this.capture;
     this.messageService.add({
       severity: 'info',
       summary: this.getTranslation('Capturing Screen'),
@@ -2760,7 +2758,7 @@ export class DashboardComponent implements AfterViewInit {
 
         // Stop the stream after capture
         displayMediaStream.getTracks().forEach((track) => track.stop());
-        this.capture=false;
+        this.capture = false;
       });
       // }, 2000);
     } catch (err) {
