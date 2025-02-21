@@ -164,6 +164,8 @@ export class DashboardComponent implements AfterViewInit {
   mapDetailsController: AbortController | null = null;
   fleetPauseController: AbortController | null = null;
 
+  currentProject: any | null = null;
+
   async deleteRobot(robot: any, index: number) {
     // console.log(robot);
     let response = await fetch(
@@ -277,6 +279,7 @@ export class DashboardComponent implements AfterViewInit {
 
   async ngOnInit() {
     this.isInLive = this.projectService.getInLive();
+    this.currentProject = this.projectService.getSelectedProject();
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {}
     );
@@ -308,7 +311,14 @@ export class DashboardComponent implements AfterViewInit {
       }
     });
 
-    if (this.isFleetUp) await this.toggleButton();
+    if (this.isFleetUp) {
+      if (!this.currentProject) return;
+      let bodyData = {
+        status: this.isPause,
+        projectId: this.currentProject._id,
+      };
+      await this.pauseFleet(bodyData);
+    }
 
     // console.log(this.projectService.getInitializeMapSelected(),'dash board')
     if (this.projectService.getInitializeMapSelected() == 'true') {
@@ -379,9 +389,11 @@ export class DashboardComponent implements AfterViewInit {
     try {
       if (this.fleetPauseController?.signal) this.fleetPauseController.abort();
       this.fleetPauseController = new AbortController();
-      let project = this.projectService.getSelectedProject();
-      if (!project) return;
-      let bodyData = { status: !this.isPause, projectId: project._id };
+      if (!this.currentProject) return;
+      let bodyData = {
+        status: !this.isPause,
+        projectId: this.currentProject._id,
+      };
       let isStatusUpdated = await this.pauseFleet(bodyData);
       if (isStatusUpdated) this.isPause = !this.isPause;
     } catch (error) {
@@ -729,7 +741,6 @@ export class DashboardComponent implements AfterViewInit {
 
   cancelAction() {
     this.hidePopup();
-
   }
 
   enableMove() {
@@ -1055,11 +1066,11 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.left = `${x}px`;
       popup.style.top = `${y}px`;
     }
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-          this.hideATPopup();
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        this.hideATPopup();
       }
-  });
+    });
   }
   showLocPopup(x: number, y: number) {
     const popup = document.getElementById('Localize-popup');
@@ -1068,13 +1079,13 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.left = `${x}px`;
       popup.style.top = `${y}px`;
     }
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") {
-          this.hideLOCPopup();
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        this.hideLOCPopup();
       }
-  });
+    });
   }
-  
+
   hideLOCPopup() {
     const popup = document.getElementById('Localize-popup');
     if (popup) {
@@ -1187,7 +1198,6 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   hideATPopup() {
-
     const popup = document.getElementById('assignTask-popup');
     if (popup) {
       popup.style.display = 'none';
@@ -2715,9 +2725,9 @@ export class DashboardComponent implements AfterViewInit {
   //     });
   //   }
   // }
-  capture:boolean=false;
+  capture: boolean = false;
   async captureCanvas() {
-    this.capture=!this.capture;
+    this.capture = !this.capture;
     this.messageService.add({
       severity: 'info',
       summary: this.getTranslation('Capturing Screen'),
@@ -2756,7 +2766,7 @@ export class DashboardComponent implements AfterViewInit {
 
         // Stop the stream after capture
         displayMediaStream.getTracks().forEach((track) => track.stop());
-        this.capture=false;
+        this.capture = false;
       });
       // }, 2000);
     } catch (err) {
