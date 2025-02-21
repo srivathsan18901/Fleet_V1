@@ -2569,27 +2569,27 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   drawLOCNode(ctx: CanvasRenderingContext2D, x: number, y: number,yaw: number, label: string){
-      // Define rectangle size
+      
       const rectWidth = 20;
       const rectHeight = 20;
 
-      // Draw the outer rectangle border only (not filled)
-      ctx.strokeStyle = '#3b82f6'; // Sky blue border
-      ctx.lineWidth = 1; // Border thickness
+    
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 1;
       ctx.strokeRect(x - rectWidth / 2, y - rectHeight / 2, rectWidth, rectHeight); 
 
-      // Draw the rotated arrow
-      ctx.save(); // Save the current transformation state
-      ctx.translate(x, y); // Move the context to the center of the rectangle
-      ctx.rotate(-(yaw-(Math.PI/2))); // Rotate by the yaw angle
+    
+      ctx.save();
+      ctx.translate(x, y);
+      ctx.rotate(-(yaw-(Math.PI/2)));
 
-      // Draw the arrow (pointing upwards in default state, then rotated)
+  
       ctx.beginPath();
-      ctx.moveTo(0, -6);  // Arrow tip (upwards)
-      ctx.lineTo(-4, 4);  // Left bottom
-      ctx.lineTo(4, 4);   // Right bottom
+      ctx.moveTo(0, -6);
+      ctx.lineTo(-4, 4);
+      ctx.lineTo(4, 4); 
       ctx.closePath();
-      ctx.fillStyle = '#3b82f6'; // Sky blue arrow
+      ctx.fillStyle = '#3b82f6'
       ctx.fill();
 
       ctx.restore(); // Restore the context to prevent affecting other drawings
