@@ -1190,7 +1190,7 @@ export class ConfigurationComponent implements AfterViewInit {
     };
 
     this.eventSource.onerror = (error) => {
-      console.error('SSE error:', error);
+      console.log('SSE error:', error);
       this.eventSource.close();
       this.messageService.add({
         severity: 'success',
