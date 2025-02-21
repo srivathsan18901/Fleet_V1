@@ -162,6 +162,8 @@ export class DashboardComponent implements AfterViewInit {
   mapDetailsController: AbortController | null = null;
   fleetPauseController: AbortController | null = null;
 
+  currentProject: any | null = null;
+
   async deleteRobot(robot: any, index: number) {
     // console.log(robot);
     let response = await fetch(
@@ -275,6 +277,7 @@ export class DashboardComponent implements AfterViewInit {
 
   async ngOnInit() {
     this.isInLive = this.projectService.getInLive();
+    this.currentProject = this.projectService.getSelectedProject();
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {}
     );
@@ -306,7 +309,14 @@ export class DashboardComponent implements AfterViewInit {
       }
     });
 
-    if (this.isFleetUp) await this.toggleButton();
+    if (this.isFleetUp) {
+      if (!this.currentProject) return;
+      let bodyData = {
+        status: this.isPause,
+        projectId: this.currentProject._id,
+      };
+      await this.pauseFleet(bodyData);
+    }
 
     // console.log(this.projectService.getInitializeMapSelected(),'dash board')
     if (this.projectService.getInitializeMapSelected() == 'true') {
@@ -377,9 +387,11 @@ export class DashboardComponent implements AfterViewInit {
     try {
       if (this.fleetPauseController?.signal) this.fleetPauseController.abort();
       this.fleetPauseController = new AbortController();
-      let project = this.projectService.getSelectedProject();
-      if (!project) return;
-      let bodyData = { status: !this.isPause, projectId: project._id };
+      if (!this.currentProject) return;
+      let bodyData = {
+        status: !this.isPause,
+        projectId: this.currentProject._id,
+      };
       let isStatusUpdated = await this.pauseFleet(bodyData);
       if (isStatusUpdated) this.isPause = !this.isPause;
     } catch (error) {
