@@ -518,6 +518,11 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.left = `${x}px`;
       popup.style.top = `${y}px`;
     }
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        this.hidePopup();
+      }
+    });
   }
 
   hidePopup() {
@@ -1244,6 +1249,7 @@ export class DashboardComponent implements AfterViewInit {
           // Show the popup at the clicked position
           this.showPopup(event.clientX, event.clientY);
           this.updatedrobo = robo;
+
           return;
         }
       }
