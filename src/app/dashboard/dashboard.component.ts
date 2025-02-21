@@ -7,6 +7,7 @@ import {
   EventEmitter,
   Output,
   OnDestroy,
+  Inject
 } from '@angular/core';
 import RecordRTC from 'recordrtc';
 import { ProjectService } from '../services/project.service';
@@ -21,6 +22,7 @@ import { NodeGraphService } from '../services/nodegraph.service';
 import { HeatmapService } from '../services/heatmap-service.service';
 import { Router } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
@@ -229,7 +231,7 @@ export class DashboardComponent implements AfterViewInit {
     private router: Router,
     private nodeGraphService: NodeGraphService,
     private heatmapService: HeatmapService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
   ) {
     if (this.projectService.getIsMapSet()) return;
   }
@@ -1091,13 +1093,14 @@ export class DashboardComponent implements AfterViewInit {
     }
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
-    this.router.navigate(['/robots']);
+    // this.router.navigate(['/robots']);
   }
 
   cancelLocalize() {
-    this.router.navigate(['/robots']);
+    // this.router.navigate(['/robots']);
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
+    this.hideLOCPopup();
   }
 
   async localizeRobo(bodyData: any): Promise<boolean> {
@@ -2651,8 +2654,13 @@ export class DashboardComponent implements AfterViewInit {
 
     if (ctx) this.draw(ctx, new Image());
   }
-
-  togglePan() {
+  localize() {
+    if(this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;    
+    this.nodeGraphService.setLocalize(true);
+    this.nodeGraphService.setAssignTask(false);
+    this.hidePopup();
+  }
+  togglePan() {``
     this.isPanning = !this.isPanning;
     // if(this.isPanning){}
     document.body.style.cursor = this.isPanning ? 'grab' : 'default';

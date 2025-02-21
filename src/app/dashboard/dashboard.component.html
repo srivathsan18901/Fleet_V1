@@ -637,6 +637,9 @@
   <button (click)="initializeRobo()" *ngIf="!isFleet">
     {{ updatedrobo?.isInitialized ? getTranslation('releaseRobot') : getTranslation('initializeRobot') }}
   </button>
+  <button (click)="localize()" *ngIf="!isFleet">
+    {{getTranslation("Localize")}}
+  </button>
   <button (click)="toggleShowRoboPath()">{{ getTranslation('showPath') }}</button>
   <button (click)="cancelAction()">{{ getTranslation('cancel') }}</button>
 </div>
