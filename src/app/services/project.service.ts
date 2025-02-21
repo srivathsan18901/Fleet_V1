@@ -150,6 +150,7 @@ export class ProjectService {
       { credentials: 'include' }
     );
     let data = await response.json();
+    if (data.error) return false;
     if (data.isFleetHalted) return true;
     return false;
   }
