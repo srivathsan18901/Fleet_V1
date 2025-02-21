@@ -58,18 +58,11 @@ app-sidenavbar{
   background: linear-gradient(rgba(230, 100, 100, 0.698), rgba(255, 255, 255, 0.323));
   backdrop-filter: blur(1px); 
 }
-/* #robo-popup button{
-  height: 100%;
-  width: 100%;
-  color: white;
-  background-color: #ff3333;
-  border: 1px solid white;
-  margin-bottom: 5px;
-  font-size: 15px;
-  font-family: "graphik", Arial,  sans-serif;
-  padding: 5px;
-  border-radius: 10px;
-} */
+#robo-popup button{
+ width: 185px;
+ justify-content: space-between;
+ text-align: end;
+}
 canvas {
   display: block;
   position: absolute;
@@ -1004,7 +997,6 @@ input:checked ~ .slider {
   overflow: hidden;
   transition-duration: .3s;
   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.199);
-  background-color: rgb(255, 0, 0);
 }
 
 /* plus sign */
