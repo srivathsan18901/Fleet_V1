@@ -7,7 +7,7 @@ import {
   EventEmitter,
   Output,
   OnDestroy,
-  Inject
+  Inject,
 } from '@angular/core';
 import RecordRTC from 'recordrtc';
 import { ProjectService } from '../services/project.service';
@@ -233,7 +233,7 @@ export class DashboardComponent implements AfterViewInit {
     private router: Router,
     private nodeGraphService: NodeGraphService,
     private heatmapService: HeatmapService,
-    private translationService: TranslationService,
+    private translationService: TranslationService
   ) {
     if (this.projectService.getIsMapSet()) return;
   }
@@ -961,9 +961,9 @@ export class DashboardComponent implements AfterViewInit {
     }
 
     if (this.nodeGraphService.getLocalize()) {
-      this.nodes.forEach((node) => {
-        const transformedY = img.height - node.nodePosition.y;
-        this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
+      this.localizePoses.forEach((pos) => {
+        const transformedY = img.height - pos.y;
+        this.drawNode(ctx, pos.x, transformedY, '-1');
       });
 
       ctx.restore();
@@ -1092,26 +1092,30 @@ export class DashboardComponent implements AfterViewInit {
       popup.style.display = 'none';
     }
   }
+
   async Localize(robotId: any, pos: any) {
     let bodyData = {
-      robotId: robotId,
       pos: pos,
+      robotId: robotId,
     };
+
     let isRoboLocalized = await this.localizeRobo(bodyData);
-    if (!isRoboLocalized) {
-      alert('localization falied!');
-      return;
-    }
+
+    if (!isRoboLocalized) alert('localization falied!');
+    else alert('Robo has been localized!');
+
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
+    this.hideLOCPopup();
     // this.router.navigate(['/robots']);
   }
 
   cancelLocalize() {
     // this.router.navigate(['/robots']);
-    if(this.roboToLocalize) this.redrawCanvas();
+    if (this.roboToLocalize) this.redrawCanvas();
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
+    this.hideLOCPopup();
   }
 
   async localizeRobo(bodyData: any): Promise<boolean> {
@@ -1284,9 +1288,9 @@ export class DashboardComponent implements AfterViewInit {
         }
       }
       if (localize) {
-        for (let node of this.nodes) {
-          const nodeX = node.nodePosition.x;
-          const nodeY = node.nodePosition.y;
+        for (let pos of this.localizePoses) {
+          const nodeX = pos.x;
+          const nodeY = pos.y;
           const nodeRadius = 15; // Define a radius to detect clicks near the node (adjust as needed)
 
           if (
@@ -1295,20 +1299,22 @@ export class DashboardComponent implements AfterViewInit {
             imgY >= nodeY - nodeRadius &&
             imgY <= nodeY + nodeRadius
           ) {
-            let pos = null;
-            for (let localNode of this.localNodePositions) {
-              if (node.nodeId == localNode.id) {
-                pos = localNode.pos;
+            let localizePos = null;
+            for (let localPos of this.localizePoses) {
+              if (pos.x == localPos.x && pos.y == localPos.y) {
+                localizePos = localPos;
                 break;
               }
             }
+            let posX = (localizePos.x * this.ratio || 1) - (this.origin.x || 0);
+            let posY = (localizePos.y * this.ratio || 1) - (this.origin.y || 0);
             this.localizationPos = {
-              x: pos.x.toFixed(2),
-              y: pos.y.toFixed(2),
-              yaw: pos.orientation,
+              x: posX,
+              y: posY,
+              yaw: localizePos.yaw,
             };
             this.showLocPopup(event.clientX, event.clientY);
-            this.sourceLocation = node.nodeId;
+            // this.sourceLocation = node.nodeId;
             return;
           }
         }
@@ -2072,8 +2078,9 @@ export class DashboardComponent implements AfterViewInit {
         this.drawnodesonAT(ctx, mapImage, centerX, centerY, this.zoomLevel);
       }
       if (this.nodeGraphService.getLocalize()) {
-        this.nodes = this.nodeGraphService.getNodes();
-        this.drawnodesonAT(ctx, mapImage, centerX, centerY, this.zoomLevel);
+        // console.log(this.localizePoses);
+
+        this.drawnodesonLOC(ctx, mapImage, centerX, centerY, this.zoomLevel);
       }
       if (this.isFleet) {
         this.robos = this.robos.map((robo) => {
@@ -2290,6 +2297,23 @@ export class DashboardComponent implements AfterViewInit {
       const scaledX = node.nodePosition.x * zoomLevel;
       const scaledY = (img.height - node.nodePosition.y) * zoomLevel; // Flip Y-axis and scale
       this.drawNode(ctx, centerX + scaledX, centerY + scaledY, node.nodeId);
+    });
+  }
+  drawnodesonLOC(
+    ctx: CanvasRenderingContext2D,
+    img: HTMLImageElement,
+    centerX: number,
+    centerY: number,
+    zoomLevel: number
+  ) {
+    this.offsetX = this.nodeGraphService.getOffsetX();
+    this.offsetY = this.nodeGraphService.getOffsetY();
+    this.zoomLevel = this.nodeGraphService.getZoomLevel();
+    // Plot nodes with scaling and centering
+    this.localizePoses.forEach((pos) => {
+      const scaledX = pos.x * zoomLevel;
+      const scaledY = (img.height - pos.y) * zoomLevel; // Flip Y-axis and scale
+      this.drawNode(ctx, centerX + scaledX, centerY + scaledY, '-1');
     });
   }
   drawNodesAndEdges(
@@ -2664,69 +2688,45 @@ export class DashboardComponent implements AfterViewInit {
 
     if (ctx) this.draw(ctx, new Image());
   }
-  localize() {
-    if(this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
+
+  localizePoses: any[] = [];
+
+  async localize() {
+    if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
     this.redrawCanvas();
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);
+
+    this.localizePoses = await this.getLocalizePos();
+    this.localizePoses = this.localizePoses.map((pos: any) => {
+      pos.x = (pos.x + (this.origin.x || 0)) / (this.ratio || 1);
+      pos.y = (pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+      return pos;
+    });
+    // console.log(this.localizePoses);
+
     this.hidePopup();
   }
-  togglePan() {``
+
+  async getLocalizePos(): Promise<any[]> {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-localize-pos`,
+      { credentials: 'include' }
+    );
+    let data = await response.json();
+
+    if (!data.localizePos) return [];
+    return data.localizePos;
+  }
+
+  togglePan() {
     this.isPanning = !this.isPanning;
     // if(this.isPanning){}
     document.body.style.cursor = this.isPanning ? 'grab' : 'default';
   }
-  // async captureCanvas() {
-  //   this.messageService.add({
-  //     severity: 'info',
-  //     summary: 'Capturing Screen',
-  //     detail: 'Screen Capturing Turned On ',
-  //     life: 4000,
-  //   });
 
-  //   try {
-  //     // Select the root or container element you want to capture
-  //     const elementToCapture = document.getElementById('myCanvas'); // or document.getElementById('your-root-id')
-
-  //     // Use html2canvas to capture the element
-  //     if (elementToCapture) {
-  //       const canvas = await html2canvas(elementToCapture, {
-  //         useCORS: true,
-  //         scale: 2,
-  //       });
-
-  //       const imgData = canvas.toDataURL('image/png');
-
-  //       // Create a link to download the image
-  //       const link = document.createElement('a');
-  //       link.href = imgData;
-  //       link.download = 'screenshot.png';
-  //       document.body.appendChild(link);
-  //       link.click();
-  //       document.body.removeChild(link);
-
-  //       this.messageService.add({
-  //         severity: 'success',
-  //         summary: 'Capture Complete',
-  //         detail: 'Screen has been captured successfully!',
-  //         life: 4000,
-  //       });
-  //       // Rest of your logic here...
-  //     } else {
-  //       console.error('Element with ID "container" not found');
-  //     }
-
-  //   } catch (err) {
-  //     console.error('Error capturing screen:', err);
-  //     this.messageService.add({
-  //       severity: 'error',
-  //       summary: 'Capture Failed',
-  //       detail: 'An error occurred while capturing the screen.',
-  //       life: 4000,
-  //     });
-  //   }
-  // }
   capture: boolean = false;
+
   async captureCanvas() {
     this.capture = !this.capture;
     this.messageService.add({
@@ -2775,6 +2775,7 @@ export class DashboardComponent implements AfterViewInit {
       this.capture = false;
     }
   }
+
   toggleDashboard() {
     this.showDashboard = !this.showDashboard;
     if (this.showDashboard) {
