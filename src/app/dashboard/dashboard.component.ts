@@ -1109,9 +1109,9 @@ export class DashboardComponent implements AfterViewInit {
 
   cancelLocalize() {
     // this.router.navigate(['/robots']);
+    if(this.roboToLocalize) this.redrawCanvas();
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
-    this.hideLOCPopup();
   }
 
   async localizeRobo(bodyData: any): Promise<boolean> {
@@ -2665,7 +2665,8 @@ export class DashboardComponent implements AfterViewInit {
     if (ctx) this.draw(ctx, new Image());
   }
   localize() {
-    if(this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;    
+    if(this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
+    this.redrawCanvas();
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);
     this.hidePopup();
