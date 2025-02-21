@@ -1873,7 +1873,7 @@ export class DashboardComponent implements AfterViewInit {
       this.isInLive = false;
       this.getOnBtnImage();
       this.posEventSource.close();
-      console.error('SSE error:', error);
+      console.log('SSE error:', error);
     };
 
     this.assetEventSource.onerror = (error) => {

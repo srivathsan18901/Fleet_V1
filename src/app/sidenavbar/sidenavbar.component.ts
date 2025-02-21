@@ -22,7 +22,7 @@ import { TranslationService } from '../services/translation.service';
 import { UserManagementComponent } from '../user-management/user-management.component';
 interface Flag {
   flagComp: string; // Type based on your data, e.g., string for SVG content
-  nameTag: "ENG" | "JAP" | "FRE" | "GER"; // Type based on your data, e.g., string for the flag name
+  nameTag: 'ENG' | 'JAP' | 'FRE' | 'GER'; // Type based on your data, e.g., string for the flag name
   order: number; // Assuming 'order' is also part of each flag object
 }
 @Component({
@@ -30,7 +30,6 @@ interface Flag {
   templateUrl: './sidenavbar.component.html',
   styleUrls: ['./sidenavbar.component.css'],
 })
-
 export class SidenavbarComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   projectName: string | null = null;
@@ -79,25 +78,25 @@ export class SidenavbarComponent implements OnInit {
     return this.translationService.getProjectSetupTranslation(key);
   }
   async ngOnInit() {
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-      // this.updateHeaderTranslation();
-      this.userrole = this.getTranslation(user.role);
-      this.cdRef.detectChanges();
-    });
-    for(let flag of this.flags){
-      if(flag.nameTag === this.translationService.getCurrentLang()){
+    for (let flag of this.flags) {
+      if (flag.nameTag === this.translationService.getCurrentLang()) {
         this.flagSvg = flag.flagComp;
-        this.flagName = flag.nameTag
+        this.flagName = flag.nameTag;
         break;
       }
     }
-    
+
     this.renderer.listen('document', 'click', (event: Event) => {
       const target = event.target as HTMLElement;
-      const notificationElement = this.eRef.nativeElement.querySelector('.notification-popup');
-      const profileElement = this.eRef.nativeElement.querySelector('.Profile-popup');
-      const languageDropdownElement = this.eRef.nativeElement.querySelector('.language-dropdown');
-      const languageToggleElement = this.eRef.nativeElement.querySelector('.language-toggle');
+      const notificationElement = this.eRef.nativeElement.querySelector(
+        '.notification-popup'
+      );
+      const profileElement =
+        this.eRef.nativeElement.querySelector('.Profile-popup');
+      const languageDropdownElement =
+        this.eRef.nativeElement.querySelector('.language-dropdown');
+      const languageToggleElement =
+        this.eRef.nativeElement.querySelector('.language-toggle');
       if (
         this.showProfilePopup &&
         profileElement &&
@@ -115,16 +114,16 @@ export class SidenavbarComponent implements OnInit {
         this.showNotificationPopup = false;
       }
 
-    // Close Language Dropdown
-    if (
-      this.languageArrowState && // Check if the dropdown is open
-      languageDropdownElement &&
-      !languageDropdownElement.contains(target) &&
-      languageToggleElement !== target && // Ensure the toggle is excluded
-      !languageToggleElement.contains(target)
-    ) {
-      this.languageArrowState = false; // Close the language dropdown
-    }
+      // Close Language Dropdown
+      if (
+        this.languageArrowState && // Check if the dropdown is open
+        languageDropdownElement &&
+        !languageDropdownElement.contains(target) &&
+        languageToggleElement !== target && // Ensure the toggle is excluded
+        !languageToggleElement.contains(target)
+      ) {
+        this.languageArrowState = false; // Close the language dropdown
+      }
     });
     this.selectedProject = this.projectService.getSelectedProject();
     this.projectName = this.selectedProject.projectName;
@@ -150,8 +149,15 @@ export class SidenavbarComponent implements OnInit {
       this.username = user.name;
       this.userrole = this.getTranslation(user.role);
     }
-    console.log(this.getTranslation(user.role));
-    
+    // console.log(this.getTranslation(user.role));
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        // this.updateHeaderTranslation();
+        this.userrole = this.getTranslation(user.role);
+        this.cdRef.detectChanges();
+      }
+    );
+
     this.cookieValue = JSON.parse(this.cookieService.get('_user'));
     this.selectedMap = this.projectService.getMapData();
 
@@ -164,7 +170,9 @@ export class SidenavbarComponent implements OnInit {
         Swal.fire({
           position: 'center',
           icon: 'warning',
-          html: `<span style="font-size: 20px;">${this.getProjectTranslation("session_almost_over")}</span>`,
+          html: `<span style="font-size: 20px;">${this.getProjectTranslation(
+            'session_almost_over'
+          )}</span>`,
           showConfirmButton: true,
         });
         this.logout();
@@ -486,7 +494,6 @@ export class SidenavbarComponent implements OnInit {
     }
   }
 
-
   // Function to show the notification popup
   showNotification() {
     this.showNotificationPopup = true;
@@ -494,11 +501,9 @@ export class SidenavbarComponent implements OnInit {
     this.showProfilePopup = false;
   }
 
-  
   closeNotification() {
     this.showNotificationPopup = false;
   }
-
 
   closePopup() {
     this.languageArrowState = false;
@@ -511,7 +516,7 @@ export class SidenavbarComponent implements OnInit {
     this.showNotificationPopup = false;
     this.languageArrowState = false;
   }
-  toggleNotificationPopup(event: Event){
+  toggleNotificationPopup(event: Event) {
     event.stopPropagation();
     this.showNotificationPopup = !this.showNotificationPopup;
     this.showProfilePopup = false;
@@ -543,14 +548,28 @@ export class SidenavbarComponent implements OnInit {
 
   // language
 
-  
   flags: Flag[] = [
-    { flagComp: '<img src="../../assets/Language/Eng.svg">', nameTag: 'ENG', order: 0 },
-    { flagComp: '<img src="../../assets/Language/Jap.svg">', nameTag: 'JAP', order: 1 },  
-    { flagComp: '<img src="../../assets/Language/Fre.svg">', nameTag: 'FRE', order: 2 },  
-    { flagComp: '<img src="../../assets/Language/Ger.svg">', nameTag: 'GER', order: 3 }, 
+    {
+      flagComp: '<img src="../../assets/Language/Eng.svg">',
+      nameTag: 'ENG',
+      order: 0,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Jap.svg">',
+      nameTag: 'JAP',
+      order: 1,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Fre.svg">',
+      nameTag: 'FRE',
+      order: 2,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Ger.svg">',
+      nameTag: 'GER',
+      order: 3,
+    },
   ];
-  
 
   trackFlag(index: number, flag: any): number {
     return flag.order; // Use the unique identifier for tracking

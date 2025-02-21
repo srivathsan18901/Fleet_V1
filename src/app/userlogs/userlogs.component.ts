@@ -11,7 +11,6 @@ import { Subscription } from 'rxjs';
 // import { clearInterval } from 'timers';
 import { TranslationService } from '../services/translation.service';
 
-
 @Component({
   selector: 'app-userlogs',
   templateUrl: './userlogs.component.html',
@@ -67,9 +66,9 @@ export class Userlogscomponent {
   ) {
     this.mapData = this.projectService.getMapData();
   }
-  activeHeaderKey: string = "Task Logs"; // Store the key instead
+  activeHeaderKey: string = 'Task Logs'; // Store the key instead
   activeHeader: string = this.getTranslation(this.activeHeaderKey);
-  
+
   async ngOnInit() {
     this.mapData = this.projectService.getMapData();
     if (!this.mapData) {
@@ -103,10 +102,12 @@ export class Userlogscomponent {
     this.fleetLogInterval = setInterval(async () => {
       await this.getFleetLogs();
     }, 1000 * 3);
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {      
-      this.activeHeader = this.getTranslation(this.activeHeaderKey);
-      this.cdRef.detectChanges();
-    });
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.activeHeader = this.getTranslation(this.activeHeaderKey);
+        this.cdRef.detectChanges();
+      }
+    );
   }
   getTranslation(key: string) {
     return this.translationService.getErrorTranslation(key);
@@ -152,7 +153,7 @@ export class Userlogscomponent {
     let data = await response.json();
     const { taskErr } = data;
     this.taskData = data.taskErr
-      .map((taskErr: any) => {
+      ?.map((taskErr: any) => {
         if (taskErr === null) return null;
 
         let dateCreated = new Date(taskErr.TaskAddTime * 1000);
@@ -485,16 +486,20 @@ export class Userlogscomponent {
   onTabChange(arg0: string) {
     throw new Error('Method not implemented.');
   }
-  
+
   getHeaderKey(button: string): string {
     switch (button) {
-      case 'task': return "Task Logs";
-      case 'robot': return "Robot Logs";
-      case 'fleet': return "Fleet Logs";
-      default: return "Task Logs";
+      case 'task':
+        return 'Task Logs';
+      case 'robot':
+        return 'Robot Logs';
+      case 'fleet':
+        return 'Fleet Logs';
+      default:
+        return 'Task Logs';
     }
   }
-  
+
   setActiveButton(button: string) {
     this.activeButton = button;
     this.isTransitioning = true;
@@ -623,13 +628,13 @@ export class Userlogscomponent {
   getHeader(button: string): string {
     switch (button) {
       case 'task':
-        return this.getTranslation("Task Logs");
+        return this.getTranslation('Task Logs');
       case 'robot':
-        return this.getTranslation("Robot Logs");
+        return this.getTranslation('Robot Logs');
       case 'fleet':
-        return this.getTranslation("Fleet Logs");
+        return this.getTranslation('Fleet Logs');
       default:
-        return this.getTranslation("Task Logs");
+        return this.getTranslation('Task Logs');
     }
   }
 
