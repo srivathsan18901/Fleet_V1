@@ -160,6 +160,7 @@ export class DashboardComponent implements AfterViewInit {
   roboPathIds: Set<number> = new Set<number>();
 
   mapDetailsController: AbortController | null = null;
+  fleetPauseController: AbortController | null = null;
 
   async deleteRobot(robot: any, index: number) {
     // console.log(robot);
@@ -288,6 +289,7 @@ export class DashboardComponent implements AfterViewInit {
     this.isFleetService.abortFleetStatusSignal(); // remove if interrupting opts...
 
     this.roboToLocalize = this.nodeGraphService.getRoboToLocalize();
+    this.isPause = await this.projectService.getIsFleetHalted();
 
     if (savedIsFleet !== null) {
       this.isFleet = savedIsFleet === 'true'; // Convert string to boolean
@@ -303,6 +305,9 @@ export class DashboardComponent implements AfterViewInit {
         this.projectService.setInLive(false); // Update the service
       }
     });
+
+    if (this.isFleetUp) await this.toggleButton();
+
     // console.log(this.projectService.getInitializeMapSelected(),'dash board')
     if (this.projectService.getInitializeMapSelected() == 'true') {
       this.canvasloader = true;
@@ -369,11 +374,17 @@ export class DashboardComponent implements AfterViewInit {
 
   async toggleButton() {
     // this.isPause = !this.isPause;
-    let project = this.projectService.getSelectedProject();
-    if (!project) return;
-    let bodyData = { status: !this.isPause, projectId: project._id };
-    let isStatusUpdated = await this.pauseFleet(bodyData);
-    if (isStatusUpdated) this.isPause = !this.isPause;
+    try {
+      if (this.fleetPauseController?.signal) this.fleetPauseController.abort();
+      this.fleetPauseController = new AbortController();
+      let project = this.projectService.getSelectedProject();
+      if (!project) return;
+      let bodyData = { status: !this.isPause, projectId: project._id };
+      let isStatusUpdated = await this.pauseFleet(bodyData);
+      if (isStatusUpdated) this.isPause = !this.isPause;
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async pauseFleet(bodyData: any): Promise<boolean> {
@@ -384,6 +395,7 @@ export class DashboardComponent implements AfterViewInit {
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(bodyData),
+        signal: this.fleetPauseController?.signal,
       }
     );
 
@@ -2826,6 +2838,7 @@ export class DashboardComponent implements AfterViewInit {
 
   ngOnDestroy() {
     this.mapDetailsController?.abort();
+    this.fleetPauseController?.abort();
     if (this.posEventSource) this.posEventSource.close(); // ONLY comment.. if interrupting on other operations..
     if (this.assetEventSource) this.assetEventSource.close();
   }
