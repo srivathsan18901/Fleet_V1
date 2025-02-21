@@ -520,7 +520,7 @@ export class DashboardComponent implements AfterViewInit {
     }
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
-        this.hidePopup();
+        this.hideLOCPopup();
       }
     });
   }
@@ -968,7 +968,7 @@ export class DashboardComponent implements AfterViewInit {
     if (this.nodeGraphService.getLocalize()) {
       this.localizePoses.forEach((pos) => {
         const transformedY = img.height - pos.y;
-        this.drawNode(ctx, pos.x, transformedY, '-1');
+        this.drawLOCNode(ctx, pos.x, transformedY, pos.yaw, '-1');
       });
 
       ctx.restore();
@@ -1078,6 +1078,7 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
   showLocPopup(x: number, y: number) {
+    this.hidePopup();
     const popup = document.getElementById('Localize-popup');
     if (popup) {
       popup.style.display = 'block';
@@ -1106,8 +1107,20 @@ export class DashboardComponent implements AfterViewInit {
 
     let isRoboLocalized = await this.localizeRobo(bodyData);
 
-    if (!isRoboLocalized) alert('localization falied!');
-    else alert('Robo has been localized!');
+    if (!isRoboLocalized) {
+      this.messageService.add({
+        severity: 'error',
+        summary: this.getTranslation(`Localization Failed!`),
+        life: 4000,
+      });
+    }
+    else {
+      this.messageService.add({
+        severity: 'success',
+        summary: this.getTranslation(`Robot has been Localized`),
+        life: 4000,
+      });
+    }
 
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
@@ -2319,7 +2332,7 @@ export class DashboardComponent implements AfterViewInit {
     this.localizePoses.forEach((pos) => {
       const scaledX = pos.x * zoomLevel;
       const scaledY = (img.height - pos.y) * zoomLevel; // Flip Y-axis and scale
-      this.drawNode(ctx, centerX + scaledX, centerY + scaledY, '-1');
+      this.drawLOCNode(ctx, centerX + scaledX, centerY + scaledY, pos.yaw,  '-1');
     });
   }
   drawNodesAndEdges(
@@ -2555,9 +2568,37 @@ export class DashboardComponent implements AfterViewInit {
     ctx.fill();
   }
 
+  drawLOCNode(ctx: CanvasRenderingContext2D, x: number, y: number,yaw: number, label: string){
+      // Define rectangle size
+      const rectWidth = 20;
+      const rectHeight = 20;
+
+      // Draw the outer rectangle border only (not filled)
+      ctx.strokeStyle = '#3b82f6'; // Sky blue border
+      ctx.lineWidth = 1; // Border thickness
+      ctx.strokeRect(x - rectWidth / 2, y - rectHeight / 2, rectWidth, rectHeight); 
+
+      // Draw the rotated arrow
+      ctx.save(); // Save the current transformation state
+      ctx.translate(x, y); // Move the context to the center of the rectangle
+      ctx.rotate(-(yaw-(Math.PI/2))); // Rotate by the yaw angle
+
+      // Draw the arrow (pointing upwards in default state, then rotated)
+      ctx.beginPath();
+      ctx.moveTo(0, -6);  // Arrow tip (upwards)
+      ctx.lineTo(-4, 4);  // Left bottom
+      ctx.lineTo(4, 4);   // Right bottom
+      ctx.closePath();
+      ctx.fillStyle = '#3b82f6'; // Sky blue arrow
+      ctx.fill();
+
+      ctx.restore(); // Restore the context to prevent affecting other drawings
+
+      return; // Skip the rest of the function as localization uses a rectangle
+  }
+
   drawNode(ctx: CanvasRenderingContext2D, x: number, y: number, label: string) {
     const isAssignTask = this.nodeGraphService.getAssignTask();
-    const isLocalise = this.nodeGraphService.getLocalize();
 
     // Set node size and color conditionally
     let nodeColor = isAssignTask ? '#f00' : '#00f'; // Red for Assign Task, Blue otherwise
@@ -2565,21 +2606,13 @@ export class DashboardComponent implements AfterViewInit {
     let outerCircleColor = '#ff7373'; // Default outer circle color
     let outerCircleRadius = nodeRadius + 4;
 
-    // If isLocalise is true, override node and outer circle color
-    if (isLocalise) {
-      nodeColor = '#3b82f6'; // Sky blue color for node
-      nodeRadius = 5; // Set a fixed radius when localised
-      outerCircleColor = '#3b82f6'; // Sky blue color for outer circle
-      outerCircleRadius = nodeRadius + 4; // Outer circle slightly larger
-    }
-
     // Draw outer circle if applicable
-    if (isAssignTask || isLocalise) {
-      ctx.beginPath();
-      ctx.arc(x, y, outerCircleRadius, 0, 2 * Math.PI); // Outer circle
-      ctx.strokeStyle = outerCircleColor; // Use appropriate color
-      ctx.lineWidth = 2; // Thickness of the outer circle's border
-      ctx.stroke();
+    if (isAssignTask) {
+        ctx.beginPath();
+        ctx.arc(x, y, outerCircleRadius, 0, 2 * Math.PI); // Outer circle
+        ctx.strokeStyle = outerCircleColor; // Use appropriate color
+        ctx.lineWidth = 2; // Thickness of the outer circle's border
+        ctx.stroke();
     }
 
     // Draw node
@@ -2588,6 +2621,7 @@ export class DashboardComponent implements AfterViewInit {
     ctx.fillStyle = nodeColor; // Use the determined color
     ctx.fill();
   }
+
 
   drawPathNode(
     ctx: CanvasRenderingContext2D,
@@ -2699,16 +2733,18 @@ export class DashboardComponent implements AfterViewInit {
 
   async localize() {
     if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
-    this.redrawCanvas();
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);
 
     this.localizePoses = await this.getLocalizePos();
+    console.log(this.localizePoses);
+    
     this.localizePoses = this.localizePoses.map((pos: any) => {
       pos.x = (pos.x + (this.origin.x || 0)) / (this.ratio || 1);
       pos.y = (pos.y + (this.origin.y || 0)) / (this.ratio || 1);
       return pos;
     });
+    this.redrawCanvas();
     // console.log(this.localizePoses);
 
     this.hidePopup();
