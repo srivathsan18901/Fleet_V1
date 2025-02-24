@@ -453,9 +453,8 @@ h2 {
   }
 }
 .DL_Btn {
-  padding: 10px;
-  width: 50px;
-  height: 50px;
+  width: 70px;
+  height: 70px;
   border: none;
   border-radius: 50%;
   background-color: #ffffff;
@@ -465,7 +464,7 @@ h2 {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  position: absolute;
+  position: fixed;
   bottom: 60px;
   right: 100px;
   z-index: 100;
