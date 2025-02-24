@@ -28,7 +28,7 @@
     "@mobiscroll/angular-lite": "^4.10.9",
     "animate": "^1.0.0",
     "animate.css": "^4.1.1",
-    "apexcharts": "^3.53.0",
+    "apexcharts": "^3.54.1",
     "dom-to-image": "^2.6.0",
     "dom-to-image-more": "^3.4.5",
     "express": "^4.18.2",

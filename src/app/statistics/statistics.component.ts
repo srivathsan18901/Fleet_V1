@@ -65,7 +65,6 @@ export class StatisticsComponent {
   onViewAllClick() {
     this.router.navigate(['/tasks']); // Navigate to tasks page
     console.log('hey');
-    
   }
 
   setView(view: string): void {
@@ -127,69 +126,8 @@ export class StatisticsComponent {
     return await response.json();
   }
 
-  // not called anywhere..
-  async getFleetLogStatus() {
-    return;
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
-    );
-    const data = await response.json();
-    if (!data.map || data.error) return;
-    this.fleetActivities = data.objs;
-    if (!('objects' in this.fleetActivities)) return;
-    let { objs }: any = this.fleetActivities;
-    if (!objs.length) return;
-
-    objs.forEach((robot: any) => {
-      if (robot.fleet_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
-          // [errorType, errors] => [key, value]
-          // if (errorType === "NO ERROR") continue;
-          for (let error of errors as any[]) {
-            let err_type = [
-              'EMERGENCY STOP',
-              'LIDAR_ERROR',
-              'DOCKING ERROR',
-              'LOADING ERROR',
-              'NO ERROR',
-            ]; //Robot Errors List from RabbitMQ
-            let criticality = 'Normal';
-
-            if (
-              err_type.includes(err_type[0]) ||
-              err_type.includes(err_type[3])
-            )
-              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
-            else if (
-              err_type.includes(err_type[1]) ||
-              err_type.includes(err_type[2])
-            )
-              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
-
-            let notificationKey = `${error.description} on robot ID ${robot.id}`;
-            if (this.processedErrors?.has(notificationKey)) continue;
-            this.processedErrors?.add(notificationKey);
-
-            this.notifications.push({
-              label: `${criticality}`,
-              message: `${error.description} on robot ID ${robot.id}`,
-              type:
-                criticality === 'Critical'
-                  ? 'red'
-                  : criticality === 'Warning'
-                  ? 'yellow'
-                  : 'green',
-            });
-
-            this.cdRef.detectChanges(); // yet to notify..
-          }
-        }
-      }
-    });
+  async createDocDefinition() {
+    
   }
 
   async getTaskNotifications() {
