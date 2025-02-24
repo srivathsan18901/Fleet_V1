@@ -6,7 +6,6 @@ import {
   EventEmitter,
   OnInit,
   ViewChild,
-  signal,
 } from '@angular/core';
 import {
   ApexAxisChartSeries,
@@ -36,6 +35,11 @@ export type ChartOptions = {
   grid: ApexGrid;
 };
 
+interface imageURI {
+  metricName: string;
+  base64URI: string;
+}
+
 @Component({
   selector: 'app-area-chart',
   templateUrl: './area-chart.component.html',
@@ -46,6 +50,7 @@ export class AreaChartComponent implements OnInit {
 
   @Output() systemThroughputEvent = new EventEmitter<any>();
   @ViewChild('chart') chart!: ChartComponent;
+  @ViewChild('chart') chartInstance!: ChartComponent;
   public chartOptions: ChartOptions;
   selectedMetric: string = 'Throughput'; // Default value
   translatedMetric: string = '';
@@ -56,21 +61,23 @@ export class AreaChartComponent implements OnInit {
   throughputArr: number[] = [0];
   throughputXaxisSeries: string[] = [];
 
-  starvationArr: number[] = [0];
+  starvationArr: number[] = [0, 1];
   starvationXaxisSeries: string[] = [];
 
-  pickAccuracyArr: number[] = [0];
+  pickAccuracyArr: number[] = [0, 1, 2];
   pickAccXaxisSeries: string[] = [];
 
-  errRateArr: number[] = [0];
+  errRateArr: number[] = [0, 1, 2, 3];
   errRateXaxisSeries: string[] = [];
 
   throuputTimeInterval: any | null = null;
   starvationTimeInterval: any | null = null;
   pickAccTimeInterval: any | null = null;
   errRateTimeInterval: any | null = null;
-  //
+
   @Input() taskData: any[] = [];
+
+  imageURIs: imageURI[] = [];
 
   constructor(
     private projectService: ProjectService,
@@ -91,7 +98,7 @@ export class AreaChartComponent implements OnInit {
         toolbar: {
           show: true, // Keep the toolbar visible
           tools: {
-            download: false, // Disable only the download menu
+            download: true, // Disable only the download menu
           },
         },
       },
@@ -150,10 +157,10 @@ export class AreaChartComponent implements OnInit {
         custom: ({ seriesIndex, dataPointIndex, w }) => {
           const value = w.config.series[seriesIndex].data[dataPointIndex];
           const category = w.config.xaxis.categories[dataPointIndex];
-  
+
           // Assuming 'metricName' is translated dynamically, here's how you can use it:
           const translatedMetric = this.getTranslation(this.selectedMetric); // Get translation for the metric
-  
+
           return `
             <div style="padding: 10px; background: #333; color: #fff;">
               <strong>${translatedMetric}</strong>: ${value}<br>
@@ -175,22 +182,20 @@ export class AreaChartComponent implements OnInit {
     this.selectedMap = this.projectService.getMapData();
     this.updateChart('data1', 'Throughput');
   }
-  
+
   getTranslation(key: string) {
     const translation = this.translationService.getStatisticsTranslation(key);
     // console.log(`Translating key: ${key} => ${translation}`);
     return translation;
   }
-  
-  
+
   updateChart(dataKey: string, metricName: string): void {
     if (!this.selectedMap) {
       console.log('no map has been selected!');
       return;
     }
     this.selectedMetric = metricName; // Update the displayed metric name
-    console.log(this.selectedMetric);
-    
+
     switch (dataKey) {
       case 'data1':
         this.updateThroughput();
@@ -209,8 +214,7 @@ export class AreaChartComponent implements OnInit {
 
   applyFilter(event: any) {
     this.currentFilter = event.target.value.toLowerCase();
-    // this.intervals.forEach((interval) => {
-    //   if (this[interval]) {
+
     if (this.selectedMetric === 'Throughput')
       this.updateChart('data1', this.selectedMetric);
     else if (this.selectedMetric === 'starvationRate')
@@ -218,10 +222,7 @@ export class AreaChartComponent implements OnInit {
     else if (this.selectedMetric === 'pickAccuracy')
       this.updateChart('data3', this.selectedMetric);
     else if (this.selectedMetric === 'errorRate')
-     this.updateChart('data4', this.selectedMetric);
-    // return;
-    // }
-    // });
+      this.updateChart('data4', this.selectedMetric);
   }
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 12) {
@@ -275,8 +276,7 @@ export class AreaChartComponent implements OnInit {
 
   async updateThroughput() {
     // this.chartOptions.xaxis.range = 7; // get use of it..
-    // console.log(this.currentFilter,"current fileter")
-    // console.log('chart updating')
+
     this.clearAllIntervals(this.throuputTimeInterval);
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.throuputTimeInterval);
@@ -306,10 +306,8 @@ export class AreaChartComponent implements OnInit {
     const data = await this.fetchChartData('throughput', this.currentFilter);
     if (data && !data.throughput) return;
     let { Stat } = data.throughput;
-    // console.log(Stat);
-    // console.log(data,'data from line 256')
+
     if (data.throughput) {
-      // this.throughputArr = data.throughput.map((stat: any) => stat.rate);
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
       this.throughputXaxisSeries = Stat.map(
         // (stat: any) => stat.time
@@ -318,7 +316,6 @@ export class AreaChartComponent implements OnInit {
       );
       this.systemThroughputEvent.emit(this.throughputArr);
     }
-    // console.log('line 265')
     this.plotChart(
       'Throughput',
       this.throughputArr,
@@ -346,7 +343,6 @@ export class AreaChartComponent implements OnInit {
         this.throughputXaxisSeries
       );
     }, 1000 * 2); // 60 * 60
-    // console.log('chart fn')
   }
 
   async updateStarvationRate() {
@@ -556,21 +552,6 @@ export class AreaChartComponent implements OnInit {
     }, 1000 * 2);
   }
 
-  // Function to plot COMPLETED percentage in the graph
-  plotCompletedPercentage(percentage: number) {
-    // Assuming you want to plot this value as a separate series in the chart
-    // You may use a charting library like ApexCharts to add a new series
-    this.chartOptions.series.push({
-      name: 'COMPLETED Percentage',
-      data: [percentage], // You can adjust this to fit the timeline if needed
-    });
-    this.plotChart(
-      'Pick accuracy',
-      this.pickAccuracyArr,
-      this.pickAccXaxisSeries
-    );
-  }
-
   async fetchErrorRateData(
     endpoint: string,
     timeSpan: string,
@@ -679,17 +660,6 @@ export class AreaChartComponent implements OnInit {
     }, 1000 * 2);
   }
 
-  // Function to plot error rate in the graph
-  plotErrorRate(errorRate: number) {
-    // Assuming you want to plot this value as a separate series in the chart
-    // You may use a charting library like ApexCharts to add a new series
-    this.chartOptions.series.push({
-      name: 'Error Rate',
-      data: [errorRate], // You can adjust this to fit the timeline if needed
-    });
-    this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries);
-  }
-
   clearAllIntervals(currInterval: number) {
     if (currInterval !== this.throuputTimeInterval) {
       clearInterval(this.throuputTimeInterval);
@@ -758,6 +728,42 @@ export class AreaChartComponent implements OnInit {
 
     this.abortControllers.forEach((controller) => controller.abort()); // forEach(val, key, map/arr/..)
     this.abortControllers.clear();
+  }
+
+  //..
+  async generateGraph() {
+    let grossGraphs: string[] = [
+      'throughputArr',
+      'starvationArr',
+      'pickAccuracyArr',
+      'errRateArr',
+    ];
+
+    let URIStrings: any[] = [];
+
+    for (let graph of grossGraphs) {
+      this.chartInstance.updateOptions({
+        series: [{ name: 'seriesName', data: this[`${graph}`] }],
+        xaxis: { categories: this.throughputXaxisSeries },
+      });
+      URIStrings.push(await this.getGraphURI());
+    }
+
+    console.log(URIStrings);
+  }
+
+  async getGraphURI(): Promise<any> {
+    let base64URI: string = '';
+    let result = await this.chartInstance.dataURI(); // resust: { imgURI: string; } | { blob: Blob; }
+
+    base64URI = (result as { imgURI: string }).imgURI;
+    // console.log(base64URI);
+
+    return base64URI;
+  }
+
+  async fetchWholeGraph() {
+    // if()
   }
 
   // let a = [];
