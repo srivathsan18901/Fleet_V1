@@ -90,8 +90,8 @@ export class ChartTimelineComponent implements OnInit {
   networkTimeInterval: any | null = null;
   idleTimeInterval: any | null = null;
   errTimeInterval: any | null = null;
-  selectedValue:string="";
-  selectedMetric: string = ""; // Initialize with an empty string or a default value
+  selectedValue:string="CPU Utilization";
+  selectedMetric: string = "CPU Utilization"; // Initialize with an empty string or a default value
   metrics = {
     Overall: [
       { key: 'data1', label:'CPU Utilization', name: this.getTranslation("CPU Utilization")},
