@@ -55,6 +55,7 @@ export class AreaChartComponent implements OnInit {
   selectedMetric: string = 'Throughput'; // Default value
   translatedMetric: string = '';
   selectedMap: any | null = null;
+  isFleetUp: boolean = false;
   [key: string]: any; // index signature..
   private abortControllers: Map<string, AbortController> = new Map();
 
@@ -180,7 +181,11 @@ export class AreaChartComponent implements OnInit {
 
   ngOnInit(): void {
     this.selectedMap = this.projectService.getMapData();
+    this.projectService.isFleetUp$.subscribe((status) => {
+      this.isFleetUp = status;
+    });
     this.updateChart('data1', 'Throughput');
+    this.fetchWholeGraph();
   }
 
   getTranslation(key: string) {
@@ -731,17 +736,16 @@ export class AreaChartComponent implements OnInit {
   }
 
   //..
+  grossGraphs: string[] = [
+    'throughputArr',
+    'starvationArr',
+    'pickAccuracyArr',
+    'errRateArr',
+  ];
   async generateGraph() {
-    let grossGraphs: string[] = [
-      'throughputArr',
-      'starvationArr',
-      'pickAccuracyArr',
-      'errRateArr',
-    ];
-
     let URIStrings: any[] = [];
 
-    for (let graph of grossGraphs) {
+    for (let graph of this.grossGraphs) {
       this.chartInstance.updateOptions({
         series: [{ name: 'seriesName', data: this[`${graph}`] }],
         xaxis: { categories: this.throughputXaxisSeries },
@@ -749,7 +753,7 @@ export class AreaChartComponent implements OnInit {
       URIStrings.push(await this.getGraphURI());
     }
 
-    console.log(URIStrings);
+    // console.log(URIStrings);
   }
 
   async getGraphURI(): Promise<any> {
@@ -763,8 +767,28 @@ export class AreaChartComponent implements OnInit {
   }
 
   async fetchWholeGraph() {
-    // if()
+    // if (!this.isFleetUp) return;
+    ('starvationrate');
+    ('pickaccuracy');
+    ('err-rate');
+    const data = await this.fetchChartData('throughput', this.currentFilter);
+    if (data && !data.throughput) return;
+    let { Stat } = data.throughput;
+
+    if (data.throughput) {
+      this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
+      this.throughputXaxisSeries = Stat.map(
+        // (stat: any) => stat.time
+        (stat: any, index: any) => ++index
+        // new Date().toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+      );
+      this.systemThroughputEvent.emit(this.throughputArr);
+    }
+
+    for (let graph of this.grossGraphs) console.log(this[`${graph}`]);
   }
+
+
 
   // let a = [];
   // let fin = [];
