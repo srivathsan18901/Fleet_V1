@@ -452,6 +452,71 @@ h2 {
     padding: 1vh 0; /* Increase vertical padding */
   }
 }
+.DL_Btn {
+  width: 50px;
+  height: 50px;
+  border: none;
+  border-radius: 50%;
+  background-color: #ffffff;
+  border: 2px solid #ff7373;
+  display: flex ;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: fixed;
+  bottom: 60px;
+  right: 100px;
+  z-index: 100;
+  transition-duration: 0.3s;
+  box-shadow: 1px 4px 5px rgb(120, 113, 113);
+}
+
+.svgIcon {
+  fill: #ff7373;
+}
+
+.icon2 {
+  width: 18px;
+  height: 5px;
+  border-bottom: 2px solid #ff7373;
+  border-left: 2px solid #ff7373;
+  border-right: 2px solid #ff7373;
+}
+
+
+.DL_Btn:hover .tooltip {
+  opacity: 1;
+  transition-duration: 0.3s;
+}
+
+.DL_Btn:hover {
+  background-color: #ff7373;
+  transition-duration: 0.3s;
+}
+
+.DL_Btn:hover .icon2 {
+  border-bottom: 2px solid white;
+  border-left: 2px solid white;
+  border-right: 2px solid white;
+}
+
+.DL_Btn:hover .svgIcon {
+  fill: white;
+  animation: slide-in-top 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+}
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0px);
+    opacity: 1;
+  }
+}
 
 /* General styling for stat-chart */
 .stat-chart {
