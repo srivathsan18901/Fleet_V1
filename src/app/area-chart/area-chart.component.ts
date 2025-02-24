@@ -22,6 +22,7 @@ import {
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
 import { TranslationService } from '../services/translation.service';
+import { ExportFileService } from '../services/export-file.service';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -83,7 +84,8 @@ export class AreaChartComponent implements OnInit {
   constructor(
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private exportFileService: ExportFileService
   ) {
     this.chartOptions = {
       series: [
@@ -185,7 +187,7 @@ export class AreaChartComponent implements OnInit {
       this.isFleetUp = status;
     });
     this.updateChart('data1', 'Throughput');
-    this.fetchWholeGraph();
+    // this.fetchWholeGraph();
   }
 
   getTranslation(key: string) {
@@ -215,10 +217,13 @@ export class AreaChartComponent implements OnInit {
         this.updateErrorRate();
         break;
     }
+
+    this.fetchWholeGraph();
   }
 
   applyFilter(event: any) {
     this.currentFilter = event.target.value.toLowerCase();
+    this.exportFileService.setCurrentFilter(this.currentFilter);
 
     if (this.selectedMetric === 'Throughput')
       this.updateChart('data1', this.selectedMetric);
@@ -490,7 +495,7 @@ export class AreaChartComponent implements OnInit {
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.pickAccTimeInterval);
       this.pickAccTimeInterval = 0;
-      console.log('pick');
+      // console.log('pick');
       const data = await this.fetchChartData(
         'pickaccuracy',
         this.currentFilter
@@ -742,18 +747,26 @@ export class AreaChartComponent implements OnInit {
     'pickAccuracyArr',
     'errRateArr',
   ];
+
+  grossGraphSeries: string[] = [
+    'throughputXaxisSeries',
+    'starvationXaxisSeries',
+    'pickAccXaxisSeries',
+    'errRateXaxisSeries',
+  ];
+
   async generateGraph() {
     let URIStrings: any[] = [];
 
-    for (let graph of this.grossGraphs) {
+    for (let i = 0; i < 4; i++) {
       this.chartInstance.updateOptions({
-        series: [{ name: 'seriesName', data: this[`${graph}`] }],
-        xaxis: { categories: this.throughputXaxisSeries },
+        series: [{ name: 'seriesName', data: this[`${this.grossGraphs[i]}`] }],
+        xaxis: { categories: this[`${this.grossGraphSeries[i]}`] },
       });
       URIStrings.push(await this.getGraphURI());
     }
 
-    // console.log(URIStrings);
+    // console.log(URIStrings[3]);
   }
 
   async getGraphURI(): Promise<any> {
@@ -766,29 +779,11 @@ export class AreaChartComponent implements OnInit {
     return base64URI;
   }
 
-  async fetchWholeGraph() {
+  fetchWholeGraph() {
     // if (!this.isFleetUp) return;
-    ('starvationrate');
-    ('pickaccuracy');
-    ('err-rate');
-    const data = await this.fetchChartData('throughput', this.currentFilter);
-    if (data && !data.throughput) return;
-    let { Stat } = data.throughput;
-
-    if (data.throughput) {
-      this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
-      this.throughputXaxisSeries = Stat.map(
-        // (stat: any) => stat.time
-        (stat: any, index: any) => ++index
-        // new Date().toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
-      );
-      this.systemThroughputEvent.emit(this.throughputArr);
-    }
-
-    for (let graph of this.grossGraphs) console.log(this[`${graph}`]);
+    this.exportFileService.fetchWholeGraph();
+    // for (let graph of this.grossGraphs) console.log(this[`${graph}`]);
   }
-
-
 
   // let a = [];
   // let fin = [];

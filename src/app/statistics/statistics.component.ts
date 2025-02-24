@@ -5,6 +5,8 @@ import { ProjectService } from '../services/project.service';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
 import { TranslationService } from '../services/translation.service';
+import { ExportFileService } from '../services/export-file.service';
+
 @Component({
   selector: 'app-statistics',
   templateUrl: './statistics.component.html',
@@ -55,13 +57,16 @@ export class StatisticsComponent {
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
     private isFleetService: IsFleetService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private exportFileService: ExportFileService
   ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
   }
+
   getTranslation(key: string) {
     return this.translationService.getStatisticsTranslation(key);
   }
+
   onViewAllClick() {
     this.router.navigate(['/tasks']); // Navigate to tasks page
     console.log('hey');
@@ -75,9 +80,11 @@ export class StatisticsComponent {
       this.router.navigate(['/statistics/operation']);
     }
   }
+
   getTaskTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
   }
+
   async ngOnInit() {
     const fleetSub = this.projectService.isFleetUp$.subscribe((status) => {
       this.isFleet = status;
@@ -126,9 +133,7 @@ export class StatisticsComponent {
     return await response.json();
   }
 
-  async createDocDefinition() {
-    
-  }
+  async createDocDefinition() {}
 
   async getTaskNotifications() {
     let establishedTime = new Date(this.selectedMap.createdAt);
@@ -330,6 +335,10 @@ export class StatisticsComponent {
       return tasksStatus;
     }
     return [0, 0, 0, 0, 0, 0];
+  }
+
+  generatePdf() {
+    this.exportFileService.createDocument();
   }
 
   onSearch(event: Event): void {
