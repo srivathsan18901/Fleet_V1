@@ -785,8 +785,7 @@ export class AreaChartComponent implements OnInit {
     let URIStrings: any[] = [];
 
     for (let i = 0; i < 4; i++) {
-      console.log(this.grossGraphs[`${}`]);
-      
+      // console.log(this.grossGraphs[`${}`]);
       // this.chartInstance.updateOptions({
       //   series: [{ name: 'seriesName', data: this[`${this.grossGraphs[i]}`] }], //  export file service..
       //   xaxis: { categories: this[`${this.grossGraphSeries[i]}`] },
