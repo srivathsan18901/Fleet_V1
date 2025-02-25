@@ -41,6 +41,8 @@ export class ExportFileService {
   
   
   async createDocument() {
+    console.log(this.URIStrings);
+    
       this.docDefinition = {
         pageSize: 'A4',
         pageMargins: [4, 4, 4, 4], // Adjust margins
@@ -99,6 +101,30 @@ export class ExportFileService {
               </defs>
               </svg>`,
             absolutePosition: { x: 15, y: 810 },
+          },
+          //0>>>Throughput
+          {
+            image: this.URIStrings[0],
+            width: 200,
+            absolutePosition: { x: 50, y: 315 },
+          },
+          //1>>>Starvation Rate
+          {
+            image: this.URIStrings[1],
+            width: 200,
+            absolutePosition: { x: 350, y: 315 },
+          },
+          //2>>>Pick Accuracy
+          {
+            image: this.URIStrings[2],
+            width: 200,
+            absolutePosition: { x: 50, y: 505 },
+          },
+          //3>>>Error
+          {
+            image: this.URIStrings[3],
+            width: 200,
+            absolutePosition: { x: 350, y: 505 },
           },
     
           // Footer: "Confidential" - Bottom Right
