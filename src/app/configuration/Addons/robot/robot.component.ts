@@ -191,7 +191,7 @@ export class RobotComponent {
     }
   }
 
-  savMov() {
+  savDATA() {
     console.log('Move Form Data:', this.moveParams);
   }
 
