@@ -166,7 +166,19 @@ export class RobotComponent {
     );
 
     let data = await response.json();
-    console.log(data);
+    if (data.error) {
+      alert('Error in fetching robot params');
+      return;
+    }
+    if (data.fleetStatus) {
+      const { robotParams } = data.fleetStatus;
+      this.dockParams = robotParams.DockParam;
+      this.chargeParams = robotParams.ChargeParam;
+      this.batteryParams = robotParams.BatteryParam;
+      this.geometryParams = robotParams.GeometryParam;
+      this.moveParams = robotParams.MoveParam;
+      this.unDockParams = robotParams.UndockParam;
+    }
   }
 
   getTranslation(key: string) {
