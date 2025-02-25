@@ -774,17 +774,18 @@ export class AreaChartComponent implements OnInit {
   }
 
   async generateGraph() {
-    let URIStrings: any[] = [];
-
+    let i = 0;
     for (let metric in this.grossGraphs) {
       this.chartInstance.updateOptions({
-        series: [{ name: 'seriesName', data: this.grossGraphs[metric] }], //  export file service..
+        series: [{ name: 'seriesName', data: this.grossGraphs[metric] }],
         xaxis: { categories: this.grossGraphSeries[metric] },
       });
-      URIStrings.push(await this.getGraphURI());
+      // this.exportFileService.URIStrings.push(await this.getGraphURI());
+      this.exportFileService.URIStrings[i] = await this.getGraphURI();
+      i++;
     }
 
-    console.log(URIStrings);
+    console.log(this.exportFileService.URIStrings);
   }
 
   // let a = [];

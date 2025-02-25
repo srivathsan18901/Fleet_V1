@@ -13,6 +13,7 @@ import { ProjectService } from './project.service';
 export class ExportFileService {
   docDefinition: any = {};
 
+  URIStrings: any[] = [];
   base64URI: string = '';
   currentFilter: string = 'today';
 
