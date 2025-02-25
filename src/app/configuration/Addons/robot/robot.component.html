@@ -26,13 +26,23 @@
                 <input type="checkbox" [(ngModel)]="moveParams.endPointOrientation" (change)="toggleMOVEndPointOrientation()"  style="height: 20px;"/><br />
             </div>
             
-            <div class="input-groupg">
+            <div >
+              <label style="margin-bottom: 5px; font-weight: bold;">{{getTranslation('auto_robot_operation_mode')}}</label>
+              <div class="input-groupg">
+              <label>{{getTranslation('DEFAULT')}}</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.autoRobotModeDefault" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
+      
+              <label>{{getTranslation('NARROW')}}</label>
+              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.autoRobotModeNarrow1" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
+            </div>
+            </div>
+            <!-- <div class="input-groupg">
                 <label>{{getTranslation('auto_robot_operation_mode')}}:</label>
                 <select [(ngModel)]="moveParams.autoRobotOperationModeMOV" (change)="updateRobotOperationMode()" style="margin-right: 20.1rem; padding: 6px; border: 1px solid #ccc;">
                     <option value="mode1">{{getTranslation('DEFAULT')}}</option>
                     <option value="mode2">{{getTranslation('NARROW')}}</option>
                 </select><br/>
-            </div>
+            </div> -->
             
 
         </p-tabPanel>
