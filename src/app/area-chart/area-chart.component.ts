@@ -63,13 +63,13 @@ export class AreaChartComponent implements OnInit {
   throughputArr: number[] = [0];
   throughputXaxisSeries: string[] = [];
 
-  starvationArr: number[] = [0, 1];
+  starvationArr: number[] = [0];
   starvationXaxisSeries: string[] = [];
 
-  pickAccuracyArr: number[] = [0, 1, 2];
+  pickAccuracyArr: number[] = [0];
   pickAccXaxisSeries: string[] = [];
 
-  errRateArr: number[] = [0, 1, 2, 3];
+  errRateArr: number[] = [0];
   errRateXaxisSeries: string[] = [];
 
   throuputTimeInterval: any | null = null;
@@ -187,7 +187,6 @@ export class AreaChartComponent implements OnInit {
       this.isFleetUp = status;
     });
     this.updateChart('data1', 'Throughput');
-    // this.fetchWholeGraph();
   }
 
   getTranslation(key: string) {
@@ -741,33 +740,30 @@ export class AreaChartComponent implements OnInit {
   }
 
   //..
-  grossGraphs: string[] = [
-    'throughputArr',
-    'starvationArr',
-    'pickAccuracyArr',
-    'errRateArr',
-  ];
+  grossGraphs: {
+    [key: string]: any; // index ignature
+  } = {
+    throughput: this.exportFileService.throughputArr,
+    starvation: this.exportFileService.starvationArr,
+    pickAccuracy: this.exportFileService.pickAccuracyArr,
+    errRate: this.exportFileService.errRateArr,
+  };
 
-  grossGraphSeries: string[] = [
-    'throughputXaxisSeries',
-    'starvationXaxisSeries',
-    'pickAccXaxisSeries',
-    'errRateXaxisSeries',
-  ];
+  // grossGraphSeries: string[] = [
+  //   'throughputXaxisSeries',
+  //   'starvationXaxisSeries',
+  //   'pickAccXaxisSeries',
+  //   'errRateXaxisSeries',
+  // ];
 
-  async generateGraph() {
-    let URIStrings: any[] = [];
-
-    for (let i = 0; i < 4; i++) {
-      this.chartInstance.updateOptions({
-        series: [{ name: 'seriesName', data: this[`${this.grossGraphs[i]}`] }],
-        xaxis: { categories: this[`${this.grossGraphSeries[i]}`] },
-      });
-      URIStrings.push(await this.getGraphURI());
-    }
-
-    // console.log(URIStrings[3]);
-  }
+  grossGraphSeries: {
+    [key: string]: any; // index ignature
+  } = {
+    throughput: this.exportFileService.throughputXaxisSeries,
+    starvation: this.exportFileService.starvationXaxisSeries,
+    pickAccuracy: this.exportFileService.pickAccXaxisSeries,
+    errRate: this.exportFileService.errRateXaxisSeries,
+  };
 
   async getGraphURI(): Promise<any> {
     let base64URI: string = '';
@@ -779,10 +775,26 @@ export class AreaChartComponent implements OnInit {
     return base64URI;
   }
 
-  fetchWholeGraph() {
+  async fetchWholeGraph() {
     // if (!this.isFleetUp) return;
-    this.exportFileService.fetchWholeGraph();
-    // for (let graph of this.grossGraphs) console.log(this[`${graph}`]);
+    if (this.isFleetUp) await this.exportFileService.fetchWholeGraph();
+    await this.generateGraph();
+  }
+
+  async generateGraph() {
+    let URIStrings: any[] = [];
+
+    for (let i = 0; i < 4; i++) {
+      console.log(this.grossGraphs[`${}`]);
+      
+      // this.chartInstance.updateOptions({
+      //   series: [{ name: 'seriesName', data: this[`${this.grossGraphs[i]}`] }], //  export file service..
+      //   xaxis: { categories: this[`${this.grossGraphSeries[i]}`] },
+      // });
+      // URIStrings.push(await this.getGraphURI());
+    }
+
+    // console.log(URIStrings[3]);
   }
 
   // let a = [];

@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { ChartComponent } from 'ng-apexcharts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from './project.service';
 
@@ -54,6 +55,7 @@ export class ExportFileService {
     };
 
     // pdfMake.createPdf(this.docDefinition).download();
+    pdfMake.createPdf(this.docDefinition).open();
   }
 
   async fetchChartData(endpoint: string, timeSpan: string) {
@@ -106,32 +108,31 @@ export class ExportFileService {
     );
 
     if (data2?.starvation) {
-      this.starvationArr = data.starvation.map((stat: any) => {
+      this.starvationArr = data2.starvation.map((stat: any) => {
         return Math.round(stat.starvationRate);
       });
-      this.starvationXaxisSeries = data.starvation.map(
+      this.starvationXaxisSeries = data2.starvation.map(
         (stat: any, index: any) => ++index
       );
     }
 
     const data3 = await this.fetchChartData('pickaccuracy', this.currentFilter);
-    console.log(data3);
 
     if (data3?.throughput) {
-      this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
+      this.pickAccuracyArr = data3.throughput.Stat.map((stat: any) =>
         Math.round(stat.pickAccuracy)
       );
-      this.pickAccXaxisSeries = data.throughput.Stat.map(
+      this.pickAccXaxisSeries = data3.throughput.Stat.map(
         (stat: any, index: any) => ++index
       );
     }
 
     const data4 = await this.fetchChartData('err-rate', this.currentFilter);
     if (data4?.errRate) {
-      this.errRateArr = data.errRate.map((stat: any) =>
+      this.errRateArr = data4.errRate.map((stat: any) =>
         Math.round(stat.errorRate)
       );
-      this.errRateXaxisSeries = data.errRate.map(
+      this.errRateXaxisSeries = data4.errRate.map(
         (stat: any, index: any) => ++index
       );
     }
