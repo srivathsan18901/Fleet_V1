@@ -144,7 +144,6 @@ export class StatisticsComponent {
 
   async createDocDefinition() {
     await this.areaChartComponent.fetchWholeGraph();
-    // this.generatePdf();
   }
 
   async getTaskNotifications() {
@@ -349,7 +348,9 @@ export class StatisticsComponent {
     return [0, 0, 0, 0, 0, 0];
   }
 
-  generatePdf() {
+  async generatePdf() {
+    await this.createDocDefinition();
+
     this.exportFileService.createDocument();
   }
 
