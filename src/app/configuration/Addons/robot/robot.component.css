@@ -13,9 +13,9 @@
   display: flex;
   flex-wrap: nowrap;
   align-items: center;  
-  justify-content: center;
+  justify-content: end;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin: 1rem;
 }
 .input-groupg {
   display: flex;

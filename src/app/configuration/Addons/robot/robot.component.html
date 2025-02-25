@@ -34,15 +34,7 @@
                 </select><br/>
             </div>
             
-            <div class="input-groupgbtn">
-                <p-button
-                    label="{{getTranslation('submit')}}"
-                    type="submit"
-                    (onClick)="savMov()"
-                    class="block mt-1 pt-2"
-                    styleClass="p-button-danger p-button1"
-                ></p-button>
-            </div>
+
         </p-tabPanel>
         
             <p-tabPanel header="{{getTranslation('DOCK')}}">
@@ -83,15 +75,7 @@
                       <option value="3">3</option>
                     </select><br/>
                   </div>
-                  <div class="input-groupgbtn">
-                  <p-button
-                  label="{{getTranslation('submit')}}"
-                  type="submit"
-                  (onClick)="savDock()"
-                  class="block mt-1 pt-2"
-                  styleClass="p-button-danger p-button1"
-                ></p-button>
-                 </div>
+
             </p-tabPanel>
             <p-tabPanel header="{{getTranslation('UNDOCK')}}">
             <div class="input-groupg">
@@ -119,15 +103,6 @@
               <label>{{getTranslation('end_point_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" placeholder="Enter Maximum Linear Velocity" /><br />
             </div> -->
-            <div class="input-groupgbtn">
-            <p-button
-            label="{{getTranslation('submit')}}"
-            type="submit"
-            (onClick)="savUNDOCK()"
-            class="block mt-1 pt-2"
-            styleClass="p-button-danger p-button1"
-          ></p-button>
-            </div>
             </p-tabPanel>
 
             <p-tabPanel header="{{getTranslation('CHARGE')}}">
@@ -168,15 +143,7 @@
                       <option value="3">3</option>
                     </select><br/>
                   </div>
-                  <div class="input-groupgbtn">
-                  <p-button
-                  label="{{getTranslation('submit')}}"
-                  type="submit"
-                  (onClick)="savCHARGE()"
-                  class="block mt-1 pt-2"
-                  styleClass="p-button-danger p-button1"
-                ></p-button>
-                </div>
+
             </p-tabPanel>
             <p-tabPanel header="{{getTranslation('GEOMETRY')}}">
                 <div class="input-groupg">
@@ -215,15 +182,7 @@
                     <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesWithLoad.Right" placeholder="{{getTranslation('enter_right')}}"/><br />
                   </div>
                   </div>
-                  <div class="input-groupgbtn">
-                  <p-button
-                  label="{{getTranslation('submit')}}"
-                  type="submit"
-                  (onClick)="savGEOMETRY()"                  
-                  class="block mt-1 pt-2"
-                  styleClass="p-button-danger p-button1"
-                ></p-button>
-                </div>
+
             </p-tabPanel>
 
             <p-tabPanel header="{{getTranslation('BATTERY')}}">
@@ -252,16 +211,19 @@
                     <label>{{getTranslation('USE_CURRENT')}}</label>
                     <input type="checkbox" (change)="toggleUSE_CURRENT()" [(ngModel)]="batteryParams.useCurrent"  style="height: 20px;"  /><br />
                 </div>
-                <div class="input-groupgbtn">
-                <p-button
-                label="{{getTranslation('submit')}}"
-                type="submit"
-                (onClick)="savBATTERY()"
-                class="block mt-1 pt-2"
-                styleClass="p-button-danger p-button1"
-              ></p-button>
-                </div>
+
             </p-tabPanel>
         </p-tabView>
+        
     </div>
+
+</div>
+<div class="input-groupgbtn">
+  <p-button
+      label="{{getTranslation('submit')}}"
+      type="submit"
+      (onClick)="savDATA()"
+      class="block mt-2 pt-2"
+      styleClass="p-button-danger p-button1"
+  ></p-button>
 </div>
