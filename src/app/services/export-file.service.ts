@@ -4,7 +4,6 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { ChartComponent } from 'ng-apexcharts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from './project.service';
-import robis from '../../assets/Export/robis.svg';
 // import proud from '../../assets/Export/proud.svg';
 // import robis_logo from '../../assets/Export/robis_logo.svg';
 
