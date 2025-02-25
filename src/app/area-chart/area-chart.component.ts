@@ -51,7 +51,7 @@ export class AreaChartComponent implements OnInit {
 
   @Output() systemThroughputEvent = new EventEmitter<any>();
   @ViewChild('chart') chart!: ChartComponent;
-  @ViewChild('chart') chartInstance!: ChartComponent;
+  @ViewChild('chartInstance') chartInstance!: ChartComponent;
   public chartOptions: ChartOptions;
   selectedMetric: string = 'Throughput'; // Default value
   translatedMetric: string = '';
@@ -749,13 +749,6 @@ export class AreaChartComponent implements OnInit {
     errRate: this.exportFileService.errRateArr,
   };
 
-  // grossGraphSeries: string[] = [
-  //   'throughputXaxisSeries',
-  //   'starvationXaxisSeries',
-  //   'pickAccXaxisSeries',
-  //   'errRateXaxisSeries',
-  // ];
-
   grossGraphSeries: {
     [key: string]: any; // index ignature
   } = {
@@ -770,7 +763,6 @@ export class AreaChartComponent implements OnInit {
     let result = await this.chartInstance.dataURI(); // resust: { imgURI: string; } | { blob: Blob; }
 
     base64URI = (result as { imgURI: string }).imgURI;
-    // console.log(base64URI);
 
     return base64URI;
   }
@@ -784,16 +776,15 @@ export class AreaChartComponent implements OnInit {
   async generateGraph() {
     let URIStrings: any[] = [];
 
-    for (let i = 0; i < 4; i++) {
-      // console.log(this.grossGraphs[`${}`]);
-      // this.chartInstance.updateOptions({
-      //   series: [{ name: 'seriesName', data: this[`${this.grossGraphs[i]}`] }], //  export file service..
-      //   xaxis: { categories: this[`${this.grossGraphSeries[i]}`] },
-      // });
-      // URIStrings.push(await this.getGraphURI());
+    for (let metric in this.grossGraphs) {
+      this.chartInstance.updateOptions({
+        series: [{ name: 'seriesName', data: this.grossGraphs[metric] }], //  export file service..
+        xaxis: { categories: this.grossGraphSeries[metric] },
+      });
+      URIStrings.push(await this.getGraphURI());
     }
 
-    // console.log(URIStrings[3]);
+    console.log(URIStrings);
   }
 
   // let a = [];

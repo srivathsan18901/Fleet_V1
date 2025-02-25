@@ -20,23 +20,13 @@
         <!-- Submenu Options -->
         <div class="submenu">
           <div class="submenu-item">
-            <a
-              href="javascript:void(0);"
-              class="submenu-link"
-              (click)="updateChart('data1', 'Throughput')"
-              >{{ getTranslation('Throughput') }}</a
-            >
+            <a href="javascript:void(0);" class="submenu-link" (click)="updateChart('data1', 'Throughput')" >{{ getTranslation("Throughput") }}</a >
           </div>
           <div class="submenu-item">
-            <a
-              href="javascript:void(0);"
-              class="submenu-link"
-              (click)="updateChart('data2', 'starvationRate')"
-              >{{ getTranslation('starvationRate') }}</a
-            >
+            <a href="javascript:void(0);" class="submenu-link" (click)="updateChart('data2', 'starvationRate')" >{{ getTranslation("starvationRate") }}</a >
           </div>
           <!-- <div class="submenu-item"> -->
-            <!-- <a
+          <!-- <a
               href="javascript:void(0);"
               class="submenu-link"
               (click)="updateChart('data3', 'Task allocation')"
@@ -44,20 +34,10 @@
             > -->
           <!-- </div> -->
           <div class="submenu-item">
-            <a
-              href="javascript:void(0);"
-              class="submenu-link"
-              (click)="updateChart('data3', 'pickAccuracy')"
-              >{{ getTranslation('pickAccuracy') }}</a
-            >
+            <a href="javascript:void(0);" class="submenu-link" (click)="updateChart('data3', 'pickAccuracy')" >{{ getTranslation("pickAccuracy") }}</a >
           </div>
           <div class="submenu-item">
-            <a
-              href="javascript:void(0);"
-              class="submenu-link"
-              (click)="updateChart('data4', 'errorRate')"
-              >{{ getTranslation('errorRate') }}</a
-            >
+            <a href="javascript:void(0);" class="submenu-link" (click)="updateChart('data4', 'errorRate')" >{{ getTranslation("errorRate") }}</a >
           </div>
         </div>
       </div>
@@ -79,7 +59,7 @@
         (change)="applyFilter($event)"
         checked
       />
-      <label for="today" class="label">{{ getTranslation('today') }}</label>
+      <label for="today" class="label">{{ getTranslation("today") }}</label>
 
       <input
         type="radio"
@@ -89,7 +69,7 @@
         class="input"
         (change)="applyFilter($event)"
       />
-      <label for="week" class="label">{{ getTranslation('week') }}</label>
+      <label for="week" class="label">{{ getTranslation("week") }}</label>
 
       <input
         type="radio"
@@ -99,13 +79,28 @@
         class="input"
         (change)="applyFilter($event)"
       />
-      <label for="month" class="label">{{ getTranslation('month') }}</label>
+      <label for="month" class="label">{{ getTranslation("month") }}</label>
     </div>
   </div>
 </div>
 
 <apx-chart
   #chart
+  [series]="chartOptions.series"
+  [chart]="chartOptions.chart"
+  [xaxis]="chartOptions.xaxis"
+  [yaxis]="chartOptions.yaxis"
+  [fill]="chartOptions.fill"
+  [dataLabels]="chartOptions.dataLabels"
+  [stroke]="chartOptions.stroke"
+  [tooltip]="chartOptions.tooltip"
+  [grid]="chartOptions.grid"
+></apx-chart>
+
+<!-- top: -9999px; -->
+<apx-chart
+  #chartInstance
+  style="visibility: hidden; position: absolute"
   [series]="chartOptions.series"
   [chart]="chartOptions.chart"
   [xaxis]="chartOptions.xaxis"
