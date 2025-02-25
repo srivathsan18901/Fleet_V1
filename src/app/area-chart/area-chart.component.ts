@@ -216,8 +216,6 @@ export class AreaChartComponent implements OnInit {
         this.updateErrorRate();
         break;
     }
-
-    this.fetchWholeGraph();
   }
 
   applyFilter(event: any) {
@@ -768,7 +766,6 @@ export class AreaChartComponent implements OnInit {
   }
 
   async fetchWholeGraph() {
-    // if (!this.isFleetUp) return;
     if (this.isFleetUp) await this.exportFileService.fetchWholeGraph();
     await this.generateGraph();
   }
@@ -784,8 +781,6 @@ export class AreaChartComponent implements OnInit {
       this.exportFileService.URIStrings[i] = await this.getGraphURI();
       i++;
     }
-
-    console.log(this.exportFileService.URIStrings);
   }
 
   // let a = [];

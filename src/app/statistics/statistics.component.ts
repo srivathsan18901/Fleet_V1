@@ -1,4 +1,9 @@
-import { ChangeDetectorRef, Component, OnChanges } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnChanges,
+  ViewChild,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
@@ -6,6 +11,7 @@ import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
 import { TranslationService } from '../services/translation.service';
 import { ExportFileService } from '../services/export-file.service';
+import { AreaChartComponent } from '../area-chart/area-chart.component';
 
 @Component({
   selector: 'app-statistics',
@@ -13,12 +19,11 @@ import { ExportFileService } from '../services/export-file.service';
   styleUrls: ['./statistics.component.css'],
 })
 export class StatisticsComponent {
+  @ViewChild(AreaChartComponent) areaChartComponent!: AreaChartComponent;
   products: any;
   fleetActivities: any;
   processedErrors: any;
-  getSeverity(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
+
   currentView: string = 'operation'; // Default to 'operation'
   operationPie: number[] = [0, 0, 0, 0, 0, 0];
   selectedMap: any | null = null;
@@ -61,6 +66,10 @@ export class StatisticsComponent {
     private exportFileService: ExportFileService
   ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
+  }
+
+  getSeverity(arg0: any) {
+    throw new Error('Method not implemented.');
   }
 
   getTranslation(key: string) {
@@ -133,7 +142,10 @@ export class StatisticsComponent {
     return await response.json();
   }
 
-  async createDocDefinition() {}
+  async createDocDefinition() {
+    await this.areaChartComponent.fetchWholeGraph();
+    // this.generatePdf();
+  }
 
   async getTaskNotifications() {
     let establishedTime = new Date(this.selectedMap.createdAt);
