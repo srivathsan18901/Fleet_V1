@@ -108,10 +108,24 @@ export class ExportFileService {
             width: 200,
             absolutePosition: { x: 50, y: 315 },
           },
+          {
+            text: 'Throughput',
+            color: 'red',
+            fontSize: 10,
+            bold: true,
+            absolutePosition: { x: 50, y: 315 },
+          },
           //1>>>Starvation Rate
           {
             image: this.URIStrings[1],
             width: 200,
+            absolutePosition: { x: 350, y: 315 },
+          },
+          {
+            text: 'Starvation Rate',
+            color: 'red',
+            fontSize: 10,
+            bold: true,
             absolutePosition: { x: 350, y: 315 },
           },
           //2>>>Pick Accuracy
@@ -120,13 +134,26 @@ export class ExportFileService {
             width: 200,
             absolutePosition: { x: 50, y: 505 },
           },
+          {
+            text: 'Pick Accuracy',
+            color: 'red',
+            fontSize: 10,
+            bold: true,
+            absolutePosition: { x: 50, y: 505 },
+          },
           //3>>>Error
           {
             image: this.URIStrings[3],
             width: 200,
             absolutePosition: { x: 350, y: 505 },
+          },    
+          {
+            text: 'Error',
+            color: 'red',
+            fontSize: 10,
+            bold: true,
+            absolutePosition: { x: 350, y: 505 },
           },
-    
           // Footer: "Confidential" - Bottom Right
           {
             text: 'Confidential',
@@ -134,7 +161,8 @@ export class ExportFileService {
             fontSize: 8,
             bold: true,
             absolutePosition: { x: 535, y: 815 },
-          },]
+          },
+        ]
       };
   
       pdfMake.createPdf(this.docDefinition).open();
