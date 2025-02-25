@@ -191,8 +191,10 @@ export class RobotComponent {
     }
   }
 
-  savDATA() {
-    console.log('Move Form Data:', this.moveParams);
+  async savDATA() {
+    let project = this.projectService.getSelectedProject();
+    if (!project) return;
+    await this.saveGrossRoboParams(project);
   }
 
   toggleDOCEndPointOrientation() {
@@ -254,15 +256,16 @@ export class RobotComponent {
     console.log('Battery Form Data:', this.batteryParams);
   }
 
-  async saveGrossRoboParams() {
+  async saveGrossRoboParams(project: any) {
     let bodyData = {
-      RobotParams: {
+      projectId: project._id,
+      robotParams: {
         DockParam: this.dockParams,
         UnDockParam: this.unDockParams,
         ChargeParam: this.chargeParams,
         MoveParam: this.moveParams,
         BatteryParam: this.batteryParams,
-        GeometryParams: this.geometryParams,
+        GeometryParam: this.geometryParams,
       },
     };
     let response = await fetch(
