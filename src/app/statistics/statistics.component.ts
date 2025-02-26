@@ -12,6 +12,7 @@ import { Subscription } from 'rxjs';
 import { TranslationService } from '../services/translation.service';
 import { ExportFileService } from '../services/export-file.service';
 import { AreaChartComponent } from '../area-chart/area-chart.component';
+import { GradientDonutComponent } from '../gradient-donut/gradient-donut.component';
 
 @Component({
   selector: 'app-statistics',
@@ -20,6 +21,8 @@ import { AreaChartComponent } from '../area-chart/area-chart.component';
 })
 export class StatisticsComponent {
   @ViewChild(AreaChartComponent) areaChartComponent!: AreaChartComponent;
+  @ViewChild(GradientDonutComponent)
+  gradientDonutComponent!: GradientDonutComponent;
   products: any;
   fleetActivities: any;
   processedErrors: any;
@@ -143,6 +146,8 @@ export class StatisticsComponent {
   }
 
   async createDocDefinition() {
+    this.gradientDonutComponent.getChart()
+    return;
     await this.areaChartComponent.fetchWholeGraph();
   }
 

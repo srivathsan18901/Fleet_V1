@@ -4,6 +4,7 @@ import {
   OnInit,
   Input,
   OnChanges,
+  ViewChild,
   SimpleChanges,
 } from '@angular/core';
 import {
@@ -15,6 +16,7 @@ import {
   ApexFill,
   ApexLegend,
   ApexTitleSubtitle,
+  ChartComponent,
 } from 'ng-apexcharts';
 
 export type ChartOptions = {
@@ -66,6 +68,7 @@ export class GradientDonutComponent implements OnInit {
   ) => {
     return val + ' - ' + opts.w.globals.series[opts.seriesIndex];
   };
+  @ViewChild('chart') chart!: ChartComponent;
 
   public chartOptions: Partial<ChartOptions> | any;
 
@@ -279,5 +282,13 @@ export class GradientDonutComponent implements OnInit {
         },
       };
     }
+  }
+
+  getChart() {
+    console.log(this.chart);
+
+    this.chart.dataURI((result: any) => {
+      console.log(result);
+    });
   }
 }
