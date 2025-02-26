@@ -1,11 +1,8 @@
 import { Injectable } from '@angular/core';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import { ChartComponent } from 'ng-apexcharts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from './project.service';
-// import proud from '../../assets/Export/proud.svg';
-// import robis_logo from '../../assets/Export/robis_logo.svg';
 
 (pdfMake as any).vfs = pdfFonts.vfs;
 
@@ -44,7 +41,7 @@ export class ExportFileService {
     this.selectedMap = this.projectService.getMapData();
   }
 
-  async createDocument() {
+  createDocument() {
     this.docDefinition = {
       pageSize: 'A4',
       pageMargins: [4, 4, 4, 4], // Adjust margins
