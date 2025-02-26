@@ -101,6 +101,12 @@ export class ExportFileService {
               </svg>`,
           absolutePosition: { x: 15, y: 810 },
         },
+        //Donut
+        {
+          image: this.donutChartBase64URI,
+          width: 220,
+          absolutePosition: { x: 35, y: 95 },
+        },
         //0>>>Throughput
         {
           image: this.URIStrings[0],
@@ -146,6 +152,8 @@ export class ExportFileService {
           width: 220,
           absolutePosition: { x: 350, y: 505 },
         },
+
+
         {
           text: 'Error',
           color: 'red',
