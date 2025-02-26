@@ -73,7 +73,7 @@ export class ExportFileService {
         // "Fleet Management System" - Top Left
         {
           svg: robis,
-          absolutePosition: { x: 10, y: 15 },
+          absolutePosition: { x: 15, y: 15 },
         },
         // "robis" SVG - Top Right
         {
