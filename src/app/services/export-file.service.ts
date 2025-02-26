@@ -153,7 +153,6 @@ export class ExportFileService {
           absolutePosition: { x: 350, y: 505 },
         },
 
-
         {
           text: 'Error',
           color: 'red',

@@ -45,7 +45,10 @@
               "node_modules/primeicons/primeicons.css",
               "node_modules/ngx-spinner/animations/ball-grid-pulse.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "loader": {
+              ".svg": "text"
+            }
           },
           "configurations": {
             "production": {
