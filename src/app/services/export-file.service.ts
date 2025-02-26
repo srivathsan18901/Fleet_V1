@@ -7,7 +7,7 @@ import { ProjectService } from './project.service';
 import proud from '../../assets/Export/proud.svg';
 import robis from '../../assets/Export/robis.svg';
 import robis_logo from '../../assets/Export/robis_logo.svg';
-import Report_name from '../../assets/Export/Report_name.svg';
+import Report_name from '../../assets/Export/image.png';
 import data from '../../assets/Export/data.svg';
 
 
@@ -50,8 +50,32 @@ export class ExportFileService {
   constructor(private projectService: ProjectService) {
     this.selectedMap = this.projectService.getMapData();
   }
+  private async convertSvgToImage(url: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      var img = new Image();
+      img.src = url;
+      img.setAttribute("crossOrigin", "anonymous");
 
-  createDocument() {
+      img.onload = () => {
+        var canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        let ctx = canvas.getContext("2d");
+        if(ctx) ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL("image/png");
+        resolve(dataURL);
+      };
+
+      img.onerror = error => {
+        reject(error);
+      };
+      });
+  }
+  
+  async createDocument() {
+    const robisImage = await this.convertSvgToImage(Report_name);
+    console.log(robisImage);
+    
     this.docDefinition = {
       pageSize: 'A4',
       pageMargins: [4, 4, 4, 4], // Adjust margins
@@ -94,10 +118,11 @@ export class ExportFileService {
           absolutePosition: { x: 535, y: 815 },
         },
         //Report Name
-        {
-          svg: Report_name,
-          absolutePosition: { x: 230, y: 55 },
-        },
+        { image: robisImage, width: 80, absolutePosition: { x: 230, y: 55 } },
+        // {
+        //   svg: Report_name,
+        //   absolutePosition: { x: 230, y: 55 },
+        // },
         //Donut
         {
           image: this.donutChartBase64URI,

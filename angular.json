@@ -47,7 +47,8 @@
             ],
             "scripts": [],
             "loader": {
-              ".svg": "text"
+              ".svg": "text",
+              ".png":"file"
             }
           },
           "configurations": {

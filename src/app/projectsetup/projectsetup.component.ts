@@ -243,7 +243,7 @@ export class ProjectsetupComponent {
       else if (data.error)
         this.messagePopUp('error', this.getTranslation('Try Submitting again'), 3000);
       else if (data.idExist) {
-        this.messagePopUp('error', this.getTranslation("mapExists"), 4000);
+        this.messagePopUp('error', this.getTranslation("projectExists"), 4000);
         this.projectService.clearProjectData();
       } else if (!data.idExist && data.nameExist) {
         return true;

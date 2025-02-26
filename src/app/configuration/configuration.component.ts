@@ -582,7 +582,7 @@ export class ConfigurationComponent implements AfterViewInit {
         );
         return;
       } else if (data.idExist) {
-        this.messagePopUp('error', this.getTranslation("projectExists"), 3000);
+        this.messagePopUp('error', this.getTranslation("mapExists"), 3000);
       } else if (!data.idExist && data.nameExist) {
         return true;
       } else if (!data.error && !data.conflicts && data.isMapUploaded) {
