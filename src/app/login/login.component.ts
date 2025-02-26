@@ -295,10 +295,11 @@ export class LoginComponent {
             this.projectService.setProjectCreated(true);
             this.messageService.add({
               severity: 'success',
-              summary:  `${data.user.projects[0].projectName}`,
+              summary: `${this.getTranslation("Welcome")} ${data.user.projects[0].projectName}`,
               detail: this.getTranslation('AuthenticationSuccess'),
               life: 4000,
             });
+            
             setTimeout(() => {
               this.router.navigate(['/dashboard']);
             }, 100);

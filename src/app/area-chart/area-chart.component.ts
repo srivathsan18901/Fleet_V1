@@ -101,7 +101,7 @@ export class AreaChartComponent implements OnInit {
         toolbar: {
           show: true, // Keep the toolbar visible
           tools: {
-            download: false, // Disable only the download menu
+            download: false,
           },
         },
       },
@@ -772,11 +772,14 @@ export class AreaChartComponent implements OnInit {
 
   async updateChartInstance(
     graphArr: number[],
-    XaxisSeries: string[]
+    XaxisSeries: string[],
+    limit: number = 10
   ): Promise<any> {
+    const limitedData = graphArr.length > limit ? graphArr.slice(-limit) : graphArr;
+    const limitedTime = XaxisSeries.length > limit ? XaxisSeries.slice(-limit) : XaxisSeries;
     this.chartInstance.updateOptions({
-      series: [{ name: 'seriesName', data: graphArr }],
-      xaxis: { categories: XaxisSeries },
+      series: [{ name: 'taskGraph', data: limitedData }],
+      xaxis: { categories: limitedTime },
     });
 
     return await this.getGraphURI();

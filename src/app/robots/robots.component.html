@@ -17,7 +17,7 @@
         <div class="search-filter-container" *ngIf="this.isFleet === true">
           <!-- Search Bar -->
           <div class="search-box" >
-            <input type="text" placeholder="Search For Something..." [(ngModel)]="searchQuery" (input)="filterRobots()" />
+            <input type="text" placeholder="{{this.getTranslation('Search for Something...')}}" [(ngModel)]="searchQuery" (input)="filterRobots()" />
             <button class="search-btn">
               <img src="../../assets/icons/download-removebg-preview.png" alt="Search" />
             </button>

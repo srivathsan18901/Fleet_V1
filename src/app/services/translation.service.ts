@@ -795,10 +795,13 @@ export class TranslationService {
         "Average Transfer Time": "Average Transfer Time",
         "Maximum speed": "Maximum speed",
         "Average Docking Time": "Average Docking Time",
-        "Emergency Stop": "Emergency Stop"
+        "Emergency Stop": "Emergency Stop",
+        "Search for Something...": "Search for Something...",
+
     },
     JAP: {
         "Robot Details": "ロボットの詳細",
+        "Search for Something...": "何かを検索...",
         "Create and edit task reports": "タスクレポートを作成および編集",
         "- No Robots Found -": "- ロボットが見つかりません -",
         "- Sim Mode has been Enabled -": "- シミュレーションモードが有効になりました -",
@@ -843,6 +846,7 @@ export class TranslationService {
         "Status": "Statut",
         "Active": "Actif",
         "Inactive": "Inactif",
+        "Search for Something...": "Rechercher quelque chose...",
         "ACTIVE": "Actif",
         "INACTIVE": "Inactif",
         'localize': 'Localiser',
@@ -883,6 +887,7 @@ export class TranslationService {
         "Inactive": "Inaktiv",
         "ACTIVE": "Aktiv",
         "INACTIVE": "Inaktiv",
+        "Search for Something...": "Nach etwas suchen...",
         "View Details": "Details anzeigen",
         "Details": "Details",
         "Current task": "Aktuelle Aufgabe",
