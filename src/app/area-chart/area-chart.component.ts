@@ -57,7 +57,7 @@ export class AreaChartComponent implements OnInit {
   translatedMetric: string = '';
   selectedMap: any | null = null;
   isFleetUp: boolean = false;
-  [key: string]: any; // index signature..
+
   private abortControllers: Map<string, AbortController> = new Map();
 
   throughputArr: number[] = [0];

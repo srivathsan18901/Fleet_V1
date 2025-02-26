@@ -19,6 +19,11 @@ export class ExportFileService {
   donutChartBase64URI: string = '';
   currentFilter: string = 'today';
 
+  systemThroughput: number = 0;
+  systemUptime: number = 0;
+  successRate: number = 0;
+  responsiveness: number = 0;
+
   selectedMap: any | null = null;
 
   throughputArr: number[] = [0];

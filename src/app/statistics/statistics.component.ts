@@ -198,9 +198,10 @@ export class StatisticsComponent {
     let uptime = await this.fetchFleetStatus('system-uptime', {
       projectId: projectId,
     });
-    if (uptime.systemUptime)
+    if (uptime.systemUptime) {
       this.statisticsData.systemUptime = uptime.systemUptime;
-    else this.statisticsData.systemUptime = 'Loading...';
+      this.exportFileService.systemUptime = this.statisticsData.systemUptime;
+    } else this.statisticsData.systemUptime = 'Loading...';
   }
 
   async fetchCurrTasksStatus(): Promise<any[]> {
@@ -267,7 +268,8 @@ export class StatisticsComponent {
       this.statisticsData.responsiveness = `${Math.round(
         average_responsiveness / 1000
       )} s`;
-      console.log('Responsiveness', Math.round(average_responsiveness));
+      this.exportFileService.responsiveness =
+        this.statisticsData.responsiveness;
 
       return fleet_tasks;
     }
@@ -347,6 +349,7 @@ export class StatisticsComponent {
             (completedTasks + errorTasks + cancelledTasks + inProgressTasks)) *
             100 || 0
         ).toFixed(2);
+        this.exportFileService.successRate = this.statisticsData.successRate;
       }
       return tasksStatus;
     }
@@ -393,10 +396,11 @@ export class StatisticsComponent {
   }
 
   updateSysThroughput(data: any) {
-    // console.log("nan tha",data[data.length - 1]);
-    if (data.length)
+    if (data.length) {
       this.statisticsData.systemThroughput = data[data.length - 1];
-    else this.statisticsData.systemThroughput = 'Loading...';
+      this.exportFileService.systemThroughput =
+        this.statisticsData.systemThroughput;
+    } else this.statisticsData.systemThroughput = 'Loading...';
   }
 
   ngOnDestroy() {
