@@ -16,7 +16,7 @@ export class ExportFileService {
   docDefinition: any = {};
 
   URIStrings: any[] = [];
-  base64URI: string = '';
+  donutChartBase64URI: string = '';
   currentFilter: string = 'today';
 
   selectedMap: any | null = null;

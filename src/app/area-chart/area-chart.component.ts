@@ -781,29 +781,4 @@ export class AreaChartComponent implements OnInit {
 
     return await this.getGraphURI();
   }
-
-  // let a = [];
-  // let fin = [];
-  // let s = 10;
-  // for(let i = 1; i <= 250; i++){
-  //   a.push(i)
-  // }
-
-  // if(s > a.length) return;
-
-  // let chunkSize = Math.round(a.length / s);
-  // let chunkCount = 0;
-
-  // for(let i = 0; i < a.length; i++){
-  //     // console.log((i+1) % s)
-  //   if(((i+1) % s)){
-  //     chunkCount += a[i];
-  //   }
-  //   else{
-  //     fin.push(chunkCount);
-  //     chunkCount = 0;
-  //   }
-  // }
-
-  // console.log(fin)
 }

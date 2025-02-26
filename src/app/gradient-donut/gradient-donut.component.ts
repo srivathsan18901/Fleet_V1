@@ -284,11 +284,8 @@ export class GradientDonutComponent implements OnInit {
     }
   }
 
-  getChart() {
-    console.log(this.chart);
-
-    this.chart.dataURI((result: any) => {
-      console.log(result);
-    });
+  async getChart(): Promise<any> {
+    let result = await this.chart.dataURI();
+    return (result as { imgURI: string }).imgURI; // type assertion
   }
 }

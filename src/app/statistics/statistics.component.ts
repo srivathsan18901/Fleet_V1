@@ -146,8 +146,8 @@ export class StatisticsComponent {
   }
 
   async createDocDefinition() {
-    this.gradientDonutComponent.getChart()
-    return;
+    this.exportFileService.donutChartBase64URI =
+      await this.gradientDonutComponent.getChart();
     await this.areaChartComponent.fetchWholeGraph();
   }
 
