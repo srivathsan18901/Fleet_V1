@@ -737,25 +737,6 @@ export class AreaChartComponent implements OnInit {
     this.abortControllers.clear();
   }
 
-  //..
-  grossGraphs: {
-    [key: string]: any; // index ignature
-  } = {
-    throughput: this.exportFileService.throughputArr,
-    starvation: this.exportFileService.starvationArr,
-    pickAccuracy: this.exportFileService.pickAccuracyArr,
-    errRate: this.exportFileService.errRateArr,
-  };
-
-  grossGraphSeries: {
-    [key: string]: any; // index ignature
-  } = {
-    throughput: this.exportFileService.throughputXaxisSeries,
-    starvation: this.exportFileService.starvationXaxisSeries,
-    pickAccuracy: this.exportFileService.pickAccXaxisSeries,
-    errRate: this.exportFileService.errRateXaxisSeries,
-  };
-
   async getGraphURI(): Promise<any> {
     let base64URI: string = '';
     let result = await this.chartInstance.dataURI(); // resust: { imgURI: string; } | { blob: Blob; }
@@ -771,19 +752,34 @@ export class AreaChartComponent implements OnInit {
   }
 
   async generateGraph() {
-    this.exportFileService.URIStrings[0] = await this.updateChartInstance(this.exportFileService.throughputArr, this.exportFileService.throughputXaxisSeries);
-    this.exportFileService.URIStrings[1] = await this.updateChartInstance(this.exportFileService.starvationArr, this.exportFileService.starvationXaxisSeries);
-    this.exportFileService.URIStrings[2] = await this.updateChartInstance(this.exportFileService.pickAccuracyArr, this.exportFileService.pickAccXaxisSeries);
-    this.exportFileService.URIStrings[3] = await this.updateChartInstance(this.exportFileService.errRateArr, this.exportFileService.errRateXaxisSeries);
+    this.exportFileService.URIStrings[0] = await this.updateChartInstance(
+      this.exportFileService.throughputArr,
+      this.exportFileService.throughputXaxisSeries
+    );
+    this.exportFileService.URIStrings[1] = await this.updateChartInstance(
+      this.exportFileService.starvationArr,
+      this.exportFileService.starvationXaxisSeries
+    );
+    this.exportFileService.URIStrings[2] = await this.updateChartInstance(
+      this.exportFileService.pickAccuracyArr,
+      this.exportFileService.pickAccXaxisSeries
+    );
+    this.exportFileService.URIStrings[3] = await this.updateChartInstance(
+      this.exportFileService.errRateArr,
+      this.exportFileService.errRateXaxisSeries
+    );
   }
 
-  async updateChartInstance(graphArr: number[], XaxisSeries:  string[]): Promise<any>{
+  async updateChartInstance(
+    graphArr: number[],
+    XaxisSeries: string[]
+  ): Promise<any> {
     this.chartInstance.updateOptions({
-      series: [{ name: 'seriesName', data: graphArr}],
+      series: [{ name: 'seriesName', data: graphArr }],
       xaxis: { categories: XaxisSeries },
     });
 
-    return await this.getGraphURI()
+    return await this.getGraphURI();
   }
 
   // let a = [];
