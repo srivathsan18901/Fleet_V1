@@ -773,7 +773,7 @@ export class AreaChartComponent implements OnInit {
   async updateChartInstance(
     graphArr: number[],
     XaxisSeries: string[],
-    limit: number = 10
+    limit: number = 5
   ): Promise<any> {
     const limitedData = graphArr.length > limit ? graphArr.slice(-limit) : graphArr;
     const limitedTime = XaxisSeries.length > limit ? XaxisSeries.slice(-limit) : XaxisSeries;

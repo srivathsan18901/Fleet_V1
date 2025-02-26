@@ -197,7 +197,7 @@ export class ExportFileService {
       ],
     };
 
-    pdfMake.createPdf(this.docDefinition).open();
+    pdfMake.createPdf(this.docDefinition).download();
   }
 
   async fetchChartData(endpoint: string, timeSpan: string) {
