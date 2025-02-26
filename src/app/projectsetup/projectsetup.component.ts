@@ -1,4 +1,4 @@
-import { Component,HostListener, ElementRef } from '@angular/core';
+import { Component, HostListener, ElementRef } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 import { ProjectService } from '../services/project.service';
@@ -9,7 +9,7 @@ import Swal from 'sweetalert2';
 import { TranslationService } from '../services/translation.service';
 interface Flag {
   flagComp: string; // Type based on your data, e.g., string for SVG content
-  nameTag: "ENG" | "JAP" | "FRE" | "GER"; // Type based on your data, e.g., string for the flag name
+  nameTag: 'ENG' | 'JAP' | 'FRE' | 'GER'; // Type based on your data, e.g., string for the flag name
   order: number; // Assuming 'order' is also part of each flag object
 }
 interface Project {
@@ -33,7 +33,7 @@ export class ProjectsetupComponent {
   projectname: string = '';
   isFocused: { [key: string]: boolean } = {};
   selectedProject: string = '';
-  selectedFileName: string = this.getTranslation("IMPORT_PROJECT_FILE");
+  selectedFileName: string = this.getTranslation('IMPORT_PROJECT_FILE');
   errorMessage: string = '';
   productList: Project[] = [];
   selectedFile: File | null = null;
@@ -55,14 +55,14 @@ export class ProjectsetupComponent {
     // hook
     // let pDet = this.cookieService.get('project-data');
     // console.log(pDet);
-    for(let flag of this.flags){
-      if(flag.nameTag === this.translationService.getCurrentLang()){
+    for (let flag of this.flags) {
+      if (flag.nameTag === this.translationService.getCurrentLang()) {
         this.flagSvg = flag.flagComp;
-        this.flagName = flag.nameTag
+        this.flagName = flag.nameTag;
         break;
       }
     }
-    this.selectedFileName = this.getTranslation("IMPORT_PROJECT_FILE");
+    this.selectedFileName = this.getTranslation('IMPORT_PROJECT_FILE');
 
     fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/projects/project-list`,
@@ -80,8 +80,11 @@ export class ProjectsetupComponent {
   }
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent) {
-
-    if (!this.eRef.nativeElement.querySelector('.language-selector')?.contains(event.target as Node)) {
+    if (
+      !this.eRef.nativeElement
+        .querySelector('.language-selector')
+        ?.contains(event.target as Node)
+    ) {
       this.languageArrowState = false;
     }
   }
@@ -105,14 +108,29 @@ export class ProjectsetupComponent {
   getTranslation(key: string) {
     return this.translationService.getProjectSetupTranslation(key);
   }
-    
+
   flags: Flag[] = [
-    { flagComp: '<img src="../../assets/Language/Eng.svg">', nameTag: 'ENG', order: 0 },
-    { flagComp: '<img src="../../assets/Language/Jap.svg">', nameTag: 'JAP', order: 1 },  
-    { flagComp: '<img src="../../assets/Language/Fre.svg">', nameTag: 'FRE', order: 2 },  
-    { flagComp: '<img src="../../assets/Language/Ger.svg">', nameTag: 'GER', order: 3 }, 
+    {
+      flagComp: '<img src="../../assets/Language/Eng.svg">',
+      nameTag: 'ENG',
+      order: 0,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Jap.svg">',
+      nameTag: 'JAP',
+      order: 1,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Fre.svg">',
+      nameTag: 'FRE',
+      order: 2,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Ger.svg">',
+      nameTag: 'GER',
+      order: 3,
+    },
   ];
-  
 
   trackFlag(index: number, flag: any): number {
     return flag.order; // Use the unique identifier for tracking
@@ -138,7 +156,7 @@ export class ProjectsetupComponent {
     this.form = null;
     this.selectedFile = null;
     this.selectedProject = '';
-    this.selectedFileName = this.getTranslation("IMPORT_PROJECT_FILE");
+    this.selectedFileName = this.getTranslation('IMPORT_PROJECT_FILE');
     if (!this.isProjDiv1Visible) {
       this.sitename = '';
       this.projectname = '';
@@ -176,13 +194,21 @@ export class ProjectsetupComponent {
     fileInput.click();
   }
 
+  messagePopUp(severity: string, summary: string, life: number) {
+    this.messageService.add({
+      severity: severity,
+      summary: summary,
+      life: life,
+    });
+  }
+
   async logout() {
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.isCookieDeleted);
+        // console.log(data.isCookieDeleted);
         if (data.isCookieDeleted) {
           this.projectService.clearProjectData();
           this.authService.logout();
@@ -198,37 +224,26 @@ export class ProjectsetupComponent {
         `http://${environment.API_URL}:${environment.PORT}/fleet-project-file/upload-project/`,
         { credentials: 'include', method: 'POST', body: this.form }
       );
-      // if (!response.ok)
-      //   throw new Error(`err with status code of ${response.status}`);
+
       let data = await response.json();
-      console.log(data);
-      if (data.conflicts) {
+      // console.log(data);
+
+      if (data.isZipValidate === false) {
+        // this.messagePopUp('error', 'Files missing or Invalid zip File', 3000);
         this.messageService.add({
-          severity: 'error',
-          summary: data.msg,
-          life: 4000, // Duration the toast will be visible
+          severity: 'warn',
+          summary: 'Files missing or Invalid zip File',
+          detail: 'Not valid file, check once!',
+          life: 4000,
         });
+        return;
       }
-      if (data.dupKeyErr || data.isZipValidate === false) {
-        this.messageService.add({
-          severity: 'error',
-          summary: data.msg,
-          life: 3000, // Duration the toast will be visible
-        });
-        return;
-      } else if (data.error) {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Try Submitting again',
-          life: 3000, // Duration the toast will be visible
-        });
-        return;
-      } else if (data.idExist) {
-        this.messageService.add({
-          severity: 'error',
-          summary: data.msg,
-          life: 3000, // Duration the toast will be visible
-        });
+      if (data.conflicts || data.dupKeyErr)
+        this.messagePopUp('error', data.msg, 4000);
+      else if (data.error)
+        this.messagePopUp('error', 'Try Submitting again', 3000);
+      else if (data.idExist) {
+        this.messagePopUp('error', data.msg, 4000);
         this.projectService.clearProjectData();
       } else if (!data.idExist && data.nameExist) {
         return true;
@@ -252,7 +267,9 @@ export class ProjectsetupComponent {
           Swal.fire({
             position: 'center',
             icon: 'warning',
-            html: `<span style="font-size: 20px;">${this.getTranslation("PROJECT_IN_USE")}</span>`,
+            html: `<span style="font-size: 20px;">${this.getTranslation(
+              'PROJECT_IN_USE'
+            )}</span>`,
             showConfirmButton: true,
           });
           return;
@@ -273,7 +290,7 @@ export class ProjectsetupComponent {
     if (!this.selectedFile) {
       this.messageService.add({
         severity: 'error',
-        summary: this.getTranslation("NO_FILE_SELECTED"),
+        summary: this.getTranslation('NO_FILE_SELECTED'),
         life: 3000, // Duration the toast will be visible
       });
       return;
@@ -305,8 +322,8 @@ export class ProjectsetupComponent {
     ) {
       this.messageService.add({
         severity: 'error',
-        summary: this.getTranslation("SELECTION_ERROR"),
-        detail: this.getTranslation("FILE_TYPE_INVALID"),
+        summary: this.getTranslation('SELECTION_ERROR'),
+        detail: this.getTranslation('FILE_TYPE_INVALID'),
         life: 3000, // Duration the toast will be visible
       });
       return;
@@ -352,8 +369,8 @@ export class ProjectsetupComponent {
       // Show error toast notification
       this.messageService.add({
         severity: 'error',
-        summary: this.getTranslation("SELECTION_ERROR"),
-        detail: this.getTranslation("SELECTION_ERROR_PROJECT"),
+        summary: this.getTranslation('SELECTION_ERROR'),
+        detail: this.getTranslation('SELECTION_ERROR_PROJECT'),
         life: 3000, // Duration the toast will be visible
       });
     }
@@ -365,8 +382,8 @@ export class ProjectsetupComponent {
     if (!this.projectname && !this.sitename) {
       this.messageService.add({
         severity: 'error',
-        summary: this.getTranslation("VALIDATION_ERROR"),
-        detail: this.getTranslation("FILL_BOTH_FIELDS"),
+        summary: this.getTranslation('VALIDATION_ERROR'),
+        detail: this.getTranslation('FILL_BOTH_FIELDS'),
         life: 3000,
       });
       return;
@@ -375,8 +392,8 @@ export class ProjectsetupComponent {
     if (!this.projectname) {
       this.messageService.add({
         severity: 'error',
-        summary: this.getTranslation("VALIDATION_ERROR"),
-        detail: this.getTranslation("FILL_PROJECT_NAME"),
+        summary: this.getTranslation('VALIDATION_ERROR'),
+        detail: this.getTranslation('FILL_PROJECT_NAME'),
         life: 3000,
       });
       return;
@@ -385,8 +402,8 @@ export class ProjectsetupComponent {
     if (!this.sitename) {
       this.messageService.add({
         severity: 'error',
-        summary: this.getTranslation("VALIDATION_ERROR"),
-        detail: this.getTranslation("PLEASE_FILL_SITE_NAME"),
+        summary: this.getTranslation('VALIDATION_ERROR'),
+        detail: this.getTranslation('PLEASE_FILL_SITE_NAME'),
         life: 3000,
       });
       return;
@@ -407,24 +424,24 @@ export class ProjectsetupComponent {
         if (res.status === 400) {
           this.messageService.add({
             severity: 'error',
-            summary: this.getTranslation("PROJECT_ERROR"),
-            detail: this.getTranslation("PROJECT_NAME_EXISTS"),
+            summary: this.getTranslation('PROJECT_ERROR'),
+            detail: this.getTranslation('PROJECT_NAME_EXISTS'),
             life: 3000,
           });
           return; // Early return to prevent proceeding with parsing the response
         } else if (res.status === 500) {
           this.messageService.add({
             severity: 'error',
-            summary: this.getTranslation("SERVER_ERROR"),
-            detail: this.getTranslation("SERVER_SIDE_ERROR"),
+            summary: this.getTranslation('SERVER_ERROR'),
+            detail: this.getTranslation('SERVER_SIDE_ERROR'),
             life: 3000,
           });
           return;
         } else if (res.status === 403) {
           this.messageService.add({
             severity: 'error',
-            summary: this.getTranslation("AUTHENTICATION_ERROR"),
-            detail: this.getTranslation("TOKEN_INVALID"),
+            summary: this.getTranslation('AUTHENTICATION_ERROR'),
+            detail: this.getTranslation('TOKEN_INVALID'),
             life: 3000,
           });
           return;
@@ -445,11 +462,13 @@ export class ProjectsetupComponent {
 
           this.messageService.add({
             severity: 'success',
-            summary: this.getTranslation("PROJECT_CREATED"),
-            detail: this.getTranslation("PROJECT_CREATED_SUCCESS").replace("{0}", data.project.projectName),
+            summary: this.getTranslation('PROJECT_CREATED'),
+            detail: this.getTranslation('PROJECT_CREATED_SUCCESS').replace(
+              '{0}',
+              data.project.projectName
+            ),
             life: 3000,
           });
-          
         }
         console.log(data);
       })
@@ -457,8 +476,8 @@ export class ProjectsetupComponent {
         console.error(err);
         this.messageService.add({
           severity: 'error',
-          summary: this.getTranslation("FETCH_ERROR"),
-          detail: this.getTranslation("FETCH_PROJECT_ERROR"),
+          summary: this.getTranslation('FETCH_ERROR'),
+          detail: this.getTranslation('FETCH_PROJECT_ERROR'),
           life: 3000,
         });
       });
@@ -468,8 +487,8 @@ export class ProjectsetupComponent {
     if (!this.project || !this.project._id || !this.project.projectName) {
       this.messageService.add({
         severity: 'error',
-        summary: this.getTranslation("NO_PROJECT_SELECTED"),
-        detail: this.getTranslation("PLEASE_SELECT_PROJECT"),
+        summary: this.getTranslation('NO_PROJECT_SELECTED'),
+        detail: this.getTranslation('PLEASE_SELECT_PROJECT'),
         life: 3000,
       });
       return;
@@ -489,9 +508,8 @@ export class ProjectsetupComponent {
         if (!data.exists) {
           this.messageService.add({
             severity: 'error',
-            summary: this.getTranslation("PROJECT_NOT_FOUND"),
-            detail:
-              this.getTranslation("PROJECT_DOES_NOT_EXIST"),
+            summary: this.getTranslation('PROJECT_NOT_FOUND'),
+            detail: this.getTranslation('PROJECT_DOES_NOT_EXIST'),
             life: 3000,
           });
           return;
@@ -516,7 +534,9 @@ export class ProjectsetupComponent {
           Swal.fire({
             position: 'center',
             icon: 'warning',
-            html: `<span style="font-size: 20px;">${this.getTranslation("PROJECT_IN_USE")}</span>`,
+            html: `<span style="font-size: 20px;">${this.getTranslation(
+              'PROJECT_IN_USE'
+            )}</span>`,
             showConfirmButton: true,
           });
           return;
@@ -528,18 +548,20 @@ export class ProjectsetupComponent {
 
         this.messageService.add({
           severity: 'success',
-          summary: this.getTranslation("PROJECT_OPENED"),
-          detail: this.getTranslation("PROJECT_OPENED_SUCCESS").replace("{0}", data.project.projectName),
+          summary: this.getTranslation('PROJECT_OPENED'),
+          detail: this.getTranslation('PROJECT_OPENED_SUCCESS').replace(
+            '{0}',
+            data.project.projectName
+          ),
           life: 3000,
         });
-        
       })
       .catch((err) => {
         console.error(err);
         this.messageService.add({
           severity: 'error',
-          summary: this.getTranslation("FETCH_ERROR"),
-          detail: this.getTranslation("FETCH_PROJECT_ERROR_OPEN"),
+          summary: this.getTranslation('FETCH_ERROR'),
+          detail: this.getTranslation('FETCH_PROJECT_ERROR_OPEN'),
           life: 3000,
         });
       });
