@@ -166,67 +166,68 @@ export class ConfigurationComponent implements AfterViewInit {
     this.paginatorIntl.itemsPerPageLabel =
       this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next(); // Notify paginator about the change
-     this.translationService.currentLanguage$.subscribe(
-      (val) => {
-        this.langSubscription = val;
+    this.translationService.currentLanguage$.subscribe((val) => {
+      this.langSubscription = val;
 
-        let localeMapping: Record<string, string> = {
-          ENG: 'en-IN',
-          JAP: 'ja-JP',
-          FRE: 'fr-FR',
-          GER: 'de-DE'
-        };
-        this.EnvData = this.EnvData.map(map=>{
-          let date = new Date(map.createdAt);    
-          let createdAt = date.toLocaleString(localeMapping[`${this.langSubscription}`] || 'en-IN', {
+      let localeMapping: Record<string, string> = {
+        ENG: 'en-IN',
+        JAP: 'ja-JP',
+        FRE: 'fr-FR',
+        GER: 'de-DE',
+      };
+      this.EnvData = this.EnvData.map((map) => {
+        let date = new Date(map.createdAt);
+        let createdAt = date.toLocaleString(
+          localeMapping[`${this.langSubscription}`] || 'en-IN',
+          {
             month: 'short',
             year: 'numeric',
             day: 'numeric',
             hour: 'numeric',
             minute: 'numeric',
-            hour12: true
-          });
-          
-          map.date = createdAt;
-          
-          return map;
-        })
-        this.filteredEnvData = [...this.EnvData];
-        // this.setPaginatedData();
-        // this.cdRef.detectChanges();
+            hour12: true,
+          }
+        );
 
-        // this.updateHeaderTranslation();
-        this.paginatorIntl.itemsPerPageLabel =
-          this.getTranslation('Items per page');
-        this.paginatorIntl.changes.next();
-        this.activeHeader = this.getTranslation(this.activeButton);
-        this.deleteButtonText = this.getTranslation('Delete');
-        this.editButtonText = this.getTranslation('edit');
-        this.exportButtonText = this.getTranslation('export');
-        this.selectedFileName = this.getTranslation('import_map_file');
-        this.items = [
-          {
-            label: this.getTranslation('Create'),
-            icon: 'pi pi-plus',
-            command: () => this.openImageUploadPopup(),
-            tooltipOptions: {
-              tooltipLabel: this.getTranslation('Create'),
-              tooltipPosition: 'top',
-            },
+        map.date = createdAt;
+
+        return map;
+      });
+      this.filteredEnvData = [...this.EnvData];
+      // this.setPaginatedData();
+      // this.cdRef.detectChanges();
+
+      // this.updateHeaderTranslation();
+      this.paginatorIntl.itemsPerPageLabel =
+        this.getTranslation('Items per page');
+      this.paginatorIntl.changes.next();
+      this.activeHeader = this.getTranslation(this.activeButton);
+      this.deleteButtonText = this.getTranslation('Delete');
+      this.editButtonText = this.getTranslation('edit');
+      this.exportButtonText = this.getTranslation('export');
+      this.selectedFileName = this.getTranslation('import_map_file');
+      this.items = [
+        {
+          label: this.getTranslation('Create'),
+          icon: 'pi pi-plus',
+          command: () => this.openImageUploadPopup(),
+          tooltipOptions: {
+            tooltipLabel: this.getTranslation('Create'),
+            tooltipPosition: 'top',
           },
-          {
-            label: this.getTranslation('Import Map'),
-            icon: 'pi pi-download',
-            command: () => this.openMapImportPopup(),
-            tooltipOptions: {
-              tooltipLabel: this.getTranslation('Import Map'),
-              tooltipPosition: 'top',
-            },
+        },
+        {
+          label: this.getTranslation('Import Map'),
+          icon: 'pi pi-download',
+          command: () => this.openMapImportPopup(),
+          tooltipOptions: {
+            tooltipLabel: this.getTranslation('Import Map'),
+            tooltipPosition: 'top',
           },
-        ];
-        this.cdRef.detectChanges();
-      }
-    );
+        },
+      ];
+      this.cdRef.detectChanges();
+    });
 
     // const rawData = this.projectService.userManagementServiceGet();
     this.items = [
@@ -331,23 +332,25 @@ export class ConfigurationComponent implements AfterViewInit {
         .flatMap((sites: any) => {
           return sites.maps.map((map: any) => {
             let date = new Date(map?.createdAt);
-            
+
             let localeMapping: Record<string, string> = {
               ENG: 'en-IN',
               JAP: 'ja-JP',
               FRE: 'fr-FR',
-              GER: 'de-DE'
+              GER: 'de-DE',
             };
-            
-            let createdAt = date.toLocaleString(localeMapping[`${this.langSubscription}`] || 'en-IN', {
-              month: 'short',
-              year: 'numeric',
-              day: 'numeric',
-              hour: 'numeric',
-              minute: 'numeric',
-              hour12: true
-            });
-            
+
+            let createdAt = date.toLocaleString(
+              localeMapping[`${this.langSubscription}`] || 'en-IN',
+              {
+                month: 'short',
+                year: 'numeric',
+                day: 'numeric',
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true,
+              }
+            );
 
             return {
               id: map.mapId,
@@ -481,6 +484,14 @@ export class ConfigurationComponent implements AfterViewInit {
     this.cancelEditingSite();
   }
 
+  messagePopUp(severity: string, summary: string, life: number) {
+    this.messageService.add({
+      severity: severity,
+      summary: summary,
+      life: life,
+    });
+  }
+
   onFileSelected(event: any) {
     const file = event.target.files[0];
     if (
@@ -491,33 +502,31 @@ export class ConfigurationComponent implements AfterViewInit {
         severity: 'error',
         summary: this.getTranslation('Selection Error'),
         detail: this.getTranslation('File type not valid'),
-        life: 3000, // Duration the toast will be visible
+        life: 3000,
       });
       return;
     }
     if (file) {
-      console.log('File selected:', file.name);
-      this.selectedFileName = file.name; // Update the variable with the file name
-      // restrict only 15 char..!
+      // console.log('File selected:', file.name);
+      this.selectedFileName = file.name;
       if (this.selectedFileName.length > 15)
         this.selectedFileName = this.selectedFileName.substring(0, 15) + '..';
     }
     this.renamedProj = '';
-    let projRename = {
-      isRenamed: this.isRenamed, // false
-      alterName: this.renamedProj, // ""
-    };
-    // this.projectService.setProjectCreated(true); //
-    // this.projectService.setSelectedProject(file.name); //
     this.selectedFile = file;
   }
 
   async importFile() {
     if (!this.selectedFile) {
+      this.messagePopUp(
+        'error',
+        this.getTranslation('No file Selected to Import'),
+        3000
+      );
       this.messageService.add({
         severity: 'error',
         summary: this.getTranslation('No file Selected to Import'),
-        life: 3000, // Duration the toast will be visible
+        life: 3000,
       });
       return;
     }
@@ -553,70 +562,35 @@ export class ConfigurationComponent implements AfterViewInit {
         `http://${environment.API_URL}:${environment.PORT}/dashboard-fs/upload-map`,
         { credentials: 'include', method: 'POST', body: this.form }
       );
-      // if (!response.ok)
-      //   throw new Error(`err with status code of ${response.status}`);
       let data = await response.json();
-      console.log(data);
-      if (data.conflicts) {
+      // console.log(data);
+
+      if (data.isZipValid === false)
         this.messageService.add({
-          severity: 'error',
-          summary: data.msg,
-          life: 4000, // Duration the toast will be visible
+          severity: 'warn',
+          summary: 'Files missing or Invalid zip File',
+          detail: 'Not valid file, check once!',
+          life: 4000,
         });
-      }
-      if (data.dupKeyErr || data.isZipValidate === false) {
-        this.messageService.add({
-          severity: 'error',
-          summary: data.msg,
-          life: 3000, // Duration the toast will be visible
-        });
+
+      if (data.conflicts || data.dupKeyErr) {
+        this.messagePopUp('error', data.msg, 4000);
         return;
       } else if (data.error) {
-        this.messageService.add({
-          severity: 'error',
-          summary: this.getTranslation('Try Submitting again'),
-          life: 3000, // Duration the toast will be visible
-        });
+        this.messagePopUp(
+          'error',
+          this.getTranslation('Try Submitting again'),
+          3000
+        );
         return;
       } else if (data.idExist) {
-        this.messageService.add({
-          severity: 'error',
-          summary: data.msg,
-          life: 3000, // Duration the toast will be visible
-        });
+        this.messagePopUp('error', data.msg, 3000);
       } else if (!data.idExist && data.nameExist) {
         return true;
       } else if (!data.error && !data.conflicts && data.isMapUploaded) {
-        const { mapData } = data;
         this.showImportPopup = false;
-        // let date = new Date(mapData.createdAt);
-        // let createdAt = date.toLocaleString('en-IN', {
-        //   month: 'short',
-        //   year: 'numeric',
-        //   day: 'numeric',
-        //   hour: 'numeric',
-        //   minute: 'numeric',
-        // });
-
-        // let uploadedMap = {
-        //   id: mapData.id,
-        //   mapName: mapData.mapName,
-        //   siteName: mapData.siteName,
-        //   date: createdAt,
-        //   createdAt: mapData.createdAt,
-        // };
-        // this.EnvData.push(uploadedMap);
-        // this.EnvData.sort(
-        //   (a: any, b: any) =>
-        //     new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        // );
-
-        // this.filteredEnvData = [...this.EnvData];
-        // this.paginatedData = [...this.EnvData];
-        // this.cdRef.detectChanges();
-
         this.messageService.add({
-          severity: 'warn',
+          severity: 'success',
           summary: ` ${data.msg}`,
         });
         await this.ngOnInit();
