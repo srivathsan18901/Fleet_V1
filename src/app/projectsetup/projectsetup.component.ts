@@ -239,11 +239,11 @@ export class ProjectsetupComponent {
         return;
       }
       if (data.conflicts || data.dupKeyErr)
-        this.messagePopUp('error', data.msg, 4000);
+        this.messagePopUp('error', this.getTranslation("conflictFieldValues"), 4000);
       else if (data.error)
-        this.messagePopUp('error', 'Try Submitting again', 3000);
+        this.messagePopUp('error', this.getTranslation('Try Submitting again'), 3000);
       else if (data.idExist) {
-        this.messagePopUp('error', data.msg, 4000);
+        this.messagePopUp('error', this.getTranslation("mapExists"), 4000);
         this.projectService.clearProjectData();
       } else if (!data.idExist && data.nameExist) {
         return true;

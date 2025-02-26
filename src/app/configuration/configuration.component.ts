@@ -448,8 +448,7 @@ export class ConfigurationComponent implements AfterViewInit {
         await this.ngOnInit();
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Map/Site Name updated successfully!',
+          detail: this.getTranslation("mapSiteUpdated"),
         });
       }
       if (data.error)
@@ -459,8 +458,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'Failed to edit the map name. Please try again later.',
+        detail:  this.getTranslation("editMapFailed"),
       });
     }
   }
@@ -568,13 +566,13 @@ export class ConfigurationComponent implements AfterViewInit {
       if (data.isZipValid === false)
         this.messageService.add({
           severity: 'warn',
-          summary: 'Files missing or Invalid zip File',
-          detail: 'Not valid file, check once!',
+          summary: this.getTranslation("missingOrInvalidZip"),
+          detail: this.getTranslation("invalidFile"),
           life: 4000,
         });
 
       if (data.conflicts || data.dupKeyErr) {
-        this.messagePopUp('error', data.msg, 4000);
+        this.messagePopUp('error', this.getTranslation("conflictFieldValues"), 4000);
         return;
       } else if (data.error) {
         this.messagePopUp(
@@ -584,14 +582,14 @@ export class ConfigurationComponent implements AfterViewInit {
         );
         return;
       } else if (data.idExist) {
-        this.messagePopUp('error', data.msg, 3000);
+        this.messagePopUp('error', this.getTranslation("projectExists"), 3000);
       } else if (!data.idExist && data.nameExist) {
         return true;
       } else if (!data.error && !data.conflicts && data.isMapUploaded) {
         this.showImportPopup = false;
         this.messageService.add({
           severity: 'success',
-          summary: ` ${data.msg}`,
+          summary: this.getTranslation("mapUploaded"),
         });
         await this.ngOnInit();
       }
@@ -1568,7 +1566,7 @@ export class ConfigurationComponent implements AfterViewInit {
       if (data.isMapExist === false) {
         this.messageService.add({
           severity: 'warn',
-          summary: `${data.msg}`,
+          summary: this.getTranslation("mapAlreadyExists"),
         });
         return false;
       }
@@ -2258,8 +2256,8 @@ export class ConfigurationComponent implements AfterViewInit {
       );
       if (!robotToDelete) {
         this.messageService.add({
-          severity: 'warn',
-          summary: `Robot with ID ${amrId} not found.`,
+          severity: 'error',
+          summary: `${amrId}`,
         });
         return;
       }

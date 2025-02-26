@@ -452,6 +452,40 @@ h2 {
     padding: 1vh 0; /* Increase vertical padding */
   }
 }
+.tooltip {
+  position: absolute;
+  top: -45px;
+  opacity: 0;
+  background-color: rgb(12, 12, 12);
+  width: max-content;
+  color: white;
+  padding: 5px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition-duration: .2s;
+  pointer-events: none;
+  letter-spacing: 0.5px;
+}
+
+.tooltip::before {
+  position: absolute;
+  content: "";
+  width: 10px;
+  height: 10px;
+  background-color: rgb(12, 12, 12);
+  background-size: 1000%;
+  background-position: center;
+  transform: rotate(45deg);
+  top: 90%;
+  transition-duration: .3s;
+}
+
+.DL_Btn:hover .tooltip {
+  opacity: 1;
+  transition-duration: .3s;
+}
 .DL_Btn {
   width: 50px;
   height: 50px;
