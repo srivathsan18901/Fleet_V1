@@ -24,13 +24,13 @@ export class ExportFileService {
   throughputArr: number[] = [0];
   throughputXaxisSeries: string[] = [];
 
-  starvationArr: number[] = [0, 1];
+  starvationArr: number[] = [0];
   starvationXaxisSeries: string[] = [];
 
-  pickAccuracyArr: number[] = [0, 1, 2];
+  pickAccuracyArr: number[] = [0];
   pickAccXaxisSeries: string[] = [];
 
-  errRateArr: number[] = [0, 1, 2, 3];
+  errRateArr: number[] = [0];
   errRateXaxisSeries: string[] = [];
 
   private abortControllers: Map<string, AbortController> = new Map();
@@ -102,7 +102,7 @@ export class ExportFileService {
         //0>>>Throughput
         {
           image: this.URIStrings[0],
-          width: 200,
+          width: 220,
           absolutePosition: { x: 50, y: 315 },
         },
         {
@@ -115,7 +115,7 @@ export class ExportFileService {
         //1>>>Starvation Rate
         {
           image: this.URIStrings[1],
-          width: 200,
+          width: 220,
           absolutePosition: { x: 350, y: 315 },
         },
         {
@@ -128,7 +128,7 @@ export class ExportFileService {
         //2>>>Pick Accuracy
         {
           image: this.URIStrings[2],
-          width: 200,
+          width: 220,
           absolutePosition: { x: 50, y: 505 },
         },
         {
@@ -141,7 +141,7 @@ export class ExportFileService {
         //3>>>Error
         {
           image: this.URIStrings[3],
-          width: 200,
+          width: 220,
           absolutePosition: { x: 350, y: 505 },
         },
         {
