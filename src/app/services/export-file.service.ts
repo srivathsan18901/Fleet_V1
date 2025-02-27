@@ -73,8 +73,7 @@ export class ExportFileService {
   }
   
   async createDocument() {
-    const robisImage = await this.convertSvgToImage(Report_name);
-    console.log(robisImage);
+    const Report_nameImage = await this.convertSvgToImage(Report_name);
     
     this.docDefinition = {
       pageSize: 'A4',
@@ -118,7 +117,7 @@ export class ExportFileService {
           absolutePosition: { x: 535, y: 815 },
         },
         //Report Name
-        { image: robisImage, width: 80, absolutePosition: { x: 230, y: 55 } },
+        { image: Report_nameImage, width: 180, absolutePosition: { x: 230, y: 55 } },
         // {
         //   svg: Report_name,
         //   absolutePosition: { x: 230, y: 55 },
@@ -221,8 +220,7 @@ export class ExportFileService {
         },
       ],
     };
-
-    pdfMake.createPdf(this.docDefinition).download();
+    pdfMake.createPdf(this.docDefinition).open();
   }
 
   async fetchChartData(endpoint: string, timeSpan: string) {
