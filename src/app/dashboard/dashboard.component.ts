@@ -2346,7 +2346,7 @@ export class DashboardComponent implements AfterViewInit {
     const rectWidth = 20;
     const rectHeight = 20;
   
-    ctx.strokeStyle = '#3b82f6'; 
+    ctx.strokeStyle = '#43A047'; 
     ctx.lineWidth = 1;
     ctx.strokeRect(x - rectWidth / 2, y - rectHeight / 2, rectWidth, rectHeight); 
   
@@ -2359,7 +2359,7 @@ export class DashboardComponent implements AfterViewInit {
     ctx.lineTo(-4, 4);
     ctx.lineTo(4, 4); 
     ctx.closePath();
-    ctx.fillStyle = '#3b82f6'
+    ctx.fillStyle = '#43A047'
     ctx.fill();
 
     ctx.restore(); // Restore the context to prevent affecting other drawings
