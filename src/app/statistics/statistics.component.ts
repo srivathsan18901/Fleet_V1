@@ -109,10 +109,16 @@ export class StatisticsComponent {
     if (!this.selectedMap) return;
     // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
     await this.getGrossStatus();
-    if (this.isFleet) this.operationPie = await this.fetchTasksStatus();
+    if (this.isFleet){
+      this.operationPie = await this.fetchTasksStatus();
+      this.exportFileService.taskData = this.operationPie;
+    }
     if (this.isFleet) await this.getTaskNotifications();
     this.taskStatus_interval = setInterval(async () => {
-      if (this.isFleet) this.operationPie = await this.fetchTasksStatus();
+      if (this.isFleet){
+         this.operationPie = await this.fetchTasksStatus();
+         this.exportFileService.taskData = this.operationPie;
+      }
     }, 1000 * 10);
     this.operationActivities = await this.fetchCurrTasksStatus();
     this.filteredOperationActivities = this.operationActivities;

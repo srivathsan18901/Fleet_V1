@@ -4,13 +4,14 @@ import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from './project.service';
 
-import proud from '../../assets/Export/proud.svg';
-import robis from '../../assets/Export/robis.svg';
+import proud from '../../assets/Export/proud.png';
+import robis from '../../assets/Export/robis.png';
 import robis_logo from '../../assets/Export/robis_logo.svg';
 import Report_name from '../../assets/Export/image.png';
-import data from '../../assets/Export/data.svg';
-
-
+import data from '../../assets/Export/data.png';
+import FMS_name from '../../assets/Export/FMS_name.png';
+import Task from '../../assets/Export/Task.png';
+import taskDet from '../../assets/Export/taskDet.png';
 (pdfMake as any).vfs = pdfFonts.vfs;
 
 @Injectable({
@@ -45,6 +46,8 @@ export class ExportFileService {
   errRateArr: number[] = [0];
   errRateXaxisSeries: string[] = [];
 
+  taskData: number[] = [0, 0, 0, 0, 0, 0];
+
   private abortControllers: Map<string, AbortController> = new Map();
 
   constructor(private projectService: ProjectService) {
@@ -74,7 +77,14 @@ export class ExportFileService {
   
   async createDocument() {
     const Report_nameImage = await this.convertSvgToImage(Report_name);
-    
+    const data_img = await this.convertSvgToImage(data);
+    const FMS_name_img = await this.convertSvgToImage(FMS_name);
+    const robis_img = await this.convertSvgToImage(robis);
+    const proud_img = await this.convertSvgToImage(proud);
+    const task_img = await this.convertSvgToImage(Task);
+    const taskDet_img = await this.convertSvgToImage(taskDet);
+
+
     this.docDefinition = {
       pageSize: 'A4',
       pageMargins: [4, 4, 4, 4], // Adjust margins
@@ -95,27 +105,31 @@ export class ExportFileService {
         },
         // "Fleet Management System" - Top Left
         {
-          svg: robis,
+          image: FMS_name_img,
+          width:100,
           absolutePosition: { x: 15, y: 15 },
         },
         // "robis" SVG - Top Right
         {
-          svg: robis_logo,
-          absolutePosition: { x: 520, y: 15 },
+          image: robis_img,
+          width:50,
+          absolutePosition: { x: 530, y: 10 },
         },
         // Footer: "Proud to be part of samvardhana motherson"
         {
-          svg: proud,
+          image: proud_img,
+          width:150,
           absolutePosition: { x: 15, y: 810 },
         },
         // Footer: "Confidential" - Bottom Right
         {
           text: 'Confidential',
-          color: 'red',
+          color: '#DA2128',
           fontSize: 8,
           bold: true,
           absolutePosition: { x: 535, y: 815 },
         },
+
         //Report Name
         { image: Report_nameImage, width: 180, absolutePosition: { x: 230, y: 55 } },
         // {
@@ -126,41 +140,107 @@ export class ExportFileService {
         {
           image: this.donutChartBase64URI,
           width: 300,
-          absolutePosition: { x: 35, y: 125 },
+          absolutePosition: { x: 30, y: 125 },
+        },
+        // Taskname
+        {
+          image: task_img,
+          width:150,
+          absolutePosition: { x: 25, y: 120 },
+        },
+        // Vertical Line
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: 0, y1: 0,
+              x2: 0, y2: 200,  // Adjust the height of the line
+              lineWidth: 2,
+              color: 'black' // Set the color of the line
+            }
+          ],
+          absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
+        },     
+        //Task_Det
+        { image: taskDet_img, width: 110, absolutePosition: { x: 215, y: 150 } },
+        {
+          text: this.taskData[0],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 325, y: 156.5 },
+        },
+        {
+          text: this.taskData[1],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 325, y: 184 },
+        },
+        {
+          text: this.taskData[2],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 325, y: 212 },
+        },
+
+        {
+          text: this.taskData[3],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 325, y: 239  },
+        },
+        {
+          text: this.taskData[4],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 325, y: 267  },
+        },
+        {
+          text: this.taskData[5],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 325, y: 295 },
         },
         //Data
+        { image: data_img, width: 160, absolutePosition: { x: 370, y: 155 } },
+
+        // {
+        //   svg: data,
+        //   width:160,
+        //   absolutePosition: { x: 370, y: 155 },
+        // },        
         {
-          svg: data,
-          width:160,
-          absolutePosition: { x: 370, y: 155 },
+          text: this.systemThroughput + '%',
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 530, y: 165 },
         },
         {
-          text: this.systemThroughput,
+          text: this.systemUptime + '%',
           color: 'black',
-          fontSize: 15,
+          fontSize: 12,
           bold: true,
-          absolutePosition: { x: 530, y: 163 },
+          absolutePosition: { x: 530, y: 198 },
         },
         {
-          text: this.systemUptime,
+          text: this.successRate + '%',
           color: 'black',
-          fontSize: 15,
+          fontSize: 12,
           bold: true,
-          absolutePosition: { x: 530, y: 196 },
-        },
-        {
-          text: this.successRate,
-          color: 'black',
-          fontSize: 15,
-          bold: true,
-          absolutePosition: { x: 530, y: 228 },
+          absolutePosition: { x: 530, y: 230 },
         },
         {
           text: this.responsiveness,
           color: 'black',
-          fontSize: 15,
+          fontSize: 12,
           bold: true,
-          absolutePosition: { x: 530, y: 260 },
+          absolutePosition: { x: 530, y: 262 },
         },
         //0>>>Throughput
         {
@@ -176,6 +256,41 @@ export class ExportFileService {
           bold: true,
           absolutePosition: { x: 30, y: 370 },
         },
+        {
+          text: 'X = Time in Hours     Y = Tasks in Total Number of Picks',
+          color: '#DA2128',
+          fontSize: 8,
+          bold: true,
+          absolutePosition: { x: 200, y: 560 },
+        },
+        {
+          text: 'X = Time in Hours     Y = Tasks in Total Number of Picks',
+          color: '#DA2128',
+          fontSize: 8,
+          bold: true,
+          absolutePosition: { x: 70, y: 775 },
+        },
+        {
+          text: 'X = Time in Hours     Y = Errors',
+          color: '#DA2128',
+          fontSize: 8,
+          bold: true,
+          absolutePosition: { x: 390, y: 775 },
+        },
+        // {
+        //   text: 'X',
+        //   color: '#DA2128',
+        //   fontSize: 8,
+        //   bold: true,
+        //   absolutePosition: { x: 290, y: 530 },
+        // },
+        // {
+        //   text: 'Y',
+        //   color: '#DA2128',
+        //   fontSize: 8,
+        //   bold: true,
+        //   absolutePosition: { x: 30, y: 450 },
+        // },
         //1>>>Starvation Rate
         {
           image: this.URIStrings[1],
