@@ -956,6 +956,14 @@ export class DashboardComponent implements AfterViewInit {
       );
     });
 
+    this.chargeNodes.forEach((station) => {
+      let x = (station.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
+      let y = (station.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+
+      const transformedY = img.height - y;
+      this.drawChargeNode(ctx, x, transformedY, station.pos.yaw, station.id, station.isOccupied);
+    });
+
     if (this.nodeGraphService.getAssignTask()) {
       this.nodes.forEach((node) => {
         const transformedY = img.height - node.nodePosition.y;
@@ -979,6 +987,7 @@ export class DashboardComponent implements AfterViewInit {
       ctx.restore();
       return;
     }
+
     this.nodes.forEach((node) => {
       const transformedY = img.height - node.nodePosition.y;
       this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
@@ -2050,12 +2059,7 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  plotAllRobots(
-    robotsData: any,
-    ctx: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement,
-    mapImage: HTMLImageElement
-  ) {
+  plotAllRobots( robotsData: any, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, mapImage: HTMLImageElement ) {
     // Calculate the scaled image dimensions and center the image on the canvas
     const imgWidth = mapImage.width * this.zoomLevel;
     const imgHeight = mapImage.height * this.zoomLevel;
@@ -2098,7 +2102,6 @@ export class DashboardComponent implements AfterViewInit {
       }
       if (this.nodeGraphService.getLocalize()) {
         // console.log(this.localizePoses);
-
         this.drawnodesonLOC(ctx, mapImage, centerX, centerY, this.zoomLevel);
       }
       if (this.isFleet) {
@@ -2148,11 +2151,7 @@ export class DashboardComponent implements AfterViewInit {
         // Draw the robot on the canvas with updated positions and orientation
         let clr = this.roboIDColor.get(robo.amrId) || 'white';
         this.plotRobo(ctx, robotPosX, robotPosY, yaw, robo.imgState, clr);
-        if (
-          robo.imgState === 'LOADSTATE' ||
-          robo.imgState === 'UNLOADSTATE' ||
-          robo.payload
-        ) {
+        if ( robo.imgState === 'LOADSTATE' || robo.imgState === 'UNLOADSTATE' || robo.payload ) {
           this.plotRack(
             ctx,
             robotPosX - (this.rackSize * this.zoomLevel) / 2,
@@ -2334,6 +2333,42 @@ export class DashboardComponent implements AfterViewInit {
       const scaledY = (img.height - pos.y) * zoomLevel; // Flip Y-axis and scale
       this.drawLOCNode(ctx, centerX + scaledX, centerY + scaledY, pos.yaw,  '-1');
     });
+  }
+
+  chargeNodes = [
+    { id: "A1", isOccupied: true, pos:{ x: 14, y: 1, yaw: Math.PI / 4} },
+    { id: "A2", isOccupied: false, pos:{ x: 22, y: 2, yaw: Math.PI / 4} },
+    { id: "A3", isOccupied: true, pos:{ x: 23, y: 3, yaw: Math.PI / 4} }
+  ];
+  
+
+  drawChargeNode(ctx: CanvasRenderingContext2D, x: number, y: number,yaw: number, id: string, isOccupied:boolean){
+    const rectWidth = 20;
+    const rectHeight = 20;
+  
+    ctx.strokeStyle = '#3b82f6'; 
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x - rectWidth / 2, y - rectHeight / 2, rectWidth, rectHeight); 
+  
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(-(yaw-(Math.PI/2)));
+
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(-4, 4);
+    ctx.lineTo(4, 4); 
+    ctx.closePath();
+    ctx.fillStyle = '#3b82f6'
+    ctx.fill();
+
+    ctx.restore(); // Restore the context to prevent affecting other drawings
+
+    return; // Skip the rest of the function as localization uses a rectangle
+  }
+
+  moveToCharge(){
+    
   }
   drawNodesAndEdges(
     ctx: CanvasRenderingContext2D,

@@ -664,50 +664,51 @@
       </svg>
       {{ updatedrobo?.isInitialized ? getTranslation('releaseRobot') : getTranslation('initializeRobot') }}
     </button>
-    <button (click)="localize()" *ngIf="isFleet"
-      class="cursor-pointer bg-white relative inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-[#F5F5F5] hover:text-[#60A5FA] h-9 rounded-md px-3"
+
+    <button (click)="localize()" *ngIf="isFleetUp"
+    class="cursor-pointer bg-white relative inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-[#F5F5F5] hover:text-[#60A5FA] h-9 rounded-md px-3"
     >
-      <svg
-        class="lucide lucide-newspaper text-blue-400 dark:text-blue-600"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="2"
-        stroke="#60A5FA"
-        fill="none"
-        viewBox="0 0 24 24"
-        height="22"
-        width="22"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"
-        ></path>
-        <path d="M18 14h-8"></path>
-        <path d="M15 18h-5"></path>
-        <path d="M10 6h8v4h-8V6Z"></path>
-      </svg>
-      {{getTranslation("Localize Robot")}}
-    </button>
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <rect width="24" height="24" fill="url(#pattern0_3209_1907)"/>
+      <defs>
+      <pattern id="pattern0_3209_1907" patternContentUnits="objectBoundingBox" width="1" height="1">
+      <use xlink:href="#image0_3209_1907" transform="scale(0.01)"/>
+      </pattern>
+      <image id="image0_3209_1907" width="100" height="100" preserveAspectRatio="none" xlink:href="data:image/png;base64,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"/>
+      </defs>
+    </svg>
+
+    {{getTranslation("Localize Robot")}}
+  </button>
+
+    <button (click)="moveToCharge()" 
+    class="cursor-pointer bg-white relative inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-[#F5F5F5] hover:text-[#43A047] h-9 rounded-md px-3"
+    >
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <rect width="24" height="24" fill="url(#pattern0_3209_1910)"/>
+      <defs>
+      <pattern id="pattern0_3209_1910" patternContentUnits="objectBoundingBox" width="1" height="1">
+      <use xlink:href="#image0_3209_1910" transform="scale(0.01)"/>
+      </pattern>
+      <image id="image0_3209_1910" width="100" height="100" preserveAspectRatio="none" xlink:href="data:image/png;base64,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"/>
+      </defs>
+      </svg>      
+
+    {{getTranslation("moveToCharge")}}
+  </button>
+
     <button (click)="toggleShowRoboPath()"
       class="cursor-pointer bg-white relative inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-[#F5F5F5] hover:text-[#FACC14] h-9 rounded-md px-3"
     >
-      <svg
-        class="lucide lucide-sticky-note text-yellow-400 dark:text-yellow-600"
-        stroke-linejoin="round"
-        stroke-linecap="round"
-        stroke-width="2"
-        stroke="#FACC14"
-        fill="none"
-        viewBox="0 0 24 24"
-        height="22"
-        width="22"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          d="M15.5 3H5a2 2 0 0 0-2 2v14c0 1.1.9 2 2 2h14a2 2 0 0 0 2-2V8.5L15.5 3Z"
-        ></path>
-        <path d="M15 3v6h6"></path>
-      </svg>
+    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <rect x="0.350098" y="0.170044" width="24" height="24" fill="url(#pattern0_3209_1909)"/>
+      <defs>
+      <pattern id="pattern0_3209_1909" patternContentUnits="objectBoundingBox" width="1" height="1">
+      <use xlink:href="#image0_3209_1909" transform="scale(0.01)"/>
+      </pattern>
+      <image id="image0_3209_1909" width="100" height="100" preserveAspectRatio="none" xlink:href="data:image/png;base64,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"/>
+      </defs>
+      </svg>           
       {{ getTranslation('showPath') }}
     </button>
   
