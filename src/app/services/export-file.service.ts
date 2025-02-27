@@ -207,7 +207,7 @@ export class ExportFileService {
           absolutePosition: { x: 325, y: 295 },
         },
         //Data
-        { image: data_img, width: 160, absolutePosition: { x: 370, y: 155 } },
+        { image: data_img, width: 160, absolutePosition: { x: 370, y: 165 } },
 
         // {
         //   svg: data,
@@ -219,28 +219,28 @@ export class ExportFileService {
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 530, y: 165 },
+          absolutePosition: { x: 535, y: 176 },
         },
         {
           text: this.systemUptime + '%',
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 530, y: 198 },
+          absolutePosition: { x: 535, y: 207 },
         },
         {
           text: this.successRate + '%',
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 530, y: 230 },
+          absolutePosition: { x: 535, y: 240 },
         },
         {
           text: this.responsiveness,
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 530, y: 262 },
+          absolutePosition: { x: 535, y: 272 },
         },
         //0>>>Throughput
         {
