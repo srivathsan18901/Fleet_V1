@@ -257,18 +257,18 @@ export class ExportFileService {
           absolutePosition: { x: 30, y: 370 },
         },
         {
-          text: 'X = Time in Hours     Y = Tasks in Total Number of Picks',
+          text: 'X = Time in Hours     Y = Number of Tasks',
           color: '#DA2128',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 200, y: 560 },
+          absolutePosition: { x: 230, y: 560 },
         },
         {
-          text: 'X = Time in Hours     Y = Tasks in Total Number of Picks',
+          text: 'X = Time in Hours     Y = Number of Picks',
           color: '#DA2128',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 70, y: 775 },
+          absolutePosition: { x: 100, y: 775 },
         },
         {
           text: 'X = Time in Hours     Y = Errors',
