@@ -1475,7 +1475,6 @@ export class DashboardComponent implements AfterViewInit {
           const nodeX = x;
           const nodeY = y;
           const nodeSize = 20; // Charge node size
-          console.log("hey",imgX,imgY,nodeX,nodeY,node.pos.x,node.pos.y);
         
           if (
               imgX >= nodeX - (nodeSize / 2) &&
@@ -1551,9 +1550,9 @@ export class DashboardComponent implements AfterViewInit {
             const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
             const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
 
-            robottooltip.style.left = `${robotScreenX}px`; // Slightly to the left of the robot's X position
-            robottooltip.style.top = `${robotScreenY - 80}px`; // Above the robot's Y position
-            robottooltip.innerHTML = `       <div class="ATactions">
+            robottooltip.style.left = `${event.clientX-90}px`; // Slightly to the left of the robot's X position
+            robottooltip.style.top = `${event.clientY-30}px`; // Above the robot's Y position
+            robottooltip.innerHTML = `<div class="ATactions">
                         <div><label class="idlabel">Robot ID: ${robotId}</label></div>
                         <div><label class="idlabel">Battery: ${battery}%</label></div>
                         <div><label class="idlabel">Task: ${taskId}</label></div>
@@ -1618,13 +1617,6 @@ export class DashboardComponent implements AfterViewInit {
       chargeTooltip.style.display = 'none';
     });
   }
-
-  // List of robots
-  robots = [
-    { name: 'Robot 1', enabled: false },
-    { name: 'Robot 2', enabled: false },
-    { name: 'Robot 3', enabled: false },
-  ];
 
   // Toggle the dropdown menu
   toggleDropdown() {
