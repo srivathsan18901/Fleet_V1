@@ -261,7 +261,14 @@ export class ExportFileService {
           color: '#DA2128',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 230, y: 560 },
+          absolutePosition: { x: 100, y: 560 },
+        },
+        {
+          text: 'X = Time in Hours     Y = Number of Tasks',
+          color: '#DA2128',
+          fontSize: 8,
+          bold: true,
+          absolutePosition: { x: 370, y: 560 },
         },
         {
           text: 'X = Time in Hours     Y = Number of Picks',

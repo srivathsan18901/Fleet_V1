@@ -224,6 +224,8 @@
       </div>
     </div>
     <!-- dashboard.component.html -->
+    <div id="chargeTooltip" class="chargeTooltip" style="display: none; position: absolute; background: rgba(0, 0, 0, 0.7); color: white; padding: 5px; border-radius: 5px; font-size: 12px;"></div>
+    
     <div
       id="Pos_tooltip"
       style="
@@ -255,6 +257,8 @@
         font-weight: bold;
       "
     ></div>
+
+
     <!-- <canvas *ngIf="showModelCanvas" id="modelCanvas" (mousedown)="panStartModelCanvas($event)"></canvas> -->
     <div *ngIf="canvasloader" class="canvas-loader">
       <div *ngIf="canvasloader" class="loader-background">

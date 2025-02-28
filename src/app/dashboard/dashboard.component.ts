@@ -1444,6 +1444,11 @@ export class DashboardComponent implements AfterViewInit {
 
   addMouseMoveListener(canvas: HTMLCanvasElement) {
     const tooltip = document.getElementById('Pos_tooltip')!;
+    const chargeTooltip = document.getElementById('chargeTooltip')!;
+    if (!chargeTooltip) {
+      console.error("chargeTooltip element not found!");
+      return;
+    }    
     const robottooltip = document.getElementById('roboTooltip')!;
     canvas.addEventListener('mousemove', (event) => {
       const rect = canvas.getBoundingClientRect();
@@ -1454,13 +1459,54 @@ export class DashboardComponent implements AfterViewInit {
       this.offsetY = this.nodeGraphService.getOffsetY();
       this.zoomLevel = this.nodeGraphService.getZoomLevel();
       // Adjust for zoom and pan
-      const imgX =
-        (mouseX - this.mapImageX + this.offsetX - this.offsetX) /
-        this.zoomLevel;
-      const imgY =
-        (transY - this.mapImageY + this.offsetY + this.offsetY) /
-        this.zoomLevel;
+      const imgX = (mouseX - this.mapImageX + this.offsetX - this.offsetX) / this.zoomLevel;
+      const imgY = (transY - this.mapImageY + this.offsetY + this.offsetY) / this.zoomLevel;
       this.draggingRobo = this.nodeGraphService.getDraggingRobo();
+
+      let isOverChargeNode = false;
+      let chargeNodeId = null;
+      let isOccupied = false;
+
+      // Check if mouse is over any charge node
+      for (let node of this.chargeNodes) {
+          
+          let x = (node.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
+          let y = (node.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+          const nodeX = x;
+          const nodeY = y;
+          const nodeSize = 20; // Charge node size
+          console.log("hey",imgX,imgY,nodeX,nodeY,node.pos.x,node.pos.y);
+        
+          if (
+              imgX >= nodeX - (nodeSize / 2) &&
+              imgX <= nodeX + (nodeSize / 2) &&
+              imgY >= nodeY - (nodeSize / 2) &&
+              imgY <= nodeY + (nodeSize / 2)
+          ) {            
+              isOverChargeNode = true;
+              chargeNodeId = node.id;
+              isOccupied = node.isOccupied;
+              const chargeNodeScreenX = nodeX * this.zoomLevel + this.mapImageX;
+              const chargeNodeScreenY = (this.mapImageHeight / this.zoomLevel - nodeY) * this.zoomLevel + this.mapImageY;
+              console.log("Charge Tooltip Position:", chargeNodeScreenX, chargeNodeScreenY);
+
+              chargeTooltip.style.left = `${event.clientX-90}px`;
+              chargeTooltip.style.top = `${event.clientY-30}px`;
+              
+              chargeTooltip.innerHTML = `
+                  <div>
+                      <b>ID:</b> ${chargeNodeId} <br>
+                      <b>Occupied:</b> ${isOccupied ? 'Yes' : 'No'}
+                  </div>
+              `;
+              chargeTooltip.style.display = 'block';
+              break;
+          }
+      }
+      if (!isOverChargeNode) {
+          chargeTooltip.style.display = 'none';
+      }
+
       if (
         this.draggingRobo &&
         this.isDragging &&
@@ -1472,13 +1518,8 @@ export class DashboardComponent implements AfterViewInit {
         let newY = (mouseY - this.mapImageY) / this.zoomLevel;
         // Update the position of the robot being dragged
         newX = Math.max(0, Math.min(newX, this.mapImageWidth / this.zoomLevel));
-        newY = Math.max(
-          0,
-          Math.min(newY, this.mapImageHeight / this.zoomLevel)
-        );
+        newY = Math.max( 0, Math.min(newY, this.mapImageHeight / this.zoomLevel) );
 
-        // console.log("mouseXY",newX, newY);
-        // Update the robot's position
         this.draggingRobo.pos.x = newX;
         this.draggingRobo.pos.y = newY;
 
@@ -1507,13 +1548,8 @@ export class DashboardComponent implements AfterViewInit {
             battery = robo.battery ? robo.battery.toFixed(2) : 0;
             taskId = robo.current_task ? robo.current_task : 'N/A';
             // Position the robot tooltip above the robot
-            const robotScreenX =
-              roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
-            const robotScreenY =
-              (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) *
-                this.zoomLevel +
-              this.offsetY +
-              this.mapImageY; // Y position on the canvas
+            const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
+            const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
 
             robottooltip.style.left = `${robotScreenX}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${robotScreenY - 80}px`; // Above the robot's Y position
@@ -1523,7 +1559,7 @@ export class DashboardComponent implements AfterViewInit {
                         <div><label class="idlabel">Task: ${taskId}</label></div>
                     </div>`;
             robottooltip.style.display = 'block';
-            break; // Exit the loop after finding the first robot
+            break;
           }
         }
       }
@@ -1557,7 +1593,7 @@ export class DashboardComponent implements AfterViewInit {
         }
       }
       if (!isOverRobot || robotId === null) {
-        robottooltip.style.display = 'none'; // Hide tooltip when not over a robot
+        robottooltip.style.display = 'none';
       }
       const isInsideMap =
         imgX >= 0 &&
@@ -1579,6 +1615,7 @@ export class DashboardComponent implements AfterViewInit {
 
     canvas.addEventListener('mouseleave', () => {
       tooltip.style.display = 'none';
+      chargeTooltip.style.display = 'none';
     });
   }
 
@@ -2336,35 +2373,55 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   chargeNodes = [
-    { id: "A1", isOccupied: true, pos:{ x: 14, y: 1, yaw: Math.PI / 4} },
-    { id: "A2", isOccupied: false, pos:{ x: 22, y: 2, yaw: Math.PI / 4} },
-    { id: "A3", isOccupied: true, pos:{ x: 23, y: 3, yaw: Math.PI / 4} }
-  ];
-  
+    { id: "A1", isOccupied: true, pos:{ x: 14, y: 1, yaw: Math.PI / 2} },
+    { id: "A2", isOccupied: false, pos:{ x: 4, y: 0, yaw: Math.PI / 5} },
+    { id: "A3", isOccupied: false, pos:{ x: 20, y: -8, yaw: Math.PI / 2} },
+    { id: "A4", isOccupied: true, pos:{ x: 23, y: 3, yaw: Math.PI / 6} }
+  ]; 
 
-  drawChargeNode(ctx: CanvasRenderingContext2D, x: number, y: number,yaw: number, id: string, isOccupied:boolean){
+  drawChargeNode(ctx: CanvasRenderingContext2D, x: number, y: number, yaw: number, id: string, isOccupied: boolean) {
     const rectWidth = 20;
     const rectHeight = 20;
-  
-    ctx.strokeStyle = '#43A047'; 
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x - rectWidth / 2, y - rectHeight / 2, rectWidth, rectHeight); 
-  
+    const borderRadius = 5; // Border radius of 10px (5 per corner for 20px size)
+
+    // Choose color based on occupancy
+    const color = isOccupied ? '#ff7373' : '#43A047'; // Red if occupied, Green otherwise
+
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(-(yaw-(Math.PI/2)));
+    ctx.rotate(-(yaw - Math.PI / 2));
 
+    // Draw rounded square
     ctx.beginPath();
-    ctx.moveTo(0, -6);
-    ctx.lineTo(-4, 4);
-    ctx.lineTo(4, 4); 
+    ctx.moveTo(-rectWidth / 2 + borderRadius, -rectHeight / 2);
+    ctx.lineTo(rectWidth / 2 - borderRadius, -rectHeight / 2);
+    ctx.quadraticCurveTo(rectWidth / 2, -rectHeight / 2, rectWidth / 2, -rectHeight / 2 + borderRadius);
+    ctx.lineTo(rectWidth / 2, rectHeight / 2 - borderRadius);
+    ctx.quadraticCurveTo(rectWidth / 2, rectHeight / 2, rectWidth / 2 - borderRadius, rectHeight / 2);
+    ctx.lineTo(-rectWidth / 2 + borderRadius, rectHeight / 2);
+    ctx.quadraticCurveTo(-rectWidth / 2, rectHeight / 2, -rectWidth / 2, rectHeight / 2 - borderRadius);
+    ctx.lineTo(-rectWidth / 2, -rectHeight / 2 + borderRadius);
+    ctx.quadraticCurveTo(-rectWidth / 2, -rectHeight / 2, -rectWidth / 2 + borderRadius, -rectHeight / 2);
     ctx.closePath();
-    ctx.fillStyle = '#43A047'
+
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Draw battery symbol inside the square
+    ctx.beginPath();
+    ctx.rect(-6, -4, 12, 8); // Battery body
+    ctx.fillStyle = color;
     ctx.fill();
 
-    ctx.restore(); // Restore the context to prevent affecting other drawings
+    ctx.fillRect(5, -2, 3, 4); // Battery positive terminal
 
-    return; // Skip the rest of the function as localization uses a rectangle
+    ctx.fillRect(10, 2, 3, 4);
+    ctx.fillRect(10, -6, 3, 4);
+
+    ctx.restore(); // Restore context
+
+    return;
   }
 
   moveToCharge(){

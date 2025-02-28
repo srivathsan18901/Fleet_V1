@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { TranslationService } from '../../../services/translation.service';
 import { environment } from '../../../../environments/environment.development';
 import { ProjectService } from '../../../services/project.service';
+import { MessageService, MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-robot',
@@ -149,7 +150,8 @@ export class RobotComponent {
 
   constructor(
     private translationService: TranslationService,
-    private projectService: ProjectService
+    private projectService: ProjectService,    
+    private messageService: MessageService,
   ) {}
 
   async ngOnInit() {
@@ -184,7 +186,9 @@ export class RobotComponent {
   getTranslation(key: string) {
     return this.translationService.getEnvmapTranslation(key);
   }
-
+  getConfigTranslation(key: string) {
+    return this.translationService.getConfigurationTranslation(key);
+  }
   toggleMOVEndPointOrientation() {
     if (this.moveParams.endPointOrientation) {
       this.moveParams.endPointOrientation = 1;
@@ -293,12 +297,24 @@ export class RobotComponent {
     let data = await response.json();
 
     if (data.error) {
-      alert('Error while configuring Robot Params');
+      this.messageService.add({
+        severity: 'error',
+        detail: this.getConfigTranslation("robotConfigError"),
+      });
       return;
     }
 
     if (data.isRoboParamsConfigured) {
-      alert('Robot parameters configured!');
-    } else alert('Robot parameters not configured yet!');
+      this.messageService.add({
+        severity: 'success',
+        detail: this.getConfigTranslation("robotConfigSuccess"),
+      });
+    }
+    else{
+      this.messageService.add({
+        severity: 'warn',
+        detail: this.getConfigTranslation("robotConfigNotSet"),
+      });
+    }
   }
 }
