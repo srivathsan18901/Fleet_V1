@@ -858,8 +858,7 @@ export class DashboardComponent implements AfterViewInit {
         img.onload = () => {
           // Set canvas dimensions based on its container
           canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-          canvas.height =
-            canvas.parentElement?.clientHeight || window.innerHeight;
+          canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
           this.zoomLevel = this.nodeGraphService.getZoomLevel();
 
           // Calculate the scaled image dimensions
@@ -1512,8 +1511,8 @@ export class DashboardComponent implements AfterViewInit {
 
           chargeTooltip.innerHTML = `
                   <div>
-                      <b>ID:</b> ${chargeNodeId} <br>
-                      <b>Occupied:</b> ${isOccupied ? 'Yes' : 'No'}
+                      <b>${this.getTranslation("stationId")} :</b> ${chargeNodeId} <br>
+                      <b>${this.getTranslation("occupied")} :</b> ${isOccupied ? this.getTranslation('yes') : this.getTranslation('no')}
                   </div>
               `;
           chargeTooltip.style.display = 'block';
@@ -1579,9 +1578,9 @@ export class DashboardComponent implements AfterViewInit {
             robottooltip.style.left = `${event.clientX - 90}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${event.clientY - 30}px`; // Above the robot's Y position
             robottooltip.innerHTML = `<div class="ATactions">
-                        <div><label class="idlabel">Robot ID: ${robotId}</label></div>
-                        <div><label class="idlabel">Battery: ${battery}%</label></div>
-                        <div><label class="idlabel">Task: ${taskId}</label></div>
+                        <div><label class="idlabel">${this.getTranslation("robotID")} : ${robotId}</label></div>
+                        <div><label class="idlabel">${this.getTranslation("battery")} : ${battery}%</label></div>
+                        <div><label class="idlabel">${this.getTranslation("task")} : ${taskId}</label></div>
                     </div>`;
             robottooltip.style.display = 'block';
             break;

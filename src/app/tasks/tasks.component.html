@@ -31,7 +31,8 @@
       </div>
       <div style="display: flex ; position: absolute; gap: 10px;top: 140px; right: 20px;">
       <div *ngIf="isButtonDisabled">
-        <button class="AT-btn" (click)="toggleAssignTask()" ><img src="../../assets/Task.svg" style="float:left;margin-right:0.5em">{{ getTranslation('assign_task') }}</button>
+        <button class="AT-btn" (click)="toggleAssignTask()"> {{ getTranslation('assign_task') }} </button>
+       <!-- <button class="AT-btn" (click)="toggleAssignTask()" > <img src="../../assets/Task.svg" style="float:left;margin-right:0.5em">{{ getTranslation('assign_task') }}</button> -->
       </div>
       <div class="filter">
         <img src="../../assets/filter.svg" class="filter-img">

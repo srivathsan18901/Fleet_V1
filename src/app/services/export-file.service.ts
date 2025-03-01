@@ -3,15 +3,16 @@ import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from './project.service';
-
+import { TranslationService } from '../services/translation.service';
 import proud from '../../assets/Export/proud.png';
 import robis from '../../assets/Export/robis.png';
 import robis_logo from '../../assets/Export/robis_logo.svg';
-import Report_name from '../../assets/Export/image.png';
+import Report_name from '../../assets/Export/logo.png';
 import data from '../../assets/Export/data.png';
 import FMS_name from '../../assets/Export/FMS_name.png';
 import Task from '../../assets/Export/Task.png';
 import taskDet from '../../assets/Export/taskDet.png';
+import blank from '../../assets/Export/blank.png';
 (pdfMake as any).vfs = pdfFonts.vfs;
 
 @Injectable({
@@ -50,7 +51,7 @@ export class ExportFileService {
 
   private abortControllers: Map<string, AbortController> = new Map();
 
-  constructor(private projectService: ProjectService) {
+  constructor(private projectService: ProjectService,private translationService: TranslationService,) {
     this.selectedMap = this.projectService.getMapData();
   }
   private async convertSvgToImage(url: string): Promise<string> {
@@ -74,7 +75,9 @@ export class ExportFileService {
       };
       });
   }
-  
+  getTranslation(key: string) {
+    return this.translationService.getStatisticsTranslation(key);
+  }
   async createDocument() {
     const Report_nameImage = await this.convertSvgToImage(Report_name);
     const data_img = await this.convertSvgToImage(data);
@@ -83,6 +86,7 @@ export class ExportFileService {
     const proud_img = await this.convertSvgToImage(proud);
     const task_img = await this.convertSvgToImage(Task);
     const taskDet_img = await this.convertSvgToImage(taskDet);
+    const blank_img = await this.convertSvgToImage(blank);
 
 
     this.docDefinition = {
@@ -123,15 +127,29 @@ export class ExportFileService {
         },
         // Footer: "Confidential" - Bottom Right
         {
-          text: 'Confidential',
+          text: this.getTranslation("confidential"),
           color: '#DA2128',
-          fontSize: 8,
+          fontSize: 10,
           bold: true,
-          absolutePosition: { x: 535, y: 815 },
+          absolutePosition: { x: 530, y: 815 },
         },
 
         //Report Name
-        { image: Report_nameImage, width: 180, absolutePosition: { x: 230, y: 55 } },
+        { image: Report_nameImage, width: 50, absolutePosition: { x: 230, y: 55 } },
+        {
+          text: this.getTranslation("taskStatistics"),
+          color: '#DA2128',
+          fontSize: 15,
+          bold: true,
+          absolutePosition: { x: 280, y: 60 },
+        },
+        {
+          text: this.getTranslation("report"),
+          color: '#DA2128',
+          fontSize: 15,
+          bold: true,
+          absolutePosition: { x: 280, y: 82 },
+        },
         // {
         //   svg: Report_name,
         //   absolutePosition: { x: 230, y: 55 },
@@ -144,67 +162,120 @@ export class ExportFileService {
         },
         // Taskname
         {
-          image: task_img,
-          width:150,
-          absolutePosition: { x: 25, y: 120 },
+          text: this.getTranslation("taskDetails"),
+          fontSize: 15,
+          bold: true,
+          color: 'black',
+          background: 'white',
+          absolutePosition: { x: 25, y: 125 },
+          margin: [10, 5, 10, 5] 
         },
+        // {
+        //   image: task_img,
+        //   width:150,
+        //   absolutePosition: { x: 25, y: 120 },
+        // },
         // Vertical Line
         {
           canvas: [
             {
               type: 'line',
-              x1: 0, y1: 0,
-              x2: 0, y2: 200,  // Adjust the height of the line
-              lineWidth: 2,
+              x1: 15, y1: 0,
+              x2: 15, y2: 200,  // Adjust the height of the line
+              lineWidth: 1,
               color: 'black' // Set the color of the line
             }
           ],
           absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
         },     
         //Task_Det
-        { image: taskDet_img, width: 110, absolutePosition: { x: 215, y: 150 } },
+        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 210, y: 130 } }, 
+        { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 140 } },   
+        
+        {
+          text: this.getTranslation("completed")+"  "+"-",
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 245, y: 148.5 },
+        },
+        {
+          text: this.getTranslation("assigned")+"  "+"-",
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 245, y: 178 },
+        },
+        {
+          text: this.getTranslation("inProgress")+"  "+"-",
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 245, y: 208 },
+        },
+        {
+          text: this.getTranslation("toDo")+"  "+"-",
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 245, y: 238  },
+        },
+        {
+          text: this.getTranslation("Error")+"  "+"-",
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 245, y: 268  },
+        },
+        {
+          text: this.getTranslation("cancelled")+"  "+"-",
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 245, y: 297 },
+        },
+
         {
           text: this.taskData[0],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 325, y: 156.5 },
+          absolutePosition: { x: 345, y: 148.5 },
         },
         {
           text: this.taskData[1],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 325, y: 184 },
+          absolutePosition: { x: 345, y: 178 },
         },
         {
           text: this.taskData[2],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 325, y: 212 },
+          absolutePosition: { x: 345, y: 208 },
         },
-
         {
           text: this.taskData[3],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 325, y: 239  },
+          absolutePosition: { x: 345, y: 238  },
         },
         {
           text: this.taskData[4],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 325, y: 267  },
+          absolutePosition: { x: 345, y: 268  },
         },
         {
           text: this.taskData[5],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 325, y: 295 },
+          absolutePosition: { x: 345, y: 297 },
         },
         //Data
         { image: data_img, width: 160, absolutePosition: { x: 370, y: 165 } },
@@ -213,34 +284,62 @@ export class ExportFileService {
         //   svg: data,
         //   width:160,
         //   absolutePosition: { x: 370, y: 155 },
-        // },        
+        // },  
+        {
+          text:this.getTranslation("systemThroughput") + '-',
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 410, y: 176 },
+        },
+        {
+          text:this.getTranslation("systemUptime") + '-',
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 410, y: 207 },
+        },
+        {
+          text:this.getTranslation("successRate") + '-',
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 410, y: 240 },
+        },
+        {
+          text:this.getTranslation("responsiveness") + '-',
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 410, y: 272 },
+        },      
         {
           text: this.systemThroughput + '%',
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 535, y: 176 },
+          absolutePosition: { x: 540, y: 176 },
         },
         {
           text: this.systemUptime + '%',
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 535, y: 207 },
+          absolutePosition: { x: 540, y: 207 },
         },
         {
           text: this.successRate + '%',
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 535, y: 240 },
+          absolutePosition: { x: 540, y: 240 },
         },
         {
           text: this.responsiveness,
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 535, y: 272 },
+          absolutePosition: { x: 540, y: 272 },
         },
         //0>>>Throughput
         {
@@ -250,7 +349,7 @@ export class ExportFileService {
           absolutePosition: { x: 30, y: 380 },
         },
         {
-          text: 'Throughput',
+          text: this.getTranslation("Throughput"),
           color: 'black',
           fontSize: 12,
           bold: true,
@@ -306,7 +405,7 @@ export class ExportFileService {
           absolutePosition: { x: 305, y: 380 },
         },
         {
-          text: 'Starvation Rate',
+          text: this.getTranslation("starvationRate"),
           color: 'black',
           fontSize: 12,
           bold: true,
@@ -320,7 +419,7 @@ export class ExportFileService {
           absolutePosition: { x: 30, y: 590 },
         },
         {
-          text: 'Pick Accuracy',
+          text: this.getTranslation("pickAccuracy"),
           color: 'black',
           fontSize: 12,
           bold: true,
@@ -334,7 +433,7 @@ export class ExportFileService {
           absolutePosition: { x: 305, y: 590 },
         },
         {
-          text: 'Error',
+          text: this.getTranslation("errorRate"),
           color: 'black',
           fontSize: 12,
           bold: true,

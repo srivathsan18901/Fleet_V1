@@ -554,20 +554,34 @@
 .iconWithLabel .sf-icon-payment:before { content: "\e706"; }
 .iconWithLabel .sf-icon-success:before { content: "\e715"; }
 
-.AT-btn{
-  border-radius: 8px;
-  display: flex ;
-  padding: 5px;
-  /* position: absolute;
-  top: 137px;
-  right: 350px; */
-  height: 46px;
-  background-color: #f0453f;
-  color: #ffffff;
-  font-size: 15px;
-  filter: drop-shadow(5px 2px 2px rgba(130, 126, 126, 0.404));
-  align-items: center;
+.AT-btn {
+  padding: 1.1em;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 2.2px;
+  font-weight: bold;
+  color: #ff7373;
+  background-color: #fff;
+  border: none;
+  border-radius: 45px;
+  border: 1px solid #ff7373;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease 0s;
+  cursor: pointer;
+  outline: none;
 }
+
+.AT-btn:hover {
+  background-color: #ff7373;
+  box-shadow: 0px 15px 20px #ff737354;
+  color: #fff;
+  transform: translateY(-7px);
+}
+
+.AT-btn:active {
+  transform: translateY(-1px);
+}
+
 .switch-container {
   display: flex;
   align-items: center; /* Vertical alignment */
