@@ -23,6 +23,7 @@ import { HeatmapService } from '../services/heatmap-service.service';
 import { Router } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { response } from 'express';
 
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
@@ -318,7 +319,9 @@ export class DashboardComponent implements AfterViewInit {
         projectId: this.currentProject._id,
       };
       await this.pauseFleet(bodyData);
+      await this.fetchChargePositions();
     }
+    // await this.fetchChargePositions();
 
     // console.log(this.projectService.getInitializeMapSelected(),'dash board')
     if (this.projectService.getInitializeMapSelected() == 'true') {
@@ -961,7 +964,14 @@ export class DashboardComponent implements AfterViewInit {
       let y = (station.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
 
       const transformedY = img.height - y;
-      this.drawChargeNode(ctx, x, transformedY, station.pos.yaw, station.id, station.isOccupied);
+      this.drawChargeNode(
+        ctx,
+        x,
+        transformedY,
+        station.pos.yaw,
+        station.id,
+        station.isOccupied
+      );
     });
 
     if (this.nodeGraphService.getAssignTask()) {
@@ -1122,8 +1132,7 @@ export class DashboardComponent implements AfterViewInit {
         summary: this.getTranslation(`Localization Failed!`),
         life: 4000,
       });
-    }
-    else {
+    } else {
       this.messageService.add({
         severity: 'success',
         summary: this.getTranslation(`Robot has been Localized`),
@@ -1446,9 +1455,9 @@ export class DashboardComponent implements AfterViewInit {
     const tooltip = document.getElementById('Pos_tooltip')!;
     const chargeTooltip = document.getElementById('chargeTooltip')!;
     if (!chargeTooltip) {
-      console.error("chargeTooltip element not found!");
+      console.error('chargeTooltip element not found!');
       return;
-    }    
+    }
     const robottooltip = document.getElementById('roboTooltip')!;
     canvas.addEventListener('mousemove', (event) => {
       const rect = canvas.getBoundingClientRect();
@@ -1459,8 +1468,12 @@ export class DashboardComponent implements AfterViewInit {
       this.offsetY = this.nodeGraphService.getOffsetY();
       this.zoomLevel = this.nodeGraphService.getZoomLevel();
       // Adjust for zoom and pan
-      const imgX = (mouseX - this.mapImageX + this.offsetX - this.offsetX) / this.zoomLevel;
-      const imgY = (transY - this.mapImageY + this.offsetY + this.offsetY) / this.zoomLevel;
+      const imgX =
+        (mouseX - this.mapImageX + this.offsetX - this.offsetX) /
+        this.zoomLevel;
+      const imgY =
+        (transY - this.mapImageY + this.offsetY + this.offsetY) /
+        this.zoomLevel;
       this.draggingRobo = this.nodeGraphService.getDraggingRobo();
 
       let isOverChargeNode = false;
@@ -1469,41 +1482,46 @@ export class DashboardComponent implements AfterViewInit {
 
       // Check if mouse is over any charge node
       for (let node of this.chargeNodes) {
-          
-          let x = (node.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-          let y = (node.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
-          const nodeX = x;
-          const nodeY = y;
-          const nodeSize = 20; // Charge node size
-        
-          if (
-              imgX >= nodeX - (nodeSize / 2) &&
-              imgX <= nodeX + (nodeSize / 2) &&
-              imgY >= nodeY - (nodeSize / 2) &&
-              imgY <= nodeY + (nodeSize / 2)
-          ) {            
-              isOverChargeNode = true;
-              chargeNodeId = node.id;
-              isOccupied = node.isOccupied;
-              const chargeNodeScreenX = nodeX * this.zoomLevel + this.mapImageX;
-              const chargeNodeScreenY = (this.mapImageHeight / this.zoomLevel - nodeY) * this.zoomLevel + this.mapImageY;
-              console.log("Charge Tooltip Position:", chargeNodeScreenX, chargeNodeScreenY);
+        let x = (node.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
+        let y = (node.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+        const nodeX = x;
+        const nodeY = y;
+        const nodeSize = 20; // Charge node size
 
-              chargeTooltip.style.left = `${event.clientX-90}px`;
-              chargeTooltip.style.top = `${event.clientY-30}px`;
-              
-              chargeTooltip.innerHTML = `
+        if (
+          imgX >= nodeX - nodeSize / 2 &&
+          imgX <= nodeX + nodeSize / 2 &&
+          imgY >= nodeY - nodeSize / 2 &&
+          imgY <= nodeY + nodeSize / 2
+        ) {
+          isOverChargeNode = true;
+          chargeNodeId = node.id;
+          isOccupied = node.isOccupied;
+          const chargeNodeScreenX = nodeX * this.zoomLevel + this.mapImageX;
+          const chargeNodeScreenY =
+            (this.mapImageHeight / this.zoomLevel - nodeY) * this.zoomLevel +
+            this.mapImageY;
+          console.log(
+            'Charge Tooltip Position:',
+            chargeNodeScreenX,
+            chargeNodeScreenY
+          );
+
+          chargeTooltip.style.left = `${event.clientX - 90}px`;
+          chargeTooltip.style.top = `${event.clientY - 30}px`;
+
+          chargeTooltip.innerHTML = `
                   <div>
                       <b>ID:</b> ${chargeNodeId} <br>
                       <b>Occupied:</b> ${isOccupied ? 'Yes' : 'No'}
                   </div>
               `;
-              chargeTooltip.style.display = 'block';
-              break;
-          }
+          chargeTooltip.style.display = 'block';
+          break;
+        }
       }
       if (!isOverChargeNode) {
-          chargeTooltip.style.display = 'none';
+        chargeTooltip.style.display = 'none';
       }
 
       if (
@@ -1517,7 +1535,10 @@ export class DashboardComponent implements AfterViewInit {
         let newY = (mouseY - this.mapImageY) / this.zoomLevel;
         // Update the position of the robot being dragged
         newX = Math.max(0, Math.min(newX, this.mapImageWidth / this.zoomLevel));
-        newY = Math.max( 0, Math.min(newY, this.mapImageHeight / this.zoomLevel) );
+        newY = Math.max(
+          0,
+          Math.min(newY, this.mapImageHeight / this.zoomLevel)
+        );
 
         this.draggingRobo.pos.x = newX;
         this.draggingRobo.pos.y = newY;
@@ -1547,11 +1568,16 @@ export class DashboardComponent implements AfterViewInit {
             battery = robo.battery ? robo.battery.toFixed(2) : 0;
             taskId = robo.current_task ? robo.current_task : 'N/A';
             // Position the robot tooltip above the robot
-            const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
-            const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
+            const robotScreenX =
+              roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
+            const robotScreenY =
+              (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) *
+                this.zoomLevel +
+              this.offsetY +
+              this.mapImageY; // Y position on the canvas
 
-            robottooltip.style.left = `${event.clientX-90}px`; // Slightly to the left of the robot's X position
-            robottooltip.style.top = `${event.clientY-30}px`; // Above the robot's Y position
+            robottooltip.style.left = `${event.clientX - 90}px`; // Slightly to the left of the robot's X position
+            robottooltip.style.top = `${event.clientY - 30}px`; // Above the robot's Y position
             robottooltip.innerHTML = `<div class="ATactions">
                         <div><label class="idlabel">Robot ID: ${robotId}</label></div>
                         <div><label class="idlabel">Battery: ${battery}%</label></div>
@@ -2088,7 +2114,12 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  plotAllRobots( robotsData: any, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, mapImage: HTMLImageElement ) {
+  plotAllRobots(
+    robotsData: any,
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    mapImage: HTMLImageElement
+  ) {
     // Calculate the scaled image dimensions and center the image on the canvas
     const imgWidth = mapImage.width * this.zoomLevel;
     const imgHeight = mapImage.height * this.zoomLevel;
@@ -2180,7 +2211,11 @@ export class DashboardComponent implements AfterViewInit {
         // Draw the robot on the canvas with updated positions and orientation
         let clr = this.roboIDColor.get(robo.amrId) || 'white';
         this.plotRobo(ctx, robotPosX, robotPosY, yaw, robo.imgState, clr);
-        if ( robo.imgState === 'LOADSTATE' || robo.imgState === 'UNLOADSTATE' || robo.payload ) {
+        if (
+          robo.imgState === 'LOADSTATE' ||
+          robo.imgState === 'UNLOADSTATE' ||
+          robo.payload
+        ) {
           this.plotRack(
             ctx,
             robotPosX - (this.rackSize * this.zoomLevel) / 2,
@@ -2360,18 +2395,31 @@ export class DashboardComponent implements AfterViewInit {
     this.localizePoses.forEach((pos) => {
       const scaledX = pos.x * zoomLevel;
       const scaledY = (img.height - pos.y) * zoomLevel; // Flip Y-axis and scale
-      this.drawLOCNode(ctx, centerX + scaledX, centerY + scaledY, pos.yaw,  '-1');
+      this.drawLOCNode(
+        ctx,
+        centerX + scaledX,
+        centerY + scaledY,
+        pos.yaw,
+        '-1'
+      );
     });
   }
 
   chargeNodes = [
-    { id: "A1", isOccupied: true, pos:{ x: 14, y: 1, yaw: Math.PI / 2} },
-    { id: "A2", isOccupied: false, pos:{ x: 4, y: 0, yaw: Math.PI / 5} },
-    { id: "A3", isOccupied: false, pos:{ x: 20, y: -8, yaw: Math.PI / 2} },
-    { id: "A4", isOccupied: true, pos:{ x: 23, y: 3, yaw: Math.PI / 6} }
-  ]; 
+    { id: 'A1', isOccupied: true, pos: { x: 14, y: 1, yaw: Math.PI / 2 } },
+    { id: 'A2', isOccupied: false, pos: { x: 4, y: 0, yaw: Math.PI / 5 } },
+    { id: 'A3', isOccupied: false, pos: { x: 20, y: -8, yaw: Math.PI / 2 } },
+    { id: 'A4', isOccupied: true, pos: { x: 23, y: 3, yaw: Math.PI / 6 } },
+  ];
 
-  drawChargeNode(ctx: CanvasRenderingContext2D, x: number, y: number, yaw: number, id: string, isOccupied: boolean) {
+  drawChargeNode(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    yaw: number,
+    id: string,
+    isOccupied: boolean
+  ) {
     const rectWidth = 20;
     const rectHeight = 20;
     const borderRadius = 5; // Border radius of 10px (5 per corner for 20px size)
@@ -2387,13 +2435,33 @@ export class DashboardComponent implements AfterViewInit {
     ctx.beginPath();
     ctx.moveTo(-rectWidth / 2 + borderRadius, -rectHeight / 2);
     ctx.lineTo(rectWidth / 2 - borderRadius, -rectHeight / 2);
-    ctx.quadraticCurveTo(rectWidth / 2, -rectHeight / 2, rectWidth / 2, -rectHeight / 2 + borderRadius);
+    ctx.quadraticCurveTo(
+      rectWidth / 2,
+      -rectHeight / 2,
+      rectWidth / 2,
+      -rectHeight / 2 + borderRadius
+    );
     ctx.lineTo(rectWidth / 2, rectHeight / 2 - borderRadius);
-    ctx.quadraticCurveTo(rectWidth / 2, rectHeight / 2, rectWidth / 2 - borderRadius, rectHeight / 2);
+    ctx.quadraticCurveTo(
+      rectWidth / 2,
+      rectHeight / 2,
+      rectWidth / 2 - borderRadius,
+      rectHeight / 2
+    );
     ctx.lineTo(-rectWidth / 2 + borderRadius, rectHeight / 2);
-    ctx.quadraticCurveTo(-rectWidth / 2, rectHeight / 2, -rectWidth / 2, rectHeight / 2 - borderRadius);
+    ctx.quadraticCurveTo(
+      -rectWidth / 2,
+      rectHeight / 2,
+      -rectWidth / 2,
+      rectHeight / 2 - borderRadius
+    );
     ctx.lineTo(-rectWidth / 2, -rectHeight / 2 + borderRadius);
-    ctx.quadraticCurveTo(-rectWidth / 2, -rectHeight / 2, -rectWidth / 2 + borderRadius, -rectHeight / 2);
+    ctx.quadraticCurveTo(
+      -rectWidth / 2,
+      -rectHeight / 2,
+      -rectWidth / 2 + borderRadius,
+      -rectHeight / 2
+    );
     ctx.closePath();
 
     ctx.strokeStyle = color;
@@ -2416,9 +2484,53 @@ export class DashboardComponent implements AfterViewInit {
     return;
   }
 
-  moveToCharge(){
-    
+  async moveToCharge() {
+    let map = this.projectService.getMapData();
+    if (!map || this.updatedrobo.amrId == null) return;
+
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-assets/charge-robot/${map.id}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          robotId: this.updatedrobo.amrId,
+        }),
+      }
+    );
+
+    let data = await response.json();
+    // console.log(data);
+    this.messageService.add({
+      severity: data.error ? 'error' : 'info',
+      summary: 'Robot pose sent!',
+      detail: data.fleetStatus ? data.fleetStatus : 'Fleet server down!',
+      life: 4000,
+    });
   }
+
+  async fetchChargePositions() {
+    let mapData = this.projectService.getMapData();
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-assets/get-chargingStation-pos/${mapData.id}`,
+      {
+        method: 'GET',
+        credentials: 'include',
+      }
+    );
+
+    let data = await response.json();
+    console.log(data);
+    this.messageService.add({
+      severity: data.error ? 'error' : 'info',
+      summary: data.fleetStatus
+        ? 'chargin pose sent!'
+        : 'Error while fetching charging poses!',
+      life: 4000,
+    });
+  }
+
   drawNodesAndEdges(
     ctx: CanvasRenderingContext2D,
     img: HTMLImageElement,
@@ -2652,33 +2764,40 @@ export class DashboardComponent implements AfterViewInit {
     ctx.fill();
   }
 
-  drawLOCNode(ctx: CanvasRenderingContext2D, x: number, y: number,yaw: number, label: string){
-      
-      const rectWidth = 20;
-      const rectHeight = 20;
+  drawLOCNode(
+    ctx: CanvasRenderingContext2D,
+    x: number,
+    y: number,
+    yaw: number,
+    label: string
+  ) {
+    const rectWidth = 20;
+    const rectHeight = 20;
 
-    
-      ctx.strokeStyle = '#3b82f6';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(x - rectWidth / 2, y - rectHeight / 2, rectWidth, rectHeight); 
+    ctx.strokeStyle = '#3b82f6';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(
+      x - rectWidth / 2,
+      y - rectHeight / 2,
+      rectWidth,
+      rectHeight
+    );
 
-    
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(-(yaw-(Math.PI/2)));
+    ctx.save();
+    ctx.translate(x, y);
+    ctx.rotate(-(yaw - Math.PI / 2));
 
-  
-      ctx.beginPath();
-      ctx.moveTo(0, -6);
-      ctx.lineTo(-4, 4);
-      ctx.lineTo(4, 4); 
-      ctx.closePath();
-      ctx.fillStyle = '#3b82f6'
-      ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(-4, 4);
+    ctx.lineTo(4, 4);
+    ctx.closePath();
+    ctx.fillStyle = '#3b82f6';
+    ctx.fill();
 
-      ctx.restore(); // Restore the context to prevent affecting other drawings
+    ctx.restore(); // Restore the context to prevent affecting other drawings
 
-      return; // Skip the rest of the function as localization uses a rectangle
+    return; // Skip the rest of the function as localization uses a rectangle
   }
 
   drawNode(ctx: CanvasRenderingContext2D, x: number, y: number, label: string) {
@@ -2692,11 +2811,11 @@ export class DashboardComponent implements AfterViewInit {
 
     // Draw outer circle if applicable
     if (isAssignTask) {
-        ctx.beginPath();
-        ctx.arc(x, y, outerCircleRadius, 0, 2 * Math.PI); // Outer circle
-        ctx.strokeStyle = outerCircleColor; // Use appropriate color
-        ctx.lineWidth = 2; // Thickness of the outer circle's border
-        ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(x, y, outerCircleRadius, 0, 2 * Math.PI); // Outer circle
+      ctx.strokeStyle = outerCircleColor; // Use appropriate color
+      ctx.lineWidth = 2; // Thickness of the outer circle's border
+      ctx.stroke();
     }
 
     // Draw node
@@ -2705,7 +2824,6 @@ export class DashboardComponent implements AfterViewInit {
     ctx.fillStyle = nodeColor; // Use the determined color
     ctx.fill();
   }
-
 
   drawPathNode(
     ctx: CanvasRenderingContext2D,
@@ -2822,7 +2940,7 @@ export class DashboardComponent implements AfterViewInit {
 
     this.localizePoses = await this.getLocalizePos();
     console.log(this.localizePoses);
-    
+
     this.localizePoses = this.localizePoses.map((pos: any) => {
       pos.x = (pos.x + (this.origin.x || 0)) / (this.ratio || 1);
       pos.y = (pos.y + (this.origin.y || 0)) / (this.ratio || 1);
