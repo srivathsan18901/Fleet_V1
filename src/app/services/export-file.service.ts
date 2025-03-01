@@ -129,9 +129,9 @@ export class ExportFileService {
         {
           text: this.getTranslation("confidential"),
           color: '#DA2128',
-          fontSize: 8,
+          fontSize: 10,
           bold: true,
-          absolutePosition: { x: 535, y: 810 },
+          absolutePosition: { x: 530, y: 815 },
         },
 
         //Report Name
