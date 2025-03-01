@@ -7,7 +7,7 @@ import { TranslationService } from '../services/translation.service';
 import proud from '../../assets/Export/proud.png';
 import robis from '../../assets/Export/robis.png';
 import robis_logo from '../../assets/Export/robis_logo.svg';
-import Report_name from '../../assets/Export/image.png';
+import Report_name from '../../assets/Export/logo.png';
 import data from '../../assets/Export/data.png';
 import FMS_name from '../../assets/Export/FMS_name.png';
 import Task from '../../assets/Export/Task.png';
@@ -131,11 +131,25 @@ export class ExportFileService {
           color: '#DA2128',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 535, y: 815 },
+          absolutePosition: { x: 535, y: 810 },
         },
 
         //Report Name
-        { image: Report_nameImage, width: 180, absolutePosition: { x: 230, y: 55 } },
+        { image: Report_nameImage, width: 50, absolutePosition: { x: 230, y: 55 } },
+        {
+          text: this.getTranslation("taskStatistics"),
+          color: '#DA2128',
+          fontSize: 15,
+          bold: true,
+          absolutePosition: { x: 280, y: 60 },
+        },
+        {
+          text: this.getTranslation("report"),
+          color: '#DA2128',
+          fontSize: 15,
+          bold: true,
+          absolutePosition: { x: 280, y: 82 },
+        },
         // {
         //   svg: Report_name,
         //   absolutePosition: { x: 230, y: 55 },
