@@ -18,7 +18,7 @@
         </svg>
       </button>
 
-      <div class="switch demo3">
+      <!-- <div class="switch demo3">
         <input
           type="checkbox"
           id="emergencyStop"
@@ -29,9 +29,17 @@
         />
         <label for="emergencyStop"><i></i></label>
         <span class="tooltip">{{getTranslation("Emergency Stop")}}</span>
-      </div>
+      </div> -->
 
-
+    <div class="switch-holder">
+      <div class="switch-label">
+        <i class="fa fa-bluetooth-b"></i><span>{{getTranslation("Emergency Stop")}}</span>
+    </div>
+    <div class="switch-toggle" >
+        <input type="checkbox" id="bluetooth" [checked]="isEmergencyStop" (change)="onToggle($event)" readonly disabled>
+        <label for="bluetooth"></label>
+    </div>
+    </div>
 
     <!-- wifi module -->
     <div class="wifi-signal ">
