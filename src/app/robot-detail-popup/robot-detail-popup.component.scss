@@ -97,11 +97,13 @@
 .switch-label {
   font-size: 16px;
   font-weight: bold;
+  padding: 10px;
   text-align: center;
 } 
 
 .switch-toggle {
   height: 40px;
+  width:auto
 }
 
 .switch-toggle input[type="checkbox"] {
@@ -113,7 +115,7 @@
 .switch-toggle input[type="checkbox"]+label {
   position: relative;
   display: inline-block;
-  width: 100px;
+  width: 140px;
   height: 40px;
   border-radius: 20px;
   margin: 0;
@@ -141,12 +143,12 @@
 
 
 .switch-toggle input[type="checkbox"]:checked+label::before {
-  left: 50%;
+  left: 60%;
   content: '0';
   font-weight: bold;
   color: #fff;
   background-color: #b30000;
-  box-shadow: #b30000 0px 5px 15px;        
+  box-shadow: #f1050567 0px 5px 15px;        
 }
 
 /* connect and disconnect */
