@@ -1,6 +1,4 @@
 import { Injectable } from '@angular/core';
-import pdfMake from 'pdfmake/build/pdfmake';
-import pdfFonts from 'pdfmake/build/vfs_fonts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from './project.service';
 import { TranslationService } from '../services/translation.service';
@@ -13,7 +11,10 @@ import FMS_name from '../../assets/Export/FMS_name.png';
 import Task from '../../assets/Export/Task.png';
 import taskDet from '../../assets/Export/taskDet.png';
 import blank from '../../assets/Export/blank.png';
-(pdfMake as any).vfs = pdfFonts.vfs;
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+import { fontVfs } from '../../assets/fonts/font-vfs';
+// (pdfMake as any).vfs = pdfFonts.vfs;
 
 @Injectable({
   providedIn: 'root',
@@ -53,6 +54,22 @@ export class ExportFileService {
 
   constructor(private projectService: ProjectService,private translationService: TranslationService,) {
     this.selectedMap = this.projectService.getMapData();
+    (pdfMake as any).vfs = { ...pdfMake.vfs, ...fontVfs };
+
+    pdfMake.fonts = {
+      Roboto: {
+        normal: 'Roboto-Regular.ttf',
+        bold: 'Roboto-Medium.ttf',
+        italics: 'Roboto-Italic.ttf',
+        bolditalics: 'Roboto-MediumItalic.ttf'
+      },
+      NotoSansJP: {
+        normal: 'NotoSansJP-Regular.ttf',
+        bold: 'NotoSansJP-Regular.ttf',
+        italics: 'NotoSansJP-Regular.ttf',
+        bolditalics: 'NotoSansJP-Regular.ttf'
+      }
+    };
   }
   private async convertSvgToImage(url: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -113,6 +130,7 @@ export class ExportFileService {
           width:100,
           absolutePosition: { x: 15, y: 15 },
         },
+        
         // "robis" SVG - Top Right
         {
           image: robis_img,
@@ -130,6 +148,7 @@ export class ExportFileService {
           text: this.getTranslation("confidential"),
           color: '#DA2128',
           fontSize: 10,
+          font: 'NotoSansJP',
           bold: true,
           absolutePosition: { x: 530, y: 815 },
         },
@@ -140,6 +159,7 @@ export class ExportFileService {
           text: this.getTranslation("taskStatistics"),
           color: '#DA2128',
           fontSize: 15,
+          font: 'NotoSansJP',
           bold: true,
           absolutePosition: { x: 280, y: 60 },
         },
@@ -147,6 +167,7 @@ export class ExportFileService {
           text: this.getTranslation("report"),
           color: '#DA2128',
           fontSize: 15,
+          font: 'NotoSansJP',
           bold: true,
           absolutePosition: { x: 280, y: 82 },
         },
@@ -165,6 +186,7 @@ export class ExportFileService {
           text: this.getTranslation("taskDetails"),
           fontSize: 15,
           bold: true,
+          font: 'NotoSansJP',
           color: 'black',
           background: 'white',
           absolutePosition: { x: 25, y: 125 },
@@ -195,6 +217,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("completed")+"  "+"-",
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 245, y: 148.5 },
@@ -202,6 +225,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("assigned")+"  "+"-",
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 245, y: 178 },
@@ -209,6 +233,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("inProgress")+"  "+"-",
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 245, y: 208 },
@@ -217,12 +242,14 @@ export class ExportFileService {
           text: this.getTranslation("toDo")+"  "+"-",
           color: 'black',
           fontSize: 12,
+          font: 'NotoSansJP',
           bold: true,
           absolutePosition: { x: 245, y: 238  },
         },
         {
           text: this.getTranslation("Error")+"  "+"-",
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 245, y: 268  },
@@ -230,6 +257,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("cancelled")+"  "+"-",
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 245, y: 297 },
@@ -239,6 +267,7 @@ export class ExportFileService {
           text: this.taskData[0],
           color: 'black',
           fontSize: 12,
+          font: 'NotoSansJP',
           bold: true,
           absolutePosition: { x: 345, y: 148.5 },
         },
@@ -288,6 +317,7 @@ export class ExportFileService {
         {
           text:this.getTranslation("systemThroughput") + '-',
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 410, y: 176 },
@@ -295,6 +325,7 @@ export class ExportFileService {
         {
           text:this.getTranslation("systemUptime") + '-',
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 410, y: 207 },
@@ -302,6 +333,7 @@ export class ExportFileService {
         {
           text:this.getTranslation("successRate") + '-',
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 410, y: 240 },
@@ -309,6 +341,7 @@ export class ExportFileService {
         {
           text:this.getTranslation("responsiveness") + '-',
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 410, y: 272 },
@@ -351,6 +384,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("Throughput"),
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 30, y: 370 },
@@ -358,6 +392,7 @@ export class ExportFileService {
         {
           text: 'X = Time in Hours     Y = Number of Tasks',
           color: '#DA2128',
+          font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
           absolutePosition: { x: 100, y: 560 },
@@ -365,6 +400,7 @@ export class ExportFileService {
         {
           text: 'X = Time in Hours     Y = Number of Tasks',
           color: '#DA2128',
+          font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
           absolutePosition: { x: 370, y: 560 },
@@ -372,6 +408,7 @@ export class ExportFileService {
         {
           text: 'X = Time in Hours     Y = Number of Picks',
           color: '#DA2128',
+          font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
           absolutePosition: { x: 100, y: 775 },
@@ -379,6 +416,7 @@ export class ExportFileService {
         {
           text: 'X = Time in Hours     Y = Errors',
           color: '#DA2128',
+          font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
           absolutePosition: { x: 390, y: 775 },
@@ -407,6 +445,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("starvationRate"),
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 305, y: 370 },
@@ -421,6 +460,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("pickAccuracy"),
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 30, y: 580 },
@@ -435,6 +475,7 @@ export class ExportFileService {
         {
           text: this.getTranslation("errorRate"),
           color: 'black',
+          font: 'NotoSansJP',
           fontSize: 12,
           bold: true,
           absolutePosition: { x: 305, y: 580 },
