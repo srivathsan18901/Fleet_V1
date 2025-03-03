@@ -34,7 +34,7 @@ export class SidenavbarComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   projectName: string | null = null;
   username: string | null = null;
-  userrole: string | null = null;
+  userrole: string  = "";
   robotActivities: any[] = [];
   fleetActivities: any[] = [];
   selectedMap: any | null = null;
@@ -91,12 +91,9 @@ export class SidenavbarComponent implements OnInit {
       const notificationElement = this.eRef.nativeElement.querySelector(
         '.notification-popup'
       );
-      const profileElement =
-        this.eRef.nativeElement.querySelector('.Profile-popup');
-      const languageDropdownElement =
-        this.eRef.nativeElement.querySelector('.language-dropdown');
-      const languageToggleElement =
-        this.eRef.nativeElement.querySelector('.language-toggle');
+      const profileElement = this.eRef.nativeElement.querySelector('.Profile-popup');
+      const languageDropdownElement = this.eRef.nativeElement.querySelector('.language-dropdown');
+      const languageToggleElement = this.eRef.nativeElement.querySelector('.language-toggle');
       if (
         this.showProfilePopup &&
         profileElement &&
@@ -152,8 +149,11 @@ export class SidenavbarComponent implements OnInit {
     // console.log(this.getTranslation(user.role));
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
-        // this.updateHeaderTranslation();
-        this.userrole = this.getTranslation(user.role);
+        const user = this.authService.getUser();
+        if (user) {
+          this.username = user.name;
+          this.userrole = this.getTranslation(user.role);
+        }
         this.cdRef.detectChanges();
       }
     );

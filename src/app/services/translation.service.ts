@@ -3394,15 +3394,21 @@ export class TranslationService {
       'not_allowed_ownself': 'Es ist nicht erlaubt, sich selbst zuzuweisen!',
   }
   };
+
   // private currentLanguage: 'ENG' | 'JAP' | 'FRE' | 'GER' = 'ENG';
   private currentLanguage: BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'> = new BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'>('ENG');
 
   // Observable for language changes
   currentLanguage$ = this.currentLanguage.asObservable();
-
+  constructor() {
+    // Retrieve stored language from localStorage or default to 'ENG'
+    const savedLanguage = localStorage.getItem('selectedLanguage') as 'ENG' | 'JAP' | 'FRE' | 'GER' | null;
+    this.currentLanguage = new BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'>(savedLanguage || 'ENG');
+  }
   setLanguage(lang: 'ENG' | 'JAP' | 'FRE' | 'GER') {
     // this.currentLanguage = lang;
     this.currentLanguage.next(lang);
+    localStorage.setItem('selectedLanguage', lang);
   }
   getCurrentLang(){
     return this.currentLanguage.value;

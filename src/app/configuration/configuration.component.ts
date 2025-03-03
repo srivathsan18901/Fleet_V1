@@ -163,8 +163,7 @@ export class ConfigurationComponent implements AfterViewInit {
   editButtonText: string = '';
   exportButtonText: string = '';
   async ngOnInit() {
-    this.paginatorIntl.itemsPerPageLabel =
-      this.getTranslation('Items per page'); // Modify the text
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next(); // Notify paginator about the change
     this.translationService.currentLanguage$.subscribe((val) => {
       this.langSubscription = val;
@@ -198,8 +197,7 @@ export class ConfigurationComponent implements AfterViewInit {
       // this.cdRef.detectChanges();
 
       // this.updateHeaderTranslation();
-      this.paginatorIntl.itemsPerPageLabel =
-        this.getTranslation('Items per page');
+      this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page');
       this.paginatorIntl.changes.next();
       this.activeHeader = this.getTranslation(this.activeButton);
       this.deleteButtonText = this.getTranslation('Delete');
