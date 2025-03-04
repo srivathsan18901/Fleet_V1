@@ -167,7 +167,6 @@ export class ConfigurationComponent implements AfterViewInit {
     this.paginatorIntl.changes.next(); // Notify paginator about the change
     this.translationService.currentLanguage$.subscribe((val) => {
       this.langSubscription = val;
-
       let localeMapping: Record<string, string> = {
         ENG: 'en-IN',
         JAP: 'ja-JP',
