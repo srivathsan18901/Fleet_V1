@@ -1007,8 +1007,18 @@ export class ConfigurationComponent implements AfterViewInit {
       isMapLoaded = await this.nodeGraphService.updateEditedMap();
     }
 
-    if (isMapLoaded) alert('Map loaded in fleet');
-    else alert('Map not loaded in fleet');
+    if (isMapLoaded) {
+      this.messageService.add({
+        severity: 'success',
+        detail: this.getTranslation('mapSelected'),
+      });
+    }
+    else{
+      this.messageService.add({
+        severity: 'warn',
+        detail: this.getTranslation('mapDeselected'),
+      });
+    }
 
     if (this.projectService.getIsMapSet()) return;
     this.projectService.setIsMapSet(true);

@@ -1283,6 +1283,23 @@ export class DashboardComponent implements AfterViewInit {
           return;
         }
       }
+      for (let robo of this.robos) {
+        const roboX = robo.pos.x;
+        const roboY = this.mapImageHeight / this.zoomLevel - robo.pos.y;
+        const imageSize = 25; // Adjust size based on robot image dimensions
+        if (
+          imgX >= roboX - imageSize &&
+          imgX <= roboX + imageSize &&
+          imgY >= roboY - imageSize &&
+          imgY <= roboY + imageSize
+        ) {
+          // Show the popup at the clicked position
+          this.showPopup(event.clientX, event.clientY);
+          this.updatedrobo = robo;
+
+          return;
+        }
+      }
     });
   }
   addMouseDownListener(canvas: HTMLCanvasElement) {
@@ -2263,6 +2280,7 @@ export class DashboardComponent implements AfterViewInit {
         yaw
       );
     });
+    
   }
 
   plotAllAssets(

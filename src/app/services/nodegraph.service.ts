@@ -206,9 +206,9 @@ export class NodeGraphService {
         }
       );
       let data = await response.json();
-      if (data.hasOwnProperty('mapExists')) return true;
+      if ('mapExists' in data) return true;
 
-      return true;
+      return false;
     } catch (error) {
       return false;
     }
