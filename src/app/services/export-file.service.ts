@@ -198,18 +198,18 @@ export class ExportFileService {
         //   absolutePosition: { x: 25, y: 120 },
         // },
         // Vertical Line
-        // {
-        //   canvas: [
-        //     {
-        //       type: 'line',
-        //       x1: 20, y1: 0,
-        //       x2: 20, y2: 200,  // Adjust the height of the line
-        //       lineWidth: 1,
-        //       color: 'black' // Set the color of the line
-        //     }
-        //   ],
-        //   absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
-        // },     
+        {
+          canvas: [
+            {
+              type: 'line',
+              x1: 5, y1: 0,
+              x2: 5, y2: 200,  // Adjust the height of the line
+              lineWidth: 1,
+              color: 'black' // Set the color of the line
+            }
+          ],
+          absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
+        },     
         //Task_Det
         // { image: blank_img, width: 120,height: 220, absolutePosition: { x: 212, y: 130 } }, 
         // { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 142 } },   

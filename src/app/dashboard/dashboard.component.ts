@@ -2520,14 +2520,14 @@ export class DashboardComponent implements AfterViewInit {
     );
 
     let data = await response.json();
-    console.log(data);
-    this.messageService.add({
-      severity: data.error ? 'error' : 'info',
-      summary: data.fleetStatus
-        ? 'chargin pose sent!'
-        : 'Error while fetching charging poses!',
-      life: 4000,
-    });
+    // console.log(data);
+    // this.messageService.add({
+    //   severity: data.error ? 'error' : 'info',
+    //   summary: data.fleetStatus
+    //     ? 'chargin pose sent!'
+    //     : 'Error while fetching charging poses!',
+    //   life: 4000,
+    // });
   }
 
   drawNodesAndEdges(

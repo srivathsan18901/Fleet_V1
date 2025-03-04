@@ -4,6 +4,8 @@ import {
   ViewChild,
   AfterViewInit,
   ChangeDetectorRef,
+  HostListener,
+  ElementRef 
 } from '@angular/core';
 import { ExportService } from '../export.service';
 import { environment } from '../../environments/environment.development';
@@ -101,7 +103,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
         icon: '../../assets/Iconsfortask/Canc.svg',
       }; // Replace previous step with "Cancelled"
     }
-
     return steps;
   }
 
@@ -135,6 +136,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
   }
 
+  // Listen for clicks outside the table to close the expanded row
+  @HostListener('document:click', ['$event'])
+  handleClickOutside(event: Event) {
+    if (!this.eRef.nativeElement.querySelector('.table-container')?.contains(event.target as Node)) {
+      // If click is outside the table, close the expanded row
+      if (this.expandedRowId) {
+        this.expandedRowMap[this.expandedRowId] = false;
+        this.expandedRowId = null;
+      }
+    }
+  }
   trackByTaskId(index: number, item: any) {
     return item.taskId;
   }
@@ -243,7 +255,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private isFleetService: IsFleetService,
     private router: Router,
     private nodeGraphService: NodeGraphService,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private eRef: ElementRef
   ) {}
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
