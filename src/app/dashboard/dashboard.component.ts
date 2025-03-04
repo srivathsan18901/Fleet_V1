@@ -2281,6 +2281,20 @@ export class DashboardComponent implements AfterViewInit {
       );
     });
     
+    this.chargeNodes.forEach((station) => {
+      let x = (station.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
+      let y = (station.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+
+      const transformedY = this.mapImageHeight - y;
+      this.drawChargeNode(
+        ctx,
+        x,
+        transformedY,
+        station.pos.yaw,
+        station.id,
+        station.isOccupied
+      );
+    });
   }
 
   plotAllAssets(

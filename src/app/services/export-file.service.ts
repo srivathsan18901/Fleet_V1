@@ -202,8 +202,8 @@ export class ExportFileService {
           canvas: [
             {
               type: 'line',
-              x1: 5, y1: 0,
-              x2: 5, y2: 200,  // Adjust the height of the line
+              x1: 15, y1: 0,
+              x2: 15, y2: 200,  // Adjust the height of the line
               lineWidth: 1,
               color: 'black' // Set the color of the line
             }
@@ -211,94 +211,94 @@ export class ExportFileService {
           absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
         },     
         //Task_Det
-        // { image: blank_img, width: 120,height: 220, absolutePosition: { x: 212, y: 130 } }, 
-        // { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 142 } },   
+        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 212, y: 130 } }, 
+        { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 142 } },   
         
-        // {
-        //   text: this.getTranslation("completed")+"  "+"-",
-        //   color: 'black',
-        //   font: 'NotoSansJP',
-        //   fontSize: 12,
-        //   absolutePosition: { x: 245, y: 147.5 },
-        // },
-        // {
-        //   text: this.getTranslation("assigned")+"  "+"-",
-        //   color: 'black',
-        //   font: 'NotoSansJP',
-        //   fontSize: 12,
-        //   absolutePosition: { x: 245, y: 177 },
-        // },
-        // {
-        //   text: this.getTranslation("inProgress")+"  "+"-",
-        //   color: 'black',
-        //   font: 'NotoSansJP',
-        //   fontSize: 12,
-        //   absolutePosition: { x: 245, y: 207 },
-        // },
-        // {
-        //   text: this.getTranslation("toDo")+"  "+"-",
-        //   color: 'black',
-        //   fontSize: 12,
-        //   font: 'NotoSansJP',
-        //   absolutePosition: { x: 245, y: 237  },
-        // },
-        // {
-        //   text: this.getTranslation("Error")+"  "+"-",
-        //   color: 'black',
-        //   font: 'NotoSansJP',
-        //   fontSize: 12,
-        //   absolutePosition: { x: 245, y: 267  },
-        // },
-        // {
-        //   text: this.getTranslation("cancelled")+"  "+"-",
-        //   color: 'black',
-        //   font: 'NotoSansJP',
-        //   fontSize: 12,
-        //   absolutePosition: { x: 245, y: 296 },
-        // },
+        {
+          text: this.getTranslation("completed")+"  "+"-",
+          color: 'black',
+          font: 'NotoSansJP',
+          fontSize: 12,
+          absolutePosition: { x: 245, y: 147.5 },
+        },
+        {
+          text: this.getTranslation("assigned")+"  "+"-",
+          color: 'black',
+          font: 'NotoSansJP',
+          fontSize: 12,
+          absolutePosition: { x: 245, y: 177 },
+        },
+        {
+          text: this.getTranslation("inProgress")+"  "+"-",
+          color: 'black',
+          font: 'NotoSansJP',
+          fontSize: 12,
+          absolutePosition: { x: 245, y: 207 },
+        },
+        {
+          text: this.getTranslation("toDo")+"  "+"-",
+          color: 'black',
+          fontSize: 12,
+          font: 'NotoSansJP',
+          absolutePosition: { x: 245, y: 237  },
+        },
+        {
+          text: this.getTranslation("Error")+"  "+"-",
+          color: 'black',
+          font: 'NotoSansJP',
+          fontSize: 12,
+          absolutePosition: { x: 245, y: 267  },
+        },
+        {
+          text: this.getTranslation("cancelled")+"  "+"-",
+          color: 'black',
+          font: 'NotoSansJP',
+          fontSize: 12,
+          absolutePosition: { x: 245, y: 296 },
+        },
 
-        // {
-        //   text: this.taskData[0],
-        //   color: 'black',
-        //   fontSize: 12,
-        //   bold: true,
-        //   absolutePosition: { x: 345, y: 148.5 },
-        // },
-        // {
-        //   text: this.taskData[1],
-        //   color: 'black',
-        //   fontSize: 12,
-        //   bold: true,
-        //   absolutePosition: { x: 345, y: 178 },
-        // },
-        // {
-        //   text: this.taskData[2],
-        //   color: 'black',
-        //   fontSize: 12,
-        //   bold: true,
-        //   absolutePosition: { x: 345, y: 208 },
-        // },
-        // {
-        //   text: this.taskData[3],
-        //   color: 'black',
-        //   fontSize: 12,
-        //   bold: true,
-        //   absolutePosition: { x: 345, y: 238  },
-        // },
-        // {
-        //   text: this.taskData[4],
-        //   color: 'black',
-        //   fontSize: 12,
-        //   bold: true,
-        //   absolutePosition: { x: 345, y: 268  },
-        // },
-        // {
-        //   text: this.taskData[5],
-        //   color: 'black',
-        //   fontSize: 12,
-        //   bold: true,
-        //   absolutePosition: { x: 345, y: 297 },
-        // },
+        {
+          text: this.taskData[0],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 345, y: 148.5 },
+        },
+        {
+          text: this.taskData[1],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 345, y: 178 },
+        },
+        {
+          text: this.taskData[2],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 345, y: 208 },
+        },
+        {
+          text: this.taskData[3],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 345, y: 238  },
+        },
+        {
+          text: this.taskData[4],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 345, y: 268  },
+        },
+        {
+          text: this.taskData[5],
+          color: 'black',
+          fontSize: 12,
+          bold: true,
+          absolutePosition: { x: 345, y: 297 },
+        },
         //Data
         { image: data_img, width: 160, absolutePosition: { x: 370, y: 165 } },
 
@@ -328,13 +328,13 @@ export class ExportFileService {
           fontSize: 12,
           absolutePosition: { x: 410, y: 236 },
         },
-        {
-          text:this.getTranslation("responsiveness") + ' -',
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 410, y: 268 },
-        },      
+        // {
+        //   text:this.getTranslation("responsiveness") + ' -',
+        //   color: 'black',
+        //   font: 'NotoSansJP',
+        //   fontSize: 12,
+        //   absolutePosition: { x: 410, y: 268 },
+        // },      
         {
           text: this.systemThroughput + '%',
           color: 'black',
@@ -356,13 +356,13 @@ export class ExportFileService {
           bold: true,
           absolutePosition: { x: 544, y: 240 },
         },
-        {
-          text: this.responsiveness,
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 544, y: 272 },
-        },
+        // {
+        //   text: this.responsiveness,
+        //   color: 'black',
+        //   fontSize: 12,
+        //   bold: true,
+        //   absolutePosition: { x: 544, y: 272 },
+        // },
         //0>>>Throughput
         {
           image: this.URIStrings[0],
