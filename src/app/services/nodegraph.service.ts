@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { environment } from '../../environments/environment.development';
+import { ProjectService } from './project.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +15,11 @@ export class NodeGraphService {
   private zoomLevel: number = 1.0;
   private offsetX: number = 0;
   private offsetY: number = 0;
+
+  public mapName: string = '';
+  public siteName: string = '';
+  public roboPos: any[] = [];
+
   private isShowPath: boolean = false;
   private isShowRoboPath: number = 0;
   private roboToLocalize: number | null = null;
@@ -23,9 +30,8 @@ export class NodeGraphService {
   assignTask: boolean = false;
   isImage: boolean = false;
 
-  
   localize: boolean = false;
-  constructor() {}
+  constructor(private projectService: ProjectService) {}
 
   setImage(isImage: boolean) {
     this.isImage = isImage;
@@ -171,5 +177,40 @@ export class NodeGraphService {
 
   getDraggingRobo() {
     return this.draggingRobo;
+  }
+
+  async updateEditedMap(): Promise<boolean> {
+    try {
+      let mapData = this.projectService.getMapData();
+      // return false;
+
+      let editedMap = {
+        mapName: this.mapName,
+        siteName: this.siteName,
+        mpp: null,
+        origin: null,
+        nodes: this.nodes,
+        edges: this.edges,
+        zones: null,
+        stations: null,
+        roboPos: this.roboPos,
+      };
+
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/update-map/${mapData.mapName}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editedMap),
+        }
+      );
+      let data = await response.json();
+      if (data.hasOwnProperty('mapExists')) return true;
+
+      return true;
+    } catch (error) {
+      return false;
+    }
   }
 }

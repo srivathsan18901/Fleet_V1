@@ -5,8 +5,6 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   ViewEncapsulation,
-  Input,
-  viewChild,
 } from '@angular/core';
 import { SpeedDial } from 'primeng/speeddial';
 import { TooltipModule } from 'primeng/tooltip';
@@ -26,8 +24,8 @@ import { SessionService } from '../services/session.service';
 import { ProjectService } from '../services/project.service';
 import { UserPermissionService } from '../services/user-permission.service';
 import { TranslationService } from '../services/translation.service';
-import { map, Subscription } from 'rxjs';
 import { MatPaginatorIntl } from '@angular/material/paginator';
+import { NodeGraphService } from '../services/nodegraph.service';
 
 interface Poll {
   ip: string;
@@ -145,6 +143,7 @@ export class ConfigurationComponent implements AfterViewInit {
   constructor(
     private cdRef: ChangeDetectorRef,
     private projectService: ProjectService,
+    public nodeGraphService: NodeGraphService,
     public dialog: MatDialog, // Inject MatDialog
     private messageService: MessageService,
     private sessionService: SessionService,
@@ -163,7 +162,8 @@ export class ConfigurationComponent implements AfterViewInit {
   editButtonText: string = '';
   exportButtonText: string = '';
   async ngOnInit() {
-    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
+    this.paginatorIntl.itemsPerPageLabel =
+      this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next(); // Notify paginator about the change
     this.translationService.currentLanguage$.subscribe((val) => {
       this.langSubscription = val;
@@ -196,7 +196,8 @@ export class ConfigurationComponent implements AfterViewInit {
       // this.cdRef.detectChanges();
 
       // this.updateHeaderTranslation();
-      this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page');
+      this.paginatorIntl.itemsPerPageLabel =
+        this.getTranslation('Items per page');
       this.paginatorIntl.changes.next();
       this.activeHeader = this.getTranslation(this.activeButton);
       this.deleteButtonText = this.getTranslation('Delete');
@@ -445,7 +446,7 @@ export class ConfigurationComponent implements AfterViewInit {
         await this.ngOnInit();
         this.messageService.add({
           severity: 'success',
-          detail: this.getTranslation("mapSiteUpdated"),
+          detail: this.getTranslation('mapSiteUpdated'),
         });
       }
       if (data.error)
@@ -455,7 +456,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
       this.messageService.add({
         severity: 'error',
-        detail:  this.getTranslation("editMapFailed"),
+        detail: this.getTranslation('editMapFailed'),
       });
     }
   }
@@ -563,13 +564,17 @@ export class ConfigurationComponent implements AfterViewInit {
       if (data.isZipValid === false)
         this.messageService.add({
           severity: 'warn',
-          summary: this.getTranslation("missingOrInvalidZip"),
-          detail: this.getTranslation("invalidFile"),
+          summary: this.getTranslation('missingOrInvalidZip'),
+          detail: this.getTranslation('invalidFile'),
           life: 4000,
         });
 
       if (data.conflicts || data.dupKeyErr) {
-        this.messagePopUp('error', this.getTranslation("conflictFieldValues"), 4000);
+        this.messagePopUp(
+          'error',
+          this.getTranslation('conflictFieldValues'),
+          4000
+        );
         return;
       } else if (data.error) {
         this.messagePopUp(
@@ -579,14 +584,14 @@ export class ConfigurationComponent implements AfterViewInit {
         );
         return;
       } else if (data.idExist) {
-        this.messagePopUp('error', this.getTranslation("mapExists"), 3000);
+        this.messagePopUp('error', this.getTranslation('mapExists'), 3000);
       } else if (!data.idExist && data.nameExist) {
         return true;
       } else if (!data.error && !data.conflicts && data.isMapUploaded) {
         this.showImportPopup = false;
         this.messageService.add({
           severity: 'success',
-          summary: this.getTranslation("mapUploaded"),
+          summary: this.getTranslation('mapUploaded'),
         });
         await this.ngOnInit();
       }
@@ -991,14 +996,22 @@ export class ConfigurationComponent implements AfterViewInit {
       imgUrl: data.map.imgUrl,
     });
 
+    let isMapLoaded = false;
+
+    if (data.map) {
+      this.nodeGraphService.mapName = map.mapName;
+      this.nodeGraphService.siteName = map.siteName;
+      this.nodeGraphService.roboPos = data.map.roboPos;
+      this.nodeGraphService.setNodes(data.map.nodes);
+      this.nodeGraphService.setEdges(data.map.edges);
+      isMapLoaded = await this.nodeGraphService.updateEditedMap();
+    }
+
+    if (isMapLoaded) alert('Map loaded in fleet');
+    else alert('Map not loaded in fleet');
+
     if (this.projectService.getIsMapSet()) return;
     this.projectService.setIsMapSet(true);
-  }
-  // This method can be called when the component is initialized or when a new map is created
-  private selectFirstMapIfNoneSelected() {
-    if (!this.selectedMap && this.EnvData.length > 0) {
-      this.selectMap(this.EnvData[0]);
-    }
   }
 
   async getMapImgUrl(map: any): Promise<any> {
@@ -1563,7 +1576,7 @@ export class ConfigurationComponent implements AfterViewInit {
       if (data.isMapExist === false) {
         this.messageService.add({
           severity: 'warn',
-          summary: this.getTranslation("mapAlreadyExists"),
+          summary: this.getTranslation('mapAlreadyExists'),
         });
         return false;
       }
