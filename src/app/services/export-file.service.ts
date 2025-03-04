@@ -198,107 +198,107 @@ export class ExportFileService {
         //   absolutePosition: { x: 25, y: 120 },
         // },
         // Vertical Line
-        {
-          canvas: [
-            {
-              type: 'line',
-              x1: 15, y1: 0,
-              x2: 15, y2: 200,  // Adjust the height of the line
-              lineWidth: 1,
-              color: 'black' // Set the color of the line
-            }
-          ],
-          absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
-        },     
+        // {
+        //   canvas: [
+        //     {
+        //       type: 'line',
+        //       x1: 20, y1: 0,
+        //       x2: 20, y2: 200,  // Adjust the height of the line
+        //       lineWidth: 1,
+        //       color: 'black' // Set the color of the line
+        //     }
+        //   ],
+        //   absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
+        // },     
         //Task_Det
-        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 210, y: 130 } }, 
-        { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 142 } },   
+        // { image: blank_img, width: 120,height: 220, absolutePosition: { x: 212, y: 130 } }, 
+        // { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 142 } },   
         
-        {
-          text: this.getTranslation("completed")+"  "+"-",
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 245, y: 147.5 },
-        },
-        {
-          text: this.getTranslation("assigned")+"  "+"-",
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 245, y: 177 },
-        },
-        {
-          text: this.getTranslation("inProgress")+"  "+"-",
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 245, y: 207 },
-        },
-        {
-          text: this.getTranslation("toDo")+"  "+"-",
-          color: 'black',
-          fontSize: 12,
-          font: 'NotoSansJP',
-          absolutePosition: { x: 245, y: 237  },
-        },
-        {
-          text: this.getTranslation("Error")+"  "+"-",
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 245, y: 267  },
-        },
-        {
-          text: this.getTranslation("cancelled")+"  "+"-",
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 245, y: 296 },
-        },
+        // {
+        //   text: this.getTranslation("completed")+"  "+"-",
+        //   color: 'black',
+        //   font: 'NotoSansJP',
+        //   fontSize: 12,
+        //   absolutePosition: { x: 245, y: 147.5 },
+        // },
+        // {
+        //   text: this.getTranslation("assigned")+"  "+"-",
+        //   color: 'black',
+        //   font: 'NotoSansJP',
+        //   fontSize: 12,
+        //   absolutePosition: { x: 245, y: 177 },
+        // },
+        // {
+        //   text: this.getTranslation("inProgress")+"  "+"-",
+        //   color: 'black',
+        //   font: 'NotoSansJP',
+        //   fontSize: 12,
+        //   absolutePosition: { x: 245, y: 207 },
+        // },
+        // {
+        //   text: this.getTranslation("toDo")+"  "+"-",
+        //   color: 'black',
+        //   fontSize: 12,
+        //   font: 'NotoSansJP',
+        //   absolutePosition: { x: 245, y: 237  },
+        // },
+        // {
+        //   text: this.getTranslation("Error")+"  "+"-",
+        //   color: 'black',
+        //   font: 'NotoSansJP',
+        //   fontSize: 12,
+        //   absolutePosition: { x: 245, y: 267  },
+        // },
+        // {
+        //   text: this.getTranslation("cancelled")+"  "+"-",
+        //   color: 'black',
+        //   font: 'NotoSansJP',
+        //   fontSize: 12,
+        //   absolutePosition: { x: 245, y: 296 },
+        // },
 
-        {
-          text: this.taskData[0],
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 345, y: 148.5 },
-        },
-        {
-          text: this.taskData[1],
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 345, y: 178 },
-        },
-        {
-          text: this.taskData[2],
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 345, y: 208 },
-        },
-        {
-          text: this.taskData[3],
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 345, y: 238  },
-        },
-        {
-          text: this.taskData[4],
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 345, y: 268  },
-        },
-        {
-          text: this.taskData[5],
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 345, y: 297 },
-        },
+        // {
+        //   text: this.taskData[0],
+        //   color: 'black',
+        //   fontSize: 12,
+        //   bold: true,
+        //   absolutePosition: { x: 345, y: 148.5 },
+        // },
+        // {
+        //   text: this.taskData[1],
+        //   color: 'black',
+        //   fontSize: 12,
+        //   bold: true,
+        //   absolutePosition: { x: 345, y: 178 },
+        // },
+        // {
+        //   text: this.taskData[2],
+        //   color: 'black',
+        //   fontSize: 12,
+        //   bold: true,
+        //   absolutePosition: { x: 345, y: 208 },
+        // },
+        // {
+        //   text: this.taskData[3],
+        //   color: 'black',
+        //   fontSize: 12,
+        //   bold: true,
+        //   absolutePosition: { x: 345, y: 238  },
+        // },
+        // {
+        //   text: this.taskData[4],
+        //   color: 'black',
+        //   fontSize: 12,
+        //   bold: true,
+        //   absolutePosition: { x: 345, y: 268  },
+        // },
+        // {
+        //   text: this.taskData[5],
+        //   color: 'black',
+        //   fontSize: 12,
+        //   bold: true,
+        //   absolutePosition: { x: 345, y: 297 },
+        // },
         //Data
         { image: data_img, width: 160, absolutePosition: { x: 370, y: 165 } },
 
@@ -308,28 +308,28 @@ export class ExportFileService {
         //   absolutePosition: { x: 370, y: 155 },
         // },  
         {
-          text:this.getTranslation("systemThroughput") + '-',
+          text:this.getTranslation("systemThroughput") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
           absolutePosition: { x: 410, y: 173 },
         },
         {
-          text:this.getTranslation("systemUptime") + '-',
+          text:this.getTranslation("systemUptime") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
           absolutePosition: { x: 410, y: 204 },
         },
         {
-          text:this.getTranslation("successRate") + '-',
+          text:this.getTranslation("successRate") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
           absolutePosition: { x: 410, y: 236 },
         },
         {
-          text:this.getTranslation("responsiveness") + '-',
+          text:this.getTranslation("responsiveness") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
@@ -379,7 +379,7 @@ export class ExportFileService {
           absolutePosition: { x: 30, y: 360 },
         },
         {
-          text: 'X = Time in Hours     Y = Number of Tasks',
+          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("Throughput"),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,
@@ -387,7 +387,7 @@ export class ExportFileService {
           absolutePosition: { x: 100, y: 550 },
         },
         {
-          text: 'X = Time in Hours     Y = Number of Tasks',
+          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("numberOfTasks"),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,
@@ -395,7 +395,7 @@ export class ExportFileService {
           absolutePosition: { x: 370, y: 550 },
         },
         {
-          text: 'X = Time in Hours     Y = Number of Picks',
+          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("numberOfPicks"),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,
@@ -403,7 +403,7 @@ export class ExportFileService {
           absolutePosition: { x: 100, y: 775 },
         },
         {
-          text: 'X = Time in Hours     Y = Errors',
+          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("errors"),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,

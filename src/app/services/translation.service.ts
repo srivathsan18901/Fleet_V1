@@ -5,6 +5,20 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class TranslationService {
+  constructor(){
+    const storedLang = localStorage.getItem('selectedLanguage');
+
+    const lang: 'ENG' | 'JAP' | 'FRE' | 'GER' = 
+      storedLang && ['ENG', 'JAP', 'FRE', 'GER'].includes(storedLang) 
+        ? (storedLang as 'ENG' | 'JAP' | 'FRE' | 'GER') 
+        : 'ENG';
+
+    console.log('Selected Language:', lang);
+
+    // Set the BehaviorSubject with the retrieved or default language
+    this.currentLanguage.next(lang);
+  }
+
   private sideNavtranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
     ENG: {
       dashboard: 'Dashboard',
@@ -497,8 +511,12 @@ export class TranslationService {
       responsiveness: "Responsiveness",
       loading: "Loading",
       completed: "Completed",
+      'numberOfPicks': 'Number of Picks',
       assigned: "Assigned",
       inProgress: "In-Progress",
+      'timeInHours': 'Time in Hours',
+      'numberOfTasks': 'Number of Tasks',
+      'errors': 'Errors',
       'exportAsPDF': 'Export as PDF',
       toDo: "To Do",
       error: "Error",
@@ -571,12 +589,16 @@ export class TranslationService {
     JAP: {
       operation: "操作",
       robot: "ロボット",
+      'numberOfPicks': 'ピック数',
       'proud_to_be_part_of': '誇りに思います', 
       'exportAsPDF': 'PDFとしてエクスポート',
       systemThroughput: "システムスループット",
       systemUptime: "システム稼働時間",
       successRate: "成功率",
       loading: "読み込み中",
+      'timeInHours': '時間（時間単位）',
+      'numberOfTasks': 'タスク数',
+      'errors': 'エラー',
       responsiveness: "応答性",
       completed: "完了",
       assigned: "割り当て済み",
@@ -656,8 +678,12 @@ export class TranslationService {
       systemUptime: "Temps de disponibilité",
       'proud_to_be_part_of': 'Fier de faire partie de', 
       successRate: "Taux de réussite",
+      'numberOfPicks': 'Nombre de prélèvements',
       responsiveness: "Réactivité",
       completed: "Terminé",
+      'timeInHours': 'Temps en heures',
+      'numberOfTasks': 'Nombre de tâches',
+      'errors': 'Erreurs',
       loading: "Chargement",
       assigned: "Attribué",
       'taskDetails': 'Détails de la tâche',
@@ -734,6 +760,7 @@ export class TranslationService {
       operation: "Betrieb",
       robot: "Roboter",
       'exportAsPDF': 'Als PDF exportieren',
+      'numberOfPicks': 'Anzahl der Picks',
       systemThroughput: "Systemdurchsatz",
       'proud_to_be_part_of': 'Stolz, ein Teil davon zu sein',  
       systemUptime: "Systemlaufzeit",
@@ -742,6 +769,9 @@ export class TranslationService {
       loading: "Laden",
       'taskDetails': 'Aufgabendetails',
       'confidential': 'Vertraulich',
+      'timeInHours': 'Zeit in Stunden',
+      'numberOfTasks': 'Anzahl der Aufgaben',
+      'errors': 'Fehler',
       'taskStatistics': 'AUFGABENSTATISTIKEN',
       'report': 'BERICHT',
       completed: "Abgeschlossen",
@@ -3394,17 +3424,12 @@ export class TranslationService {
       'not_allowed_ownself': 'Es ist nicht erlaubt, sich selbst zuzuweisen!',
   }
   };
-
   // private currentLanguage: 'ENG' | 'JAP' | 'FRE' | 'GER' = 'ENG';
   private currentLanguage: BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'> = new BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'>('ENG');
 
   // Observable for language changes
   currentLanguage$ = this.currentLanguage.asObservable();
-  constructor() {
-    // Retrieve stored language from localStorage or default to 'ENG'
-    const savedLanguage = localStorage.getItem('selectedLanguage') as 'ENG' | 'JAP' | 'FRE' | 'GER' | null;
-    this.currentLanguage = new BehaviorSubject<'ENG' | 'JAP' | 'FRE' | 'GER'>(savedLanguage || 'ENG');
-  }
+
   setLanguage(lang: 'ENG' | 'JAP' | 'FRE' | 'GER') {
     // this.currentLanguage = lang;
     this.currentLanguage.next(lang);

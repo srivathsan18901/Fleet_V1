@@ -47,7 +47,7 @@ export class GradientDonutComponent implements OnInit {
   @Input() dataLabelsEnabled: boolean = false;
   @Input() fillType: string = 'gradient';
   @Input() titleText: string = 'Total activities';
-  @Input() legendFontSize: string = '17px';
+  @Input() legendFontSize: string = '16px';
   @Input() dataLabelFontSize: string = '14px';
   @Input() responsive: ApexResponsive[] = [
     {
@@ -100,7 +100,7 @@ export class GradientDonutComponent implements OnInit {
               startAngle: this.startAngle,
               endAngle: this.endAngle,
               donut: {
-                size: '60%', // Adjust size to ensure it fits well within the container
+                size: '50%', // Adjust size to ensure it fits well within the container
                 labels: {
                   show: true,
                   name: {
@@ -123,7 +123,7 @@ export class GradientDonutComponent implements OnInit {
                   total: {
                     show: true,
                     label: this.getTranslation('total'),
-                    fontSize: '1.2em',
+                    fontSize: '1.0em',
                     fontWeight: 'bold',
                     color: '#121212',
                     style: { fontFamily: '"Graphik", Arial, sans-serif' },
@@ -146,10 +146,11 @@ export class GradientDonutComponent implements OnInit {
           },
           legend: {
             fontSize: this.legendFontSize,
+            fontWeight: 'bold',
             formatter: this.legendFormatter,
             itemMargin: {
               horizontal: 10,
-              vertical: 15,
+              vertical: 10,
             },
             labels: {
               colors: ['#000000'], // Adjust color as needed
@@ -187,7 +188,7 @@ export class GradientDonutComponent implements OnInit {
           startAngle: this.startAngle,
           endAngle: this.endAngle,
           donut: {
-            size: '60%', // Adjust size to ensure it fits well within the container
+            size: '50%', // Adjust size to ensure it fits well within the container
             labels: {
               show: true,
               name: {
@@ -210,7 +211,7 @@ export class GradientDonutComponent implements OnInit {
               total: {
                 show: true,
                 label: this.getTranslation('total'),
-                fontSize: '1.2em',
+                fontSize: '1.0em',
                 fontWeight: 'bold',
                 color: '#121212',
                 style: { fontFamily: '"Graphik", Arial, sans-serif' },
@@ -233,10 +234,11 @@ export class GradientDonutComponent implements OnInit {
       },
       legend: {
         fontSize: this.legendFontSize,
+        fontWeight: 'bold',
         formatter: this.legendFormatter,
         itemMargin: {
           horizontal: 10,
-          vertical: 15,
+          vertical: 10,
         },
         labels: {
           colors: ['#000000'], // Adjust color as needed

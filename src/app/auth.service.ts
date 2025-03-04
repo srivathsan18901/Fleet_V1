@@ -35,7 +35,7 @@ export class AuthService {
     localStorage.removeItem('timerStartTime');
     localStorage.removeItem('lastSession');
     localStorage.removeItem('maxAge');
-    localStorage.removeItem('selectedLanguage');
+    // localStorage.removeItem('selectedLanguage');
     fetch(`http://${environment.API_URL}:${environment.PORT}/auth/logout`, {
       credentials: 'include',
     })
