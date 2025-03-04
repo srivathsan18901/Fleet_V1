@@ -41,7 +41,7 @@ export class SidenavbarComponent implements OnInit {
   showNotificationPopup = false; // Property to track popup visibility
   showProfilePopup = false;
   isSidebarEnlarged = false; // Property to track sidebar enlargement
-  cookieValue: any;
+  cookieValue: any = '';
   isNotificationVisible = false;
   languageArrowState = false;
   isFleetUp: boolean = false; // Set to true or false based on your logic

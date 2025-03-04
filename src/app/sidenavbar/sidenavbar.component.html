@@ -138,7 +138,7 @@
       </div>
 
       <!-- cookieValue.role !== "User" -->
-      @if (cookieValue.role) {
+      @if (cookieValue?.role) {
       <div class="icon4" routerLink="/configuration" routerLinkActive="active">
         <img
           src="../../assets/icons/Configuration_icons.svg"
@@ -169,7 +169,7 @@
       </div>
 
       <!-- (cookieValue.role === "Administrator") -->
-      @if (cookieValue.role) {
+      @if (cookieValue?.role) {
       <div
         *ngIf="userManagementData.generalPermissions.userManagement"
         class="icon7"
