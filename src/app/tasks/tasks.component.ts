@@ -196,7 +196,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
     console.log(item);
 
     if (!data.isTaskCancelled) {
-      alert(data.response || data.msg);
+      this.messageService.add({
+        severity: 'info',
+        
+        detail: data.response || data.msg,
+      });
+      // alert(data.response || data.msg);
       return;
     }
     if (data.isTaskCancelled) {
@@ -479,6 +484,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   async assignRobot(task: any) {
+    
     if (task.selectedRobot) {
       // task.roboName = task.selectedRobot; // Assign the robot name
       // task.status = 'ASSIGNED'; // Update status
@@ -506,7 +512,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
     let data = await response.json();
     console.log(data);
     if (data.taskAssigned) {
-      alert('task sent');
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Info',
+        detail: 'Task Sent',
+      });
       return true;
     }
     // if (data.error) return false;
@@ -518,8 +528,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
     item.showReassDropdown = false;
     this.isTaskDropDowned = false;
   }
-  toggleDropdown(task: any) {
-    task.showDropdown = true;
+  toggleDropdown(item: any) {
+    console.log(item.selectedRobot);    
+    item.selectedRobot = '';
+    item.showDropdown = true;
     this.isTaskDropDowned = true;
   }
   reassignRobot(item: any) {
