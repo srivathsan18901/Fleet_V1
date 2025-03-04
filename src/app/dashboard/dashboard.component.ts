@@ -319,7 +319,7 @@ export class DashboardComponent implements AfterViewInit {
         projectId: this.currentProject._id,
       };
       await this.pauseFleet(bodyData);
-      await this.fetchChargePositions();
+      // await this.fetchChargePositions();
     }
     // await this.fetchChargePositions();
 
