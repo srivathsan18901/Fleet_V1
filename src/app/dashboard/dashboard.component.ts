@@ -2175,12 +2175,7 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  plotAllRobots(
-    robotsData: any,
-    ctx: CanvasRenderingContext2D,
-    canvas: HTMLCanvasElement,
-    mapImage: HTMLImageElement
-  ) {
+  plotAllRobots( robotsData: any, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, mapImage: HTMLImageElement ) {
     // Calculate the scaled image dimensions and center the image on the canvas
     const imgWidth = mapImage.width * this.zoomLevel;
     const imgHeight = mapImage.height * this.zoomLevel;
@@ -2195,17 +2190,13 @@ export class DashboardComponent implements AfterViewInit {
     ctx.restore(); // Reset transformation after drawing the map
 
     for (let [index, robotId] of Object.keys(robotsData).entries()) {
-      const { posX, posY, yaw, state, path, payload, battery, current_task } =
-        robotsData[robotId];
+      const { posX, posY, yaw, state, path, payload, battery, current_task } = robotsData[robotId];
 
-      // Scale position and apply spacing offset
       const scaledPosX = posX;
       const scaledPosY = posY;
 
       // Flip Y-axis for canvas and calculate actual canvas positions
-      const transformedPosY = !this.simMode
-        ? this.mapImageHeight - scaledPosY // Non-simulation mode
-        : imgHeight / this.zoomLevel - scaledPosY;
+      const transformedPosY = !this.simMode ? this.mapImageHeight - scaledPosY : imgHeight / this.zoomLevel - scaledPosY;
       const robotCanvasX = scaledPosX;
       const robotCanvasY = transformedPosY;
       this.setPaths(path, imgHeight, centerX, centerY, parseInt(robotId));
@@ -2327,19 +2318,26 @@ export class DashboardComponent implements AfterViewInit {
     });
     
     this.chargeNodes.forEach((station) => {
-      let x = (station.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-      let y = (station.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
-
-      const transformedY = this.mapImageHeight - y;
+      let scaledX = (station.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
+      let scaledY = (station.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+      
+      // Adjust Y-coordinate if needed (flipping the Y-axis)
+      let transformedY = imgHeight / this.zoomLevel - scaledY;
+    
+      // Apply zoom level and centering
+      let chargeNodeX = centerX + scaledX * this.zoomLevel;
+      let chargeNodeY = centerY + transformedY * this.zoomLevel;
+    
       this.drawChargeNode(
         ctx,
-        x,
-        transformedY,
+        chargeNodeX,
+        chargeNodeY,
         station.pos.yaw,
         station.id,
         station.isOccupied
       );
     });
+    
   }
 
   plotAllAssets(
