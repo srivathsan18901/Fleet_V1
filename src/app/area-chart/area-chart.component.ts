@@ -756,14 +756,37 @@ export class AreaChartComponent implements OnInit {
       this.exportFileService.throughputArr,
       this.exportFileService.throughputXaxisSeries
     );
+
+    this.exportFileService.URIStrings[0] = await this.updateChartInstance(
+      this.exportFileService.throughputArr,
+      this.exportFileService.throughputXaxisSeries
+    );
+
     this.exportFileService.URIStrings[1] = await this.updateChartInstance(
       this.exportFileService.starvationArr,
       this.exportFileService.starvationXaxisSeries
     );
+
+    this.exportFileService.URIStrings[1] = await this.updateChartInstance(
+      this.exportFileService.starvationArr,
+      this.exportFileService.starvationXaxisSeries
+    );
+
     this.exportFileService.URIStrings[2] = await this.updateChartInstance(
       this.exportFileService.pickAccuracyArr,
       this.exportFileService.pickAccXaxisSeries
     );
+
+    this.exportFileService.URIStrings[2] = await this.updateChartInstance(
+      this.exportFileService.pickAccuracyArr,
+      this.exportFileService.pickAccXaxisSeries
+    );
+
+    this.exportFileService.URIStrings[3] = await this.updateChartInstance(
+      this.exportFileService.errRateArr,
+      this.exportFileService.errRateXaxisSeries
+    );
+
     this.exportFileService.URIStrings[3] = await this.updateChartInstance(
       this.exportFileService.errRateArr,
       this.exportFileService.errRateXaxisSeries
