@@ -515,18 +515,46 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   showPopup(x: number, y: number) {
-    const popup = document.getElementById('robo-popup') as HTMLDivElement;
-    if (popup) {
-      popup.style.display = 'block';
-      popup.style.left = `${x}px`;
-      popup.style.top = `${y}px`;
+    const popup = document.getElementById('robo-popup');
+    if (!popup) return;
+  
+    popup.style.display = 'block';
+  
+    // Get popup dimensions
+    const popupWidth = popup.offsetWidth;
+    const popupHeight = popup.offsetHeight;
+  
+    // Get viewport dimensions
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+  
+    // Adjust x position if popup overflows right edge
+    if (x + popupWidth > viewportWidth) {
+      x -= popupWidth;
+      y -= popupHeight;
     }
+  
+    // Adjust y position if popup overflows bottom edge
+    if (y + popupHeight > viewportHeight) {
+      y -= popupHeight;
+    }
+  
+    // Ensure popup is within screen bounds
+    x = Math.max(0, x);
+    y = Math.max(0, y);
+  
+    popup.style.left = `${x}px`;
+    popup.style.top = `${y}px`;
+  
+    // Close popup on Escape key press
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
+        this.hidePopup();
         this.hideLOCPopup();
       }
     });
   }
+  
 
   hidePopup() {
     const popup = document.getElementById('robo-popup') as HTMLDivElement;
@@ -1142,6 +1170,7 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setAssignTask(false);
     this.nodeGraphService.setLocalize(false);
     this.hideLOCPopup();
+    this.redrawCanvas();
     // this.router.navigate(['/robots']);
   }
 
@@ -1297,6 +1326,22 @@ export class DashboardComponent implements AfterViewInit {
           this.showPopup(event.clientX, event.clientY);
           this.updatedrobo = robo;
 
+          return;
+        }
+      }
+      for (let robo of this.robos) {
+        const roboX = robo.pos.x;
+        const roboY = this.mapImageHeight / this.zoomLevel - robo.pos.y;
+        const imageSize = 25; // Adjust size based on robot image dimensions
+        if (
+          imgX >= roboX - imageSize &&
+          imgX <= roboX + imageSize &&
+          imgY >= roboY - imageSize &&
+          imgY <= roboY + imageSize
+        ) {
+          // Show the popup at the clicked position
+          this.showPopup(event.clientX, event.clientY);
+          this.updatedrobo = robo;
           return;
         }
       }
