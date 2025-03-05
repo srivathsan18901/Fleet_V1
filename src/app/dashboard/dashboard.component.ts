@@ -318,7 +318,7 @@ export class DashboardComponent implements AfterViewInit {
         status: this.isPause,
         projectId: this.currentProject._id,
       };
-      await this.pauseFleet(bodyData);
+      await this.pauseFleet(bodyData,false);
       // await this.fetchChargePositions();
     }
     // await this.fetchChargePositions();
@@ -397,14 +397,14 @@ export class DashboardComponent implements AfterViewInit {
         status: !this.isPause,
         projectId: this.currentProject._id,
       };
-      let isStatusUpdated = await this.pauseFleet(bodyData);
+      let isStatusUpdated = await this.pauseFleet(bodyData,true);
       if (isStatusUpdated) this.isPause = !this.isPause;
     } catch (error) {
       console.log(error);
     }
   }
 
-  async pauseFleet(bodyData: any): Promise<boolean> {
+  async pauseFleet(bodyData: any,showToast: boolean = true): Promise<boolean> {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/pause-fleet`,
       {
@@ -419,12 +419,20 @@ export class DashboardComponent implements AfterViewInit {
     let data = await response.json();
     console.log(data);
     if (data.error) {
+      if (showToast) {
       this.toastPopup('error', 'Error', 'Error whlie pausing fleet');
+      }
       return false;
     }
-
-    // this.isPause = !this.isPause; // yet to modify the state, depends upon the returned state..
-    this.toastPopup('warn', 'Paused', 'Fleet Has been Paused');
+    if(!this.isPause){ // yet to modify the state, depends upon the returned state..
+    if (showToast) {
+    this.toastPopup('info', 'Paused', 'Fleet Has been Paused');
+    }}
+    else{
+      if (showToast) {
+      this.toastPopup('info', 'Resumed', 'Fleet Has been Resumed');
+      }
+    }
     return true;
   }
 
