@@ -368,8 +368,8 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setShowModelCanvas(false);
     this.showModelCanvas = false; // no need in later..
     this.cdRef.detectChanges();
-    this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
     if (!this.isInLive) this.initSimRoboPos();
+    this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
     if (this.nodeGraphService.getAssignTask()) this.updateCurrentRoboList();
     this.loadCanvas();
     if (this.posEventSource || this.assetEventSource) {
