@@ -518,10 +518,7 @@ export class ExportFileService {
       this.throughputXaxisSeries = Stat.map((stat: any, index: any) => ++index);
     }
 
-    const data2 = await this.fetchChartData(
-      'starvationrate',
-      this.currentFilter
-    );
+    const data2 = await this.fetchChartData('starvationrate', this.currentFilter );
 
     if (data2?.starvation) {
       this.starvationArr = data2.starvation.map((stat: any) => {
