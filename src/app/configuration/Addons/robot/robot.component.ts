@@ -273,6 +273,9 @@ export class RobotComponent {
   }
 
   async saveGrossRoboParams(project: any) {
+    this.dockParams.dockingType = Number(this.dockParams.dockingType)
+    this.chargeParams.dockingType = Number(this.chargeParams.dockingType)
+
     let bodyData = {
       projectId: project._id,
       robotParams: {
