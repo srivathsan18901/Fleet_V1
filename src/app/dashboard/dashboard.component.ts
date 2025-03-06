@@ -318,7 +318,7 @@ export class DashboardComponent implements AfterViewInit {
         status: this.isPause,
         projectId: this.currentProject._id,
       };
-      await this.pauseFleet(bodyData,false);
+      await this.pauseFleet(bodyData, false);
       // await this.fetchChargePositions();
     }
     // await this.fetchChargePositions();
@@ -326,12 +326,13 @@ export class DashboardComponent implements AfterViewInit {
     // console.log(this.projectService.getInitializeMapSelected(),'dash board')
     if (this.projectService.getInitializeMapSelected() == 'true') {
       this.canvasloader = true;
-      this.projectService.isFleetUp$.subscribe((status) => {
+      this.projectService.isFleetUp$.subscribe(async (status) => {
         this.isFleetUp = status;
         if (!this.isFleetUp) {
           this.disableAllRobos();
           this.isInLive = false; // Ensure we're not in live mode if fleet is down
           this.projectService.setInLive(false); // Update the service
+          this.chargeNodes = await this.fetchChargePositions();
         }
       });
       if (this.projectService.getInitializeMapSelected() == 'true') {
@@ -397,14 +398,14 @@ export class DashboardComponent implements AfterViewInit {
         status: !this.isPause,
         projectId: this.currentProject._id,
       };
-      let isStatusUpdated = await this.pauseFleet(bodyData,true);
+      let isStatusUpdated = await this.pauseFleet(bodyData, true);
       if (isStatusUpdated) this.isPause = !this.isPause;
     } catch (error) {
       console.log(error);
     }
   }
 
-  async pauseFleet(bodyData: any,showToast: boolean = true): Promise<boolean> {
+  async pauseFleet(bodyData: any, showToast: boolean = true): Promise<boolean> {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/pause-fleet`,
       {
@@ -420,17 +421,18 @@ export class DashboardComponent implements AfterViewInit {
     console.log(data);
     if (data.error) {
       if (showToast) {
-      this.toastPopup('error', 'Error', 'Error whlie pausing fleet');
+        this.toastPopup('error', 'Error', 'Error whlie pausing fleet');
       }
       return false;
     }
-    if(!this.isPause){ // yet to modify the state, depends upon the returned state..
-    if (showToast) {
-    this.toastPopup('info', 'Paused', 'Fleet Has been Paused');
-    }}
-    else{
+    if (!this.isPause) {
+      // yet to modify the state, depends upon the returned state..
       if (showToast) {
-      this.toastPopup('info', 'Resumed', 'Fleet Has been Resumed');
+        this.toastPopup('info', 'Paused', 'Fleet Has been Paused');
+      }
+    } else {
+      if (showToast) {
+        this.toastPopup('info', 'Resumed', 'Fleet Has been Resumed');
       }
     }
     return true;
@@ -525,35 +527,35 @@ export class DashboardComponent implements AfterViewInit {
   showPopup(x: number, y: number) {
     const popup = document.getElementById('robo-popup');
     if (!popup) return;
-  
+
     popup.style.display = 'block';
-  
+
     // Get popup dimensions
     const popupWidth = popup.offsetWidth;
     const popupHeight = popup.offsetHeight;
-  
+
     // Get viewport dimensions
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-  
+
     // Adjust x position if popup overflows right edge
     if (x + popupWidth > viewportWidth) {
       x -= popupWidth;
       y -= popupHeight;
     }
-  
+
     // Adjust y position if popup overflows bottom edge
     if (y + popupHeight > viewportHeight) {
       y -= popupHeight;
     }
-  
+
     // Ensure popup is within screen bounds
     x = Math.max(0, x);
     y = Math.max(0, y);
-  
+
     popup.style.left = `${x}px`;
     popup.style.top = `${y}px`;
-  
+
     // Close popup on Escape key press
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape') {
@@ -562,7 +564,6 @@ export class DashboardComponent implements AfterViewInit {
       }
     });
   }
-  
 
   hidePopup() {
     const popup = document.getElementById('robo-popup') as HTMLDivElement;
@@ -894,7 +895,8 @@ export class DashboardComponent implements AfterViewInit {
         img.onload = () => {
           // Set canvas dimensions based on its container
           canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-          canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+          canvas.height =
+            canvas.parentElement?.clientHeight || window.innerHeight;
           this.zoomLevel = this.nodeGraphService.getZoomLevel();
 
           // Calculate the scaled image dimensions
@@ -995,17 +997,17 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     this.chargeNodes.forEach((station) => {
-      let x = (station.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-      let y = (station.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+      let x = (station.pose.x + (this.origin.x || 0)) / (this.ratio || 1);
+      let y = (station.pose.y + (this.origin.y || 0)) / (this.ratio || 1);
 
       const transformedY = img.height - y;
       this.drawChargeNode(
         ctx,
         x,
         transformedY,
-        station.pos.yaw,
+        station.pose.yaw,
         station.id,
-        station.isOccupied
+        station.is_occupied
       );
     });
 
@@ -1551,8 +1553,8 @@ export class DashboardComponent implements AfterViewInit {
 
       // Check if mouse is over any charge node
       for (let node of this.chargeNodes) {
-        let x = (node.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-        let y = (node.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+        let x = (node.pose.x + (this.origin.x || 0)) / (this.ratio || 1);
+        let y = (node.pose.y + (this.origin.y || 0)) / (this.ratio || 1);
         const nodeX = x;
         const nodeY = y;
         const nodeSize = 20; // Charge node size
@@ -1565,7 +1567,7 @@ export class DashboardComponent implements AfterViewInit {
         ) {
           isOverChargeNode = true;
           chargeNodeId = node.id;
-          isOccupied = node.isOccupied;
+          isOccupied = node.is_occupied;
           const chargeNodeScreenX = nodeX * this.zoomLevel + this.mapImageX;
           const chargeNodeScreenY =
             (this.mapImageHeight / this.zoomLevel - nodeY) * this.zoomLevel +
@@ -1581,8 +1583,12 @@ export class DashboardComponent implements AfterViewInit {
 
           chargeTooltip.innerHTML = `
                   <div>
-                      <b>${this.getTranslation("stationId")} :</b> ${chargeNodeId} <br>
-                      <b>${this.getTranslation("occupied")} :</b> ${isOccupied ? this.getTranslation('yes') : this.getTranslation('no')}
+                      <b>${this.getTranslation(
+                        'stationId'
+                      )} :</b> ${chargeNodeId} <br>
+                      <b>${this.getTranslation('occupied')} :</b> ${
+            isOccupied ? this.getTranslation('yes') : this.getTranslation('no')
+          }
                   </div>
               `;
           chargeTooltip.style.display = 'block';
@@ -1648,9 +1654,15 @@ export class DashboardComponent implements AfterViewInit {
             robottooltip.style.left = `${event.clientX - 90}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${event.clientY - 30}px`; // Above the robot's Y position
             robottooltip.innerHTML = `<div class="ATactions">
-                        <div><label class="idlabel">${this.getTranslation("robotID")} : ${robotId}</label></div>
-                        <div><label class="idlabel">${this.getTranslation("battery")} : ${battery}%</label></div>
-                        <div><label class="idlabel">${this.getTranslation("task")} : ${taskId}</label></div>
+                        <div><label class="idlabel">${this.getTranslation(
+                          'robotID'
+                        )} : ${robotId}</label></div>
+                        <div><label class="idlabel">${this.getTranslation(
+                          'battery'
+                        )} : ${battery}%</label></div>
+                        <div><label class="idlabel">${this.getTranslation(
+                          'task'
+                        )} : ${taskId}</label></div>
                     </div>`;
             robottooltip.style.display = 'block';
             break;
@@ -2183,7 +2195,12 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  plotAllRobots( robotsData: any, ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement, mapImage: HTMLImageElement ) {
+  plotAllRobots(
+    robotsData: any,
+    ctx: CanvasRenderingContext2D,
+    canvas: HTMLCanvasElement,
+    mapImage: HTMLImageElement
+  ) {
     // Calculate the scaled image dimensions and center the image on the canvas
     const imgWidth = mapImage.width * this.zoomLevel;
     const imgHeight = mapImage.height * this.zoomLevel;
@@ -2198,13 +2215,16 @@ export class DashboardComponent implements AfterViewInit {
     ctx.restore(); // Reset transformation after drawing the map
 
     for (let [index, robotId] of Object.keys(robotsData).entries()) {
-      const { posX, posY, yaw, state, path, payload, battery, current_task } = robotsData[robotId];
+      const { posX, posY, yaw, state, path, payload, battery, current_task } =
+        robotsData[robotId];
 
       const scaledPosX = posX;
       const scaledPosY = posY;
 
       // Flip Y-axis for canvas and calculate actual canvas positions
-      const transformedPosY = !this.simMode ? this.mapImageHeight - scaledPosY : imgHeight / this.zoomLevel - scaledPosY;
+      const transformedPosY = !this.simMode
+        ? this.mapImageHeight - scaledPosY
+        : imgHeight / this.zoomLevel - scaledPosY;
       const robotCanvasX = scaledPosX;
       const robotCanvasY = transformedPosY;
       this.setPaths(path, imgHeight, centerX, centerY, parseInt(robotId));
@@ -2324,28 +2344,27 @@ export class DashboardComponent implements AfterViewInit {
         yaw
       );
     });
-    
+
     this.chargeNodes.forEach((station) => {
-      let scaledX = (station.pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-      let scaledY = (station.pos.y + (this.origin.y || 0)) / (this.ratio || 1);
-      
+      let scaledX = (station.pose.x + (this.origin.x || 0)) / (this.ratio || 1);
+      let scaledY = (station.pose.y + (this.origin.y || 0)) / (this.ratio || 1);
+
       // Adjust Y-coordinate if needed (flipping the Y-axis)
       let transformedY = imgHeight / this.zoomLevel - scaledY;
-    
+
       // Apply zoom level and centering
       let chargeNodeX = centerX + scaledX * this.zoomLevel;
       let chargeNodeY = centerY + transformedY * this.zoomLevel;
-    
+
       this.drawChargeNode(
         ctx,
         chargeNodeX,
         chargeNodeY,
-        station.pos.yaw,
+        station.pose.yaw,
         station.id,
-        station.isOccupied
+        station.is_occupied
       );
     });
-    
   }
 
   plotAllAssets(
@@ -2487,12 +2506,7 @@ export class DashboardComponent implements AfterViewInit {
     });
   }
 
-  chargeNodes = [
-    { id: 'A1', isOccupied: true, pos: { x: 14, y: 1, yaw: Math.PI / 2 } },
-    { id: 'A2', isOccupied: false, pos: { x: 4, y: 0, yaw: Math.PI / 5 } },
-    { id: 'A3', isOccupied: false, pos: { x: 20, y: -8, yaw: Math.PI / 2 } },
-    { id: 'A4', isOccupied: true, pos: { x: 23, y: 3, yaw: Math.PI / 6 } },
-  ];
+  chargeNodes: any[] = [];
 
   drawChargeNode(
     ctx: CanvasRenderingContext2D,
@@ -2511,7 +2525,7 @@ export class DashboardComponent implements AfterViewInit {
 
     ctx.save();
     ctx.translate(x, y);
-    ctx.rotate(-(yaw - Math.PI / 2));
+    ctx.rotate((yaw * Math.PI) / 180);
 
     // Draw rounded square
     ctx.beginPath();
@@ -2568,7 +2582,11 @@ export class DashboardComponent implements AfterViewInit {
 
   async moveToCharge() {
     let map = this.projectService.getMapData();
-    if (!map || this.updatedrobo.amrId == null) return;
+
+    if (!map || this.updatedrobo.amrId == null || !this.isFleetUp) return;
+
+    this.chargeNodes = await this.fetchChargePositions();
+    // return;
 
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-assets/charge-robot/${map.id}`,
@@ -2583,16 +2601,33 @@ export class DashboardComponent implements AfterViewInit {
     );
 
     let data = await response.json();
-    // console.log(data);
-    this.messageService.add({
-      severity: data.error ? 'error' : 'info',
-      summary: 'Robot pose sent!',
-      detail: data.fleetStatus ? data.fleetStatus : 'Fleet server down!',
-      life: 4000,
-    });
+    console.log(data);
+    if (data.error) {
+      this.toastPopup(
+        'error',
+        'server might down',
+        'Error occured whlie sending robot pose'
+      );
+      return;
+    }
+    const { fleetStatus } = data;
+    if (fleetStatus)
+      this.toastPopup(
+        'info',
+        'Robot pose sent!',
+        `Station allocated to Robot ${this.updatedrobo.amrId}`
+      );
+    else this.toastPopup('info', 'Pose not sent', 'Fleet might down');
+
+    // this.messageService.add({
+    //   severity: data.error ? 'error' : 'info',
+    //   summary: 'Robot pose sent!',
+    //   detail: data.fleetStatus ? data.fleetStatus : 'Fleet server down!',
+    //   life: 4000,
+    // });
   }
 
-  async fetchChargePositions() {
+  async fetchChargePositions(): Promise<any[]> {
     let mapData = this.projectService.getMapData();
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-assets/get-chargingStation-pos/${mapData.id}`,
@@ -2603,7 +2638,11 @@ export class DashboardComponent implements AfterViewInit {
     );
 
     let data = await response.json();
+    if (data.error) return [];
     // console.log(data);
+
+    const { fleetStatus } = data;
+    return fleetStatus.charging_stations;
     // this.messageService.add({
     //   severity: data.error ? 'error' : 'info',
     //   summary: data.fleetStatus
@@ -2611,6 +2650,7 @@ export class DashboardComponent implements AfterViewInit {
     //     : 'Error while fetching charging poses!',
     //   life: 4000,
     // });
+    return [];
   }
 
   drawNodesAndEdges(
