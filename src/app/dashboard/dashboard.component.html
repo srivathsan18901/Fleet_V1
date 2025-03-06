@@ -684,8 +684,8 @@
 
     {{getTranslation("Localize Robot")}}
   </button>
-
-    <button (click)="moveToCharge()" 
+    
+    <button [disabled]="disableMoveTocharge" (click)="moveToCharge()"
     class="cursor-pointer bg-white relative inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-[#F5F5F5] hover:text-[#43A047] h-9 rounded-md px-3"
     >
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">

@@ -94,6 +94,9 @@ export class GradientDonutComponent implements OnInit {
             type: 'donut',
             width: this.chartWidth,
             height: this.chartHeight,
+            animations: {
+              enabled: false
+            }
           },
           plotOptions: {
             pie: {
@@ -182,6 +185,9 @@ export class GradientDonutComponent implements OnInit {
         type: 'donut',
         width: this.chartWidth,
         height: this.chartHeight,
+        animations: {
+          enabled: false
+        }
       },
       plotOptions: {
         pie: {

@@ -319,9 +319,8 @@ export class DashboardComponent implements AfterViewInit {
         projectId: this.currentProject._id,
       };
       await this.pauseFleet(bodyData, false);
-      // await this.fetchChargePositions();
+      if(this.projectService.getInitializeMapSelected() == 'true') this.chargeNodes = await this.fetchChargePositions();
     }
-    // await this.fetchChargePositions();
 
     // console.log(this.projectService.getInitializeMapSelected(),'dash board')
     if (this.projectService.getInitializeMapSelected() == 'true') {
@@ -599,8 +598,6 @@ export class DashboardComponent implements AfterViewInit {
         imgY >= roboY - imageSize &&
         imgY <= roboY + imageSize
       ) {
-        // // Show the popup at the clicked position
-        // this.showPopup(event.clientX, event.clientY);
         this.updatedrobo = robo;
         this.updatedrobo.isInitialized = false;
         await this.initializeRobo();
@@ -1287,8 +1284,18 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
+  async isChargingNode(){
+    if(!this.isFleetUp) return;
+    this.chargeNodes = await this.fetchChargePositions();
+    if(!this.chargeNodes.length) {
+      this.disableMoveTocharge = true;;
+      return;
+    }
+    this.disableMoveTocharge = false;
+  }
+
   addRightClickListener(canvas: HTMLCanvasElement) {
-    canvas.addEventListener('contextmenu', (event) => {
+    canvas.addEventListener('contextmenu', async (event) => {
       event.preventDefault(); // Prevent the default context menu
       const assignTask = this.nodeGraphService.getAssignTask();
       this.offsetX = this.nodeGraphService.getOffsetX();
@@ -1316,6 +1323,7 @@ export class DashboardComponent implements AfterViewInit {
           imgY <= roboY + imageSize
         ) {
           // Show the popup at the clicked position
+          await this.isChargingNode();
           this.showPopup(event.clientX, event.clientY);
           this.updatedrobo = robo;
 
@@ -1333,25 +1341,10 @@ export class DashboardComponent implements AfterViewInit {
           imgY <= roboY + imageSize
         ) {
           // Show the popup at the clicked position
+          await this.isChargingNode();
           this.showPopup(event.clientX, event.clientY);
           this.updatedrobo = robo;
 
-          return;
-        }
-      }
-      for (let robo of this.robos) {
-        const roboX = robo.pos.x;
-        const roboY = this.mapImageHeight / this.zoomLevel - robo.pos.y;
-        const imageSize = 25; // Adjust size based on robot image dimensions
-        if (
-          imgX >= roboX - imageSize &&
-          imgX <= roboX + imageSize &&
-          imgY >= roboY - imageSize &&
-          imgY <= roboY + imageSize
-        ) {
-          // Show the popup at the clicked position
-          this.showPopup(event.clientX, event.clientY);
-          this.updatedrobo = robo;
           return;
         }
       }
@@ -2580,13 +2573,14 @@ export class DashboardComponent implements AfterViewInit {
     return;
   }
 
+  disableMoveTocharge: boolean = false;
+
   async moveToCharge() {
     let map = this.projectService.getMapData();
 
     if (!map || this.updatedrobo.amrId == null || !this.isFleetUp) return;
 
     this.chargeNodes = await this.fetchChargePositions();
-    // return;
 
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-assets/charge-robot/${map.id}`,
@@ -2603,21 +2597,23 @@ export class DashboardComponent implements AfterViewInit {
     let data = await response.json();
     console.log(data);
     if (data.error) {
-      this.toastPopup(
-        'error',
-        'server might down',
-        'Error occured whlie sending robot pose'
-      );
+      this.messageService.add({
+        severity: 'error',
+        summary: 'server might down',
+        detail: 'Error occured whlie sending robot pose',
+        life: 4000
+    });
       return;
     }
     const { fleetStatus } = data;
     if (fleetStatus)
-      this.toastPopup(
-        'info',
-        'Robot pose sent!',
-        `Station allocated to Robot ${this.updatedrobo.amrId}`
-      );
-    else this.toastPopup('info', 'Pose not sent', 'Fleet might down');
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Robot pose sent!',
+        detail: `Station allocated to Robot ${this.updatedrobo.amrId}`,
+        life: 4000
+  });
+    else this.messageService.add({severity: 'info', summary: 'Pose not sent', detail: 'Fleet might down', life: 4000});
 
     // this.messageService.add({
     //   severity: data.error ? 'error' : 'info',
@@ -2642,14 +2638,7 @@ export class DashboardComponent implements AfterViewInit {
     // console.log(data);
 
     const { fleetStatus } = data;
-    return fleetStatus.charging_stations;
-    // this.messageService.add({
-    //   severity: data.error ? 'error' : 'info',
-    //   summary: data.fleetStatus
-    //     ? 'chargin pose sent!'
-    //     : 'Error while fetching charging poses!',
-    //   life: 4000,
-    // });
+    if(fleetStatus) return fleetStatus.charging_stations;
     return [];
   }
 
