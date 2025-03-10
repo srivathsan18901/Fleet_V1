@@ -182,7 +182,7 @@ export class ExportFileService {
         {
           image: this.donutChartBase64URI,
           width: 300,
-          absolutePosition: { x: 30, y: 125 },
+          absolutePosition: { x: 180, y: 130 },
         },
         // Taskname
         {
@@ -192,7 +192,7 @@ export class ExportFileService {
           font: 'NotoSansJP',
           color: 'black',
           background: 'white',
-          absolutePosition: { x: 25, y: 125 },
+          absolutePosition: { x: 180, y: 125 },
           margin: [10, 5, 10, 5] 
         },
         // {
@@ -214,11 +214,11 @@ export class ExportFileService {
         //   absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
         // },     
         //Task_Det
-        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 212, y: 130 } }, 
-        { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 142 } },   
+        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 300, y: 130 } }, 
+        { image: taskDet_img, width: 120, absolutePosition: { x: 325, y: 142 } },   
         
         {
-          text: this.getTranslation("completed")+"  "+"-",
+          text: this.getTranslation("completed")+"  "+ "-",
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
@@ -315,21 +315,21 @@ export class ExportFileService {
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 80, y: 100 },
+          absolutePosition: { x: 30, y: 80 },
         },
         {
           text:this.getTranslation("systemUptime") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 250, y: 100 },
+          absolutePosition: { x: 220, y: 80 },
         },
         {
           text:this.getTranslation("successRate") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 470, y: 100 },
+          absolutePosition: { x: 420, y: 80 },
         },
         // {
         //   text:this.getTranslation("responsiveness") + ' -',
@@ -343,21 +343,21 @@ export class ExportFileService {
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 544, y: 176 },
+          absolutePosition: { x: 160, y: 83 },
         },
         {
           text: this.systemUptime + '%',
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 544, y: 207 },
+          absolutePosition: { x: 350, y: 83 },
         },
         {
           text: this.successRate + '%',
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 544, y: 240 },
+          absolutePosition: { x: 534, y: 83 },
         },
         // {
         //   text: this.responsiveness,
