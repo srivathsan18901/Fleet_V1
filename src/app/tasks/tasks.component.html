@@ -97,7 +97,7 @@
         <td>{{ item.sourceLocation }}</td>
         <td>
           <div style="display: flex; align-items: center; gap: 10px;">
-            <ng-container *ngIf="item.status === 'NOTASSIGNED' || item.status === 'ACCEPTED'; else assigned">
+            <ng-container *ngIf="item.status === 'NOTASSIGNED'; else assigned">
               <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
                 {{ getTranslation('assign') }}
               </button>
@@ -117,7 +117,7 @@
               </ng-container>
             </ng-container>
             <ng-template #assigned>
-              <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS' ; else inProgress">
+              <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS'  || item.status === 'ACCEPTED' ; else inProgress">
                 <button  *ngIf="!item.showReassDropdown" (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
                   {{ getTranslation('re_assign') }}
                 </button>

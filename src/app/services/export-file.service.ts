@@ -71,6 +71,7 @@ export class ExportFileService {
       }
     };
   }
+
   private async convertSvgToImage(url: string): Promise<string> {
     return new Promise((resolve, reject) => {
       var img = new Image();
@@ -92,9 +93,11 @@ export class ExportFileService {
       };
       });
   }
+
   getTranslation(key: string) {
     return this.translationService.getStatisticsTranslation(key);
   }
+
   async createDocument() {
     const Report_nameImage = await this.convertSvgToImage(Report_name);
     const data_img = await this.convertSvgToImage(data);
@@ -515,7 +518,9 @@ export class ExportFileService {
     if (data?.throughput) {
       let { Stat } = data.throughput;
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
-      this.throughputXaxisSeries = Stat.map((stat: any, index: any) => ++index);
+      this.throughputXaxisSeries = Stat.map(
+        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+      );
     }
 
     const data2 = await this.fetchChartData('starvationrate', this.currentFilter );
@@ -525,7 +530,7 @@ export class ExportFileService {
         return Math.round(stat.starvationRate);
       });
       this.starvationXaxisSeries = data2.starvation.map(
-        (stat: any, index: any) => ++index
+        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
       );
     }
 
@@ -536,7 +541,7 @@ export class ExportFileService {
         Math.round(stat.pickAccuracy)
       );
       this.pickAccXaxisSeries = data3.throughput.Stat.map(
-        (stat: any, index: any) => ++index
+        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
       );
     }
 
@@ -546,7 +551,7 @@ export class ExportFileService {
         Math.round(stat.errorRate)
       );
       this.errRateXaxisSeries = data4.errRate.map(
-        (stat: any, index: any) => ++index
+        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
       );
     }
   }
