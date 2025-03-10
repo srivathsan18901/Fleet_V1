@@ -259,7 +259,12 @@ export class AreaChartComponent implements OnInit {
   }
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 7) {
-    const [limitedData, limitedTime] = this.chunkDataArr(data, time, limit);
+    let [limitedData, limitedTime] = this.chunkDataArr(data, time, limit);
+
+    if (!this.isFleetUp) {
+      limitedData = [0];
+      limitedTime = [''];
+    }
 
     this.chart.updateOptions(
       {
@@ -805,25 +810,8 @@ export class AreaChartComponent implements OnInit {
 
   async fetchWholeGraph() {
     this.chartInstance.updateOptions({
-      // yet to remove it later..
       animations: {
         enabled: false,
-      },
-      xaxis: {
-        labels: {
-          style: {
-            colors: '#000000',
-            fontSize: '8px',
-          },
-        },
-      },
-      yaxis: {
-        labels: {
-          style: {
-            colors: '#000000',
-            fontSize: '8px',
-          },
-        },
       },
     });
     if (this.isFleetUp) await this.exportFileService.fetchWholeGraph();
