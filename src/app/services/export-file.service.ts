@@ -27,7 +27,7 @@ export class ExportFileService {
   currentFilter: string = 'today';
 
   graphHeight: number = 180;
-  graphWidth: number = 260;
+  graphWidth: number = 280;
 
   systemThroughput: number = 0;
   systemUptime: number = 0;
@@ -157,14 +157,14 @@ export class ExportFileService {
         },
 
         //Report Name
-        { image: Report_nameImage, width: 50, absolutePosition: { x: 230, y: 55 } },
+        { image: Report_nameImage, width: 50, absolutePosition: { x: 230, y: 10 } },
         {
           text: this.getTranslation("taskStatistics"),
           color: '#DA2128',
           fontSize: 15,
           font: 'NotoSansJP',
           bold: true,
-          absolutePosition: { x: 280, y: 58 },
+          absolutePosition: { x: 280, y: 13 },
         },
         {
           text: this.getTranslation("report"),
@@ -172,7 +172,7 @@ export class ExportFileService {
           fontSize: 15,
           font: 'NotoSansJP',
           bold: true,
-          absolutePosition: { x: 280, y: 80 },
+          absolutePosition: { x: 280, y: 33 },
         },
         // {
         //   svg: Report_name,
@@ -201,18 +201,18 @@ export class ExportFileService {
         //   absolutePosition: { x: 25, y: 120 },
         // },
         // Vertical Line
-        {
-          canvas: [
-            {
-              type: 'line',
-              x1: 15, y1: 0,
-              x2: 15, y2: 200,  // Adjust the height of the line
-              lineWidth: 1,
-              color: 'black' // Set the color of the line
-            }
-          ],
-          absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
-        },     
+        // {
+        //   canvas: [
+        //     {
+        //       type: 'line',
+        //       x1: 15, y1: 0,
+        //       x2: 15, y2: 200,  // Adjust the height of the line
+        //       lineWidth: 1,
+        //       color: 'black' // Set the color of the line
+        //     }
+        //   ],
+        //   absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
+        // },     
         //Task_Det
         { image: blank_img, width: 120,height: 220, absolutePosition: { x: 212, y: 130 } }, 
         { image: taskDet_img, width: 120, absolutePosition: { x: 215, y: 142 } },   
@@ -303,7 +303,7 @@ export class ExportFileService {
           absolutePosition: { x: 345, y: 297 },
         },
         //Data
-        { image: data_img, width: 160, absolutePosition: { x: 370, y: 165 } },
+        // { image: data_img, width: 160, absolutePosition: { x: 370, y: 165 } },
 
         // {
         //   svg: data,
@@ -315,21 +315,21 @@ export class ExportFileService {
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 410, y: 173 },
+          absolutePosition: { x: 80, y: 100 },
         },
         {
           text:this.getTranslation("systemUptime") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 410, y: 204 },
+          absolutePosition: { x: 250, y: 100 },
         },
         {
           text:this.getTranslation("successRate") + ' -',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 410, y: 236 },
+          absolutePosition: { x: 470, y: 100 },
         },
         // {
         //   text:this.getTranslation("responsiveness") + ' -',

@@ -383,7 +383,7 @@ export class AreaChartComponent implements OnInit {
         'starvationrate',
         this.currentFilter
       );
-      console.log(data, 'data starvation');
+      // console.log(data, 'data starvation');
 
       if (data.starvation) {
         this.starvationArr = data.starvation.map((stat: any) => {
@@ -749,9 +749,25 @@ export class AreaChartComponent implements OnInit {
   }
 
   async fetchWholeGraph() {
-    this.chartInstance.updateOptions({
+    this.chartInstance.updateOptions({ // yet to remove it later..
       animations: {
         enabled: false
+      },
+      xaxis: {
+        labels: {
+          style: {
+            colors: '#000000',
+            fontSize: '8px',
+          },
+        },
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#000000',
+            fontSize: '8px',
+          },
+        },
       }
     })
     if (this.isFleetUp) await this.exportFileService.fetchWholeGraph();
@@ -785,7 +801,8 @@ export class AreaChartComponent implements OnInit {
     XaxisSeries: string[],
     limit: number = 7
   ): Promise<any> {
-    const [limitedData, limitedTime] = this.chunkDataArr(graphArr, XaxisSeries, limit);
+    let [limitedData, limitedTime] = this.chunkDataArr(graphArr, XaxisSeries, limit);
+    limitedTime = limitedTime.map((time:String) => time.split(','));
 
     this.chartInstance.updateOptions(
       {
