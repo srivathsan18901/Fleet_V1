@@ -232,26 +232,26 @@ export class AreaChartComponent implements OnInit {
       this.updateChart('data4', this.selectedMetric);
   }
 
-  chunkDataArr(data: any[], time: any[], limit: number):any[][] {
+  chunkDataArr(data: any[], time: any[], limit: number): any[][] {
     let chunks = [];
     let timeChunks = [];
-    let resultedData:number[] = [];
+    let resultedData: number[] = [];
     let resultedTime: any[] = [];
     let arrayLimit = data.length / limit;
-    for(let i = limit; i > 0; i--){
+    for (let i = limit; i > 0; i--) {
       let chunk = data.splice(0, arrayLimit);
       let timeChunk = time.splice(0, arrayLimit);
       chunks.push(chunk);
       timeChunks.push(timeChunk);
     }
-    for(let i = 0; i < chunks.length; i++){
+    for (let i = 0; i < chunks.length; i++) {
       let sum = 0;
-      chunks[i].forEach(val => {
+      chunks[i].forEach((val) => {
         sum += val;
       });
       let avg = Math.round(sum / chunks[i].length); // [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
       resultedData.push(avg);
-      let timeChunklen = timeChunks[i].length-1;
+      let timeChunklen = timeChunks[i].length - 1;
       resultedTime.push(timeChunks[i][timeChunklen]);
     }
 
@@ -259,7 +259,12 @@ export class AreaChartComponent implements OnInit {
   }
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 7) {
-    const [limitedData, limitedTime] = this.chunkDataArr(data, time, limit);
+    let [limitedData, limitedTime] = this.chunkDataArr(data, time, limit);
+
+    if (!this.isFleetUp) {
+      limitedData = [0];
+      limitedTime = [''];
+    }
 
     this.chart.updateOptions(
       {
@@ -316,8 +321,13 @@ export class AreaChartComponent implements OnInit {
         this.throughputArr = data.throughput.Stat.map(
           (stat: any) => stat.TotalThroughPutPerHour
         );
-        this.throughputXaxisSeries = data.throughput.Stat.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.throughputXaxisSeries = data.throughput.Stat.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
       }
 
@@ -338,8 +348,13 @@ export class AreaChartComponent implements OnInit {
 
     if (data.throughput) {
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
-      this.throughputXaxisSeries = Stat.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+      this.throughputXaxisSeries = Stat.map((stat: any) =>
+        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        })
       );
       this.systemThroughputEvent.emit(this.throughputArr);
     }
@@ -359,8 +374,13 @@ export class AreaChartComponent implements OnInit {
         this.throughputArr = Stat.map(
           (stat: any) => stat.TotalThroughPutPerHour
         );
-        this.throughputXaxisSeries = Stat.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.throughputXaxisSeries = Stat.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
         this.systemThroughputEvent.emit(this.throughputArr);
       }
@@ -389,8 +409,13 @@ export class AreaChartComponent implements OnInit {
         this.starvationArr = data.starvation.map((stat: any) => {
           return Math.round(stat.starvationRate);
         });
-        this.starvationXaxisSeries = data.starvation.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.starvationXaxisSeries = data.starvation.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
       }
       this.plotChart(
@@ -413,8 +438,13 @@ export class AreaChartComponent implements OnInit {
       this.starvationArr = data.starvation.map((stat: any) => {
         return Math.round(stat.starvationRate);
       });
-      this.starvationXaxisSeries = data.starvation.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+      this.starvationXaxisSeries = data.starvation.map((stat: any) =>
+        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        })
       );
     }
 
@@ -433,8 +463,13 @@ export class AreaChartComponent implements OnInit {
         this.starvationArr = data.starvation.map((stat: any) => {
           return Math.round(stat.starvationRate);
         });
-        this.starvationXaxisSeries = data.starvation.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.starvationXaxisSeries = data.starvation.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
       }
       this.plotChart(
@@ -505,8 +540,13 @@ export class AreaChartComponent implements OnInit {
         this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
           Math.round(stat.pickAccuracy)
         );
-        this.pickAccXaxisSeries = data.throughput.Stat.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.pickAccXaxisSeries = data.throughput.Stat.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
       }
 
@@ -527,8 +567,13 @@ export class AreaChartComponent implements OnInit {
       this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
         Math.round(stat.pickAccuracy)
       );
-      this.pickAccXaxisSeries = data.throughput.Stat.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+      this.pickAccXaxisSeries = data.throughput.Stat.map((stat: any) =>
+        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        })
       );
     }
 
@@ -548,15 +593,20 @@ export class AreaChartComponent implements OnInit {
         this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
           Math.round(stat.pickAccuracy)
         );
-        this.pickAccXaxisSeries = data.throughput.Stat.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.pickAccXaxisSeries = data.throughput.Stat.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
       }
 
       this.plotChart(
         'Pick accuracy',
         this.pickAccuracyArr,
-        this.pickAccXaxisSeries,
+        this.pickAccXaxisSeries
       );
     }, 1000 * 2);
   }
@@ -626,16 +676,16 @@ export class AreaChartComponent implements OnInit {
         this.errRateArr = data.errRate.map((stat: any) =>
           Math.round(stat.errorRate)
         );
-        this.errRateXaxisSeries = data.errRate.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.errRateXaxisSeries = data.errRate.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
       }
-      this.plotChart(
-        'Error rate',
-        this.errRateArr,
-        this.errRateXaxisSeries,
-        7
-      );
+      this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries, 7);
       return;
     }
 
@@ -647,8 +697,13 @@ export class AreaChartComponent implements OnInit {
       this.errRateArr = data.errRate.map((stat: any) =>
         Math.round(stat.errorRate)
       );
-      this.errRateXaxisSeries = data.errRate.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+      this.errRateXaxisSeries = data.errRate.map((stat: any) =>
+        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+          month: 'short',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+        })
       );
     }
 
@@ -660,8 +715,13 @@ export class AreaChartComponent implements OnInit {
         this.errRateArr = data.errRate.map((stat: any) =>
           Math.round(stat.errorRate)
         );
-        this.errRateXaxisSeries = data.errRate.map(
-          (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        this.errRateXaxisSeries = data.errRate.map((stat: any) =>
+          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+            month: 'short',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          })
         );
       }
 
@@ -749,27 +809,11 @@ export class AreaChartComponent implements OnInit {
   }
 
   async fetchWholeGraph() {
-    this.chartInstance.updateOptions({ // yet to remove it later..
+    this.chartInstance.updateOptions({
       animations: {
-        enabled: false
+        enabled: false,
       },
-      xaxis: {
-        labels: {
-          style: {
-            colors: '#000000',
-            fontSize: '8px',
-          },
-        },
-      },
-      yaxis: {
-        labels: {
-          style: {
-            colors: '#000000',
-            fontSize: '8px',
-          },
-        },
-      }
-    })
+    });
     if (this.isFleetUp) await this.exportFileService.fetchWholeGraph();
     await this.generateGraph();
   }
@@ -784,7 +828,7 @@ export class AreaChartComponent implements OnInit {
       this.exportFileService.starvationArr,
       this.exportFileService.starvationXaxisSeries
     );
-    
+
     this.exportFileService.URIStrings[2] = await this.updateChartInstance(
       this.exportFileService.pickAccuracyArr,
       this.exportFileService.pickAccXaxisSeries
@@ -801,8 +845,18 @@ export class AreaChartComponent implements OnInit {
     XaxisSeries: string[],
     limit: number = 7
   ): Promise<any> {
-    let [limitedData, limitedTime] = this.chunkDataArr(graphArr, XaxisSeries, limit);
-    limitedTime = limitedTime.map((time:String) => time.split(','));
+    let [limitedData, limitedTime] = this.chunkDataArr(
+      graphArr,
+      XaxisSeries,
+      limit
+    );
+    if (this.isFleetUp)
+      limitedTime = limitedTime.map((time: String) => time.split(','));
+
+    if (!this.isFleetUp) {
+      limitedData = [0];
+      limitedTime = [''];
+    }
 
     this.chartInstance.updateOptions(
       {
