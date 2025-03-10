@@ -182,7 +182,7 @@ export class ExportFileService {
         {
           image: this.donutChartBase64URI,
           width: 300,
-          absolutePosition: { x: 180, y: 130 },
+          absolutePosition: { x: 130, y: 140 },
         },
         // Taskname
         {
@@ -192,7 +192,7 @@ export class ExportFileService {
           font: 'NotoSansJP',
           color: 'black',
           background: 'white',
-          absolutePosition: { x: 180, y: 125 },
+          absolutePosition: { x: 130, y: 135 },
           margin: [10, 5, 10, 5] 
         },
         // {
@@ -214,50 +214,50 @@ export class ExportFileService {
         //   absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
         // },     
         //Task_Det
-        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 300, y: 130 } }, 
-        { image: taskDet_img, width: 120, absolutePosition: { x: 325, y: 142 } },   
+        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 315, y: 140 } }, 
+        { image: taskDet_img, width: 120, absolutePosition: { x: 325, y: 152 } },   
         
         {
           text: this.getTranslation("completed")+"  "+ "-",
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 245, y: 147.5 },
+          absolutePosition: { x: 355, y: 157.5 },
         },
         {
           text: this.getTranslation("assigned")+"  "+"-",
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 245, y: 177 },
+          absolutePosition: { x: 355, y: 187 },
         },
         {
           text: this.getTranslation("inProgress")+"  "+"-",
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 245, y: 207 },
+          absolutePosition: { x: 355, y: 217 },
         },
         {
           text: this.getTranslation("toDo")+"  "+"-",
           color: 'black',
           fontSize: 12,
           font: 'NotoSansJP',
-          absolutePosition: { x: 245, y: 237  },
+          absolutePosition: { x: 355, y: 247  },
         },
         {
           text: this.getTranslation("Error")+"  "+"-",
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 245, y: 267  },
+          absolutePosition: { x: 355, y: 277  },
         },
         {
           text: this.getTranslation("cancelled")+"  "+"-",
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 245, y: 296 },
+          absolutePosition: { x: 355, y: 306 },
         },
 
         {
@@ -265,42 +265,42 @@ export class ExportFileService {
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 345, y: 148.5 },
+          absolutePosition: { x: 470, y: 158.5 },
         },
         {
           text: this.taskData[1],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 345, y: 178 },
+          absolutePosition: { x: 470, y: 188 },
         },
         {
           text: this.taskData[2],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 345, y: 208 },
+          absolutePosition: { x: 470, y: 218 },
         },
         {
           text: this.taskData[3],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 345, y: 238  },
+          absolutePosition: { x: 470, y: 248  },
         },
         {
           text: this.taskData[4],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 345, y: 268  },
+          absolutePosition: { x: 470, y: 278  },
         },
         {
           text: this.taskData[5],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 345, y: 297 },
+          absolutePosition: { x: 470, y: 307 },
         },
         //Data
         // { image: data_img, width: 160, absolutePosition: { x: 370, y: 165 } },
@@ -311,54 +311,36 @@ export class ExportFileService {
         //   absolutePosition: { x: 370, y: 155 },
         // },  
         {
-          text:this.getTranslation("systemThroughput") + ' -',
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 30, y: 80 },
+          table: {
+            widths: [170, 170, 170], // Adjust column widths as needed
+            body: [
+              [
+                { text: this.getTranslation("systemThroughput"), color: 'black', font: 'NotoSansJP', fontSize: 12, alignment: 'center' },
+                { text: this.getTranslation("systemUptime"), color: 'black', font: 'NotoSansJP', fontSize: 12, alignment: 'center' },
+                { text: this.getTranslation("successRate"), color: 'black', font: 'NotoSansJP', fontSize: 12, alignment: 'center' }
+              ],
+              [
+                { text: this.systemThroughput + '%', color: 'black', fontSize: 12, bold: true, alignment: 'center' },
+                { text: this.systemUptime + '%', color: 'black', fontSize: 12, bold: true, alignment: 'center' },
+                { text: this.successRate + '%', color: 'black', fontSize: 12, bold: true, alignment: 'center' }
+              ]
+            ]
+          },
+          layout: {
+
+            hLineColor: function (i:any, node:any) {
+                return 'black';
+            },
+            vLineColor: function (i:any, node:any) {
+                return 'black';
+            },
+            paddingLeft: function(i:any, node:any) { return 4; },
+            paddingRight: function(i:any, node:any) { return 4; }
         },
-        {
-          text:this.getTranslation("systemUptime") + ' -',
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 220, y: 80 },
+         // Optional: Adds horizontal lines to the table
+          absolutePosition: { x: 30, y: 80 } // Adjust position as needed
         },
-        {
-          text:this.getTranslation("successRate") + ' -',
-          color: 'black',
-          font: 'NotoSansJP',
-          fontSize: 12,
-          absolutePosition: { x: 420, y: 80 },
-        },
-        // {
-        //   text:this.getTranslation("responsiveness") + ' -',
-        //   color: 'black',
-        //   font: 'NotoSansJP',
-        //   fontSize: 12,
-        //   absolutePosition: { x: 410, y: 268 },
-        // },      
-        {
-          text: this.systemThroughput + '%',
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 160, y: 83 },
-        },
-        {
-          text: this.systemUptime + '%',
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 350, y: 83 },
-        },
-        {
-          text: this.successRate + '%',
-          color: 'black',
-          fontSize: 12,
-          bold: true,
-          absolutePosition: { x: 534, y: 83 },
-        },
+        
         // {
         //   text: this.responsiveness,
         //   color: 'black',

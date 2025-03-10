@@ -813,6 +813,22 @@ export class AreaChartComponent implements OnInit {
       animations: {
         enabled: false,
       },
+      xaxis: {
+        labels: {
+          style: {
+            colors: '#000000',
+            fontSize: '8px',
+          },
+        },
+      },
+      yaxis: {
+        labels: {
+          style: {
+            colors: '#000000',
+            fontSize: '8px',
+          },
+        },
+      },
     });
     if (this.isFleetUp) await this.exportFileService.fetchWholeGraph();
     await this.generateGraph();
