@@ -57,7 +57,7 @@
     width: 102%;
     border-radius: 10px;
     margin-top: 80px;
-    max-height: 35rem;
+    max-height: 25rem;
     overflow-y: auto;
   }
   .progress-container {
@@ -170,6 +170,7 @@
   thead {
     position: sticky;
     top: 0;
+    z-index: 3;
     background-color: #FFCDCD; /* Ensure the header has a background color */
     /* z-index: 1000; */
   }
@@ -237,6 +238,7 @@
 .export-button-container {
     position: fixed;
     bottom: 20px;
+    z-index: 4;
     right: 20px;
   }
 
