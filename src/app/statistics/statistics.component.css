@@ -518,6 +518,11 @@ h2 {
   border-right: 2px solid #ff7373;
 }
 
+.DL_Btn:disabled{
+  pointer-events: none;
+  cursor: not-allowed;
+  filter: blur(1px);
+}
 
 .DL_Btn:hover .tooltip {
   opacity: 1;
