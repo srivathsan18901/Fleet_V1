@@ -108,7 +108,6 @@ export class ExportFileService {
     const taskDet_img = await this.convertSvgToImage(taskDet);
     const blank_img = await this.convertSvgToImage(blank);
 
-
     this.docDefinition = {
       pageSize: 'A4',
       pageMargins: [4, 4, 4, 4], // Adjust margins
@@ -133,7 +132,6 @@ export class ExportFileService {
           width:100,
           absolutePosition: { x: 15, y: 15 },
         },
-        
         // "robis" SVG - Top Right
         {
           image: robis_img,
@@ -155,7 +153,6 @@ export class ExportFileService {
           bold: true,
           absolutePosition: { x: 523, y: 815 },
         },
-
         //Report Name
         { image: Report_nameImage, width: 50, absolutePosition: { x: 230, y: 10 } },
         {
@@ -216,7 +213,6 @@ export class ExportFileService {
         //Task_Det
         { image: blank_img, width: 120,height: 220, absolutePosition: { x: 315, y: 140 } }, 
         { image: taskDet_img, width: 120, absolutePosition: { x: 325, y: 152 } },   
-        
         {
           text: this.getTranslation("completed")+"  "+ "-",
           color: 'black',

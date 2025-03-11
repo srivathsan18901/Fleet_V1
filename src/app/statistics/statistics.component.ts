@@ -13,6 +13,7 @@ import { TranslationService } from '../services/translation.service';
 import { ExportFileService } from '../services/export-file.service';
 import { AreaChartComponent } from '../area-chart/area-chart.component';
 import { GradientDonutComponent } from '../gradient-donut/gradient-donut.component';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-statistics',
@@ -36,6 +37,7 @@ export class StatisticsComponent {
   taskErrNotifications: any[] = [];
 
   isFleet: boolean = false;
+  isExpInProgress: boolean = false;
 
   statisticsData: any = {
     systemThroughput: 0,
@@ -48,7 +50,7 @@ export class StatisticsComponent {
     responsivenessChange: 5.2,
   }; // Initialize the array with mock data
 
-  systemThroughput: number[] = [1, 2, 3, 4, 5];
+  // systemThroughput: number[] = [1, 2, 3, 4, 5];
   private subscriptions: Subscription[] = [];
 
   filteredOperationActivities = this.operationActivities;
@@ -66,7 +68,8 @@ export class StatisticsComponent {
     private cdRef: ChangeDetectorRef,
     private isFleetService: IsFleetService,
     private translationService: TranslationService,
-    private exportFileService: ExportFileService
+    private exportFileService: ExportFileService,
+    private spinner: NgxSpinnerService
   ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
   }
@@ -109,15 +112,15 @@ export class StatisticsComponent {
     if (!this.selectedMap) return;
     // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
     await this.getGrossStatus();
-    if (this.isFleet){
+    if (this.isFleet) {
       this.operationPie = await this.fetchTasksStatus();
       this.exportFileService.taskData = this.operationPie;
     }
     if (this.isFleet) await this.getTaskNotifications();
     this.taskStatus_interval = setInterval(async () => {
-      if (this.isFleet){
-         this.operationPie = await this.fetchTasksStatus();
-         this.exportFileService.taskData = this.operationPie;
+      if (this.isFleet) {
+        this.operationPie = await this.fetchTasksStatus();
+        this.exportFileService.taskData = this.operationPie;
       }
     }, 1000 * 10);
     this.operationActivities = await this.fetchCurrTasksStatus();
@@ -152,9 +155,9 @@ export class StatisticsComponent {
   }
 
   async createDocDefinition() {
+    await this.areaChartComponent.fetchWholeGraph();
     this.exportFileService.donutChartBase64URI =
       await this.gradientDonutComponent.getChart();
-    await this.areaChartComponent.fetchWholeGraph();
   }
 
   async getTaskNotifications() {
@@ -285,8 +288,6 @@ export class StatisticsComponent {
   async fetchTasksStatus(): Promise<number[]> {
     let establishedTime = new Date(this.selectedMap.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime); // yet to take, in seri..
-    // timeStamp1 = 1728930600;
-    // timeStamp2 = 1729050704;
 
     let endPoint = '/fleet-tasks';
 
@@ -319,7 +320,7 @@ export class StatisticsComponent {
     }
     if (!data.tasks?.tasks) return [0, 0, 0, 0, 0, 0];
     const { tasks } = data.tasks;
-    // if (data.tasksStatus) return data.tasksStatus;
+
     // ["completed", "In-progress", "todo", "err", "cancelled"];
     let tasksStatus = [0, 0, 0, 0, 0, 0];
     let tot_tasks = 0;
@@ -363,9 +364,17 @@ export class StatisticsComponent {
   }
 
   async generatePdf() {
+    if (!this.isFleet) {
+      alert('fleet is in down!');
+      return;
+    }
+    this.isExpInProgress = true;
+    this.spinner.show();
     await this.createDocDefinition();
 
     this.exportFileService.createDocument();
+    this.isExpInProgress = false;
+    this.spinner.hide();
   }
 
   onSearch(event: Event): void {

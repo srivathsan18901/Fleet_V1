@@ -5,7 +5,7 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   HostListener,
-  ElementRef 
+  ElementRef,
 } from '@angular/core';
 import { ExportService } from '../export.service';
 import { environment } from '../../environments/environment.development';
@@ -111,6 +111,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (item.status === 'CANCELLED') {
       return this.getPreviousStep(item); // Set active step to the last valid step before cancellation
     }
+    if (item.status === 'ACCEPTED') return this.statusStepMap['ASSIGNED'];
     return this.statusStepMap[item.status] ?? 0;
   }
 
@@ -139,7 +140,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
   // Listen for clicks outside the table to close the expanded row
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {
-    if (!this.eRef.nativeElement.querySelector('.table-container')?.contains(event.target as Node)) {
+    if (
+      !this.eRef.nativeElement
+        .querySelector('.table-container')
+        ?.contains(event.target as Node)
+    ) {
       // If click is outside the table, close the expanded row
       if (this.expandedRowId) {
         this.expandedRowMap[this.expandedRowId] = false;
@@ -198,7 +203,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (!data.isTaskCancelled) {
       this.messageService.add({
         severity: 'info',
-        
+
         detail: data.response || data.msg,
       });
       // alert(data.response || data.msg);
@@ -275,7 +280,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
 
-    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
+    this.paginatorIntl.itemsPerPageLabel =
+      this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
@@ -297,7 +303,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
             icon: '../../assets/Iconsfortask/Comp.svg',
           },
         ];
-        this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page');
+        this.paginatorIntl.itemsPerPageLabel =
+          this.getTranslation('Items per page');
         this.paginatorIntl.changes.next();
       }
     );
@@ -335,7 +342,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.setPaginatedData(); // Just update the paginated data
     }
   }
-  
+
   async fetchTasks() {
     this.tasksSignalController = new AbortController();
 
@@ -484,7 +491,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   async assignRobot(task: any) {
-    
     if (task.selectedRobot) {
       // task.roboName = task.selectedRobot; // Assign the robot name
       // task.status = 'ASSIGNED'; // Update status
@@ -529,7 +535,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.isTaskDropDowned = false;
   }
   toggleDropdown(item: any) {
-    console.log(item.selectedRobot);    
+    // console.log(item.selectedRobot);
     item.selectedRobot = '';
     item.showDropdown = true;
     this.isTaskDropDowned = true;
@@ -616,7 +622,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.searchQuery = (event.target as HTMLInputElement).value.toLowerCase();
     this.filterTasks(); // Call filterTasks to apply search and filter together
   }
-
 
   exportData(format: string) {
     const data = this.tasks;
