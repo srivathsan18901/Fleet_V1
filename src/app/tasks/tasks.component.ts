@@ -241,8 +241,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
         taskType: task.sub_task[0]?.task_type || 'N/A',
         status: task.task_status.status,
         roboName: task.agent_ID,
-        sourceLocation: task.sub_task[0]?.source_location || 'N/A',
-        destinationLocation: 'N/A',
+        // sourceLocation: task.sub_task[0]?.source_location || 'N/A',
+        destinationLocation: task.sub_task[0]?.source_location || 'N/A',
       }));
       // this.filteredTaskData = this.tasks;
       this.updateData(); // Ensure pagination and filtered data are updated
@@ -372,10 +372,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
             : 'N/A',
           status: task.task_status.status,
           roboName: task.agent_ID,
-          sourceLocation: task.sub_task[0]?.source_location
-            ? task.sub_task[0]?.source_location
-            : 'N/A',
-          destinationLocation: 'N/A',
+          // sourceLocation: task.sub_task[0]?.source_location
+          //   ? task.sub_task[0]?.source_location
+          //   : 'N/A',
+          destinationLocation: task.sub_task[0]?.source_location || 'N/A',
         };
       });
     // this.filteredTaskData = this.tasks;
@@ -633,7 +633,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
                 taskType: '',
                 status: '',
                 roboName: '',
-                sourceLocation: '',
                 destinationLocation: '',
               },
             ];
@@ -658,7 +657,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
                 taskType: '',
                 status: '',
                 roboName: '',
-                sourceLocation: '',
                 destinationLocation: '',
               },
             ];

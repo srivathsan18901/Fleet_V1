@@ -1009,6 +1009,7 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     if (this.nodeGraphService.getAssignTask()) {
+      this.assignTask=true;
       this.nodes.forEach((node) => {
         const transformedY = img.height - node.nodePosition.y;
         this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
@@ -1185,7 +1186,12 @@ export class DashboardComponent implements AfterViewInit {
     // this.router.navigate(['/robots']);
     if (this.roboToLocalize) this.redrawCanvas();
     this.nodeGraphService.setAssignTask(false);
+    this.assignTask=false;
+    if(!this.assignTask){      
+    this.router.navigate(['/tasks']);
+    }
     this.nodeGraphService.setLocalize(false);
+    this.redrawCanvas();
     this.hideLOCPopup();
   }
 
