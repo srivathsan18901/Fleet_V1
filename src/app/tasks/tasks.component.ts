@@ -111,6 +111,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (item.status === 'CANCELLED') {
       return this.getPreviousStep(item); // Set active step to the last valid step before cancellation
     }
+    if (item.status === 'ACCEPTED') return this.statusStepMap['ASSIGNED'];
     return this.statusStepMap[item.status] ?? 0;
   }
 
@@ -534,7 +535,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.isTaskDropDowned = false;
   }
   toggleDropdown(item: any) {
-    console.log(item.selectedRobot);
+    // console.log(item.selectedRobot);
     item.selectedRobot = '';
     item.showDropdown = true;
     this.isTaskDropDowned = true;
