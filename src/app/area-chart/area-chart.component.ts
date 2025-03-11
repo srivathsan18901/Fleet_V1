@@ -817,7 +817,7 @@ export class AreaChartComponent implements OnInit {
         labels: {
           style: {
             colors: '#000000',
-            fontSize: '8px',
+            fontSize: '7px',
           },
         },
       },
@@ -825,7 +825,7 @@ export class AreaChartComponent implements OnInit {
         labels: {
           style: {
             colors: '#000000',
-            fontSize: '8px',
+            fontSize: '7px',
           },
         },
       },
