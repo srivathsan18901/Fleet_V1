@@ -167,8 +167,7 @@
         <td colspan="8" class="expanded-row">
           <div class="card bg-white justify-content-center p-3">
             <div class="progress-container">
-              <div *ngFor="let step of getSteps(item); let i = index" class="step">
-                
+              <div *ngFor="let step of getSteps(item); let i = index" class="step"> 
                 <div class="circle-container">
                   <div
                     class="circle"
@@ -182,7 +181,6 @@
                   </div>
                   <span class="step-label">{{ step.label }}</span>
                 </div>
-      
                 <!-- Line only between circles -->
                 <div *ngIf="i < getSteps(item).length - 1" class="line" [ngClass]="{'active': i < getCurrentStep(item)}"></div>
               </div>
