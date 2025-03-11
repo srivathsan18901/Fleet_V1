@@ -263,6 +263,9 @@ export class AreaChartComponent implements OnInit {
       ? this.chunkDataArr(data, time, limit)
       : [[0], ['']];
 
+    if (this.isFleetUp)
+      limitedTime = limitedTime.map((time: String) => time.split(','));
+
     this.chart.updateOptions(
       {
         series: [{ name: seriesName, data: limitedData }],
