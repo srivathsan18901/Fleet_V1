@@ -319,7 +319,8 @@ export class DashboardComponent implements AfterViewInit {
         projectId: this.currentProject._id,
       };
       await this.pauseFleet(bodyData, false);
-      if(this.projectService.getInitializeMapSelected() == 'true') this.chargeNodes = await this.fetchChargePositions();
+      if (this.projectService.getInitializeMapSelected() == 'true')
+        this.chargeNodes = await this.fetchChargePositions();
     }
 
     // console.log(this.projectService.getInitializeMapSelected(),'dash board')
@@ -1239,6 +1240,7 @@ export class DashboardComponent implements AfterViewInit {
       Priority: 1,
       sourceLocation: this.sourceLocation,
       taskType: this.taskAction,
+      status: 1,
     };
 
     let response = await fetch(
@@ -1284,11 +1286,11 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  async isChargingNode(){
-    if(!this.isFleetUp) return;
+  async isChargingNode() {
+    if (!this.isFleetUp) return;
     this.chargeNodes = await this.fetchChargePositions();
-    if(!this.chargeNodes.length) {
-      this.disableMoveTocharge = true;;
+    if (!this.chargeNodes.length) {
+      this.disableMoveTocharge = true;
       return;
     }
     this.disableMoveTocharge = false;
@@ -2601,8 +2603,8 @@ export class DashboardComponent implements AfterViewInit {
         severity: 'error',
         summary: 'server might down',
         detail: 'Error occured whlie sending robot pose',
-        life: 4000
-    });
+        life: 4000,
+      });
       return;
     }
     const { fleetStatus } = data;
@@ -2611,9 +2613,15 @@ export class DashboardComponent implements AfterViewInit {
         severity: 'info',
         summary: 'Robot pose sent!',
         detail: `Station allocated to Robot ${this.updatedrobo.amrId}`,
-        life: 4000
-  });
-    else this.messageService.add({severity: 'info', summary: 'Pose not sent', detail: 'Fleet might down', life: 4000});
+        life: 4000,
+      });
+    else
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Pose not sent',
+        detail: 'Fleet might down',
+        life: 4000,
+      });
 
     // this.messageService.add({
     //   severity: data.error ? 'error' : 'info',
@@ -2638,7 +2646,7 @@ export class DashboardComponent implements AfterViewInit {
     // console.log(data);
 
     const { fleetStatus } = data;
-    if(fleetStatus) return fleetStatus.charging_stations;
+    if (fleetStatus) return fleetStatus.charging_stations;
     return [];
   }
 
