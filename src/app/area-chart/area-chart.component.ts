@@ -259,12 +259,9 @@ export class AreaChartComponent implements OnInit {
   }
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 7) {
-    let [limitedData, limitedTime] = this.chunkDataArr(data, time, limit);
-
-    if (!this.isFleetUp) {
-      limitedData = [0];
-      limitedTime = [''];
-    }
+    let [limitedData, limitedTime] = this.isFleetUp
+      ? this.chunkDataArr(data, time, limit)
+      : [[0], ['']];
 
     this.chart.updateOptions(
       {
