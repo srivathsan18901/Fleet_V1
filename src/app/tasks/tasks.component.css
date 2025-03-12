@@ -169,7 +169,7 @@
   }
   thead {
     position: sticky;
-    /* top: 0; */
+    top: 0;
     z-index: 3;
     background-color: #FFCDCD; /* Ensure the header has a background color */
     /* z-index: 1000; */
