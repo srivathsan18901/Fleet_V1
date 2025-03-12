@@ -33,6 +33,56 @@
     <div class="notification" style=" margin: 8px 5px 0px; " (click)="toggleNotificationPopup($event)">
       <!-- <img alt="" src="../../assets/icons/Notification_icon.svg" (click)="toggleNotificationPopup()" class="Nlogo" /> -->
       <i class="pi pi-bell p-mr-4 p-text-secondary" pBadge style="font-size: 1.4rem; color: #ff7373;" [value]="notifications.length" ></i>
+      <div class="notification-popup" [ngClass]="{ show: showNotificationPopup }">
+        <!-- Clear All Button -->
+        <div class="notification-header">
+          <h3>{{ getTranslation('notifications') }}</h3>
+          <!-- <div class="button-container" >
+            <button class="close-button" (click)="closeNotification()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path
+                  d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                />
+              </svg>
+            </button>
+          </div> -->
+        </div>
+      
+        <!-- Scrollable notification container -->
+        <div class="scrollable-container">
+          <ng-container
+            *ngIf="notifications && notifications.length > 0; else noNotifications"
+          >
+            <ul>
+              <li
+                *ngFor="let notification of notifications"
+                [ngClass]="getNotificationClass(notification.type)"
+              >
+                <span class="notification-label">{{ notification.label }}</span>
+                <span class="notification-message">{{ notification.message }}</span>
+              </li>
+            </ul>
+          </ng-container>
+        </div>
+      
+        <ng-template #noNotifications>
+          <div class="no-notifications">
+            <img src="../../assets/icons/NoNoti.svg" />
+            <h2>{{ getTranslation('noNotifications') }}</h2>
+          </div>
+        </ng-template>
+        <div class="Clr-BTN" *ngIf="notifications && notifications.length > 0">
+          <button class="clear-all-btn" (click)="clearAllNotifications()">
+            {{ getTranslation('clearAll') }}
+          </button>
+        </div>
+      </div>
     </div>
 
      <div class="language-selector">
@@ -68,28 +118,30 @@
         <p class="username">{{ username }}</p>
         <p class="userrole">{{ getTranslation(userrole) }}</p>
       </div>
+      <div class="Profile-popup" *ngIf="showProfilePopup">
+        <div style=" text-align: center; margin-bottom: 5px; border-radius: 4px; border-bottom: 1px solid #ff3333; " >
+          <p class="msg">{{ getTranslation('profileHello') }}, {{ username }}</p>
+          <!-- <p class="Projmsg">Project: {{ projectName }}</p> -->
+        </div>
+        <div class="Option_set">
+          <div class="logoutIcon" (click)="exportProject()">
+            <img src="../../assets/Export.svg" alt="" class="Outlogo" />
+            <span class="logoutlabel">{{ getTranslation('exportProject') }}</span>
+          </div>
+          <!-- <div class="logoutIcon" (click)="showLogoutConfirmation = true">
+          <img src="../../assets/icons/Logout.svg " alt="" class="Outlogo" />
+          <span class="logoutlabel">Logout</span>
+        </div> -->
+        </div>
+        <div class="timer">
+          <app-timer></app-timer>
+        </div>
+      </div>
     </div>
+
   </div>
 </div>
-<div class="Profile-popup" *ngIf="showProfilePopup">
-  <div style=" text-align: center; margin-bottom: 5px; border-radius: 4px; border-bottom: 1px solid #ff3333; " >
-    <p class="msg">{{ getTranslation('profileHello') }}, {{ username }}</p>
-    <!-- <p class="Projmsg">Project: {{ projectName }}</p> -->
-  </div>
-  <div class="Option_set">
-    <div class="logoutIcon" (click)="exportProject()">
-      <img src="../../assets/Export.svg" alt="" class="Outlogo" />
-      <span class="logoutlabel">{{ getTranslation('exportProject') }}</span>
-    </div>
-    <!-- <div class="logoutIcon" (click)="showLogoutConfirmation = true">
-    <img src="../../assets/icons/Logout.svg " alt="" class="Outlogo" />
-    <span class="logoutlabel">Logout</span>
-  </div> -->
-  </div>
-  <div class="timer">
-    <app-timer></app-timer>
-  </div>
-</div>
+
 <!-- side bar -->
 <div class="Sidenav">
   <div class="sidebar">
@@ -200,56 +252,7 @@
 
 <!-- notification popup -->
 
-<div class="notification-popup" [ngClass]="{ show: showNotificationPopup }">
-  <!-- Clear All Button -->
-  <div class="notification-header">
-    <h3>{{ getTranslation('notifications') }}</h3>
-    <div class="button-container">
-      <button class="close-button" (click)="closeNotification()">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 24 24"
-          width="24"
-          height="24"
-        >
-          <path fill="none" d="M0 0h24v24H0z" />
-          <path
-            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
-          />
-        </svg>
-      </button>
-    </div>
-  </div>
 
-  <!-- Scrollable notification container -->
-  <div class="scrollable-container">
-    <ng-container
-      *ngIf="notifications && notifications.length > 0; else noNotifications"
-    >
-      <ul>
-        <li
-          *ngFor="let notification of notifications"
-          [ngClass]="getNotificationClass(notification.type)"
-        >
-          <span class="notification-label">{{ notification.label }}</span>
-          <span class="notification-message">{{ notification.message }}</span>
-        </li>
-      </ul>
-    </ng-container>
-  </div>
-
-  <ng-template #noNotifications>
-    <div class="no-notifications">
-      <img src="../../assets/icons/NoNoti.svg" />
-      <h2>{{ getTranslation('noNotifications') }}</h2>
-    </div>
-  </ng-template>
-  <div class="Clr-BTN" *ngIf="notifications && notifications.length > 0">
-    <button class="clear-all-btn" (click)="clearAllNotifications()">
-      {{ getTranslation('clearAll') }}
-    </button>
-  </div>
-</div>
 
 <div *ngIf="showLogoutConfirmation" class="confirmation-popup-overlay">
   <div class="confirmation-popup">

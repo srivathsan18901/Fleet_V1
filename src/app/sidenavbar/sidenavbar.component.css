@@ -778,16 +778,13 @@
 .language-dropdown {
   display: flex;
   flex-direction: column;
-  /* gap: 0.5rem; Space between dropdown options */
-  /* padding: 0.75rem; Equivalent to p-3 */
   background-color: rgb(255, 252, 252);; /* Background color */
   position: absolute;
   box-shadow: 0px 6px 6px -5px #FF7373, -6px 0px 6px -5px #FF7373, 6px 0px 6px -3px #FF7373;
-  top: 59px; /* Adjust positioning */
+  top: 59px; 
   left: 0;
-  /* border: 2px solid #ccc; Border for dropdown */
-  border-radius: 8px; /* Rounded corners */
-  z-index: 1000; /* Ensure it appears above other elements */
+  border-radius: 8px; 
+  z-index: 1000; 
 }
 
 .language-option {
