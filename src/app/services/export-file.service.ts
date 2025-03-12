@@ -13,7 +13,7 @@ import taskDet from '../../assets/Export/taskDet.png';
 import blank from '../../assets/Export/blank.png';
 import pdfMake from 'pdfmake/build/pdfmake';
 import pdfFonts from 'pdfmake/build/vfs_fonts';
-import { fontVfs } from '../../assets/fonts/font-vfs';
+// import { fontVfs } from '../../assets/fonts/font-vfs';
 // (pdfMake as any).vfs = pdfFonts.vfs;
 
 @Injectable({
@@ -53,7 +53,27 @@ export class ExportFileService {
   private abortControllers: Map<string, AbortController> = new Map();
 
   constructor(private projectService: ProjectService,private translationService: TranslationService,) {
-    this.selectedMap = this.projectService.getMapData();
+    this.selectedMap = this.projectService.getMapData(); 
+    this.loadCustomFonts();
+  }
+
+  async loadCustomFonts() {
+    const fontFiles = {
+      'NotoSansJP-Regular.ttf': '/assets/fonts/NotoSansJP-Regular.ttf',
+      'NotoSansJP-Bold.ttf': '/assets/fonts/NotoSansJP-Bold.ttf',
+      'Roboto-Regular.ttf': '/assets/fonts/Roboto-Regular.ttf',
+      'Roboto-Medium.ttf': '/assets/fonts/Roboto-Medium.ttf',
+      'Roboto-Italic.ttf': '/assets/fonts/Roboto-Italic.ttf',
+      'Roboto-MediumItalic.ttf': '/assets/fonts/Roboto-MediumItalic.ttf',
+    };
+
+    const fontVfs: any = {};
+
+    for (const [fontName, url] of Object.entries(fontFiles)) {
+      const fontData = await this.loadFontFile(url);
+      fontVfs[fontName] = fontData;
+    }
+
     (pdfMake as any).vfs = { ...pdfMake.vfs, ...fontVfs };
 
     pdfMake.fonts = {
@@ -70,6 +90,19 @@ export class ExportFileService {
         bolditalics: 'NotoSansJP-Regular.ttf'
       }
     };
+  }
+
+  private loadFontFile(url: string): Promise<string> {
+    return fetch(url)
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        let binary = '';
+        const bytes = new Uint8Array(buffer);
+        for (let i = 0; i < bytes.length; i++) {
+          binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary); // Convert to Base64
+      });
   }
 
   private async convertSvgToImage(url: string): Promise<string> {

@@ -86,100 +86,99 @@ export class GradientDonutComponent implements OnInit {
   private langSubscription!: Subscription;
 
   async ngOnInit() {
-    // yet to uncomment and notify about it..
-    // this.langSubscription = this.translationService.currentLanguage$.subscribe(
-    //   (val) => {
-    //     this.chartOptions = {
-    //       series: this.series,
-    //       chart: {
-    //         type: 'donut',
-    //         width: this.chartWidth,
-    //         height: this.chartHeight,
-    //         animations: {
-    //           enabled: false
-    //         }
-    //       },
-    //       plotOptions: {
-    //         pie: {
-    //           startAngle: this.startAngle,
-    //           endAngle: this.endAngle,
-    //           donut: {
-    //             size: '50%', // Adjust size to ensure it fits well within the container
-    //             labels: {
-    //               show: true,
-    //               name: {
-    //                 show: true,
-    //                 fontSize: '1.0em',
-    //                 fontWeight: 'bold',
-    //                 color: '#121212',
-    //                 offsetY: -7,
-    //                 style: { fontFamily: '"Graphik", Arial, sans-serif' },
-    //               },
-    //               value: {
-    //                 show: true,
-    //                 fontSize: '1.5em',
-    //                 fontWeight: 'bold',
-    //                 color: '#121212',
-    //                 offsetY: 6,
-    //                 formatter: (val: any) => `${val}`, // Formatting the value to show percentage
-    //                 style: { fontFamily: '"Graphik", Arial, sans-serif' },
-    //               },
-    //               total: {
-    //                 show: true,
-    //                 label: this.getTranslation('total'),
-    //                 fontSize: '1.0em',
-    //                 fontWeight: 'bold',
-    //                 color: '#121212',
-    //                 style: { fontFamily: '"Graphik", Arial, sans-serif' },
-    //               },
-    //             },
-    //           },
-    //         },
-    //       },
-    //       dataLabels: {
-    //         enabled: this.dataLabelsEnabled,
-    //         style: {
-    //           fontSize: this.dataLabelFontSize,
-    //           fontWeight: 'bold',
-    //           colors: ['#000000'],
-    //           fontFamily: '"Graphik", Arial, sans-serif',
-    //         },
-    //       },
-    //       fill: {
-    //         type: this.fillType,
-    //       },
-    //       legend: {
-    //         fontSize: this.legendFontSize,
-    //         fontWeight: 'bold',
-    //         formatter: this.legendFormatter,
-    //         itemMargin: {
-    //           horizontal: 10,
-    //           vertical: 10,
-    //         },
-    //         labels: {
-    //           colors: ['#000000'], // Adjust color as needed
-    //           style: { fontFamily: '"Graphik", Arial, sans-serif' },
-    //         },
-    //       },
-    //       labels: this.labels,
-    //       title: {
-    //         text: this.titleText,
-    //         align: 'left',
-    //         margin: 10,
-    //         offsetX: 0,
-    //         offsetY: 15,
-    //         floating: false,
-    //         style: {
-    //           fontSize: '1.2em',
-    //           color: '#263238',
-    //           fontFamily: '"Graphik", Arial, sans-serif',
-    //         },
-    //       },
-    //       responsive: this.responsive,
-    //     };
-    //     this.cdRef.detectChanges();
-    //   }
-    // );
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.chartOptions = {
+          series: this.series,
+          chart: {
+            type: 'donut',
+            width: this.chartWidth,
+            height: this.chartHeight,
+            animations: {
+              enabled: false
+            }
+          },
+          plotOptions: {
+            pie: {
+              startAngle: this.startAngle,
+              endAngle: this.endAngle,
+              donut: {
+                size: '50%', // Adjust size to ensure it fits well within the container
+                labels: {
+                  show: true,
+                  name: {
+                    show: true,
+                    fontSize: '1.0em',
+                    fontWeight: 'bold',
+                    color: '#121212',
+                    offsetY: -7,
+                    style: { fontFamily: '"Graphik", Arial, sans-serif' },
+                  },
+                  value: {
+                    show: true,
+                    fontSize: '1.5em',
+                    fontWeight: 'bold',
+                    color: '#121212',
+                    offsetY: 6,
+                    formatter: (val: any) => `${val}`, // Formatting the value to show percentage
+                    style: { fontFamily: '"Graphik", Arial, sans-serif' },
+                  },
+                  total: {
+                    show: true,
+                    label: this.getTranslation('total'),
+                    fontSize: '1.0em',
+                    fontWeight: 'bold',
+                    color: '#121212',
+                    style: { fontFamily: '"Graphik", Arial, sans-serif' },
+                  },
+                },
+              },
+            },
+          },
+          dataLabels: {
+            enabled: this.dataLabelsEnabled,
+            style: {
+              fontSize: this.dataLabelFontSize,
+              fontWeight: 'bold',
+              colors: ['#000000'],
+              fontFamily: '"Graphik", Arial, sans-serif',
+            },
+          },
+          fill: {
+            type: this.fillType,
+          },
+          legend: {
+            fontSize: this.legendFontSize,
+            fontWeight: 'bold',
+            formatter: this.legendFormatter,
+            itemMargin: {
+              horizontal: 10,
+              vertical: 10,
+            },
+            labels: {
+              colors: ['#000000'], // Adjust color as needed
+              style: { fontFamily: '"Graphik", Arial, sans-serif' },
+            },
+          },
+          labels: this.labels,
+          title: {
+            text: this.titleText,
+            align: 'left',
+            margin: 10,
+            offsetX: 0,
+            offsetY: 15,
+            floating: false,
+            style: {
+              fontSize: '1.2em',
+              color: '#263238',
+              fontFamily: '"Graphik", Arial, sans-serif',
+            },
+          },
+          responsive: this.responsive,
+        };
+        this.cdRef.detectChanges();
+      }
+    );
     this.chartOptions = {
       series: this.series,
       chart: {
