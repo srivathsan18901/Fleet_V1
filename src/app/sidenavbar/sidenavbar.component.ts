@@ -502,7 +502,12 @@ export class SidenavbarComponent implements OnInit {
     this.showProfilePopup = false;
     this.showNotificationPopup = false;
   }
-
+truncateUsername(username:any) {
+  if (username.length > 10) {
+    return username.substring(0, 10) + '...';
+  }
+  return username;
+}
   toggleProfilePopup() {
     this.showProfilePopup = !this.showProfilePopup;
     this.showNotificationPopup = false;

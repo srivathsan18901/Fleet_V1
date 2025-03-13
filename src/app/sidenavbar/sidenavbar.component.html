@@ -115,7 +115,7 @@
         class="PPicon"
       />
       <div class="profile-info">
-        <p class="username">{{ username }}</p>
+        <p class="username" title="{{ username }}">{{ truncateUsername(username) }}</p>
         <p class="userrole">{{ getTranslation(userrole) }}</p>
       </div>
       <div class="Profile-popup" *ngIf="showProfilePopup">

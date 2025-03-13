@@ -187,9 +187,10 @@
         <input
           [(ngModel)]="userName"
           type="text"
-          maxlength="250"
+          maxlength="15"
           placeholder="{{getTranslation('Username')}}"
           class="w-full p-[8px] rounded-[4px] border-2 border-[#CCC] outline-none"
+          (keydown)="onKeyDown($event)"
         />
         <!-- DropDown -->
         <span

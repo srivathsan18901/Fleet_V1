@@ -437,14 +437,18 @@
   } */
 
   /* Styling for the username */
-.profile-info .username {
-  font-size: 1.0rem;
-  font-weight: bold;
-  font-family: "graphik", Arial,  sans-serif;
-  color: #333;
-  margin-bottom: 0rem;
-  text-transform: capitalize; /* Ensures the first letter is capitalized */
-}
+  .profile-info .username {
+    font-size: 1.0rem;
+    font-weight: bold;
+    font-family: "graphik", Arial, sans-serif;
+    color: #333;
+    margin-bottom: 0rem;
+    text-transform: capitalize; /* Ensures the first letter is capitalized */
+    white-space: nowrap; /* Prevents the text from wrapping */
+    overflow: hidden; /* Hides the overflow */
+    text-overflow: ellipsis; /* Adds an ellipsis to the truncated text */
+    max-width: 150px; /* Adjust this value based on your layout */
+  }
 
 /* Styling for the userrole */
 .profile-info .userrole {

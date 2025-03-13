@@ -917,7 +917,7 @@ export class UserManagementComponent implements OnInit {
     this.setPaginatedData();
   }
 
-  getDeleteUser(userName: any, userRole: any) {
+  getDeleteUser(userName: string, userRole: string) {
     this.deleteUserName = userName;
     this.deleteUserRole = userRole;
     this.setPaginatedData();
@@ -946,7 +946,15 @@ export class UserManagementComponent implements OnInit {
     this.confrimPasswordView = this.confrimPasswordState ? 'HIDE' : 'SHOW';
     // console.log('CPASS State: ', this.confrimPasswordState);
   }
+  onKeyDown(event: KeyboardEvent): void {
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab']; // Allow navigation and deletion keys
+    const isAlphanumeric = /^[a-zA-Z0-9]$/.test(event.key); // Allow only alphanumeric characters
 
+    // Allow allowed keys or alphanumeric input if the length is less than 15
+    if (!allowedKeys.includes(event.key) && (!isAlphanumeric || this.userName.length >= 15)) {
+      event.preventDefault(); // Prevent the input
+    }
+  }
   userCreatePopUpOpen(isCancel: boolean = false) {
     this.userRoleOCstate = false;
     this.userCreatePopUp = !this.userCreatePopUp;
