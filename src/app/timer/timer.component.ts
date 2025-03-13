@@ -15,7 +15,7 @@ import { TranslationService } from '../services/translation.service';
 })
 export class TimerComponent {
   private subscription: Subscription = new Subscription();
-  totalDuration: number = this.sessionService.getMaxAge() + 20 || 1200; // 20 minutes in seconds
+  totalDuration: number = this.sessionService.getMaxAge() + 60 || 1200; // 20 minutes in seconds
   remainingTime: number = 0; // Initialize with 0
   fiveMinuteRemaining: number = 300; // 5 minutes in seconds
   logoutTimeout: any;
@@ -101,11 +101,7 @@ export class TimerComponent {
       let sessionId = this.cookieService.get('_token');
       if (this.remainingTime > 0) this.remainingTime--;
       this.sessionService.setRemainingTime(this.remainingTime);
-      // if (!sessionId || this.remainingTime <= 0) {
-      //   this.logout();
-      //   return;
-      // }
-    }, 1000 * 5);
+    }, 1000);
   }
 
   resetTimer() {
@@ -162,7 +158,9 @@ export class TimerComponent {
     Swal.fire({
       position: 'center',
       icon: 'warning',
-      html: `<span style="font-size: 20px;">${this.getProjectTranslation("session_almost_over")}</span>`,
+      html: `<span style="font-size: 20px;">${this.getProjectTranslation(
+        'session_almost_over'
+      )}</span>`,
       showConfirmButton: true,
     });
     // clearInterval(this.trackSessionAge);
