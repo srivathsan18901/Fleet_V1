@@ -355,10 +355,7 @@
           </div>
         </div>
         <div *ngIf="!isFleet">
-          <div
-            *ngFor="let robot of simMode; let i = index"
-            class="dropdown-item"
-          >
+          <div *ngFor="let robot of simMode; let i = index" class="dropdown-item" >
             <span>{{ robot.amrId }}</span>
             <span>{{ robot.roboName }}</span>
             <label class="switch">

@@ -577,6 +577,11 @@ export class DashboardComponent implements AfterViewInit {
       robo.isActive = false;
       return robo;
     });
+
+    this.robos = this.robos.map((robo) => {
+      robo.isActive = false;
+      return robo;
+    });
   }
 
   async initializeWhileInLive(canvas: HTMLCanvasElement, event: MouseEvent) {
@@ -2265,10 +2270,8 @@ export class DashboardComponent implements AfterViewInit {
             robo.payload = payload;
             robo.battery = battery;
             robo.current_task = current_task;
-            if (state !== 'INITSTATE') {
+            if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
               robo.isActive = true;
-              // this.cdRef.detectChanges();//yet to review and remove
-            }
           }
           return robo;
         });
@@ -2285,10 +2288,8 @@ export class DashboardComponent implements AfterViewInit {
           robo.payload = payload;
           robo.battery = battery;
           robo.current_task = current_task;
-          if (state !== 'INITSTATE') {
+          if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
             robo.isActive = true;
-            // this.cdRef.detectChanges();//yet to review and remove
-          }
         }
         return robo;
       });
