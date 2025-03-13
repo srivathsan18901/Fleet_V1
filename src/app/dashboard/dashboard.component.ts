@@ -1010,7 +1010,7 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     if (this.nodeGraphService.getAssignTask()) {
-      this.assignTask=true;
+      this.assignTask = true;
       this.nodes.forEach((node) => {
         const transformedY = img.height - node.nodePosition.y;
         this.drawNode(ctx, node.nodePosition.x, transformedY, node.nodeId);
@@ -1187,9 +1187,9 @@ export class DashboardComponent implements AfterViewInit {
     // this.router.navigate(['/robots']);
     if (this.roboToLocalize) this.redrawCanvas();
     this.nodeGraphService.setAssignTask(false);
-    this.assignTask=false;
-    if(!this.assignTask){      
-    this.router.navigate(['/tasks']);
+    this.assignTask = false;
+    if (!this.assignTask) {
+      this.router.navigate(['/tasks']);
     }
     this.nodeGraphService.setLocalize(false);
     this.redrawCanvas();
@@ -1758,14 +1758,24 @@ export class DashboardComponent implements AfterViewInit {
     robot.enabled = true;
     let data = await this.enable_robot(robot);
 
-    this.simMode = this.simMode.map((robo) => {
-      if (robo.amrId === robot.amrId && data.isRoboEnabled) {
-        robo.isActive = true;
-      } else if (robo.amrId === robot.amrId && !data.isRoboEnabled) {
-        robo.isActive = false;
-      }
-      return robo;
-    });
+    if (!this.isFleet)
+      this.simMode = this.simMode.map((robo) => {
+        if (robo.amrId === robot.amrId && data.isRoboEnabled)
+          robo.isActive = true;
+        else if (robo.amrId === robot.amrId && !data.isRoboEnabled)
+          robo.isActive = false;
+
+        return robo;
+      });
+
+    if (this.isFleet)
+      this.robos = this.robos.map((robo) => {
+        if (robo.roboDet.id === robot.roboDet.id && data.isRoboEnabled)
+          robo.isActive = true;
+        else if (robo.roboDet.id === robot.roboDet.id && !data.isRoboEnabled)
+          robo.isActive = false;
+        return robo;
+      });
 
     if (data.isRoboEnabled) {
       this.messageService.add({
@@ -2255,6 +2265,10 @@ export class DashboardComponent implements AfterViewInit {
             robo.payload = payload;
             robo.battery = battery;
             robo.current_task = current_task;
+            if (state !== 'INITSTATE') {
+              robo.isActive = true;
+              // this.cdRef.detectChanges();//yet to review and remove
+            }
           }
           return robo;
         });
