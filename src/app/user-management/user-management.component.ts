@@ -75,6 +75,7 @@ export class UserManagementComponent implements OnInit {
   
   private languageSubscription!: Subscription;
   private langSubscription: String = 'ENG';
+
   async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
     this.paginatorIntl.itemsPerPageLabel =
@@ -244,6 +245,13 @@ export class UserManagementComponent implements OnInit {
         general: 'PROJECT',
       },
     ];
+  }
+
+  isSameUser(userName: string, userRole: string): boolean {
+    let currUserName: string = this.authService.getUser().name;
+    let currUserRole: string = this.authService.getUser().role;
+    if(currUserName == userName && currUserRole == userRole) return true;
+    return false;
   }
 
   changePage(order: any) {
@@ -703,6 +711,7 @@ export class UserManagementComponent implements OnInit {
   trackByTaskId(index: number, user: any): number {
     return user.userId; // or any unique identifier like taskId
   }
+
   // create user..
   createUser() {
     console.log(this.passwordState, this.confrimPasswordState);

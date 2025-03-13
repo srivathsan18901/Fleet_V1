@@ -100,11 +100,12 @@
             {{ user!.createdOn }}
           </p>
 
-          <span class="flex gap-5 items-center justify-center w-full">
+          <span  class="flex gap-5 items-center justify-center w-full">
             <button
               class="edit-button"
               (click)="userPermissionPopUpOpen(user!.userId)"
               [attr.data-content]="editButtonText"
+              *ngIf="!this.isSameUser(user!.userName, user!.userRole)"
             >
               <svg class="edit-svgIcon" viewBox="0 0 512 512">
                 <path
@@ -117,6 +118,7 @@
               class="delete-button"
               (click)="getDeleteUser(user!.userName, user!.userRole)"
               [attr.data-content]="deleteButtonText"
+              *ngIf="!this.isSameUser(user!.userName, user!.userRole)"
               >
               <svg class="delete-svgIcon" viewBox="0 0 448 512">
                 <path
