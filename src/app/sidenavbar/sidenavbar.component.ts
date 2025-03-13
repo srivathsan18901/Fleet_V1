@@ -267,14 +267,6 @@ export class SidenavbarComponent implements OnInit {
     let data = await response.json();
 
     this.isFleetUp = data.fleetUp ? true : false;
-    // let project = this.projectService.getSelectedProject();
-    // if (project && project._id) {
-    // let rabbitResponse = await fetch(
-    //   `http://${environment.API_URL}:${environment.PORT}/stream-data/rabbitmq-status/${project._id}`
-    // );
-    // let rabbitData = await rabbitResponse.json();
-    // this.isAmqpUp = rabbitData.rabbitmqStatus ? true : false;
-    // }
 
     let prevFleetStatus = this.projectService.getIsFleetUp();
     if (prevFleetStatus === this.isFleetUp) return; // && this.isAmqpUp
