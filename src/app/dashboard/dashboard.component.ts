@@ -1688,19 +1688,28 @@ export class DashboardComponent implements AfterViewInit {
             imgY <= roboY + imageSize
           ) {
             isOverRobot = true;
-            robotId = robo.roboDet.id;
-
+            robotId = robo.amrId;
+            battery = robo.battery ? robo.battery.toFixed(2) : 0;
+            taskId = robo.current_task ? robo.current_task : 'N/A';
             // Position the robot tooltip above the robot
-            const robotScreenX = roboX * this.zoomLevel + this.mapImageX; // X position on the canvas
-            const robotScreenY =
-              (this.mapImageHeight / this.zoomLevel - roboY) * this.zoomLevel +
-              this.mapImageY; // Y position on the canvas
+            const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
+            const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
 
-            robottooltip.style.left = `${robotScreenX - 30}px`; // Slightly to the left of the robot's X position
-            robottooltip.style.top = `${robotScreenY - 45}px`; // Above the robot's Y position
-            robottooltip.innerHTML = `Robot ID: ${robotId}`;
+            robottooltip.style.left = `${event.clientX - 90}px`; // Slightly to the left of the robot's X position
+            robottooltip.style.top = `${event.clientY - 30}px`; // Above the robot's Y position
+            robottooltip.innerHTML = `<div class="ATactions">
+                        <div><label class="idlabel">${this.getTranslation(
+                          'robotID'
+                        )} : ${robotId}</label></div>
+                        <div><label class="idlabel">${this.getTranslation(
+                          'battery'
+                        )} : ${battery}%</label></div>
+                        <div><label class="idlabel">${this.getTranslation(
+                          'task'
+                        )} : ${taskId}</label></div>
+                    </div>`;
             robottooltip.style.display = 'block';
-            break; // Exit the loop after finding the first robot
+            break;
           }
         }
       }
