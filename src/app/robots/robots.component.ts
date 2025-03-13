@@ -202,6 +202,7 @@ export class RobotsComponent implements OnInit {
           robo.cpuutilization = liveRobo.CPU_Utilization;
           robo.DropCount = liveRobo.DropCount;
           // robo.error = liveRobo.robotError;
+          robo.isCharging = liveRobo.robot_state == "CHARGESTATE" ? true : false;
           robo.currentspeed = liveRobo['Robot Speed'];
           robo.averagespeed = liveRobo['Robot Speed'];
         }

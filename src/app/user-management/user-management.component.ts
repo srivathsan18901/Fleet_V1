@@ -842,7 +842,7 @@ export class UserManagementComponent implements OnInit {
       });
   }
   //Deleting the user credentials from the database
-  deleteUser(username: any, userRole: any) {
+  deleteUser(username: string, userRole: string) {
     let findingAdmin = this.userCredentials.filter(
       (user) => user.userRole === 'Administrator'
     );
@@ -861,7 +861,7 @@ export class UserManagementComponent implements OnInit {
     }
     console.log('DELETE:', username); // Log the username to delete
     const userToDelete = this.userCredentials.find(
-      (user) => username === user.userName
+      (user) => username === user.userName && userRole === user.userRole
     );
 
     if (!userToDelete) {
@@ -920,8 +920,9 @@ export class UserManagementComponent implements OnInit {
   getDeleteUser(userName: string, userRole: string) {
     this.deleteUserName = userName;
     this.deleteUserRole = userRole;
+    
     this.setPaginatedData();
-    console.log(this.deleteUserName);
+    // console.log(this.deleteUserName);
     this.deleteUserPopUp();
   }
 
