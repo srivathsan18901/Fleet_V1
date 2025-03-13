@@ -126,7 +126,6 @@ export class RobotDetailPopupComponent {
   ) {}
 
   getBatteryColor(batteryPercentage: number): string {
-    console.log("hey",batteryPercentage);    
     if (batteryPercentage >= 75) {
       return 'high'; // Green for high battery
     } else if (batteryPercentage >= 40) {

@@ -94,7 +94,8 @@
   align-content: center;
 }
 .switch-holder:hover{
-  background-color: #8b0202eb;
+  transition: 0.3s ease-in-out;
+  background-color: #f81e1e88;
   color: white;
 }
 .switch-label {
@@ -122,6 +123,7 @@
   height: 40px;
   border-radius: 20px;
   margin: 0;
+  background-color: white;
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
