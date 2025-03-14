@@ -526,8 +526,10 @@
       <!-- General Tab -->
       <div
         class="absolute top-0 left-0 w-full h-full transition-transform overflow-y-auto duration-500 ease-in-out"
-        [class.translate-x-[-100%]]="activeTab !== 'General'"
-        [class.translate-x-0]="activeTab === 'General'"
+        [ngClass]="{
+          'translate-x-0': activeTab === 'General',
+          'translate-x-[-100%]': activeTab === 'Configuration' || activeTab === 'PROJECT'
+        }"
       >
         <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <div *ngFor="let permission of generalPermissions">
@@ -573,8 +575,11 @@
 
       <div
         class="absolute top-0 left-0 w-full h-full overflow-y-auto transition-transform duration-500 ease-in-out"
-        [class.translate-x-0]="activeTab === 'Configuration'"
-        [class.translate-x-[100%]]="activeTab !== 'Configuration'"
+        [ngClass]="{
+          'translate-x-0': activeTab === 'Configuration',
+          'translate-x-[100%]': activeTab === 'General',
+          'translate-x-[-100%]': activeTab === 'PROJECT'
+        }"  
       >
         <div class="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           <!-- Cards -->
@@ -641,8 +646,10 @@
       <!-- PROJECT Tab -->
       <div
         class="absolute top-0 left-0 w-full h-full overflow-y-auto transition-transform duration-500 ease-in-out"
-        [class.translate-x-0]="activeTab === 'PROJECT'"
-        [class.translate-x-[100%]]="activeTab !== 'PROJECT'"
+        [ngClass]="{
+          'translate-x-0': activeTab === 'PROJECT',
+          'translate-x-[100%]': activeTab === 'Configuration' || activeTab === 'General'
+        }"
       >
         <!-- Table -->
         <div class="p-4">
