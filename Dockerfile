@@ -30,7 +30,8 @@ FROM nginx:alpine
 # Copy the built application from the previous stage
 COPY --from=build /app/dist/fleet-ui/browser /usr/share/nginx/html
 
-#COPY nginx.conf /etc/nginx/nginx.conf
+# Copy the custom Nginx configuration
+COPY default.conf /etc/nginx/conf.d/default.conf
  
 # Expose port 80
 EXPOSE 80
