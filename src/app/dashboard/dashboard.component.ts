@@ -1688,7 +1688,7 @@ export class DashboardComponent implements AfterViewInit {
             imgY <= roboY + imageSize
           ) {
             isOverRobot = true;
-            robotId = robo.amrId;
+            robotId = robo.roboDet.id;
             battery = robo.battery ? robo.battery.toFixed(2) : 0;
             taskId = robo.current_task ? robo.current_task : 'N/A';
             // Position the robot tooltip above the robot
