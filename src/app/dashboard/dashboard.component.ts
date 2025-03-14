@@ -527,7 +527,6 @@ export class DashboardComponent implements AfterViewInit {
             i++;
             return robo;
         });
-        console.log("heye!", this.simMode,imgWidth,imgHeight);
     }
   }
 
