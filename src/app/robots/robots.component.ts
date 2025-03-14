@@ -261,7 +261,7 @@ export class RobotsComponent implements OnInit {
 
   setSignalStrength(signal: string): void {
     this.currentSignalClass = this.mapSignalToClass(signal);
-    console.log('Current Signal Class: ', this.currentSignalClass); // Debug log
+    // console.log('Current Signal Class: ', this.currentSignalClass); // Debug log
   }
 
   mapSignalToClass(signal: string): string {

@@ -234,7 +234,7 @@
     </div>
     <span class="pick-drop-label">{{getTranslation("Total Pick / Drop")}}</span>
   </div>
-  <span class="pick-drop-values">{{ data.PickCount }} / {{ data.DropCount }}</span>
+  <span class="pick-drop-values">{{ data.PickCount || 0}} / {{ data.DropCount || 0}}</span>
 </div>
 
 
@@ -374,7 +374,7 @@
       </div>
       <span class="robot-utilization-label">{{getTranslation("Total Distance")}}</span>
     </div>
-    <span class="robot-utilization-value">{{ data.distance| number:'1.1-1' }}m</span>
+    <span class="robot-utilization-value">{{( data.distance| number:'1.1-1') || 0}}m</span>
   </div>
 </div>
 
