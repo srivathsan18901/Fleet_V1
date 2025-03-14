@@ -251,7 +251,10 @@ export class DashboardComponent implements AfterViewInit {
     this.isFleet = !fleetMode ? true : false;
     this.isFleetService.setIsFleet(this.isFleet);
     sessionStorage.setItem('isFleet', String(this.isFleet));
-    if (!this.isFleet) this.initSimRoboPos();
+    if (!this.isFleet) {
+      console.log("Here!");      
+      // this.initSimRoboPos();
+    }
 
     this.redrawCanvas();
   }
@@ -368,8 +371,10 @@ export class DashboardComponent implements AfterViewInit {
     // this.showModelCanvas = false;
     this.nodeGraphService.setShowModelCanvas(false);
     this.showModelCanvas = false; // no need in later..
-    this.cdRef.detectChanges();
-    if (!this.isInLive) this.initSimRoboPos();
+    this.cdRef.detectChanges();    
+    if (!this.isInLive){ 
+      this.initSimRoboPos();
+    }
     this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
     if (this.nodeGraphService.getAssignTask()) this.updateCurrentRoboList();
     this.loadCanvas();
@@ -522,6 +527,7 @@ export class DashboardComponent implements AfterViewInit {
         i++;
         return robo;
       });
+    this.redrawCanvas();
   }
 
   showPopup(x: number, y: number) {
