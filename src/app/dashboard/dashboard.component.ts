@@ -515,16 +515,16 @@ export class DashboardComponent implements AfterViewInit {
     const imgHeight = this.mapImg.height; // Image height
 
     // Calculate the center position of the image
-    let centerX = imgWidth / 2;
-    let centerY = imgHeight / 2;
+    let centerX = imgWidth / 2 + 620;
+    let centerY = imgHeight / 2 + 250;
 
     let i = 0;
     if (!this.isFleet) {
         this.simMode = this.simMode.map((robo) => {
             // Position each robot at the bottom-right corner of the image, with an offset for spacing
             robo.pos = {
-                x: imgWidth - this.placeOffset * i, // Move to the right edge, applying offset
-                y: imgHeight, // Move to the bottom edge
+                x: centerX - this.placeOffset * i, // Move to the right edge, applying offset
+                y: centerY, // Move to the bottom edge
                 orientation: 0,
             };
             i++;
