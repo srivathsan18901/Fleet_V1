@@ -1197,14 +1197,16 @@ export class DashboardComponent implements AfterViewInit {
   cancelLocalize() {
     // this.router.navigate(['/robots']);
     if (this.roboToLocalize) this.redrawCanvas();
+    this.nodeGraphService.setLocalize(false);
+    this.redrawCanvas();
+    this.hideLOCPopup();
+  }
+  cancelAT(){
     this.nodeGraphService.setAssignTask(false);
     this.assignTask = false;
     if (!this.assignTask) {
       this.router.navigate(['/tasks']);
     }
-    this.nodeGraphService.setLocalize(false);
-    this.redrawCanvas();
-    this.hideLOCPopup();
   }
 
   async localizeRobo(bodyData: any): Promise<boolean> {
@@ -3089,6 +3091,11 @@ export class DashboardComponent implements AfterViewInit {
   localizePoses: any[] = [];
 
   async localize() {
+    if(this.showModelCanvas){
+      this.nodeGraphService.setShowModelCanvas(false);
+      this.showModelCanvas=false;
+      this.redrawCanvas();
+    }
     if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);

@@ -436,8 +436,13 @@
         {{ !isPause ? getTranslation('pauseText') : getTranslation('resumeText') }}
       </button>
     </div>
-    <div class="ONBtn2" *ngIf="isLocalize || assignTask" >
+    <div class="ONBtn2" *ngIf="isLocalize" >
       <button class="cancel-loc" (click)="cancelLocalize()" >
+        {{getTranslation("cancel")}} 
+      </button>
+    </div>
+    <div class="ONBtn2" *ngIf="assignTask" >
+      <button class="cancel-loc" (click)="cancelAT()" >
         {{getTranslation("cancel")}} 
       </button>
     </div>

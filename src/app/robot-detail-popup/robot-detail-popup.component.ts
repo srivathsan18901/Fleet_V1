@@ -91,6 +91,7 @@ export class RobotDetailPopupComponent {
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);
     this.router.navigate(['/dashboard']);
+    this.dialogRef.close();
   }
   onEmergencyStop() {
     alert('Emergency Stop Pressed!');
