@@ -2194,6 +2194,7 @@ export class ConfigurationComponent implements AfterViewInit {
         enable: false,
         isInitialized: false,
         imgState: '',
+        errState: [],
         pos: { x: existingSimRobos.length + i, y: 0, orientation: 0 },
       });
     }
