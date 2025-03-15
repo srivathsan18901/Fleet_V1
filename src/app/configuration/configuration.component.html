@@ -860,8 +860,8 @@
           <div
             class="Create-button-container"
             *ngIf="
-              userManagementData?.configurationPermissions?.environment
-                ?.enabled == true
+              currentTable === 'Environment' &&
+              configurationPermissions.environment.create == true
             "
           >
             <p-speedDial 

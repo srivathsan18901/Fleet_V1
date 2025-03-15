@@ -315,13 +315,13 @@ export class SidenavbarComponent implements OnInit {
             )
               criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
 
-            let notificationKey = `${error.description} on robot ID ${robot.id}`;
+            let notificationKey = `${error.description}`;
             if (this.processedErrors?.has(notificationKey)) continue;
             this.processedErrors?.add(notificationKey);
 
             this.notifications.push({
               label: `${criticality}`,
-              message: `${error.description} on robot ID ${robot.id}`,
+              message: `${error.description}`,
               type:
                 criticality === 'Critical'
                   ? 'red'
@@ -386,13 +386,13 @@ export class SidenavbarComponent implements OnInit {
             )
               criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
 
-            let notificationKey = `${error.description} on robot ID ${robot.id}`;
+            let notificationKey = `${error.description}`;
             if (this.processedErrors?.has(notificationKey)) continue;
             this.processedErrors?.add(notificationKey);
 
             this.notifications.push({
               label: `${criticality}`,
-              message: `${error.description} on robot ID ${robot.id}`,
+              message: `${error.description}`,
               type:
                 criticality === 'Critical'
                   ? 'red'
