@@ -154,8 +154,6 @@ export class ConfigurationComponent implements AfterViewInit {
     private paginatorIntl: MatPaginatorIntl
   ) {
     this.filteredEnvData = [...this.EnvData];
-    // this.filteredRobotData = [...this.robotData];
-    // this.filteredRobotData = this.robotData;
   }
   items: any[] = [];
   deleteButtonText: string = '';
@@ -378,6 +376,12 @@ export class ConfigurationComponent implements AfterViewInit {
     }
 
     this.fetchRobos(); // fetch all robots..
+    let mapData = this.projectService.getMapData();
+    if (!mapData){
+      this.robotData.length = 0;
+      this.filteredRobotData.length = 0;
+      this.paginatedData1.length = 0;
+    }
 
     if (!this.EnvData.length) return;
 
@@ -724,6 +728,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
   async fetchRobos() {
     let mapData = this.projectService.getMapData();
+    
     // this.filteredRobotData = this.mapData;
     if (!mapData) return;
     try {
@@ -943,8 +948,6 @@ export class ConfigurationComponent implements AfterViewInit {
   }
 
   async selectMap(map: any) {
-    // console.log('select deselected clicked')
-    // let mapStatus=this.projectService.getInitializeMapSelected()
     this.projectService.setInitializeMapSelected(true);
     // Deselect if the same map is clicked again
     if (this.selectedMap?.id === map.id) {
@@ -961,9 +964,6 @@ export class ConfigurationComponent implements AfterViewInit {
       let data = await response.json();
       // let { map } = data;
       await this.ngOnInit();
-
-      // if (this.projectService.getIsMapSet()) return; // yet to uncomment..
-      // this.projectService.setIsMapSet(true);
       return;
     }
     // Select a new map
@@ -1053,10 +1053,6 @@ export class ConfigurationComponent implements AfterViewInit {
     return this.formatDate(date); // Strips time information, returns 'YYYY-MM-DD'
   }
 
-  selectedrobotData = [
-    { column1: '192.168.XX.XX', column2: ' ' },
-    { column1: '192.168.XX.XX', column2: ' ' },
-  ];
   ipScanData: any[] = [];
 
   loadData() {
@@ -1713,7 +1709,6 @@ export class ConfigurationComponent implements AfterViewInit {
           this.setPaginatedData();
         }
 
-        // console.log('line 1438');
         this.ngOnInit();
         this.reloadTable();
         // console.log(this.paginatedData, 'page data');

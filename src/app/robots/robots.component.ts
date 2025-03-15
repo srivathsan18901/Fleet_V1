@@ -99,7 +99,7 @@ export class RobotsComponent implements OnInit {
     // this.updateLiveRoboInfo();
     let grossFactSheet = await this.fetchAllRobos();
     this.robots = grossFactSheet.map((robo) => {
-      robo.imageUrl = '../../assets/robots/agv1.png';
+      robo.imageUrl = '../../assets/robots/Kaynes.png';
       if (robo.networkstrength < 20) robo.SignalStrength = 'Weak';
       else if (robo.networkstrength < 40) robo.SignalStrength = 'Medium';
       else if (robo.networkstrength < 80) robo.SignalStrength = 'Full';
