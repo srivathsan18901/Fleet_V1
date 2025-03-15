@@ -52,6 +52,7 @@ export class ProjectsetupComponent {
   ) {}
 
   ngOnInit(): void {
+    document.addEventListener('keydown', this.handleEnterPress);
     // hook
     // let pDet = this.cookieService.get('project-data');
     // console.log(pDet);
@@ -88,6 +89,19 @@ export class ProjectsetupComponent {
       this.languageArrowState = false;
     }
   }
+  handleEnterPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      if(this.isProjDiv1Visible){
+        this.createProject();
+      }
+      if(this.isProjDiv2Visible){
+        this.importFile();
+      }
+      if(this.isProjDiv3Visible){
+        this.openProject();
+      }
+    }
+  };
   showProjDiv1() {
     this.isProjDiv1Visible = !this.isProjDiv1Visible;
     this.isProjDiv2Visible = false;

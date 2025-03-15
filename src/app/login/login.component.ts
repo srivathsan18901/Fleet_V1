@@ -51,7 +51,14 @@ export class LoginComponent {
       this.errorMessage = null;
     }, duration);
   }
+  handleEnterPress = (event: KeyboardEvent) => {
+    if (event.key === 'Enter') {
+      this.validateForm();
+    }
+  };
+
   ngOnInit() {
+    document.addEventListener('keydown', this.handleEnterPress);
     for(let flag of this.flags){
       if(flag.nameTag === this.translationService.getCurrentLang()){
         this.flagSvg = flag.flagComp;

@@ -4452,9 +4452,22 @@ export class EnvmapComponent implements AfterViewInit {
   @HostListener('document:keydown', ['$event'])
   onKeydownHandler(event: KeyboardEvent) {
     if (event.key === 'Escape') {
-      console.log('ESC pressed, disabling delete mode');
-      this.isDeleteModeEnabled = false; // Disable delete mode
-      // this.isPlottingEnabled =false;
+      if(this.isRobotPopupVisible = true){
+        this.isRobotPopupVisible = false
+      }
+      if(this.isPopupVisible = true){
+        this.isPopupVisible = false
+      }
+      if(this.isConfirmationVisible = true){
+        this.isConfirmationVisible = false
+      }
+      if(this.isPlottingEnabled = true){
+        this.isPlottingEnabled = false
+      }
+      if(this.isDeleteModeEnabled = true){
+        this.isDeleteModeEnabled = false;
+        this.redrawCanvas();
+      }
       if (this.isZonePlottingEnabled) {
         this.plottedPoints = [];
         this.isZonePlottingEnabled = false;
