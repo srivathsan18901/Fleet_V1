@@ -851,6 +851,9 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setShowModelCanvas(
       !this.nodeGraphService.getShowModelCanvas()
     );
+    if(!this.nodeGraphService.getShowModelCanvas()){
+      this.showEdges=false;
+    }
     this.showModelCanvas = this.nodeGraphService.getShowModelCanvas();
     if (this.isInLive) {
       // this.initSimRoboPos();

@@ -424,9 +424,7 @@
         [ngClass]="{ 'blinking-svg': isInLive }"
       />
     </div> -->
-    <div class="ONBtn1" *ngIf="isImage && showModelCanvas">
-      <button class="AT-btn1" (click)="toggleShowEdges()"><img src="../../assets/edges.svg" style="float:left;margin-right:0.5em">{{ getTranslation('showEdges') }}</button>
-    </div>
+
     <div class="btnSet">
     <div class="ONBtn2" *ngIf="isImage" >  
       <button
@@ -582,6 +580,7 @@
           />
           <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('heatMap')}}</span>
         </div>
+
         <div class="tooltip" [ngClass]="{ 'active-dashboard': showModelCanvas }">
           <img
             src="../../assets/CanvasOptions/Model.svg"
@@ -592,6 +591,17 @@
           />
           <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('mapOption')}}</span>
         </div>
+
+        <div class="tooltip" *ngIf="isImage && showModelCanvas" [ngClass]="{ 'active-dashboard': showEdges }">
+          <img
+            src="../../assets/edges.svg"
+            class="ModelCanvas"
+            (click)="toggleShowEdges()"
+            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
+            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
+          />
+          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{ getTranslation('showEdges') }}</span>
+        </div>
       </div>
       <!-- <div class="tooltip">
         <img src="../../assets/CanvasOptions/live.svg" class="ModelCanvas" (click)="fetchlive()" />
@@ -599,6 +609,9 @@
       </div> -->
     </div>
 
+    <!-- <div class="ONBtn1" *ngIf="isImage && showModelCanvas">
+      <button class="AT-btn1" (click)="toggleShowEdges()"><img src="../../assets/edges.svg" style="float:left;margin-right:0.5em">{{ getTranslation('showEdges') }}</button>
+    </div> -->
     <!-- Dashboard Charts and Graphs -->
     <div class="GraphAndCharts" *ngIf="showDashboard">
       <button class="close-button" (click)="onClose()">
