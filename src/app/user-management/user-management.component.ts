@@ -717,25 +717,25 @@ export class UserManagementComponent implements OnInit {
     console.log(this.passwordState, this.confrimPasswordState);
     this.resetPassword();
     if (this.userName === '') {
-      this.errorMessage = '*Username is not entered';
+      this.errorMessage = this.getTranslation("username_not_entered");
       setTimeout(() => {
         this.errorMessage = '';
       }, 4000);
       return;
     } else if (this.passWord === '') {
-      this.errorMessage = '*Password is not entered';
+      this.errorMessage = this.getTranslation("password_not_entered");
       setTimeout(() => {
         this.errorMessage = '';
       }, 4000);
       return;
     } else if (this.confrimPassword === '') {
-      this.errorMessage = '*Confirm password is not entered';
+      this.errorMessage = this.getTranslation("confirm_password_not_entered");
       setTimeout(() => {
         this.errorMessage = '';
       }, 4000);
       return;
     } else if (this.passWord !== this.confrimPassword) {
-      this.errorMessage = '*Password mismatch';
+      this.errorMessage = this.getTranslation("password_mismatch");
       setTimeout(() => {
         this.errorMessage = '';
       }, 4000);
