@@ -532,7 +532,6 @@ export class DashboardComponent implements AfterViewInit {
         });
     }
   }
-
   showPopup(x: number, y: number) {
     const popup = document.getElementById('robo-popup');
     if (!popup) return;

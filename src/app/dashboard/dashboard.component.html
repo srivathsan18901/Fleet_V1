@@ -321,7 +321,10 @@
         <div *ngIf="isFleet">
           <div *ngFor="let robot of robos; let i = index" class="dropdown-item">
             <span>{{ robot.roboDet.id }}</span>
-            <span>{{ robot.roboDet.roboName }}</span>
+            <span [title]="robot.roboDet.roboName">
+              {{ robot.roboDet.roboName | slice:0:3 }}...
+            </span>
+            
             <label class="switch">
               <input
                 type="checkbox"
@@ -357,7 +360,10 @@
         <div *ngIf="!isFleet">
           <div *ngFor="let robot of simMode; let i = index" class="dropdown-item" >
             <span>{{ robot.amrId }}</span>
-            <span>{{ robot.roboName }}</span>
+            <span [title]="robot.roboName">
+              {{ robot.roboName | slice:0:3 }}...
+            </span>
+            
             <label class="switch">
               <input
                 type="checkbox"
