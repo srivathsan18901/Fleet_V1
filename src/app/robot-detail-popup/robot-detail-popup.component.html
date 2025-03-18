@@ -41,7 +41,7 @@
         <i class="fa fa-bluetooth-b"></i><span>{{getTranslation("Emergency Stop")}}</span>
     </div>
     <div class="switch-toggle" >
-        <input type="checkbox" id="bluetooth" [checked]="isEmergencyStop" (change)="onToggle($event)" readonly disabled>
+        <input type="checkbox" id="bluetooth" [checked]="!isEmergencyStop" (change)="onToggle($event)" readonly disabled>
         <label for="bluetooth"></label>
     </div>
     </div>
