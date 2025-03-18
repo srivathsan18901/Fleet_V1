@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { fadeAnimation } from './app.animations';
 import { Router } from '@angular/router';
 import { LoaderService } from './loader.service';
-
+import { IdleTrackerService } from '../app/services/idle-tracker.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -14,11 +14,14 @@ export class AppComponent {
   getRouteAnimationData(outlet: any) {
     return outlet && outlet.activatedRouteData && outlet.activatedRouteData.animation;
   }
-  constructor(private loaderService: LoaderService, public router: Router) {}
+  constructor(public idleService: IdleTrackerService,private loaderService: LoaderService, public router: Router) {}
   shouldShowSidebar(): boolean {
     // Add the routes where you want to hide the sidebar
     const excludedRoutes = ['/login', '/project_setup']; // Add other routes if needed
     return !excludedRoutes.includes(this.router.url);
+  }
+  get idleStatus() {
+    return this.idleService.isIdle ? 'User is idle' : 'User is active';
   }
   ngOnInit(): void {
     window.scroll(0,0);
