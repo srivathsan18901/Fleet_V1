@@ -482,6 +482,9 @@ export class DashboardComponent implements AfterViewInit {
       this.addMouseDownListener(canvas);
       this.addMouseUpListener(canvas);
       this.addRightClickListener(canvas);
+      
+      // Add resize event listener
+      window.addEventListener('resize', () => this.handleResize(canvas));
     } else {
       console.error('myCanvas is undefined');
     }
@@ -494,7 +497,21 @@ export class DashboardComponent implements AfterViewInit {
     this.assetImages['docking'].src = 'assets/Asseticon/docking-station.svg';
     this.assetImages['charging'].src = 'assets/Asseticon/charging-station.svg';
   }
-
+  handleResize(canvas: HTMLCanvasElement): void {
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+  
+    // Set canvas dimensions to match its container
+    canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+    canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+  
+    // Recalculate the image position to center it
+    this.mapImageX = (canvas.width - this.mapImageWidth) / 2 + this.offsetX;
+    this.mapImageY = (canvas.height - this.mapImageHeight) / 2 + this.offsetY;
+  
+    // Redraw the canvas with the centered image
+    this.redrawCanvas();
+  }
   updateCurrentRoboList() {
     if (!this.isFleet) {
       this.currentRoboList = this.simMode.map((robo) => robo.amrId);
@@ -909,8 +926,7 @@ export class DashboardComponent implements AfterViewInit {
         img.onload = () => {
           // Set canvas dimensions based on its container
           canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-          canvas.height =
-            canvas.parentElement?.clientHeight || window.innerHeight;
+          canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
           this.zoomLevel = this.nodeGraphService.getZoomLevel();
 
           // Calculate the scaled image dimensions
