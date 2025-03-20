@@ -377,7 +377,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
     this.fetchRobos(); // fetch all robots..
     let mapData = this.projectService.getMapData();
-    if (!mapData){
+    if (!mapData) {
       this.robotData.length = 0;
       this.filteredRobotData.length = 0;
       this.paginatedData1.length = 0;
@@ -728,7 +728,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
   async fetchRobos() {
     let mapData = this.projectService.getMapData();
-    
+
     // this.filteredRobotData = this.mapData;
     if (!mapData) return;
     try {
@@ -1012,8 +1012,7 @@ export class ConfigurationComponent implements AfterViewInit {
         severity: 'success',
         detail: this.getTranslation('mapSelected'),
       });
-    }
-    else{
+    } else {
       this.messageService.add({
         severity: 'warn',
         detail: this.getTranslation('mapDeselected'),
@@ -1500,6 +1499,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
         const { map } = data;
         const mapImgUrl = `http://${environment.API_URL}:${environment.PORT}/${map.imgUrl}`;
+        // const mapImgUrl = `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/image/${item.mapName}`; // retrieved from db...
 
         // Check if the image URL is accessible
         this.checkImageLoading(mapImgUrl)

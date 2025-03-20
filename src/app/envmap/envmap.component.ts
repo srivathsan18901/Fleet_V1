@@ -4452,19 +4452,19 @@ export class EnvmapComponent implements AfterViewInit {
   @HostListener('document:keydown', ['$event'])
   onKeydownHandler(event: KeyboardEvent) {
     if (event.key === 'Escape') {
-      if(this.isRobotPopupVisible = true){
-        this.isRobotPopupVisible = false
+      if ((this.isRobotPopupVisible = true)) {
+        this.isRobotPopupVisible = false;
       }
-      if(this.isPopupVisible = true){
-        this.isPopupVisible = false
+      if ((this.isPopupVisible = true)) {
+        this.isPopupVisible = false;
       }
-      if(this.isConfirmationVisible = true){
-        this.isConfirmationVisible = false
+      if ((this.isConfirmationVisible = true)) {
+        this.isConfirmationVisible = false;
       }
-      if(this.isPlottingEnabled = true){
-        this.isPlottingEnabled = false
+      if ((this.isPlottingEnabled = true)) {
+        this.isPlottingEnabled = false;
       }
-      if(this.isDeleteModeEnabled = true){
+      if ((this.isDeleteModeEnabled = true)) {
         this.isDeleteModeEnabled = false;
         this.redrawCanvas();
       }
