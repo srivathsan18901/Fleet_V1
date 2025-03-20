@@ -255,7 +255,7 @@ export class DashboardComponent implements AfterViewInit {
     this.isFleetService.setIsFleet(this.isFleet);
     sessionStorage.setItem('isFleet', String(this.isFleet));
     if (!this.isFleet) {
-      console.log("Here!");      
+      console.log('Here!');
       // this.initSimRoboPos();
     }
 
@@ -374,8 +374,8 @@ export class DashboardComponent implements AfterViewInit {
     // this.showModelCanvas = false;
     this.nodeGraphService.setShowModelCanvas(false);
     this.showModelCanvas = false; // no need in later..
-    this.cdRef.detectChanges();    
-    if (!this.isInLive){ 
+    this.cdRef.detectChanges();
+    if (!this.isInLive) {
       this.initSimRoboPos();
     }
     this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
@@ -482,7 +482,7 @@ export class DashboardComponent implements AfterViewInit {
       this.addMouseDownListener(canvas);
       this.addMouseUpListener(canvas);
       this.addRightClickListener(canvas);
-      
+
       // Add resize event listener
       window.addEventListener('resize', () => this.handleResize(canvas));
     } else {
@@ -500,15 +500,15 @@ export class DashboardComponent implements AfterViewInit {
   handleResize(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-  
+
     // Set canvas dimensions to match its container
     canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
     canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
-  
+
     // Recalculate the image position to center it
     this.mapImageX = (canvas.width - this.mapImageWidth) / 2 + this.offsetX;
     this.mapImageY = (canvas.height - this.mapImageHeight) / 2 + this.offsetY;
-  
+
     // Redraw the canvas with the centered image
     this.redrawCanvas();
   }
@@ -537,16 +537,16 @@ export class DashboardComponent implements AfterViewInit {
 
     let i = 0;
     if (!this.isFleet) {
-        this.simMode = this.simMode.map((robo) => {
-            // Position each robot at the bottom-right corner of the image, with an offset for spacing
-            robo.pos = {
-                x: centerX - this.placeOffset * i, // Move to the right edge, applying offset
-                y: centerY, // Move to the bottom edge
-                orientation: 0,
-            };
-            i++;
-            return robo;
-        });
+      this.simMode = this.simMode.map((robo) => {
+        // Position each robot at the bottom-right corner of the image, with an offset for spacing
+        robo.pos = {
+          x: centerX - this.placeOffset * i, // Move to the right edge, applying offset
+          y: centerY, // Move to the bottom edge
+          orientation: 0,
+        };
+        i++;
+        return robo;
+      });
     }
   }
   showPopup(x: number, y: number) {
@@ -868,8 +868,8 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setShowModelCanvas(
       !this.nodeGraphService.getShowModelCanvas()
     );
-    if(!this.nodeGraphService.getShowModelCanvas()){
-      this.showEdges=false;
+    if (!this.nodeGraphService.getShowModelCanvas()) {
+      this.showEdges = false;
     }
     this.showModelCanvas = this.nodeGraphService.getShowModelCanvas();
     if (this.isInLive) {
@@ -926,7 +926,8 @@ export class DashboardComponent implements AfterViewInit {
         img.onload = () => {
           // Set canvas dimensions based on its container
           canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
-          canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+          canvas.height =
+            canvas.parentElement?.clientHeight || window.innerHeight;
           this.zoomLevel = this.nodeGraphService.getZoomLevel();
 
           // Calculate the scaled image dimensions
@@ -1226,7 +1227,7 @@ export class DashboardComponent implements AfterViewInit {
     this.redrawCanvas();
     this.hideLOCPopup();
   }
-  cancelAT(){
+  cancelAT() {
     this.nodeGraphService.setAssignTask(false);
     this.assignTask = false;
     if (!this.assignTask) {
@@ -1683,11 +1684,13 @@ export class DashboardComponent implements AfterViewInit {
             battery = robo.battery ? robo.battery.toFixed(2) : 0;
             taskId = robo.current_task ? robo.current_task : 'N/A';
             errState = robo.errState
-            ? `<div>
-                 <label class="idlabel">${this.getTranslation('error')} : ${robo.errState}</label>
+              ? `<div>
+                 <label class="idlabel">${this.getTranslation('error')} : ${
+                  robo.errState
+                }</label>
                </div>`
-            : '';
-            
+              : '';
+
             // Position the robot tooltip above the robot
             const robotScreenX =
               roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
@@ -1702,13 +1705,19 @@ export class DashboardComponent implements AfterViewInit {
             robottooltip.innerHTML = `
                         <div class="ATactions">
                           <div>
-                            <label class="idlabel">${this.getTranslation( 'robotID' )} : ${robotId}</label>
+                            <label class="idlabel">${this.getTranslation(
+                              'robotID'
+                            )} : ${robotId}</label>
                           </div>
                           <div>
-                            <label class="idlabel">${this.getTranslation( 'battery' )} : ${battery}%</label>
+                            <label class="idlabel">${this.getTranslation(
+                              'battery'
+                            )} : ${battery}%</label>
                           </div>
                           <div>
-                            <label class="idlabel">${this.getTranslation( 'task' )} : ${taskId}</label>
+                            <label class="idlabel">${this.getTranslation(
+                              'task'
+                            )} : ${taskId}</label>
                           </div>
                           </div>
                           </div>
@@ -1737,13 +1746,20 @@ export class DashboardComponent implements AfterViewInit {
             battery = robo.battery ? robo.battery.toFixed(2) : 0;
             taskId = robo.current_task ? robo.current_task : 'N/A';
             errState = robo.errState
-            ? `<div>
-                 <label class="idlabel">${this.getTranslation('error')} : ${robo.errState}</label>
+              ? `<div>
+                 <label class="idlabel">${this.getTranslation('error')} : ${
+                  robo.errState
+                }</label>
                </div>`
-            : '';
+              : '';
             // Position the robot tooltip above the robot
-            const robotScreenX = roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
-            const robotScreenY = (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) * this.zoomLevel + this.offsetY + this.mapImageY; // Y position on the canvas
+            const robotScreenX =
+              roboX * this.zoomLevel + this.mapImageX + this.zoomLevel; // X position on the canvas
+            const robotScreenY =
+              (this.mapImageHeight / this.zoomLevel - this.offsetY - roboY) *
+                this.zoomLevel +
+              this.offsetY +
+              this.mapImageY; // Y position on the canvas
 
             robottooltip.style.left = `${event.clientX - 90}px`; // Slightly to the left of the robot's X position
             robottooltip.style.top = `${event.clientY - 30}px`; // Above the robot's Y position
@@ -2076,7 +2092,9 @@ export class DashboardComponent implements AfterViewInit {
               y: Number(robot.pose.position.y?.toFixed(0)),
             });
 
-            let errState = robot.robot_errors ? Object.keys(robot.robot_errors) : [""];
+            let errState = robot.robot_errors
+              ? Object.keys(robot.robot_errors)
+              : [''];
             // Store each robot's position and orientation using the robot ID
             robotsData[robot.id] = {
               posX,
@@ -2164,9 +2182,9 @@ export class DashboardComponent implements AfterViewInit {
     FAILEDSTATE: '#ff0800',
   };
 
-  errorColorMap: {[key: string]: string} = {
-    LOCALIZATION_ERROR: "rgba(236, 55, 55, 0.66)"
-  }
+  errorColorMap: { [key: string]: string } = {
+    LOCALIZATION_ERROR: 'rgba(236, 55, 55, 0.66)',
+  };
 
   roboIDColor = new Map<number, string>();
   fleetRoboIdColor = new Map<number, string>();
@@ -2183,8 +2201,8 @@ export class DashboardComponent implements AfterViewInit {
     const width = 25 * this.zoomLevel * 1.3; // Define the width of the square
     const height = 25 * this.zoomLevel; // Define the height of the square
     const borderRadius = 3; // Border radius for the square
-    const circleRadius = height / 3.5; // Circle radius    
-    const errcircleRadius = height ; // Circle radius
+    const circleRadius = height / 3.5; // Circle radius
+    const errcircleRadius = height; // Circle radius
     const rectangleColor = this.stateColorMap[state] || '#ff7373';
     const errStateColor = this.errorColorMap[errState] || 'transparent';
     const borderColor = '#000000'; // Define the border color
@@ -2268,10 +2286,7 @@ export class DashboardComponent implements AfterViewInit {
       ctx.strokeStyle = borderColor; // Triangle border color
       ctx.stroke();
 
-
-  
       ctx.restore();
-      
     }
   }
 
@@ -2314,8 +2329,17 @@ export class DashboardComponent implements AfterViewInit {
     ctx.restore(); // Reset transformation after drawing the map
 
     for (let [index, robotId] of Object.keys(robotsData).entries()) {
-      const { posX, posY, yaw, state, errState, path, payload, battery, current_task } =
-        robotsData[robotId];
+      const {
+        posX,
+        posY,
+        yaw,
+        state,
+        errState,
+        path,
+        payload,
+        battery,
+        current_task,
+      } = robotsData[robotId];
 
       const scaledPosX = posX;
       const scaledPosY = posY;
@@ -2391,7 +2415,15 @@ export class DashboardComponent implements AfterViewInit {
 
         // Draw the robot on the canvas with updated positions and orientation
         let clr = this.roboIDColor.get(robo.amrId) || 'white';
-        this.plotRobo(ctx, robotPosX, robotPosY, yaw, robo.imgState, robo.errState, clr);
+        this.plotRobo(
+          ctx,
+          robotPosX,
+          robotPosY,
+          yaw,
+          robo.imgState,
+          robo.errState,
+          clr
+        );
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
@@ -2416,7 +2448,15 @@ export class DashboardComponent implements AfterViewInit {
 
         // Draw the robot on the canvas with updated positions and orientation
         let clr = this.roboIDColor.get(robo.roboDet.id) || 'white';
-        this.plotRobo(ctx, robotPosX, robotPosY, yaw, robo.imgState, robo.errState, clr);
+        this.plotRobo(
+          ctx,
+          robotPosX,
+          robotPosY,
+          yaw,
+          robo.imgState,
+          robo.errState,
+          clr
+        );
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
@@ -3159,9 +3199,9 @@ export class DashboardComponent implements AfterViewInit {
   localizePoses: any[] = [];
 
   async localize() {
-    if(this.showModelCanvas){
+    if (this.showModelCanvas) {
       this.nodeGraphService.setShowModelCanvas(false);
-      this.showModelCanvas=false;
+      this.showModelCanvas = false;
       this.redrawCanvas();
     }
     if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
