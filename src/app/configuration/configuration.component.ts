@@ -807,6 +807,7 @@ export class ConfigurationComponent implements AfterViewInit {
               ? null
               : this.formData.robotName,
           grossInfo: this.formData,
+          mapName: this.selectedMap.mapName,
         }),
       }
     );
