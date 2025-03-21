@@ -723,21 +723,6 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   toggleShowPath() {
-    if (!this.isFleet)
-      this.simMode.forEach((robo) => {
-        if (robo.imgState !== 'MOVESTATE'){
-          !this.isShowPath;
-          this.nodeGraphService.setIsShowPath(this.isShowPath);
-
-        }
-    });
-    if (this.isFleet)
-      this.robos.forEach((robo) => {
-        if (robo.imgState === 'MOVESTATE'){
-          !this.isShowPath;
-          this.nodeGraphService.setIsShowPath(this.isShowPath);
-        }
-    });
     this.isShowPath = !this.isShowPath;
     this.nodeGraphService.setIsShowPath(this.isShowPath);
     if (this.isShowPath) {
