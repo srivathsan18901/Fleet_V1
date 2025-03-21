@@ -198,7 +198,7 @@ export class AreaChartComponent implements OnInit {
     this.updateChart('data1', 'Throughput');
   }
   async getLiveRoboInfo(): Promise<string[]> {
-    if(!this.selectedMap) return [];
+    if (!this.selectedMap) return [];
     try {
       const response = await fetch(
         `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
@@ -228,13 +228,14 @@ export class AreaChartComponent implements OnInit {
     }
   }
   roboNames: any[] = [];
-  selectedRobo: Robo | null = null;
   selectedType: string = 'Overall'; // Default selection for the dropdown
+  selectedRoboId: Robo | null = null;
+
   updateSelection(type: string, robo: any): void {
     this.selectedType = type;
-    this.selectedRobo = robo;
-    // this.getTimeStampsOfDay()
+    this.selectedRoboId = robo ? robo.roboId : robo;
   }
+
   getTranslation(key: string) {
     const translation = this.translationService.getStatisticsTranslation(key);
     // console.log(`Translating key: ${key} => ${translation}`);
@@ -295,7 +296,7 @@ export class AreaChartComponent implements OnInit {
       chunks[i].forEach((val) => {
         sum += val;
       });
-      let avg = Math.round(sum / chunks[i].length); // [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]]
+      let avg = Math.round(sum / chunks[i].length);
       resultedData.push(avg);
       let timeChunklen = timeChunks[i].length - 1;
       resultedTime.push(timeChunks[i][timeChunklen]);
@@ -339,6 +340,7 @@ export class AreaChartComponent implements OnInit {
           credentials: 'include',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            roboId: this.selectedRoboId,
             timeSpan: timeSpan, // e.g. 'Daily' or 'Weekly'
             timeStamp1: timeStamp1,
             timeStamp2: timeStamp2,
@@ -356,13 +358,15 @@ export class AreaChartComponent implements OnInit {
     }
   }
 
+  // < ---------- >
+
   async updateThroughput() {
     this.clearAllIntervals(this.throuputTimeInterval);
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.throuputTimeInterval);
       this.throuputTimeInterval = 0;
       const data = await this.fetchChartData('throughput', this.currentFilter);
-      // console.log(data,'data')
+      // console.log(data);
       if (data.throughput) {
         this.throughputArr = data.throughput.Stat.map(
           (stat: any) => stat.TotalThroughPutPerHour
@@ -430,7 +434,7 @@ export class AreaChartComponent implements OnInit {
         );
         this.systemThroughputEvent.emit(this.throughputArr);
       }
-      // console.log('line 278')
+
       this.plotChart(
         'Throughput',
         this.throughputArr,
@@ -526,47 +530,6 @@ export class AreaChartComponent implements OnInit {
     }, 1000 * 2);
   }
 
-  async fetchPickAccuracyData(
-    endpoint: string,
-    timeSpan: string,
-    startTime: string,
-    endTime: string
-  ) {
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-
-    // Fetch data from the API
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeSpan: timeSpan,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    // Assuming data contains a list of tasks
-    if (data && data.tasks) {
-      const totalTasks = data.tasks.length;
-      const completedCount = data.tasks.filter(
-        (task: any) => task.TaskStatus_Names === 'COMPLETED'
-      ).length;
-
-      const completedPercentage = (completedCount / totalTasks) * 100;
-
-      // Return the data with the calculated COMPLETED percentage
-      return { tasks: data.tasks, completedPercentage };
-    }
-
-    return { tasks: [], completedPercentage: 0 };
-  }
-
   async updatePickAccuracy() {
     let startTime = new Date().setHours(0, 0, 0, 0); // Set current time to starting time of the current day..
     let endTime = new Date().setMilliseconds(0); // Time in milliseconds..
@@ -576,7 +539,6 @@ export class AreaChartComponent implements OnInit {
     if (this.currentFilter === 'week' || this.currentFilter === 'month') {
       clearInterval(this.pickAccTimeInterval);
       this.pickAccTimeInterval = 0;
-      // console.log('pick');
       const data = await this.fetchChartData(
         'pickaccuracy',
         this.currentFilter
@@ -657,59 +619,6 @@ export class AreaChartComponent implements OnInit {
     }, 1000 * 2);
   }
 
-  async fetchErrorRateData(
-    endpoint: string,
-    timeSpan: string,
-    startTime: string,
-    endTime: string
-  ) {
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-
-    // Fetch data from the API
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeSpan: timeSpan,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-      }
-    );
-
-    const data = await response.json();
-
-    // Assuming data contains a list of tasks
-    if (data && data.tasks) {
-      const totalTasks = data.tasks.length;
-
-      // Count the number of tasks with "FAILED", "CANCELLED", and "REJECTED" statuses
-      const failedCount = data.tasks.filter(
-        (task: any) => task.TaskStatus_Names === 'FAILED'
-      ).length;
-      const cancelledCount = data.tasks.filter(
-        (task: any) => task.TaskStatus_Names === 'CANCELLED'
-      ).length;
-      const rejectedCount = data.tasks.filter(
-        (task: any) => task.TaskStatus_Names === 'REJECTED'
-      ).length;
-
-      // Calculate the error rate
-      const errorRate =
-        ((totalTasks - (failedCount + cancelledCount + rejectedCount)) /
-          totalTasks) *
-        100;
-
-      // Return the data with the calculated error rate
-      return { tasks: data.tasks, errorRate };
-    }
-
-    return { tasks: [], errorRate: 0 };
-  }
-
   async updateErrorRate() {
     this.clearAllIntervals(this.errRateTimeInterval);
 
@@ -774,6 +683,8 @@ export class AreaChartComponent implements OnInit {
       this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries);
     }, 1000 * 2);
   }
+
+  // < ---------- >
 
   clearAllIntervals(currInterval: number) {
     if (currInterval !== this.throuputTimeInterval) {
