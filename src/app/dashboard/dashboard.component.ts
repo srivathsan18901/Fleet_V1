@@ -1289,7 +1289,7 @@ export class DashboardComponent implements AfterViewInit {
       destination_location: this.sourceLocation,
       type: taskType,
       automation_type: 0,
-      automation_id: this.roboToAssign,
+      automation_id: parseInt(this.roboToAssign),
       deadline: '',
       dependency: '',
       // status: 1,
