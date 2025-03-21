@@ -1279,14 +1279,23 @@ export class DashboardComponent implements AfterViewInit {
       this.roboToAssign === 'Default' ? DEFAULT_AGENT_ID : this.roboToAssign;
     const genId = Date.now().toString(16);
 
+    let taskType =
+      this.taskAction == 'MOVE' ? 0 : this.taskAction == 'PICK' ? 1 : 2;
+
     let taskData = {
-      taskId: 't' + genId,
-      agentId: this.roboToAssign,
-      Priority: 1,
-      sourceLocation: this.sourceLocation,
-      taskType: this.taskAction,
-      status: 1,
+      task_id: 't' + genId,
+      priority: 1,
+      source_location: this.sourceLocation,
+      destination_location: this.sourceLocation,
+      type: taskType,
+      automation_type: 0,
+      automation_id: this.roboToAssign,
+      deadline: '',
+      dependency: '',
+      // status: 1,
     };
+    let tasks = [];
+    tasks[0] = taskData;
 
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/send-task/${this.selectedMap.id}`,
@@ -1294,7 +1303,7 @@ export class DashboardComponent implements AfterViewInit {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(taskData),
+        body: JSON.stringify({ tasks: tasks }),
       }
     );
 
