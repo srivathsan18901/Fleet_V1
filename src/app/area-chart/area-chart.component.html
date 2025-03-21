@@ -26,14 +26,6 @@
           <div class="submenu-item">
             <a href="javascript:void(0);" class="submenu-link" (click)="updateChart('data2', 'starvationRate')" >{{ getTranslation("starvationRate") }}</a >
           </div>
-          <!-- <div class="submenu-item"> -->
-          <!-- <a
-              href="javascript:void(0);"
-              class="submenu-link"
-              (click)="updateChart('data3', 'Task allocation')"
-              >Task allocation</a
-            > -->
-          <!-- </div> -->
           <div class="submenu-item">
             <a href="javascript:void(0);" class="submenu-link" (click)="updateChart('data3', 'pickAccuracy')" >{{ getTranslation("pickAccuracy") }}</a >
           </div>
@@ -44,29 +36,32 @@
       </div>
     </div>
   </div>
-  <div class="dropdown2-container" *ngIf="selectedMetric === 'Throughput'">
-    <div class="menu">
-      <div class="item">
-        <a href="javascript:void(0);" class="link" id="selectedMetric">
-          <span>{{ getTranslation("Overall") }}</span>
-          <!-- Angular data binding to update the displayed text -->
-          <svg viewBox="0 0 360 360" xml:space="preserve">
-            <g id="SVGRepo_iconCarrier">
-              <path
-                id="XMLID_225_"
-                d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393 
-                c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393 
+  
+  <div class="menu" id="overall">
+    <div class="item">
+      <a href="javascript:void(0);" class="link" id="selectedScope">
+        <span>{{ getTranslation(selectedType) }}</span>
+        <svg viewBox="0 0 360 360" xml:space="preserve">
+          <g id="SVGRepo_iconCarrier">
+            <path
+              id="XMLID_225_"
+              d="M325.607,79.393c-5.857-5.857-15.355-5.858-21.213,0.001l-139.39,139.393L25.607,79.393
+                c-5.857-5.857-15.355-5.858-21.213,0.001c-5.858,5.858-5.858,15.355,0,21.213l150.004,150c2.813,2.813,6.628,4.393,10.606,4.393
                 s7.794-1.581,10.606-4.394l149.996-150C331.465,94.749,331.465,85.251,325.607,79.393z"
-              ></path>
-            </g>
-          </svg>
-        </a>
-
-        <!-- Submenu Options -->
-        <div class="submenu">
-          <div class="submenu-item">
-            <a href="javascript:void(0);" class="submenu-link" (click)="updateChart('data1', 'Throughput')" >{{ getTranslation("Overall") }}</a >
-          </div>
+            ></path>
+          </g>
+        </svg>
+      </a>
+      <!-- Scope Options -->
+      <div class="submenu">
+        <div class="submenu-item " id="overall">
+          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection('Overall',null)">{{ getTranslation('Overall') }}</a>
+        </div>
+        <div
+          class="submenu-item"
+          *ngFor="let robo of roboNames"
+        >
+          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection(robo.roboName,robo)">{{ robo.roboName }}</a>
         </div>
       </div>
     </div>
