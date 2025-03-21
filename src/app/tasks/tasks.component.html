@@ -53,7 +53,6 @@
       <!-- Table -->
       <div class="table-container">
         <div class="table-wrapper">
-          <!-- Table container without scroll -->
           <div class="table-responsive">
             <table class="table">
               <thead >
@@ -63,12 +62,15 @@
                   <th>{{ getTranslation('Task Type') }}</th>
                   <th>{{ getTranslation('Status') }}</th>
                   <th>{{ getTranslation('Robot Name') }}</th>
-                  <!-- <th>Source</th> -->
                   <th>{{ getTranslation('Destination') }}</th>
                   <th>{{ getTranslation('assign_robots') }}</th>    
                   <th>{{ getTranslation('Actions') }}</th>                
                 </tr>
               </thead>
+            </table>
+          </div>
+          <div class="table-body">
+            <table class="table">
               <tbody>
                 <!-- Show No Data Row with image and message -->
                <tr *ngIf="paginatedData.length === 0">
