@@ -40,7 +40,10 @@ interface imageURI {
   metricName: string;
   base64URI: string;
 }
-
+interface Robo {
+  roboName: string;
+  roboId: number;
+}
 @Component({
   selector: 'app-area-chart',
   templateUrl: './area-chart.component.html',
@@ -87,6 +90,9 @@ export class AreaChartComponent implements OnInit {
     private translationService: TranslationService,
     private exportFileService: ExportFileService
   ) {
+    this.getLiveRoboInfo().then((names) => {
+      this.roboNames = names;
+    });
     this.chartOptions = {
       series: [
         {
@@ -186,9 +192,49 @@ export class AreaChartComponent implements OnInit {
     this.projectService.isFleetUp$.subscribe((status) => {
       this.isFleetUp = status;
     });
+    this.getLiveRoboInfo().then((names) => {
+      this.roboNames = names;
+    });
     this.updateChart('data1', 'Throughput');
   }
+  async getLiveRoboInfo(): Promise<string[]> {
+    if(!this.selectedMap) return [];
+    try {
+      const response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
+      // console.log(response);
 
+      const data = await response.json();
+      // console.log(data);
+      if (!data.populatedRobos || data.msg !== 'data sent!') {
+        console.log(data);
+        console.error('Invalid API response');
+        return [];
+      }
+      return data.populatedRobos.map((robo: any) => {
+        return {
+          roboName: robo.roboName || 'Unknown Robo',
+          roboId: robo.amrId,
+        };
+      });
+    } catch (error) {
+      console.error('Error fetching robot names:', error);
+      return [];
+    }
+  }
+  roboNames: any[] = [];
+  selectedRobo: Robo | null = null;
+  selectedType: string = 'Overall'; // Default selection for the dropdown
+  updateSelection(type: string, robo: any): void {
+    this.selectedType = type;
+    this.selectedRobo = robo;
+    // this.getTimeStampsOfDay()
+  }
   getTranslation(key: string) {
     const translation = this.translationService.getStatisticsTranslation(key);
     // console.log(`Translating key: ${key} => ${translation}`);
