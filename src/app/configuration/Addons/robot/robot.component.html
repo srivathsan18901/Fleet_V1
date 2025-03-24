@@ -18,14 +18,16 @@
                 <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.maxToleranceAtGoalY" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
             </div>
             
-            <div class="input-groupg">
+            <div class="input-groupg" style="gap: 0.75em;">
                 <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
                 <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.maxToleranceAtGoalOrientation" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
-        
-                <label>{{getTranslation('end_point_orientation')}}</label>
-                <input type="checkbox" [(ngModel)]="moveParams.endPointOrientation" (change)="toggleMOVEndPointOrientation()"  style="height: 20px;"/><br />
             </div>
-            
+            <div class="input-groupg">      
+              <label>{{getTranslation('end_point_orientation')}}</label>
+              <div class="checkbox-group">
+              <input type="checkbox" [(ngModel)]="moveParams.endPointOrientation" (change)="toggleMOVEndPointOrientation()"  style="height: 20px;"/><br />
+              </div>
+          </div>
             <div >
               <label style="margin-bottom: 5px; font-weight: bold;">{{getTranslation('auto_robot_operation_mode')}}</label>
               <div class="input-groupg">
@@ -69,17 +71,21 @@
                     <label>{{getTranslation('goal_offset_y')}}</label>
                     <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.goalOffsetY" placeholder="{{getTranslation('enter_goal_offset_y')}}"/><br />
                   </div>
-                  <div class="input-groupg">
+                  <div class="input-groupg" style="gap: 0.75em;">
                     <label>{{getTranslation('goal_offset_orientation')}}</label>
                     <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.goalOffsetOrientation" placeholder="{{getTranslation('enter_goal_offset_orientation')}}"/><br />
       
-                    <label>{{getTranslation('end_point_orientation')}}</label>
-                    <input type="checkbox"  style="height: 20px;" (change)="toggleDOCEndPointOrientation()" [(ngModel)]="dockParams.endPointOrientation"/><br />
                   </div>
                   <div class="input-groupg">
+                    <label>{{getTranslation('end_point_orientation')}}</label>
+                    <div class="checkbox-group">
+                    <input type="checkbox"  style="height: 20px;" (change)="toggleDOCEndPointOrientation()" [(ngModel)]="dockParams.endPointOrientation"/><br />
+                    </div>
+                  </div>
+                  <div class="input-groupg" style="gap: 0.75em;">
                     <label>{{getTranslation('docking_type')}}</label>
-                    <select [(ngModel)]="dockParams.dockingType"  style="margin-right: 20.2rem; border: 1px solid #ccc;" placeholder="Select Docking Type">
-                      <option [value]="0">0</option>
+                    <select [(ngModel)]="dockParams.dockingType"  style="margin-right: 20.2rem; border: 1px solid #ccc; border-radius: 5px;padding:6px;" placeholder="Select Docking Type">
+                      <option [value]="0">0</option> 
                       <option [value]="1">1</option>
                       <option [value]="2">2</option>
                       <option [value]="3">3</option>
@@ -88,28 +94,29 @@
                   </div>
 
             </p-tabPanel>
-            <p-tabPanel header="{{getTranslation('UNDOCK')}}">
+            <p-tabPanel header="{{getTranslation('UNDOCK')}}" [headerStyleClass]="'custom-tab-header'">
             <div class="input-groupg">
+              <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
+              <input pInputText type="number" min="0" max="1000"  [(ngModel)]="unDockParams.maxToleranceAtGoalOrientation" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
+
               <label>{{getTranslation('max_linear_velocity')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="unDockParams.maxLinearVelocity" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}" /><br />
 
-              <!-- <label>{{getTranslation('max_angular_velocity')}}</label>
-              <input pInputText type="number" min="0" max="1000" [(ngModel)]="max_angular_velocityUD" placeholder="{{getTranslation('enter_maximum_angular_velocity')}}"  /><br /> -->
             </div>
             <div class="input-groupg">
-              <label style="margin-right: .8rem;">{{getTranslation('max_tolerance_at_goal_x')}}</label>
+              <label >{{getTranslation('max_tolerance_at_goal_x')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="unDockParams.maxToleranceAtGoalX" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
 
               <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
               <input pInputText type="number" min="0" max="1000" [(ngModel)]="unDockParams.maxToleranceAtGoalY" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
             </div>
             <div class="input-groupg">
-              <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-              <input pInputText type="number" min="0" max="1000"  [(ngModel)]="unDockParams.maxToleranceAtGoalOrientation" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
-
               <label>{{getTranslation('end_point_orientation')}}</label>
-              <input type="checkbox" [(ngModel)]="unDockParams.endPointOrientation" (change)="toggleUDEndPointOrientation()" style="height: 20px;"/><br />
+              <div class="checkbox-group">
+                  <input type="checkbox" [(ngModel)]="moveParams.endPointOrientation" (change)="toggleMOVEndPointOrientation()" style="height: 20px;"/>
+              </div>
             </div>
+          
             <!-- <div class="input-groupg">
               <label>{{getTranslation('end_point_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" placeholder="Enter Maximum Linear Velocity" /><br />
@@ -138,16 +145,21 @@
                     <label>{{getTranslation('goal_offset_y')}}</label>
                     <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.goalOffsetY" placeholder="{{getTranslation('enter_goal_offset_y')}}"/><br />
                   </div>
-                  <div class="input-groupg">
+                  <div class="input-groupg" style="gap: 0.75em;">
                     <label>{{getTranslation('goal_offset_orientation')}}</label>
                     <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.goalOffsetOrientation" placeholder="{{getTranslation('enter_goal_offset_orientation')}}"/><br />
       
-                    <label>{{getTranslation('end_point_orientation')}}</label>
-                    <input type="checkbox" (change)="toggleCHARGEEndPointOrientation()" [(ngModel)]="chargeParams.endPointOrientation" style="height: 20px;"/><br />
                   </div>
-                  <div class="input-groupg"> 
+                  <div class="input-groupg">
+
+                    <label>{{getTranslation('end_point_orientation')}}</label>
+                    <div class="checkbox-group">
+                    <input type="checkbox" (change)="toggleCHARGEEndPointOrientation()" [(ngModel)]="chargeParams.endPointOrientation" style="height: 20px;"/><br />
+                    </div>
+                  </div>
+                  <div class="input-groupg" style="gap: 0.75em;"> 
                     <label>{{getTranslation('docking_type')}}</label>
-                    <select [(ngModel)]="chargeParams.dockingType" style="margin-right: 20.2rem; border: 1px solid #ccc;">
+                    <select [(ngModel)]="chargeParams.dockingType" style="margin-right: 20.2rem; border: 1px solid #ccc;border-radius: 5px;padding:6px;">
                       <option value="0">0</option>
                       <option value="1">1</option>
                       <option value="2">2</option>
@@ -161,7 +173,7 @@
                     <label>{{getTranslation('WIDTH')}}</label>
                     <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.Width" placeholder="{{getTranslation('enter_width')}}"/><br />
                     <label>{{getTranslation('LENGTH')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.Width" placeholder="{{getTranslation('enter_length')}}"/><br />
+                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.Length" placeholder="{{getTranslation('enter_length')}}"/><br />
                 </div>
                 <div class="newdiv">
                   <div style="font-weight: bold;margin-bottom: 10px;">
@@ -211,16 +223,24 @@
                     <label>{{getTranslation('WARNING_VOLTAGE')}}</label>
                     <input pInputText type="number" min="0" max="1000" [(ngModel)]="batteryParams.warningVoltage" placeholder="{{getTranslation('enter_warning_voltage')}}"/><br />
                 </div>
-                <div class="input-groupg">
+                <div class="input-groupg" style="gap: 0.75em;">
                     <label>{{getTranslation('MINIMUM_VOLTAGE')}}</label>
                     <input pInputText type="number" min="0" max="1000" [(ngModel)]="batteryParams.minimumVoltage" placeholder="{{getTranslation('enter_maximum_voltage')}}"/><br />
-      
-                    <label>{{getTranslation('USE_ONLY_PERCENTAGE')}}</label>
-                    <input type="checkbox" (change)="toggleUSE_ONLY_PERCENTAGE()" [(ngModel)]="batteryParams.useOnlyPercentage"  style="height: 20px;"/><br />
+                
                 </div>
                 <div class="input-groupg">
-                    <label>{{getTranslation('USE_CURRENT')}}</label>
+                  <label>{{getTranslation('USE_ONLY_PERCENTAGE')}}</label>
+                  <div class="checkbox-group">
+                  <input type="checkbox" (change)="toggleUSE_ONLY_PERCENTAGE()" [(ngModel)]="batteryParams.useOnlyPercentage"  style="height: 20px;"/><br />
+                  </div>
+
+                </div>
+                <div class="input-groupg">
+ 
+                  <label>{{getTranslation('USE_CURRENT')}}</label>
+                  <div class="checkbox-group">
                     <input type="checkbox" (change)="toggleUSE_CURRENT()" [(ngModel)]="batteryParams.useCurrent"  style="height: 20px;"  /><br />
+                  </div>
                 </div>
 
             </p-tabPanel>

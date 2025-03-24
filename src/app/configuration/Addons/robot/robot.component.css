@@ -29,7 +29,15 @@
   flex-basis: 30%; /* Adjust width of labels */
   min-width: 150px; /* Minimum width for labels */
 }
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust spacing between checkbox and label */
+}
 
+.checkbox-group input {
+  margin-left: 0; /* Ensure checkbox aligns to the left */
+}
 .input-groupg input,
 .input-groupg select {
   height: 32px;
@@ -39,3 +47,37 @@
 }
 
 
+label {
+  font-size: 14px; /* Adjust size as needed */
+  color: #333; /* Change text color */
+  font-family: "graphik", Arial, sans-serif;
+}
+
+input {
+  font-size: 14px; /* Font size for input fields */
+  color: #000; /* Text color for inputs */
+  font-family: "graphik", Arial, sans-serif;
+}
+
+
+
+::ng-deep .p-tabview-nav li .p-tabview-title {
+  font-size: 16px; 
+  font-family: "graphik", Arial, sans-serif !important;
+  color: #000000; 
+}
+
+::ng-deep .p-tabview-nav li.p-highlight .p-tabview-title {
+  font-size: 16px; 
+  font-weight: bold; 
+  font-family: "graphik", Arial, sans-serif !important;
+  color: #007bff; 
+}
+
+::ng-deep .p-tabview-nav li {
+  background: transparent !important; 
+}
+
+.p-tabview-title{
+  font-family: "graphik", Arial, sans-serif !important;
+}
