@@ -2326,7 +2326,7 @@ export class DashboardComponent implements AfterViewInit {
       canvasOptions.style.boxShadow = '0 3px 6px #ff7373';
     }
   }
-
+  enablePath:boolean=false;
   plotAllRobots(
     robotsData: any,
     ctx: CanvasRenderingContext2D,
@@ -2442,6 +2442,10 @@ export class DashboardComponent implements AfterViewInit {
           robo.errState,
           clr
         );
+        if(robo.imgState === 'MOVESTATE'){
+          this.enablePath=true
+        }
+        else{this.enablePath=false}
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
@@ -2475,6 +2479,10 @@ export class DashboardComponent implements AfterViewInit {
           robo.errState,
           clr
         );
+        if(robo.imgState === 'MOVESTATE'){
+          this.enablePath=true;
+        }
+        else{this.enablePath=false;}
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
