@@ -497,6 +497,7 @@ export class DashboardComponent implements AfterViewInit {
     this.assetImages['docking'].src = 'assets/Asseticon/docking-station.svg';
     this.assetImages['charging'].src = 'assets/Asseticon/charging-station.svg';
   }
+
   handleResize(canvas: HTMLCanvasElement): void {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
@@ -512,6 +513,7 @@ export class DashboardComponent implements AfterViewInit {
     // Redraw the canvas with the centered image
     this.redrawCanvas();
   }
+
   updateCurrentRoboList() {
     if (!this.isFleet) {
       this.currentRoboList = this.simMode.map((robo) => robo.amrId);
@@ -848,9 +850,11 @@ export class DashboardComponent implements AfterViewInit {
     this.showEdges = !this.showEdges;
     this.redrawCanvas();
   }
+
   get isTaskAssigned(): boolean {
     return this.nodeGraphService.getAssignTask();
   }
+
   get isLocalize(): boolean {
     return this.nodeGraphService.getLocalize();
   }
@@ -1156,6 +1160,7 @@ export class DashboardComponent implements AfterViewInit {
     // console.log(distance, imageSize*1.5);
     return distance <= imageSize * 1.5; // Adjust this based on the robot's size
   }
+
   showATPopup(x: number, y: number) {
     const popup = document.getElementById('assignTask-popup');
     if (popup) {
@@ -1169,6 +1174,7 @@ export class DashboardComponent implements AfterViewInit {
       }
     });
   }
+
   showLocPopup(x: number, y: number) {
     this.hidePopup();
     const popup = document.getElementById('Localize-popup');
@@ -1227,6 +1233,7 @@ export class DashboardComponent implements AfterViewInit {
     this.redrawCanvas();
     this.hideLOCPopup();
   }
+
   cancelAT() {
     this.nodeGraphService.setAssignTask(false);
     this.assignTask = false;
@@ -1406,6 +1413,7 @@ export class DashboardComponent implements AfterViewInit {
       }
     });
   }
+
   addMouseDownListener(canvas: HTMLCanvasElement) {
     canvas.addEventListener('mousedown', (event) => {
       if (event.button === 2) {
@@ -2104,6 +2112,7 @@ export class DashboardComponent implements AfterViewInit {
             let errState = robot.robot_errors
               ? Object.keys(robot.robot_errors)
               : [''];
+
             // Store each robot's position and orientation using the robot ID
             robotsData[robot.id] = {
               posX,
@@ -2113,9 +2122,9 @@ export class DashboardComponent implements AfterViewInit {
               errState: errState,
               battery: robot.battery,
               current_task: robot.current_task,
-              path: robot.agentPath,
+              path: robot.robot_state === 'MOVESTATE' ? robot.agentPath : [], // robot.agentPath.length = 0
               payload: robot.payload_status,
-            }; // here we go...
+            };
 
             // console.log(robot.id, robot.pose.position.x, robot.pose.position.y);
             this.simMode = this.nodeGraphService.getsimMode();
