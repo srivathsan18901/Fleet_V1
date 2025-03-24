@@ -9,6 +9,9 @@
     flex-direction: column;
     align-items: center;
 }
+::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
+  background-color: transparent !important;
+}
 .input-groupgbtn{
   display: flex;
   flex-wrap: nowrap;

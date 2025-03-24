@@ -36,7 +36,8 @@ textarea:disabled {
 .field {
   margin-bottom: 15px;
   display: flex;
-  align-items: center;
+  align-items: center;  
+  justify-content: space-between;
 }
 
 .centers{
@@ -80,7 +81,7 @@ label {
 } */
 
 ::ng-deep .p-dropdown{
-  width: 11rem;
+  width: 10rem;
   /* height: 3rem; */
 }
 
@@ -100,6 +101,7 @@ br {
   border: 1px solid #000;
   border-radius: 15px;
 }
+
 
 ::ng-deep{
   .p-button.p-button-danger{
