@@ -15,9 +15,11 @@ import {
   ApexDataLabels,
   ApexYAxis,
   ApexTooltip,
+  ApexAnnotations,
   ApexGrid,
   ApexStroke,
   ChartComponent,
+  ApexMarkers,
 } from 'ng-apexcharts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
@@ -34,6 +36,7 @@ export type ChartOptions = {
   stroke: ApexStroke;
   tooltip: ApexTooltip;
   grid: ApexGrid;
+  markers:ApexMarkers;
 };
 
 interface imageURI {
@@ -112,8 +115,11 @@ export class AreaChartComponent implements OnInit {
         },
       },
       xaxis: {
-        categories: [], // Your default categories
+        categories:  [],
+        type: "datetime", // Important: Uses timestamps directly
+        tickAmount: 6,
         labels: {
+          format: 'dd MMM HH:mm', // Ensures date + time format
           style: {
             colors: '#9aa0ac',
             fontSize: '12px',
@@ -128,6 +134,7 @@ export class AreaChartComponent implements OnInit {
           },
         },
       },
+
       fill: {
         type: 'gradient',
         gradient: {
@@ -138,30 +145,42 @@ export class AreaChartComponent implements OnInit {
           colorStops: [
             {
               offset: 0,
-              color: '#32CD32',
+              color: '#DD7373',
               opacity: 0.5,
             },
             {
               offset: 100,
-              color: '#32CD3200',
+              color: '#DD7373',
               opacity: 0.1,
             },
           ],
         },
       },
       dataLabels: {
-        enabled: true,
+        enabled: false,
       },
+      markers: {
+        size: 0, // Controls the size of the point
+        colors: ['#DD7373'], // Sets the point color
+        strokeColors: '#DD7373', // Sets the border color
+        strokeWidth: 2, // Adjusts the border thickness
+        hover: {
+          size: 4, // Slightly enlarges the point on hover
+        },
+      },     
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: ['#32CD32'], // This is the key change: making sure the stroke is red
+        colors: ['#DD7373'], // This is the key change: making sure the stroke is red
       },
       tooltip: {
         enabled: true,
         theme: 'dark',
         x: {
           format: 'dd MMM',
+        },
+        marker: {
+          fillColors: ['#DD7373'], // Changes the tooltip marker color
         },
         custom: ({ seriesIndex, dataPointIndex, w }) => {
           const value = w.config.series[seriesIndex].data[dataPointIndex];
@@ -197,6 +216,7 @@ export class AreaChartComponent implements OnInit {
     });
     this.updateChart('data1', 'Throughput');
   }
+ 
   async getLiveRoboInfo(): Promise<string[]> {
     if (!this.selectedMap) return [];
     try {
@@ -207,7 +227,6 @@ export class AreaChartComponent implements OnInit {
           credentials: 'include',
         }
       );
-      // console.log(response);
 
       const data = await response.json();
       // console.log(data);
@@ -227,6 +246,7 @@ export class AreaChartComponent implements OnInit {
       return [];
     }
   }
+
   roboNames: any[] = [];
   selectedType: string = 'Overall'; // Default selection for the dropdown
   selectedRoboId: Robo | null = null;
@@ -306,17 +326,17 @@ export class AreaChartComponent implements OnInit {
   }
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 7) {
-    let [limitedData, limitedTime] = this.isFleetUp
-      ? this.chunkDataArr(data, time, limit)
-      : [[0], ['']];
+    // let [limitedData, limitedTime] = this.isFleetUp
+    //   ? this.chunkDataArr(data, time, limit)
+    //   : [[0], ['']];
 
-    if (this.isFleetUp)
-      limitedTime = limitedTime.map((time: String) => time.split(','));
-
+    // if (this.isFleetUp)
+    //   limitedTime = limitedTime.map((time: String) => time.split(','));
+    
     this.chart.updateOptions(
       {
-        series: [{ name: seriesName, data: limitedData }],
-        xaxis: { categories: limitedTime },
+        series: [{ name: seriesName, data: data }],
+        xaxis: { categories: time },
       },
       false, // Don't replot the entire chart
       true // Smooth transitions
@@ -602,12 +622,13 @@ export class AreaChartComponent implements OnInit {
           Math.round(stat.pickAccuracy)
         );
         this.pickAccXaxisSeries = data.throughput.Stat.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
+          stat.TimeStamp
+          // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+          //   month: 'short',
+          //   day: 'numeric',
+          //   hour: 'numeric',
+          //   minute: 'numeric',
+          // })
         );
       }
 
@@ -632,12 +653,13 @@ export class AreaChartComponent implements OnInit {
           Math.round(stat.errorRate)
         );
         this.errRateXaxisSeries = data.errRate.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
+          stat.TimeStamp
+          // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+          //   month: 'short',
+          //   day: 'numeric',
+          //   hour: 'numeric',
+          //   minute: 'numeric',
+          // })
         );
       }
       this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries, 7);
@@ -653,12 +675,13 @@ export class AreaChartComponent implements OnInit {
         Math.round(stat.errorRate)
       );
       this.errRateXaxisSeries = data.errRate.map((stat: any) =>
-        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        })
+        stat.TimeStamp
+        // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+        //   month: 'short',
+        //   day: 'numeric',
+        //   hour: 'numeric',
+        //   minute: 'numeric',
+        // })
       );
     }
 
@@ -671,12 +694,13 @@ export class AreaChartComponent implements OnInit {
           Math.round(stat.errorRate)
         );
         this.errRateXaxisSeries = data.errRate.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
+          stat.TimeStamp
+          // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
+          //   month: 'short',
+          //   day: 'numeric',
+          //   hour: 'numeric',
+          //   minute: 'numeric',
+          // })
         );
       }
 

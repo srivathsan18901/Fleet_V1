@@ -37,7 +37,7 @@
     </div>
   </div>
   
-  <div class="menu" id="overall">
+  <div class="menu" id="overall" *ngIf="selectedMetric === 'Throughput'">
     <div class="item">
       <a href="javascript:void(0);" class="link" id="selectedScope">
         <span>{{ getTranslation(selectedType) }}</span>
@@ -64,6 +64,18 @@
           <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection(robo.roboName,robo)">{{ robo.roboName }}</a>
         </div>
       </div>
+      
+      <!-- <div class="submenu" *ngIf="this.simMode">
+        <div class="submenu-item " id="overall">
+          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection('Overall',null)">{{ getTranslation('Overall') }}</a>
+        </div>
+        <div
+          class="submenu-item"
+          *ngFor="let robot of simMode"
+        >
+          <a href="javascript:void(0);" class="submenu-link" (click)="updateSelection(robo.roboName,robo)">{{ robo.roboName }}</a>
+        </div>
+      </div> -->
     </div>
   </div>
   </div>
@@ -118,6 +130,7 @@
   [stroke]="chartOptions.stroke"
   [tooltip]="chartOptions.tooltip"
   [grid]="chartOptions.grid"
+  [markers]="chartOptions.markers"
 ></apx-chart>
 
 <!-- top: -9999px; -->
@@ -132,5 +145,6 @@
   [dataLabels]="chartOptions.dataLabels"
   [stroke]="chartOptions.stroke"
   [tooltip]="chartOptions.tooltip"
-  [grid]="chartOptions.grid"
+  [grid]="chartOptions.grid"  
+  [markers]="chartOptions.markers"
 ></apx-chart>

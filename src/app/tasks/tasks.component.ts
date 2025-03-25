@@ -273,9 +273,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
   isButtonDisabled: boolean = true;
   async ngOnInit() {
-    if (!JSON.parse(this.projectService.getInitializeMapSelected()))
+    if (!JSON.parse(this.projectService.getInitializeMapSelected())){
       this.isButtonDisabled = false;
-
+    }
     this.mapData = this.projectService.getMapData();
     // timeStamp1 = 1728930600;
     // timeStamp2 = 1729050704;
