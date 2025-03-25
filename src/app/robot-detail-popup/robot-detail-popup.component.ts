@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnDestroy } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
@@ -61,61 +61,10 @@ export class RobotDetailPopupComponent {
   currentSignalClass: any;
   selectedMap: any | null = null;
   mapId: any;
-  isConnected: boolean = true;
   robotUtilization: string = '0';
-  pick: any;
-  specific: any;
-  distance: any;
 
-  toggleConnection() {
-    console.log('toggle is clicked');
-    this.data.isConnected = !this.data.isConnected;
-    // console.log(this.data);
-    this.isConnected = !this.isConnected;
-  }
   // active & Inactive
   isActive: boolean = false; // Initially true
-
-  toggleStatus() {
-    this.isActive = !this.isActive; // Toggle between true and false
-  }
-
-  // // Method to handle toggle
-  // onToggle(event: Event): void {
-  //   const checkbox = event.target as HTMLInputElement;
-  //   this.isEmergencyStop = !checkbox.checked; // Toggle the state
-  // }
-
-  localize() {
-    this.nodeGraphService.setRoboToLocalize(this.data.id);
-    this.nodeGraphService.setLocalize(true);
-    this.nodeGraphService.setAssignTask(false);
-    this.router.navigate(['/dashboard']);
-    this.dialogRef.close();
-  }
-  onEmergencyStop() {
-    alert('Emergency Stop Pressed!');
-  }
-  truncateValue(value: number): string {
-    const valueString = value.toString(); // Convert number to string
-    if (valueString.length > 3) {
-      return valueString.slice(0, 3) + '...'; // Truncate and append '...'
-    }
-    return valueString; // Return the whole string if 3 or fewer digits
-  }
-
-  getClassForCircle(percentage: number, threshold: number): string {
-    return percentage >= threshold ? 'filled' : '';
-  }
-
-  // Function to get battery color
-
-
-
-  // Getter for isCharging status
-  // get isCharging(): boolean {
-  //   return this.data.isCharging;
-  // }
 
   constructor(
     public dialogRef: MatDialogRef<RobotDetailPopupComponent>,
@@ -126,40 +75,16 @@ export class RobotDetailPopupComponent {
     @Inject(MAT_DIALOG_DATA) public data: Robot
   ) {}
 
-  getBatteryColor(batteryPercentage: number): string {
-    if (batteryPercentage >= 75) {
-      return 'high'; // Green for high battery
-    } else if (batteryPercentage >= 40) {
-      return 'medium';
-    } else {
-      return 'low'; // Red for low battery
-    }
-  }
-  get batteryPercentage(): number {
-    return Number(this.data.batteryPercentage);
-  }
-  getTranslation(key: string) {
-    return this.translationService.getRobotsTranslation(key);
-  }
   ngOnInit(): void {
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) {
       this.selectedMap = 'N/A';
       return;
     }
-    this.pick = this.fetchChartData();
-    this.specific = this.robotDetails();
-    this.distance = this.fetchDistance();
-    // console.log(this.specific,"=======================specific======================");
-    // console.log(this.pick,"==========================pick===================");
-    // console.log(this.distance,"======================distance=======================");
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     this.setSignalStrength(this.data.SignalStrength);
-    // console.log(this.data,'data=========================')
     this.mapId = this.selectedMap.id;
-    // console.log("dolu", this.mapId)
-    this.populatedRobo();
-    // console.log(this.populatedRobo)
+    // this.populatedRobo(); // check it once..
     this.fetchLiveRobosData();
     this.projectService
       .getRobotUtilization(this.mapId, timeStamp1, timeStamp2)
@@ -173,81 +98,108 @@ export class RobotDetailPopupComponent {
           console.error('Error fetching robot utilization:', error);
         }
       );
-    // console.log(this.robotUtilization,"---------------robot utilization ------------");
   }
+
+  toggleStatus() {
+    this.isActive = !this.isActive; // Toggle between true and false
+  }
+
+  toggleConnection() {
+    if (!this.data) return;
+    // this.data.isConnected = !this.data.isConnected;
+    if (this.data.isConnected) this.disConnectRobot(this.data.id);
+    this.connectRobot(this.data.id);
+  }
+
+  localize() {
+    this.nodeGraphService.setRoboToLocalize(this.data.id);
+    this.nodeGraphService.setLocalize(true);
+    this.nodeGraphService.setAssignTask(false);
+    this.router.navigate(['/dashboard']);
+    this.dialogRef.close();
+  }
+
+  connectRobotController: AbortController | null = null;
+  disConnectRobotController: AbortController | null = null;
+
+  async connectRobot(robotId: number): Promise<void> {
+    if (this.connectRobotController) this.connectRobotController.abort();
+    this.connectRobotController = new AbortController();
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/connect-robot`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ robotId: robotId }),
+        signal: this.connectRobotController.signal,
+      }
+    );
+
+    let data = await response.json();
+    if (data.error) return;
+    if (data.isRobotConnected) this.data.isConnected = true;
+  }
+
+  async disConnectRobot(robotId: number): Promise<void> {
+    if (this.disConnectRobotController) this.disConnectRobotController.abort();
+    this.disConnectRobotController = new AbortController();
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/disconnect-robot`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ robotId: robotId }),
+        signal: this.disConnectRobotController.signal,
+      }
+    );
+
+    let data = await response.json();
+    if (data.error) return;
+    if (data.isRobotDisconnected) this.data.isConnected = false;
+  }
+
+  onEmergencyStop() {
+    alert('Emergency Stop Pressed!');
+  }
+
+  truncateValue(value: number): string {
+    const valueString = value.toString(); // Convert number to string
+    if (valueString.length > 3) {
+      return valueString.slice(0, 3) + '...'; // Truncate and append '...'
+    }
+    return valueString; // Return the whole string if 3 or fewer digits
+  }
+
+  getClassForCircle(percentage: number, threshold: number): string {
+    return percentage >= threshold ? 'filled' : '';
+  }
+
+  getBatteryColor(batteryPercentage: number): string {
+    if (batteryPercentage >= 75) {
+      return 'high'; // Green for high battery
+    } else if (batteryPercentage >= 40) {
+      return 'medium';
+    } else {
+      return 'low'; // Red for low battery
+    }
+  }
+
+  get batteryPercentage(): number {
+    return Number(this.data.batteryPercentage);
+  }
+
+  getTranslation(key: string) {
+    return this.translationService.getRobotsTranslation(key);
+  }
+
   truncateNumber(value: number): string {
     const numberString = value.toString();
     // Limit visible characters, truncate after a few digits and add '...'
     return numberString.length > 5
       ? numberString.substring(0, 4) + '..'
       : numberString;
-  }
-
-  fetchChartData(): Promise<any> {
-    const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    // console.log(timeSpan, 'time span robot');
-
-    // Return a Promise to handle asynchronous behavior
-    return fetch(
-      `http://${environment.API_URL}:${environment.PORT}/get_pickdropCount`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-      }
-    ).then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    });
-  }
-
-  fetchDistance(): Promise<any> {
-    const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    // console.log(timeSpan, 'time span robot');
-
-    // Return a Promise to handle asynchronous behavior
-    return fetch(
-      `http://${environment.API_URL}:${environment.PORT}/get_distance`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-      }
-    ).then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    });
-  }
-
-  robotDetails(): Promise<any> {
-    const { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    // console.log(timeSpan, 'time span robot');
-
-    // Return a Promise to handle asynchronous behavior
-    return fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
-    ).then((response) => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    });
   }
 
   populatedRobo(): void {
@@ -293,9 +245,11 @@ export class RobotDetailPopupComponent {
       timeStamp2: currentTime,
     };
   }
+
   getStartOfDay() {
     return Math.floor(new Date().setHours(0, 0, 0) / 1000);
   }
+
   weekStartOfDay() {
     let currentDate = new Date();
 
@@ -363,5 +317,10 @@ export class RobotDetailPopupComponent {
     console.log(
       `Emergency Stop toggled to: ${this.isEmergencyStop ? 'Stop' : 'Run'}`
     );
+  }
+
+  ngOnDestroy() {
+    if (this.connectRobotController) this.connectRobotController.abort();
+    if (this.disConnectRobotController) this.disConnectRobotController.abort();
   }
 }
