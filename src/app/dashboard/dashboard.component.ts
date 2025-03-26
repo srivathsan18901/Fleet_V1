@@ -3401,7 +3401,7 @@ export class DashboardComponent implements AfterViewInit {
   ngOnDestroy() {
     this.mapDetailsController?.abort();
     this.fleetPauseController?.abort();
-    // if (this.posEventSource) this.posEventSource.close(); // ONLY comment.. if interrupting on other operations..
+    if (this.posEventSource) this.posEventSource.close(); // ONLY comment.. if interrupting on other operations..
     if (this.assetEventSource) this.assetEventSource.close();
   }
 }

@@ -34,7 +34,7 @@ export class SidenavbarComponent implements OnInit {
   private subscription: Subscription = new Subscription();
   projectName: string | null = null;
   username: string | null = null;
-  userrole: string  = "";
+  userrole: string = '';
   robotActivities: any[] = [];
   fleetActivities: any[] = [];
   selectedMap: any | null = null;
@@ -45,8 +45,6 @@ export class SidenavbarComponent implements OnInit {
   isNotificationVisible = false;
   languageArrowState = false;
   isFleetUp: boolean = false; // Set to true or false based on your logic
-  // isAmqpUp: boolean = false;
-  private autoCloseTimeout: any;
   notifications: any[] = [];
   private subscriptions: Subscription[] = [];
   processedErrors: Set<string>; // To track processed errors
@@ -91,9 +89,12 @@ export class SidenavbarComponent implements OnInit {
       const notificationElement = this.eRef.nativeElement.querySelector(
         '.notification-popup'
       );
-      const profileElement = this.eRef.nativeElement.querySelector('.Profile-popup');
-      const languageDropdownElement = this.eRef.nativeElement.querySelector('.language-dropdown');
-      const languageToggleElement = this.eRef.nativeElement.querySelector('.language-toggle');
+      const profileElement =
+        this.eRef.nativeElement.querySelector('.Profile-popup');
+      const languageDropdownElement =
+        this.eRef.nativeElement.querySelector('.language-dropdown');
+      const languageToggleElement =
+        this.eRef.nativeElement.querySelector('.language-toggle');
       if (
         this.showProfilePopup &&
         profileElement &&
@@ -502,12 +503,12 @@ export class SidenavbarComponent implements OnInit {
     this.showProfilePopup = false;
     this.showNotificationPopup = false;
   }
-truncateUsername(username:any) {
-  if (username.length > 10) {
-    return username.substring(0, 10) + '...';
+  truncateUsername(username: any) {
+    if (username.length > 10) {
+      return username.substring(0, 10) + '...';
+    }
+    return username;
   }
-  return username;
-}
   toggleProfilePopup() {
     this.showProfilePopup = !this.showProfilePopup;
     this.showNotificationPopup = false;
