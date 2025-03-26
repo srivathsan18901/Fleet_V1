@@ -845,7 +845,7 @@ export class TranslationService {
   private robotsTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
     ENG: {
         "Robot Details": "Robot Details",
-        "Create and edit task reports": "Create and edit task reports",
+        'display_robot_details': 'Display robot details',
         "- No Robots Found -": "- No Robots Found -",
         "- Sim Mode has been Enabled -": "- Sim Mode has been Enabled -",
         "ID": "ID",
@@ -884,7 +884,7 @@ export class TranslationService {
     JAP: {
         "Robot Details": "ロボットの詳細",
         "Search for Something...": "何かを検索...",
-        "Create and edit task reports": "タスクレポートを作成および編集",
+        'display_robot_details': 'ロボットの詳細を表示',
         "- No Robots Found -": "- ロボットが見つかりません -",
         "- Sim Mode has been Enabled -": "- シミュレーションモードが有効になりました -",
         "ID": "ID",
@@ -920,7 +920,7 @@ export class TranslationService {
     },
     FRE: {
         "Robot Details": "Détails du robot",
-        "Create and edit task reports": "Créer et modifier des rapports de tâches",
+        'display_robot_details': 'Afficher les détails du robot',
         "- No Robots Found -": "- Aucun robot trouvé -",
         "- Sim Mode has been Enabled -": "- Le mode simulation a été activé -",
         "ID": "ID",
@@ -958,7 +958,7 @@ export class TranslationService {
     },
     GER: {
         "Robot Details": "Roboterdetails",
-        "Create and edit task reports": "Aufgabenberichte erstellen und bearbeiten",
+        'display_robot_details': 'Roboterdetails anzeigen',
         "- No Robots Found -": "- Keine Roboter gefunden -",
         "- Sim Mode has been Enabled -": "- Simulationsmodus wurde aktiviert -",
         "ID": "ID",

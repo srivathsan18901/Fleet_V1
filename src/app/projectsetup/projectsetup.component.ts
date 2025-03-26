@@ -52,7 +52,7 @@ export class ProjectsetupComponent {
   ) {}
 
   ngOnInit(): void {
-    document.addEventListener('keydown', this.handleEnterPress);
+    // document.addEventListener('keydown', this.handleEnterPress);
     // hook
     // let pDet = this.cookieService.get('project-data');
     // console.log(pDet);
