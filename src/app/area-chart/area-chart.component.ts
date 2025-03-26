@@ -134,7 +134,6 @@ export class AreaChartComponent implements OnInit {
           },
         },
       },
-
       fill: {
         type: 'gradient',
         gradient: {
@@ -145,12 +144,12 @@ export class AreaChartComponent implements OnInit {
           colorStops: [
             {
               offset: 0,
-              color: '#DD7373',
+              color: '#8DD98B',
               opacity: 0.5,
             },
             {
               offset: 100,
-              color: '#DD7373',
+              color: '#8DD98B',
               opacity: 0.1,
             },
           ],
@@ -161,8 +160,8 @@ export class AreaChartComponent implements OnInit {
       },
       markers: {
         size: 0, // Controls the size of the point
-        colors: ['#DD7373'], // Sets the point color
-        strokeColors: '#DD7373', // Sets the border color
+        colors: ['#8DD98B'], // Sets the point color
+        strokeColors: '#8DD98B', // Sets the border color
         strokeWidth: 2, // Adjusts the border thickness
         hover: {
           size: 4, // Slightly enlarges the point on hover
@@ -171,7 +170,7 @@ export class AreaChartComponent implements OnInit {
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: ['#DD7373'], // This is the key change: making sure the stroke is red
+        colors: ['#8DD98B'], // This is the key change: making sure the stroke is red
       },
       tooltip: {
         enabled: true,
