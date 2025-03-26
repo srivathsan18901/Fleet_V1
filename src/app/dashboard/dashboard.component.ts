@@ -2326,7 +2326,7 @@ export class DashboardComponent implements AfterViewInit {
       canvasOptions.style.boxShadow = '0 3px 6px #ff7373';
     }
   }
-  enablePath:boolean=false;
+  enablePath: boolean = false;
   plotAllRobots(
     robotsData: any,
     ctx: CanvasRenderingContext2D,
@@ -2442,10 +2442,11 @@ export class DashboardComponent implements AfterViewInit {
           robo.errState,
           clr
         );
-        if(robo.imgState === 'MOVESTATE'){
-          this.enablePath=true
+        if (robo.imgState === 'MOVESTATE') {
+          this.enablePath = true;
+        } else {
+          this.enablePath = false;
         }
-        else{this.enablePath=false}
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
@@ -2479,10 +2480,11 @@ export class DashboardComponent implements AfterViewInit {
           robo.errState,
           clr
         );
-        if(robo.imgState === 'MOVESTATE'){
-          this.enablePath=true;
+        if (robo.imgState === 'MOVESTATE') {
+          this.enablePath = true;
+        } else {
+          this.enablePath = false;
         }
-        else{this.enablePath=false;}
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
@@ -3399,7 +3401,7 @@ export class DashboardComponent implements AfterViewInit {
   ngOnDestroy() {
     this.mapDetailsController?.abort();
     this.fleetPauseController?.abort();
-    if (this.posEventSource) this.posEventSource.close(); // ONLY comment.. if interrupting on other operations..
+    // if (this.posEventSource) this.posEventSource.close(); // ONLY comment.. if interrupting on other operations..
     if (this.assetEventSource) this.assetEventSource.close();
   }
 }

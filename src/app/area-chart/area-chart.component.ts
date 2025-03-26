@@ -25,6 +25,8 @@ import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
 import { TranslationService } from '../services/translation.service';
 import { ExportFileService } from '../services/export-file.service';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+import { Subscription } from 'rxjs';
 
 export type ChartOptions = {
   series: ApexAxisChartSeries;
@@ -36,13 +38,9 @@ export type ChartOptions = {
   stroke: ApexStroke;
   tooltip: ApexTooltip;
   grid: ApexGrid;
-  markers:ApexMarkers;
+  markers: ApexMarkers;
 };
 
-interface imageURI {
-  metricName: string;
-  base64URI: string;
-}
 interface Robo {
   roboName: string;
   roboId: number;
@@ -63,6 +61,9 @@ export class AreaChartComponent implements OnInit {
   translatedMetric: string = '';
   selectedMap: any | null = null;
   isFleetUp: boolean = false;
+  isFleetMode: boolean = false;
+
+  private subscriptions: Subscription[] = [];
 
   private abortControllers: Map<string, AbortController> = new Map();
 
@@ -84,18 +85,15 @@ export class AreaChartComponent implements OnInit {
   errRateTimeInterval: any | null = null;
 
   @Input() taskData: any[] = [];
-
-  imageURIs: imageURI[] = [];
+  mapRobos: any = { roboPos: [], simMode: [] };
 
   constructor(
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
     private translationService: TranslationService,
-    private exportFileService: ExportFileService
+    private exportFileService: ExportFileService,
+    private isFleetService: IsFleetService
   ) {
-    this.getLiveRoboInfo().then((names) => {
-      this.roboNames = names;
-    });
     this.chartOptions = {
       series: [
         {
@@ -115,8 +113,8 @@ export class AreaChartComponent implements OnInit {
         },
       },
       xaxis: {
-        categories:  [],
-        type: "datetime", // Important: Uses timestamps directly
+        categories: [],
+        type: 'datetime', // Important: Uses timestamps directly
         tickAmount: 6,
         labels: {
           format: 'dd MMM HH:mm', // Ensures date + time format
@@ -166,7 +164,7 @@ export class AreaChartComponent implements OnInit {
         hover: {
           size: 4, // Slightly enlarges the point on hover
         },
-      },     
+      },
       stroke: {
         curve: 'smooth',
         width: 3,
@@ -205,45 +203,77 @@ export class AreaChartComponent implements OnInit {
     };
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     this.selectedMap = this.projectService.getMapData();
-    this.projectService.isFleetUp$.subscribe((status) => {
+
+    this.mapRobos = await this.getRobos();
+    // this.getLiveRoboInfo().then((names) => {
+    //   this.roboNames = names;
+    // });
+
+    this.roboNames = this.swapRobos();
+
+    const isFleetUp = this.projectService.isFleetUp$.subscribe((status) => {
       this.isFleetUp = status;
     });
-    this.getLiveRoboInfo().then((names) => {
-      this.roboNames = names;
+
+    const isFleet = this.isFleetService.isFleet$.subscribe((status) => {
+      this.isFleetMode = status;
+      this.roboNames = this.swapRobos();
     });
+
+    this.subscriptions.push(isFleetUp, isFleet);
+
     this.updateChart('data1', 'Throughput');
   }
- 
-  async getLiveRoboInfo(): Promise<string[]> {
-    if (!this.selectedMap) return [];
-    try {
-      const response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        }
-      );
 
-      const data = await response.json();
-      // console.log(data);
-      if (!data.populatedRobos || data.msg !== 'data sent!') {
-        console.log(data);
-        console.error('Invalid API response');
-        return [];
-      }
-      return data.populatedRobos.map((robo: any) => {
+  // async getLiveRoboInfo(): Promise<string[]> {
+  //   if (!this.selectedMap) return [];
+  //   try {
+  //     const response = await fetch(
+  //       `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
+  //       {
+  //         method: 'GET',
+  //         credentials: 'include',
+  //       }
+  //     );
+
+  //     const data = await response.json();
+
+  //     if (!data.populatedRobos || data.msg !== 'data sent!') {
+  //       // console.log(data);
+  //       console.error('Invalid API response');
+  //       return [];
+  //     }
+  //     return data.populatedRobos.map((robo: any) => {
+  //       return {
+  //         roboName: robo.roboName || 'Unknown Robo',
+  //         roboId: robo.amrId,
+  //       };
+  //     });
+  //   } catch (error) {
+  //     console.error('Error fetching robot names:', error);
+  //     return [];
+  //   }
+  // }
+
+  swapRobos() {
+    if (!this.selectedMap) return;
+    if (this.isFleetMode) {
+      return this.mapRobos.roboPos?.map((robo: any) => {
         return {
-          roboName: robo.roboName || 'Unknown Robo',
-          roboId: robo.amrId,
+          roboName: robo.roboDet.roboName || 'Unknown Robo',
+          roboId: robo.roboDet.id,
         };
       });
-    } catch (error) {
-      console.error('Error fetching robot names:', error);
-      return [];
     }
+
+    return this.mapRobos.simMode?.map((robo: any) => {
+      return {
+        roboName: robo.roboName || 'Unknown Robo',
+        roboId: robo.amrId,
+      };
+    });
   }
 
   roboNames: any[] = [];
@@ -331,7 +361,7 @@ export class AreaChartComponent implements OnInit {
 
     // if (this.isFleetUp)
     //   limitedTime = limitedTime.map((time: String) => time.split(','));
-    
+
     this.chart.updateOptions(
       {
         series: [{ name: seriesName, data: data }],
@@ -620,8 +650,8 @@ export class AreaChartComponent implements OnInit {
         this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
           Math.round(stat.pickAccuracy)
         );
-        this.pickAccXaxisSeries = data.throughput.Stat.map((stat: any) =>
-          stat.TimeStamp
+        this.pickAccXaxisSeries = data.throughput.Stat.map(
+          (stat: any) => stat.TimeStamp
           // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
           //   month: 'short',
           //   day: 'numeric',
@@ -651,8 +681,8 @@ export class AreaChartComponent implements OnInit {
         this.errRateArr = data.errRate.map((stat: any) =>
           Math.round(stat.errorRate)
         );
-        this.errRateXaxisSeries = data.errRate.map((stat: any) =>
-          stat.TimeStamp
+        this.errRateXaxisSeries = data.errRate.map(
+          (stat: any) => stat.TimeStamp
           // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
           //   month: 'short',
           //   day: 'numeric',
@@ -673,8 +703,8 @@ export class AreaChartComponent implements OnInit {
       this.errRateArr = data.errRate.map((stat: any) =>
         Math.round(stat.errorRate)
       );
-      this.errRateXaxisSeries = data.errRate.map((stat: any) =>
-        stat.TimeStamp
+      this.errRateXaxisSeries = data.errRate.map(
+        (stat: any) => stat.TimeStamp
         // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
         //   month: 'short',
         //   day: 'numeric',
@@ -692,8 +722,8 @@ export class AreaChartComponent implements OnInit {
         this.errRateArr = data.errRate.map((stat: any) =>
           Math.round(stat.errorRate)
         );
-        this.errRateXaxisSeries = data.errRate.map((stat: any) =>
-          stat.TimeStamp
+        this.errRateXaxisSeries = data.errRate.map(
+          (stat: any) => stat.TimeStamp
           // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
           //   month: 'short',
           //   day: 'numeric',
@@ -767,16 +797,6 @@ export class AreaChartComponent implements OnInit {
     let lastMonthDate = new Date();
     lastMonthDate.setMonth(currentDate.getMonth() - 1);
     return Math.floor(new Date(lastMonthDate).setHours(0, 0, 0) / 1000);
-  }
-
-  ngOnDestroy() {
-    if (this.throuputTimeInterval) clearInterval(this.throuputTimeInterval);
-    if (this.starvationTimeInterval) clearInterval(this.starvationTimeInterval);
-    if (this.pickAccTimeInterval) clearInterval(this.pickAccTimeInterval);
-    if (this.errRateTimeInterval) clearInterval(this.errRateTimeInterval);
-
-    this.abortControllers.forEach((controller) => controller.abort()); // forEach(val, key, map/arr/..)
-    this.abortControllers.clear();
   }
 
   async getGraphURI(): Promise<any> {
@@ -864,5 +884,35 @@ export class AreaChartComponent implements OnInit {
     );
 
     return await this.getGraphURI();
+  }
+
+  async getRobos(): Promise<any> {
+    try {
+      // this.selectedMap.id
+      const response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.selectedMap.mapName}`,
+        {
+          method: 'GET',
+          credentials: 'include',
+        }
+      );
+
+      let data = await response.json();
+      if (data.error || !data || !data.map) return [];
+      const { roboPos, simMode } = data.map;
+      return { roboPos, simMode };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  ngOnDestroy() {
+    if (this.throuputTimeInterval) clearInterval(this.throuputTimeInterval);
+    if (this.starvationTimeInterval) clearInterval(this.starvationTimeInterval);
+    if (this.pickAccTimeInterval) clearInterval(this.pickAccTimeInterval);
+    if (this.errRateTimeInterval) clearInterval(this.errRateTimeInterval);
+
+    this.abortControllers.forEach((controller) => controller.abort()); // forEach(val, key, map/arr/..)
+    this.abortControllers.clear();
   }
 }

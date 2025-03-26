@@ -957,12 +957,12 @@ export class ConfigurationComponent implements AfterViewInit {
       this.projectService.setIsMapSet(false);
       if (!this.EnvData.length) return;
       this.selectedMap = this.EnvData[0];
-      const response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.EnvData[0]?.mapName}`
-      );
-      if (!response.ok)
-        console.error('Error while fetching map data : ', response.status);
-      let data = await response.json();
+      // const response = await fetch(
+      //   `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.EnvData[0]?.mapName}`
+      // );
+      // if (!response.ok)
+      //   console.error('Error while fetching map data : ', response.status);
+      // let data = await response.json();
       // let { map } = data;
       await this.ngOnInit();
       return;

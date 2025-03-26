@@ -37,20 +37,20 @@ export class StatisticsComponent {
   taskErrNotifications: any[] = [];
 
   isFleet: boolean = false;
+  isFleetMode: boolean = false;
   isExpInProgress: boolean = false;
 
   statisticsData: any = {
     systemThroughput: 0,
-    systemThroughputChange: 3.5,
+    systemThroughputChange: 0,
     systemUptime: 0,
-    systemUptimeChange: 0.2,
+    systemUptimeChange: 0,
     successRate: 0,
-    successRateChange: -1.5,
+    successRateChange: 0,
     responsiveness: 0,
-    responsivenessChange: 5.2,
+    responsivenessChange: 0,
   }; // Initialize the array with mock data
 
-  // systemThroughput: number[] = [1, 2, 3, 4, 5];
   private subscriptions: Subscription[] = [];
 
   filteredOperationActivities = this.operationActivities;
@@ -72,6 +72,41 @@ export class StatisticsComponent {
     private spinner: NgxSpinnerService
   ) {
     if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
+  }
+
+  async ngOnInit() {
+    const fleetSub = this.projectService.isFleetUp$.subscribe((status) => {
+      this.isFleet = status;
+      this.cdRef.detectChanges();
+      // console.log(status);
+    });
+
+    this.subscriptions.push(fleetSub);
+    this.router.navigate(['/statistics/operation']); // Default to operation view
+    this.selectedMap = this.projectService.getMapData();
+    if (!this.selectedMap) return;
+    // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
+    await this.getGrossStatus();
+
+    if (this.isFleet) {
+      this.operationPie = await this.fetchTasksStatus();
+      this.exportFileService.taskData = this.operationPie;
+    }
+    if (this.isFleet) await this.getTaskNotifications();
+    this.taskStatus_interval = setInterval(async () => {
+      if (this.isFleet) {
+        this.operationPie = await this.fetchTasksStatus();
+        this.exportFileService.taskData = this.operationPie;
+      }
+    }, 1000 * 10);
+    this.operationActivities = await this.fetchCurrTasksStatus();
+    this.filteredOperationActivities = this.operationActivities;
+    this.currTaskStatus_interval = setInterval(async () => {
+      if (this.isFleet) {
+        let currTasks = await this.fetchCurrTasksStatus();
+        this.filteredOperationActivities = currTasks;
+      }
+    }, 1000 * 10);
   }
 
   getSeverity(arg0: any) {
@@ -98,39 +133,6 @@ export class StatisticsComponent {
 
   getTaskTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
-  }
-
-  async ngOnInit() {
-    const fleetSub = this.projectService.isFleetUp$.subscribe((status) => {
-      this.isFleet = status;
-      this.cdRef.detectChanges();
-      // console.log(status);
-    });
-    this.subscriptions.push(fleetSub);
-    this.router.navigate(['/statistics/operation']); // Default to operation view
-    this.selectedMap = this.projectService.getMapData();
-    if (!this.selectedMap) return;
-    // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
-    await this.getGrossStatus();
-    if (this.isFleet) {
-      this.operationPie = await this.fetchTasksStatus();
-      this.exportFileService.taskData = this.operationPie;
-    }
-    if (this.isFleet) await this.getTaskNotifications();
-    this.taskStatus_interval = setInterval(async () => {
-      if (this.isFleet) {
-        this.operationPie = await this.fetchTasksStatus();
-        this.exportFileService.taskData = this.operationPie;
-      }
-    }, 1000 * 10);
-    this.operationActivities = await this.fetchCurrTasksStatus();
-    this.filteredOperationActivities = this.operationActivities;
-    this.currTaskStatus_interval = setInterval(async () => {
-      if (this.isFleet) {
-        let currTasks = await this.fetchCurrTasksStatus();
-        this.filteredOperationActivities = currTasks;
-      }
-    }, 1000 * 10);
   }
 
   async fetchFleetStatus(endpoint: string, bodyData = {}): Promise<any> {
