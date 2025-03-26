@@ -143,10 +143,16 @@ export class ChartTimelineComponent implements OnInit {
       },
       // colors: ['#77B6EA', '#545454'],
       dataLabels: {
-        enabled: true,
+        enabled: false,
       },
       markers: {
-        size: 0,
+        size: 0, // Controls the size of the point
+        colors: ['#8DD98B'], // Sets the point color
+        strokeColors: '#8DD98B', // Sets the border color
+        strokeWidth: 2, // Adjusts the border thickness
+        hover: {
+          size: 4, // Slightly enlarges the point on hover
+        },
       },
       xaxis: {
         categories: [], // Your default categories
@@ -174,6 +180,9 @@ export class ChartTimelineComponent implements OnInit {
         x: {
           format: 'dd MMM',
         },
+        marker: {
+          fillColors: ['#DD7373'], // Changes the tooltip marker color
+        },
         custom: ({ seriesIndex, dataPointIndex, w }) => {
           const value = w.config.series[seriesIndex].data[dataPointIndex];
           const category = w.config.xaxis.categories[dataPointIndex];
@@ -199,12 +208,12 @@ export class ChartTimelineComponent implements OnInit {
           colorStops: [
             {
               offset: 0,
-              color: '#7854f7',
+              color: '#8DD98B',
               opacity: 0.7,
             },
             {
               offset: 100,
-              color: '#7854f7',
+              color: '#8DD98B',
               opacity: 0.2,
             },
           ],
@@ -213,7 +222,7 @@ export class ChartTimelineComponent implements OnInit {
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: ['#7854f7'],
+        colors: ['#8DD98B'],
       },
       grid: {
         borderColor: '#e7e7e7',
