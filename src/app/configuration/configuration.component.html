@@ -255,7 +255,7 @@
                     <div>{{ getTranslation("Edit/Delete") }}</div>
                   </th>
                   <th class="iconTable">{{ getTranslation("Pick Map") }}</th>
-                  <th class="iconTable">{{ getTranslation("Export Map") }}</th>
+                  <th class="iconTable" *ngIf=" configurationPermissions.environment.enabled === true && configurationPermissions.environment.edit === true " [attr.data-content]="editButtonText">{{ getTranslation("Export Map") }}</th>
                 </tr>
               </thead>
               <tbody>
@@ -411,7 +411,7 @@
                   </button>
                   
                   </td>
-                  <td class="iconTable">
+                  <td class="iconTable" *ngIf=" configurationPermissions.environment.enabled === true && configurationPermissions.environment.edit === true " [attr.data-content]="editButtonText">
                     <div class="exportBtn">
                       <button class="export-button" (click)="exportMap(item)" [attr.data-content]="exportButtonText">
                         <!-- <svg class="delete-svgIcon" viewBox="0 0 448 512">
