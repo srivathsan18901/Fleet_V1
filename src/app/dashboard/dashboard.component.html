@@ -796,7 +796,11 @@
   <label class="idlabel" for="robot-select">{{ getTranslation('robotID') }}: {{roboToLocalize}}</label>
   </div>
   <div>
-  <label class="idlabel" for="robot-select">X: {{localizationPos.x}}, Y: {{localizationPos.y}}, θ: {{localizationPos.yaw}}</label>
+    <label class="idlabel" for="robot-select">
+      X: {{ localizationPos.x | number:'1.2-2' }}, 
+      Y: {{ localizationPos.y | number:'1.2-2' }}, 
+      θ: {{ localizationPos.yaw | number:'1.2-2' }}
+    </label>
   </div>
 </div>
   <div class="ATbtn-set">
