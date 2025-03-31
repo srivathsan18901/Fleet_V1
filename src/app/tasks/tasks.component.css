@@ -58,7 +58,7 @@
     display: flex;
     flex-direction: column;    
     margin-left: 15px;
-    margin-top: 90px;
+    margin-top: 50px;
     overflow: hidden;
   }
   .table-wrapper {
@@ -552,32 +552,63 @@
 .iconWithLabel .sf-icon-payment:before { content: "\e706"; }
 .iconWithLabel .sf-icon-success:before { content: "\e715"; }
 
-.AT-btn {
-  padding: 1.1em;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 2.2px;
-  font-weight: bold;
-  color: #ff7373;
-  background-color: #fff;
+.AT-Btn{
+  font-family: inherit;
+  font-size: 18px;
+  background: linear-gradient(to bottom, #ff7373 30%,#ff7373 100%);
+  color: white;
+  padding: 10px;
+  display: flex;
+  /* position: absolute; */
+  align-items: center;
+  justify-content: center;
   border: none;
-  border-radius: 45px;
-  border: 1px solid #ff7373;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease 0s;
-  cursor: pointer;
-  outline: none;
+  border-radius: 25px;
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s;
 }
 
-.AT-btn:hover {
-  background-color: #ff7373;
-  box-shadow: 0px 15px 20px #ff737354;
-  color: #fff;
-  transform: translateY(-7px);
+.AT-Btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
 }
 
-.AT-btn:active {
-  transform: translateY(-1px);
+.AT-Btn:active {
+  transform: scale(0.95);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.AT-Btnspan {
+  display: block;
+  margin-left: 0.4em;
+  transition: all 0.3s;
+}
+
+.AT-Btn svg {
+  width: 18px;
+  height: 18px;
+  fill: white;
+  transition: all 0.3s;
+}
+
+.AT-Btn .svg-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  margin-right: 0.5em;
+  transition: all 0.3s;
+}
+
+ .AT-Btn:hover .svg-wrapper {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.AT-Btn:hover svg {
+  transform: rotate(45deg);
 }
 
 .switch-container {
@@ -656,41 +687,6 @@
   background-color: #4f874e;
 }
   
-.filter{
-  display: flex;
-  /* position: absolute;
-  top: 136px;
-  right: 22px; */
-  justify-content: end;
-  background-color: #f7f7f7;
-  padding:10px 15px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-.status-filter{
-  margin-right: 15px;
-  display: flex;
-  align-items: center;
-}
-.status-filter label{
-  font-family: 'graphik', Arial, sans-serif;
-}
-.filter select{
-  background: #ffffff;
-  margin-left: 10px;
-  border-radius: 25px;
-  padding: 3px;
-}
-.robot-filter{
-  margin-right: 10px;
-}
-.clr-btn{
-  background: #ff5c5c;
-  color: white;
-  padding: 0px 5px;
-  font-size: 13px;
-  border-radius: 5px;
-}
 .btn-disabled {
   background: #f09e98; /* Red for cancel */
   color: white; /* Light grey for text */
@@ -804,4 +800,59 @@
   color: white;
   border-right: 1px solid #d2d2d2;
   background-color: #49d84e;
+}
+
+.filter-popup {
+  position: absolute;
+  top: 200px;
+  left: -85px;
+  transform: translate(-50%, -50%);
+  background: #f7f7f7;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+/* For browsers that support ::webkit-datetime-edit */
+input[type="datetime-local"]::-webkit-datetime-edit {
+  color: #ff5c5c;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(39%) sepia(59%) saturate(2476%) hue-rotate(331deg) brightness(100%) contrast(101%);
+  /* Or use a custom icon */
+  /* background-image: url('your-custom-icon.svg'); */
+}
+.filter-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.filter-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.filter-btn {
+  background-color: #ffffff;
+  color: #dd7373;
+  border: 1px solid;
+  display: flex;  
+  width: max-content;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+}
+
+.clr-fil-btn {
+  background-color: #ff5c5c;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  cursor: pointer;
 }

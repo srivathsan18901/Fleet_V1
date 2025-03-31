@@ -52,8 +52,11 @@ export class ExportFileService {
 
   private abortControllers: Map<string, AbortController> = new Map();
 
-  constructor(private projectService: ProjectService,private translationService: TranslationService,) {
-    this.selectedMap = this.projectService.getMapData(); 
+  constructor(
+    private projectService: ProjectService,
+    private translationService: TranslationService
+  ) {
+    this.selectedMap = this.projectService.getMapData();
     this.loadCustomFonts();
   }
 
@@ -81,14 +84,14 @@ export class ExportFileService {
         normal: 'Roboto-Regular.ttf',
         bold: 'Roboto-Medium.ttf',
         italics: 'Roboto-Italic.ttf',
-        bolditalics: 'Roboto-MediumItalic.ttf'
+        bolditalics: 'Roboto-MediumItalic.ttf',
       },
       NotoSansJP: {
         normal: 'NotoSansJP-Regular.ttf',
         bold: 'NotoSansJP-Bold.ttf',
         italics: 'NotoSansJP-Regular.ttf',
-        bolditalics: 'NotoSansJP-Regular.ttf'
-      }
+        bolditalics: 'NotoSansJP-Regular.ttf',
+      },
     };
   }
 
@@ -109,22 +112,22 @@ export class ExportFileService {
     return new Promise((resolve, reject) => {
       var img = new Image();
       img.src = url;
-      img.setAttribute("crossOrigin", "anonymous");
+      img.setAttribute('crossOrigin', 'anonymous');
 
       img.onload = () => {
-        var canvas = document.createElement("canvas");
+        var canvas = document.createElement('canvas');
         canvas.width = img.width;
         canvas.height = img.height;
-        let ctx = canvas.getContext("2d");
-        if(ctx) ctx.drawImage(img, 0, 0);
-        const dataURL = canvas.toDataURL("image/png");
+        let ctx = canvas.getContext('2d');
+        if (ctx) ctx.drawImage(img, 0, 0);
+        const dataURL = canvas.toDataURL('image/png');
         resolve(dataURL);
       };
 
-      img.onerror = error => {
+      img.onerror = (error) => {
         reject(error);
       };
-      });
+    });
   }
 
   getTranslation(key: string) {
@@ -162,24 +165,24 @@ export class ExportFileService {
         // "Fleet Management System" - Top Left
         {
           image: FMS_name_img,
-          width:100,
+          width: 100,
           absolutePosition: { x: 15, y: 15 },
         },
         // "robis" SVG - Top Right
         {
           image: robis_img,
-          width:50,
+          width: 50,
           absolutePosition: { x: 530, y: 10 },
         },
         // Footer: "Proud to be part of samvardhana motherson"
         {
           image: proud_img,
-          width:150,
+          width: 150,
           absolutePosition: { x: 15, y: 810 },
         },
         // Footer: "Confidential" - Bottom Right
         {
-          text: this.getTranslation("confidential"),
+          text: this.getTranslation('confidential'),
           color: '#DA2128',
           fontSize: 10,
           font: 'NotoSansJP',
@@ -187,9 +190,13 @@ export class ExportFileService {
           absolutePosition: { x: 523, y: 815 },
         },
         //Report Name
-        { image: Report_nameImage, width: 50, absolutePosition: { x: 230, y: 10 } },
         {
-          text: this.getTranslation("taskStatistics"),
+          image: Report_nameImage,
+          width: 50,
+          absolutePosition: { x: 230, y: 10 },
+        },
+        {
+          text: this.getTranslation('taskStatistics'),
           color: '#DA2128',
           fontSize: 15,
           font: 'NotoSansJP',
@@ -197,17 +204,14 @@ export class ExportFileService {
           absolutePosition: { x: 280, y: 13 },
         },
         {
-          text: this.getTranslation("report"),
+          text: this.getTranslation('report'),
           color: '#DA2128',
           fontSize: 15,
           font: 'NotoSansJP',
           bold: true,
           absolutePosition: { x: 280, y: 33 },
         },
-        // {
-        //   svg: Report_name,
-        //   absolutePosition: { x: 230, y: 55 },
-        // },
+
         //Donut
         {
           image: this.donutChartBase64URI,
@@ -216,15 +220,13 @@ export class ExportFileService {
         },
         // Taskname
         {
-          text: this.getTranslation("taskDetails"),
-          fontSize: 15,
-          bold: true,
-          font: 'NotoSansJP',
-          color: 'black',
-          background: 'white',
+          image: blank_img,
+          width: 90,
+          height: 20,
           absolutePosition: { x: 130, y: 135 },
-          margin: [10, 5, 10, 5] 
         },
+        
+
         // {
         //   image: task_img,
         //   width:150,
@@ -242,47 +244,66 @@ export class ExportFileService {
         //     }
         //   ],
         //   absolutePosition: { x: 350, y: 125 }, // Adjust position based on spacing
-        // },     
+        // },
         //Task_Det
-        { image: blank_img, width: 120,height: 220, absolutePosition: { x: 315, y: 140 } }, 
-        { image: taskDet_img, width: 120, absolutePosition: { x: 325, y: 152 } },   
         {
-          text: this.getTranslation("completed")+"  "+ "-",
+          image: blank_img,
+          width: 120,
+          height: 220,
+          absolutePosition: { x: 315, y: 140 },
+        },
+        {
+          text: this.getTranslation('taskDetails'),
+          fontSize: 12,
+          bold: true,
+          font: 'NotoSansJP',
+          color: 'black',
+          background: 'white',
+          absolutePosition: { x: 30, y: 135 },
+          margin: [10, 5, 10, 5],
+        },
+        {
+          image: taskDet_img,
+          width: 120,
+          absolutePosition: { x: 325, y: 152 },
+        },
+        {
+          text: this.getTranslation('completed') + '  ' + '-',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
           absolutePosition: { x: 355, y: 157.5 },
         },
         {
-          text: this.getTranslation("assigned")+"  "+"-",
+          text: this.getTranslation('assigned') + '  ' + '-',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
           absolutePosition: { x: 355, y: 187 },
         },
         {
-          text: this.getTranslation("inProgress")+"  "+"-",
+          text: this.getTranslation('inProgress') + '  ' + '-',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
           absolutePosition: { x: 355, y: 217 },
         },
         {
-          text: this.getTranslation("toDo")+"  "+"-",
+          text: this.getTranslation('toDo') + '  ' + '-',
           color: 'black',
           fontSize: 12,
           font: 'NotoSansJP',
-          absolutePosition: { x: 355, y: 247  },
+          absolutePosition: { x: 355, y: 247 },
         },
         {
-          text: this.getTranslation("Error")+"  "+"-",
+          text: this.getTranslation('Error') + '  ' + '-',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
-          absolutePosition: { x: 355, y: 277  },
+          absolutePosition: { x: 355, y: 277 },
         },
         {
-          text: this.getTranslation("cancelled")+"  "+"-",
+          text: this.getTranslation('cancelled') + '  ' + '-',
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
@@ -315,14 +336,14 @@ export class ExportFileService {
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 470, y: 248  },
+          absolutePosition: { x: 470, y: 248 },
         },
         {
           text: this.taskData[4],
           color: 'black',
           fontSize: 12,
           bold: true,
-          absolutePosition: { x: 470, y: 278  },
+          absolutePosition: { x: 470, y: 278 },
         },
         {
           text: this.taskData[5],
@@ -338,38 +359,77 @@ export class ExportFileService {
         //   svg: data,
         //   width:160,
         //   absolutePosition: { x: 370, y: 155 },
-        // },  
+        // },
         {
           table: {
             widths: [170, 170, 170], // Adjust column widths as needed
             body: [
               [
-                { text: this.getTranslation("systemThroughput"), color: 'black', font: 'NotoSansJP', fontSize: 12, alignment: 'center' },
-                { text: this.getTranslation("systemUptime"), color: 'black', font: 'NotoSansJP', fontSize: 12, alignment: 'center' },
-                { text: this.getTranslation("successRate"), color: 'black', font: 'NotoSansJP', fontSize: 12, alignment: 'center' }
+                {
+                  text: this.getTranslation('systemThroughput'),
+                  color: 'black',
+                  font: 'NotoSansJP',
+                  fontSize: 12,
+                  alignment: 'center',
+                },
+                {
+                  text: this.getTranslation('systemUptime'),
+                  color: 'black',
+                  font: 'NotoSansJP',
+                  fontSize: 12,
+                  alignment: 'center',
+                },
+                {
+                  text: this.getTranslation('successRate'),
+                  color: 'black',
+                  font: 'NotoSansJP',
+                  fontSize: 12,
+                  alignment: 'center',
+                },
               ],
               [
-                { text: this.systemThroughput + '%', color: 'black', fontSize: 12, bold: true, alignment: 'center' },
-                { text: this.systemUptime + '%', color: 'black', fontSize: 12, bold: true, alignment: 'center' },
-                { text: this.successRate + '%', color: 'black', fontSize: 12, bold: true, alignment: 'center' }
-              ]
-            ]
+                {
+                  text: this.systemThroughput ,
+                  color: 'black',
+                  fontSize: 12,
+                  bold: true,
+                  alignment: 'center',
+                },
+                {
+                  text: this.systemUptime + '%',
+                  color: 'black',
+                  fontSize: 12,
+                  bold: true,
+                  alignment: 'center',
+                },
+                {
+                  text: this.successRate + '%',
+                  color: 'black',
+                  fontSize: 12,
+                  bold: true,
+                  alignment: 'center',
+                },
+              ],
+            ],
           },
           layout: {
+            hLineColor: function (i: any, node: any) {
+              return 'black';
+            },
+            vLineColor: function (i: any, node: any) {
+              return 'black';
+            },
+            paddingLeft: function (i: any, node: any) {
+              return 4;
+            },
+            paddingRight: function (i: any, node: any) {
+              return 4;
+            },
+          },
+          // Optional: Adds horizontal lines to the table
+          absolutePosition: { x: 30, y: 80 }, // Adjust position as needed
+        },
 
-            hLineColor: function (i:any, node:any) {
-                return 'black';
-            },
-            vLineColor: function (i:any, node:any) {
-                return 'black';
-            },
-            paddingLeft: function(i:any, node:any) { return 4; },
-            paddingRight: function(i:any, node:any) { return 4; }
-        },
-         // Optional: Adds horizontal lines to the table
-          absolutePosition: { x: 30, y: 80 } // Adjust position as needed
-        },
-        
         // {
         //   text: this.responsiveness,
         //   color: 'black',
@@ -385,7 +445,7 @@ export class ExportFileService {
           absolutePosition: { x: 30, y: 370 },
         },
         {
-          text: this.getTranslation("Throughput"),
+          text: this.getTranslation('Throughput'),
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
@@ -393,36 +453,52 @@ export class ExportFileService {
           absolutePosition: { x: 30, y: 360 },
         },
         {
-          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("Throughput"),
+          text:
+            'X = ' +
+            this.getTranslation('timeInHours') +
+            ', Y = ' +
+            this.getTranslation('Throughput'),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 100, y: 550 },
+          absolutePosition: { x: 100, y: 560 },
         },
         {
-          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("numberOfTasks"),
+          text:
+            'X = ' +
+            this.getTranslation('timeInHours') +
+            ', Y = ' +
+            this.getTranslation('numberOfTasks'),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 370, y: 550 },
+          absolutePosition: { x: 370, y: 560 },
         },
         {
-          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("numberOfPicks"),
+          text:
+            'X = ' +
+            this.getTranslation('timeInHours') +
+            ', Y = ' +
+            this.getTranslation('numberOfPicks'),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 100, y: 775 },
+          absolutePosition: { x: 100, y: 790 },
         },
         {
-          text: 'X = '+ this.getTranslation("timeInHours") +   ', Y = '+ this.getTranslation("errors"),
+          text:
+            'X = ' +
+            this.getTranslation('timeInHours') +
+            ', Y = ' +
+            this.getTranslation('errors'),
           color: '#DA2128',
           font: 'NotoSansJP',
           fontSize: 8,
           bold: true,
-          absolutePosition: { x: 390, y: 775 },
+          absolutePosition: { x: 390, y: 790 },
         },
         // {
         //   text: 'X',
@@ -446,7 +522,7 @@ export class ExportFileService {
           absolutePosition: { x: 305, y: 370 },
         },
         {
-          text: this.getTranslation("starvationRate"),
+          text: this.getTranslation('starvationRate'),
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
@@ -461,7 +537,7 @@ export class ExportFileService {
           absolutePosition: { x: 30, y: 590 },
         },
         {
-          text: this.getTranslation("pickAccuracy"),
+          text: this.getTranslation('pickAccuracy'),
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
@@ -476,7 +552,7 @@ export class ExportFileService {
           absolutePosition: { x: 305, y: 590 },
         },
         {
-          text: this.getTranslation("errorRate"),
+          text: this.getTranslation('errorRate'),
           color: 'black',
           font: 'NotoSansJP',
           fontSize: 12,
@@ -530,18 +606,21 @@ export class ExportFileService {
       let { Stat } = data.throughput;
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
       this.throughputXaxisSeries = Stat.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
 
-    const data2 = await this.fetchChartData('starvationrate', this.currentFilter );
+    const data2 = await this.fetchChartData(
+      'starvationrate',
+      this.currentFilter
+    );
 
     if (data2?.starvation) {
       this.starvationArr = data2.starvation.map((stat: any) => {
         return Math.round(stat.starvationRate);
       });
       this.starvationXaxisSeries = data2.starvation.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
 
@@ -552,7 +631,7 @@ export class ExportFileService {
         Math.round(stat.pickAccuracy)
       );
       this.pickAccXaxisSeries = data3.throughput.Stat.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
 
@@ -562,7 +641,7 @@ export class ExportFileService {
         Math.round(stat.errorRate)
       );
       this.errRateXaxisSeries = data4.errRate.map(
-        (stat: any) => new Date(stat.TimeStamp*1000).toLocaleString('en-IN', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric', })
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
   }

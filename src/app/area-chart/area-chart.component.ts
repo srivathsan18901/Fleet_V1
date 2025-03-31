@@ -15,11 +15,10 @@ import {
   ApexDataLabels,
   ApexYAxis,
   ApexTooltip,
-  ApexAnnotations,
   ApexGrid,
   ApexStroke,
-  ChartComponent,
   ApexMarkers,
+  ChartComponent,
 } from 'ng-apexcharts';
 import { environment } from '../../environments/environment.development';
 import { ProjectService } from '../services/project.service';
@@ -41,6 +40,10 @@ export type ChartOptions = {
   markers: ApexMarkers;
 };
 
+interface imageURI {
+  metricName: string;
+  base64URI: string;
+}
 interface Robo {
   roboName: string;
   roboId: number;
@@ -58,6 +61,7 @@ export class AreaChartComponent implements OnInit {
   @ViewChild('chartInstance') chartInstance!: ChartComponent;
   public chartOptions: ChartOptions;
   selectedMetric: string = 'Throughput'; // Default value
+  dataKey: string = 'data1';
   translatedMetric: string = '';
   selectedMap: any | null = null;
   isFleetUp: boolean = false;
@@ -79,13 +83,14 @@ export class AreaChartComponent implements OnInit {
   errRateArr: number[] = [0];
   errRateXaxisSeries: string[] = [];
 
-  throuputTimeInterval: any | null = null;
-  starvationTimeInterval: any | null = null;
-  pickAccTimeInterval: any | null = null;
-  errRateTimeInterval: any | null = null;
+  throuputTimeInterval: ReturnType<typeof setInterval> | null = null;
+  starvationTimeInterval: ReturnType<typeof setInterval> | null = null;
+  pickAccTimeInterval: ReturnType<typeof setInterval> | null = null;
+  errRateTimeInterval: ReturnType<typeof setInterval> | null = null;
 
   @Input() taskData: any[] = [];
   mapRobos: any = { roboPos: [], simMode: [] };
+  imageURIs: imageURI[] = [];
 
   constructor(
     private projectService: ProjectService,
@@ -105,10 +110,24 @@ export class AreaChartComponent implements OnInit {
         height: 250,
         type: 'area',
         background: '#FFFFFF',
+        events: {
+          zoomed: (chart, options) => {
+            this.clearAllIntervals(this.throuputTimeInterval);
+            this.clearAllIntervals(this.starvationTimeInterval);
+            this.clearAllIntervals(this.pickAccTimeInterval);
+            this.clearAllIntervals(this.errRateTimeInterval);
+          },
+          scrolled: (chart, options) => {
+            this.clearAllIntervals(this.throuputTimeInterval);
+            this.clearAllIntervals(this.starvationTimeInterval);
+            this.clearAllIntervals(this.pickAccTimeInterval);
+            this.clearAllIntervals(this.errRateTimeInterval);
+          },
+        },
         toolbar: {
           show: true, // Keep the toolbar visible
           tools: {
-            download: false,
+            download: true,
           },
         },
       },
@@ -117,7 +136,8 @@ export class AreaChartComponent implements OnInit {
         type: 'datetime', // Important: Uses timestamps directly
         tickAmount: 6,
         labels: {
-          format: 'dd MMM HH:mm', // Ensures date + time format
+          datetimeUTC: false,
+          format: 'dd MMM HH:mm',
           style: {
             colors: '#9aa0ac',
             fontSize: '12px',
@@ -204,13 +224,11 @@ export class AreaChartComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
+    this.currentFilter = 'today';
     this.selectedMap = this.projectService.getMapData();
+    if (!this.selectedMap) return;
 
     this.mapRobos = await this.getRobos();
-    // this.getLiveRoboInfo().then((names) => {
-    //   this.roboNames = names;
-    // });
-
     this.roboNames = this.swapRobos();
 
     const isFleetUp = this.projectService.isFleetUp$.subscribe((status) => {
@@ -220,6 +238,7 @@ export class AreaChartComponent implements OnInit {
     const isFleet = this.isFleetService.isFleet$.subscribe((status) => {
       this.isFleetMode = status;
       this.roboNames = this.swapRobos();
+      this.selectedType = 'Overall';
     });
 
     this.subscriptions.push(isFleetUp, isFleet);
@@ -227,35 +246,31 @@ export class AreaChartComponent implements OnInit {
     this.updateChart('data1', 'Throughput');
   }
 
-  // async getLiveRoboInfo(): Promise<string[]> {
-  //   if (!this.selectedMap) return [];
-  //   try {
-  //     const response = await fetch(
-  //       `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
-  //       {
-  //         method: 'GET',
-  //         credentials: 'include',
-  //       }
-  //     );
+  async getLiveRoboInfo(): Promise<string[]> {
+    if (!this.selectedMap) return [];
+    try {
+      const response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
+        { method: 'GET', credentials: 'include' }
+      );
 
-  //     const data = await response.json();
-
-  //     if (!data.populatedRobos || data.msg !== 'data sent!') {
-  //       // console.log(data);
-  //       console.error('Invalid API response');
-  //       return [];
-  //     }
-  //     return data.populatedRobos.map((robo: any) => {
-  //       return {
-  //         roboName: robo.roboName || 'Unknown Robo',
-  //         roboId: robo.amrId,
-  //       };
-  //     });
-  //   } catch (error) {
-  //     console.error('Error fetching robot names:', error);
-  //     return [];
-  //   }
-  // }
+      const data = await response.json();
+      // console.log(data);
+      if (!data.populatedRobos || data.msg !== 'data sent!') {
+        console.error('Invalid API response');
+        return [];
+      }
+      return data.populatedRobos.map((robo: any) => {
+        return {
+          roboName: robo.roboName || 'Unknown Robo',
+          roboId: robo.amrId,
+        };
+      });
+    } catch (error) {
+      console.error('Error fetching robot names:', error);
+      return [];
+    }
+  }
 
   swapRobos() {
     if (!this.selectedMap) return;
@@ -283,6 +298,9 @@ export class AreaChartComponent implements OnInit {
   updateSelection(type: string, robo: any): void {
     this.selectedType = type;
     this.selectedRoboId = robo ? robo.roboId : robo;
+
+    this.clearIntervals(); // clear whole intervals!
+    this.updateChart(this.dataKey, this.selectedMetric);
   }
 
   getTranslation(key: string) {
@@ -292,11 +310,10 @@ export class AreaChartComponent implements OnInit {
   }
 
   updateChart(dataKey: string, metricName: string): void {
-    if (!this.selectedMap) {
-      console.log('no map has been selected!');
-      return;
-    }
+    if (!this.selectedMap) return;
+
     this.selectedMetric = metricName; // Update the displayed metric name
+    this.dataKey = dataKey; // Update the dataKey
 
     switch (dataKey) {
       case 'data1':
@@ -411,51 +428,21 @@ export class AreaChartComponent implements OnInit {
 
   async updateThroughput() {
     this.clearAllIntervals(this.throuputTimeInterval);
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.throuputTimeInterval);
-      this.throuputTimeInterval = 0;
-      const data = await this.fetchChartData('throughput', this.currentFilter);
-      // console.log(data);
-      if (data.throughput) {
-        this.throughputArr = data.throughput.Stat.map(
-          (stat: any) => stat.TotalThroughPutPerHour
-        );
-        this.throughputXaxisSeries = data.throughput.Stat.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
-        );
-      }
-
-      this.plotChart(
-        'Throughput',
-        this.throughputArr,
-        this.throughputXaxisSeries,
-        7
-      );
-      return;
-    }
-
     if (this.throuputTimeInterval) return;
 
     const data = await this.fetchChartData('throughput', this.currentFilter);
-    if (data && !data.throughput) return;
-    let { Stat } = data.throughput;
+    // if (data && !data.throughput) return;
+    let Stat = data.throughput?.Stat;
 
-    if (data.throughput) {
+    if (Stat && Stat.length) {
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
-      this.throughputXaxisSeries = Stat.map((stat: any) =>
-        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        })
+      this.throughputXaxisSeries = Stat.map(
+        (stat: any) => stat.TimeStamp * 1000
       );
       this.systemThroughputEvent.emit(this.throughputArr);
+    } else {
+      this.throughputArr.length = 0;
+      this.throughputXaxisSeries.length = 0;
     }
 
     this.plotChart(
@@ -466,22 +453,20 @@ export class AreaChartComponent implements OnInit {
 
     this.throuputTimeInterval = setInterval(async () => {
       const data = await this.fetchChartData('throughput', this.currentFilter);
-      if (data && !data.throughput) return;
-      let { Stat } = data.throughput;
+      // if (data && !data.throughput) return;
+      let Stat = data.throughput?.Stat;
 
-      if (data.throughput) {
+      if (Stat && Stat.length) {
         this.throughputArr = Stat.map(
           (stat: any) => stat.TotalThroughPutPerHour
         );
-        this.throughputXaxisSeries = Stat.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
+        this.throughputXaxisSeries = Stat.map(
+          (stat: any) => stat.TimeStamp * 1000
         );
         this.systemThroughputEvent.emit(this.throughputArr);
+      } else {
+        this.throughputArr.length = 0;
+        this.throughputXaxisSeries.length = 0;
       }
 
       this.plotChart(
@@ -495,37 +480,6 @@ export class AreaChartComponent implements OnInit {
   async updateStarvationRate() {
     this.clearAllIntervals(this.starvationTimeInterval);
 
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.starvationTimeInterval);
-      this.starvationTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'starvationrate',
-        this.currentFilter
-      );
-      // console.log(data, 'data starvation');
-
-      if (data.starvation) {
-        this.starvationArr = data.starvation.map((stat: any) => {
-          return Math.round(stat.starvationRate);
-        });
-        this.starvationXaxisSeries = data.starvation.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
-        );
-      }
-      this.plotChart(
-        'Starvation rate',
-        this.starvationArr,
-        this.starvationXaxisSeries,
-        7
-      );
-      return;
-    }
-
     if (this.starvationTimeInterval) return;
 
     const data = await this.fetchChartData(
@@ -537,13 +491,8 @@ export class AreaChartComponent implements OnInit {
       this.starvationArr = data.starvation.map((stat: any) => {
         return Math.round(stat.starvationRate);
       });
-      this.starvationXaxisSeries = data.starvation.map((stat: any) =>
-        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        })
+      this.starvationXaxisSeries = data.starvation.map(
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
 
@@ -562,13 +511,8 @@ export class AreaChartComponent implements OnInit {
         this.starvationArr = data.starvation.map((stat: any) => {
           return Math.round(stat.starvationRate);
         });
-        this.starvationXaxisSeries = data.starvation.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
+        this.starvationXaxisSeries = data.starvation.map(
+          (stat: any) => stat.TimeStamp * 1000
         );
       }
       this.plotChart(
@@ -585,37 +529,6 @@ export class AreaChartComponent implements OnInit {
 
     this.clearAllIntervals(this.pickAccTimeInterval);
 
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.pickAccTimeInterval);
-      this.pickAccTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'pickaccuracy',
-        this.currentFilter
-      );
-
-      if (data.throughput) {
-        this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
-          Math.round(stat.pickAccuracy)
-        );
-        this.pickAccXaxisSeries = data.throughput.Stat.map((stat: any) =>
-          new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-            month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
-        );
-      }
-
-      this.plotChart(
-        'Pick accuracy',
-        this.pickAccuracyArr,
-        this.pickAccXaxisSeries,
-        7
-      );
-      return;
-    }
-
     if (this.pickAccTimeInterval) return;
 
     // Fetch the data and calculate the COMPLETED percentage
@@ -624,13 +537,8 @@ export class AreaChartComponent implements OnInit {
       this.pickAccuracyArr = data.throughput.Stat.map((stat: any) =>
         Math.round(stat.pickAccuracy)
       );
-      this.pickAccXaxisSeries = data.throughput.Stat.map((stat: any) =>
-        new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-          month: 'short',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-        })
+      this.pickAccXaxisSeries = data.throughput.Stat.map(
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
 
@@ -651,13 +559,7 @@ export class AreaChartComponent implements OnInit {
           Math.round(stat.pickAccuracy)
         );
         this.pickAccXaxisSeries = data.throughput.Stat.map(
-          (stat: any) => stat.TimeStamp
-          // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-          //   month: 'short',
-          //   day: 'numeric',
-          //   hour: 'numeric',
-          //   minute: 'numeric',
-          // })
+          (stat: any) => stat.TimeStamp * 1000
         );
       }
 
@@ -672,29 +574,6 @@ export class AreaChartComponent implements OnInit {
   async updateErrorRate() {
     this.clearAllIntervals(this.errRateTimeInterval);
 
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.errRateTimeInterval);
-      this.errRateTimeInterval = 0;
-
-      const data = await this.fetchChartData('err-rate', this.currentFilter);
-      if (data.errRate) {
-        this.errRateArr = data.errRate.map((stat: any) =>
-          Math.round(stat.errorRate)
-        );
-        this.errRateXaxisSeries = data.errRate.map(
-          (stat: any) => stat.TimeStamp
-          // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-          //   month: 'short',
-          //   day: 'numeric',
-          //   hour: 'numeric',
-          //   minute: 'numeric',
-          // })
-        );
-      }
-      this.plotChart('Error rate', this.errRateArr, this.errRateXaxisSeries, 7);
-      return;
-    }
-
     if (this.errRateTimeInterval) return;
 
     // Fetch the data and calculate the error rate
@@ -704,13 +583,7 @@ export class AreaChartComponent implements OnInit {
         Math.round(stat.errorRate)
       );
       this.errRateXaxisSeries = data.errRate.map(
-        (stat: any) => stat.TimeStamp
-        // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-        //   month: 'short',
-        //   day: 'numeric',
-        //   hour: 'numeric',
-        //   minute: 'numeric',
-        // })
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
 
@@ -723,13 +596,7 @@ export class AreaChartComponent implements OnInit {
           Math.round(stat.errorRate)
         );
         this.errRateXaxisSeries = data.errRate.map(
-          (stat: any) => stat.TimeStamp
-          // new Date(stat.TimeStamp * 1000).toLocaleString('en-IN', {
-          //   month: 'short',
-          //   day: 'numeric',
-          //   hour: 'numeric',
-          //   minute: 'numeric',
-          // })
+          (stat: any) => stat.TimeStamp * 1000
         );
       }
 
@@ -739,22 +606,28 @@ export class AreaChartComponent implements OnInit {
 
   // < ---------- >
 
-  clearAllIntervals(currInterval: number) {
-    if (currInterval !== this.throuputTimeInterval) {
+  clearAllIntervals(currInterval: ReturnType<typeof setInterval> | null) {
+    if (
+      currInterval !== this.throuputTimeInterval &&
+      this.throuputTimeInterval
+    ) {
       clearInterval(this.throuputTimeInterval);
-      this.throuputTimeInterval = 0;
+      this.throuputTimeInterval = null;
     }
-    if (currInterval !== this.starvationTimeInterval) {
+    if (
+      currInterval !== this.starvationTimeInterval &&
+      this.starvationTimeInterval
+    ) {
       clearInterval(this.starvationTimeInterval);
-      this.starvationTimeInterval = 0;
+      this.starvationTimeInterval = null;
     }
-    if (currInterval !== this.pickAccTimeInterval) {
+    if (currInterval !== this.pickAccTimeInterval && this.pickAccTimeInterval) {
       clearInterval(this.pickAccTimeInterval);
-      this.pickAccTimeInterval = 0;
+      this.pickAccTimeInterval = null;
     }
-    if (currInterval !== this.errRateTimeInterval) {
+    if (currInterval !== this.errRateTimeInterval && this.errRateTimeInterval) {
       clearInterval(this.errRateTimeInterval);
-      this.errRateTimeInterval = 0;
+      this.errRateTimeInterval = null;
     }
   }
 
@@ -797,6 +670,32 @@ export class AreaChartComponent implements OnInit {
     let lastMonthDate = new Date();
     lastMonthDate.setMonth(currentDate.getMonth() - 1);
     return Math.floor(new Date(lastMonthDate).setHours(0, 0, 0) / 1000);
+  }
+
+  ngOnDestroy() {
+    this.clearIntervals();
+
+    this.abortControllers.forEach((controller) => controller?.abort()); // forEach(val, key, map/arr/..)
+    this.abortControllers.clear();
+  }
+
+  clearIntervals() {
+    if (this.throuputTimeInterval) {
+      clearInterval(this.throuputTimeInterval);
+      this.throuputTimeInterval = null;
+    }
+    if (this.starvationTimeInterval) {
+      clearInterval(this.starvationTimeInterval);
+      this.starvationTimeInterval = null;
+    }
+    if (this.pickAccTimeInterval) {
+      clearInterval(this.pickAccTimeInterval);
+      this.pickAccTimeInterval = null;
+    }
+    if (this.errRateTimeInterval) {
+      clearInterval(this.errRateTimeInterval);
+      this.errRateTimeInterval = null;
+    }
   }
 
   async getGraphURI(): Promise<any> {
@@ -856,28 +755,15 @@ export class AreaChartComponent implements OnInit {
     );
   }
 
+  // limit: number = 7
   async updateChartInstance(
     graphArr: number[],
-    XaxisSeries: string[],
-    limit: number = 7
+    XaxisSeries: string[]
   ): Promise<any> {
-    let [limitedData, limitedTime] = this.chunkDataArr(
-      graphArr,
-      XaxisSeries,
-      limit
-    );
-    if (this.isFleetUp)
-      limitedTime = limitedTime.map((time: String) => time.split(','));
-
-    if (!this.isFleetUp) {
-      limitedData = [0];
-      limitedTime = [''];
-    }
-
     this.chartInstance.updateOptions(
       {
-        series: [{ name: 'taskGraph', data: limitedData }],
-        xaxis: { categories: limitedTime },
+        series: [{ name: 'taskGraph', data: graphArr }],
+        xaxis: { categories: XaxisSeries },
       },
       false,
       false
@@ -891,10 +777,7 @@ export class AreaChartComponent implements OnInit {
       // this.selectedMap.id
       const response = await fetch(
         `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.selectedMap.mapName}`,
-        {
-          method: 'GET',
-          credentials: 'include',
-        }
+        { method: 'GET', credentials: 'include' }
       );
 
       let data = await response.json();
@@ -904,15 +787,5 @@ export class AreaChartComponent implements OnInit {
     } catch (error) {
       return null;
     }
-  }
-
-  ngOnDestroy() {
-    if (this.throuputTimeInterval) clearInterval(this.throuputTimeInterval);
-    if (this.starvationTimeInterval) clearInterval(this.starvationTimeInterval);
-    if (this.pickAccTimeInterval) clearInterval(this.pickAccTimeInterval);
-    if (this.errRateTimeInterval) clearInterval(this.errRateTimeInterval);
-
-    this.abortControllers.forEach((controller) => controller.abort()); // forEach(val, key, map/arr/..)
-    this.abortControllers.clear();
   }
 }

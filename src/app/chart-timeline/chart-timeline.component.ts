@@ -17,16 +17,16 @@ import {
   ApexTooltip,
   ApexFill,
   ApexStroke,
+  ApexGrid,
 } from 'ng-apexcharts';
 import { ProjectService } from '../services/project.service';
 import { environment } from '../../environments/environment.development';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { TranslationService } from '../services/translation.service';
-import {
-  Robot,
-  RobotDetailPopupComponent,
-} from '../robot-detail-popup/robot-detail-popup.component';
-import { map,Subscription } from 'rxjs';
+import { map, Subscription } from 'rxjs';
+import { IsFleetService } from '../services/shared/is-fleet.service';
+import e from 'express';
+
 interface Robo {
   roboName: string;
   roboId: number;
@@ -37,12 +37,12 @@ export type ChartOptions = {
   chart: ApexChart;
   xaxis: ApexXAxis;
   yaxis: ApexYAxis;
-  dataLabels: ApexDataLabels;
-  markers: ApexMarkers;
-  tooltip: ApexTooltip;
   fill: ApexFill;
+  dataLabels: ApexDataLabels;
   stroke: ApexStroke;
-  grid?: any;
+  tooltip: ApexTooltip;
+  grid: ApexGrid;
+  markers: ApexMarkers;
 };
 
 @Component({
@@ -90,73 +90,90 @@ export class ChartTimelineComponent implements OnInit {
   networkTimeInterval: any | null = null;
   idleTimeInterval: any | null = null;
   errTimeInterval: any | null = null;
-  selectedValue:string="CPU Utilization";
-  selectedMetric: string = "CPU Utilization"; // Initialize with an empty string or a default value
+  selectedDataKey: string = 'data1';
+  selectedMetric: string = 'CPU Utilization'; // Initialize with an empty string or a default value
+
   metrics = {
     Overall: [
-      { key: 'data1', label:'CPU Utilization', name: this.getTranslation("CPU Utilization")},
-      { key: 'data2', label:'Robot Utilization', name: this.getTranslation("Robot Utilization")},
-      { key: 'data3', label:'Memory' , name:this.getTranslation("Memory")},
-      { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
-      { key: 'data5', label:'Idletime' , name:this.getTranslation("Idletime")},
-      { key: 'data6', label:'Error', name:this.getTranslation("Error")},
-      { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
+      {
+        key: 'data1',
+        label: 'CPU Utilization',
+        name: this.getTranslation('CPU Utilization'),
+      },
+      {
+        key: 'data2',
+        label: 'Robot Utilization',
+        name: this.getTranslation('Robot Utilization'),
+      },
+      { key: 'data3', label: 'Memory', name: this.getTranslation('Memory') },
+      { key: 'data4', label: 'Network', name: this.getTranslation('Network') },
+      {
+        key: 'data5',
+        label: 'Idletime',
+        name: this.getTranslation('Idletime'),
+      },
+      { key: 'data6', label: 'Error', name: this.getTranslation('Error') },
+      { key: 'data7', label: 'Battery', name: this.getTranslation('Battery') },
     ],
     robot: [
-      { key: 'data1', label:'CPU Utilization', name:this.getTranslation("CPU Utilization")},
-      { key: 'data3', label:'Memory', name:this.getTranslation("Memory") },
-      { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
-      { key: 'data5', label:'Idletime', name:this.getTranslation("Idletime") },
-      { key: 'data6', label:'Error', name:this.getTranslation("Error")},
-      { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
+      {
+        key: 'data1',
+        label: 'CPU Utilization',
+        name: this.getTranslation('CPU Utilization'),
+      },
+      { key: 'data3', label: 'Memory', name: this.getTranslation('Memory') },
+      { key: 'data4', label: 'Network', name: this.getTranslation('Network') },
+      {
+        key: 'data5',
+        label: 'Idletime',
+        name: this.getTranslation('Idletime'),
+      },
+      { key: 'data6', label: 'Error', name: this.getTranslation('Error') },
+      { key: 'data7', label: 'Battery', name: this.getTranslation('Battery') },
     ],
   };
+
+  private abortControllers: Map<string, AbortController> = new Map();
+
+  isFleetMode: boolean = false;
+  mapRobos: any = { roboPos: [], simMode: [] };
+
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private isFleetService: IsFleetService
   ) {
-    this.getLiveRoboInfo().then((names) => {
-      this.roboNames = names;
-    });
     this.chartOptions = {
-      series: [
-        {
-          name: '',
-          data: this.cpuUtilArr,
-        },
-      ],
+      series: [{ name: '', data: this.cpuUtilArr }],
       chart: {
-        id: 'area-datetime',
+        // id: 'area-datetime',
         type: 'area',
         height: 250,
-        zoom: {
-          autoScaleYaxis: true,
+        events: {
+          zoomed: (chart, options) => {
+            this.clearIntervals();
+          },
+          scrolled: (chart, options) => {
+            this.clearIntervals();
+          },
         },
         toolbar: {
           show: true, // Keep the toolbar visible
           tools: {
-            download: false, // Disable only the download menu
+            download: true, // Disable only the download menu
           },
         },
       },
-      // colors: ['#77B6EA', '#545454'],
-      dataLabels: {
-        enabled: false,
-      },
-      markers: {
-        size: 0, // Controls the size of the point
-        colors: ['#8DD98B'], // Sets the point color
-        strokeColors: '#8DD98B', // Sets the border color
-        strokeWidth: 2, // Adjusts the border thickness
-        hover: {
-          size: 4, // Slightly enlarges the point on hover
-        },
-      },
       xaxis: {
-        categories: [], // Your default categories
+        categories: [],
+        type: 'datetime', // Important: Uses timestamps directly
+        tickAmount: 6,
         labels: {
+          datetimeUTC: false,
+          format: 'dd MMM HH:mm',
           style: {
             colors: '#9aa0ac',
             fontSize: '12px',
@@ -169,36 +186,11 @@ export class ChartTimelineComponent implements OnInit {
             colors: '#9aa0ac',
             fontSize: '12px',
           },
-          formatter: function (value: number) {
-            return value.toFixed(1); // Ensure two decimal places
-          },
+          // formatter: function (value: number) {
+          //   return value.toFixed(1); // Ensure two decimal places
+          // },
         },
       },
-      tooltip: {
-        enabled: true,
-        theme: 'dark',
-        x: {
-          format: 'dd MMM',
-        },
-        marker: {
-          fillColors: ['#DD7373'], // Changes the tooltip marker color
-        },
-        custom: ({ seriesIndex, dataPointIndex, w }) => {
-          const value = w.config.series[seriesIndex].data[dataPointIndex];
-          const category = w.config.xaxis.categories[dataPointIndex];
-
-          // Find the corresponding metric translation
-          const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
-          const translatedMetric = this.getTranslation(metricKey) || metricKey; 
-      
-          return `
-            <div style="padding: 10px; background: #333; color: #fff;">
-              <strong>${translatedMetric}</strong>: ${value}<br>
-            </div>
-          `;
-        },
-      },
-      
       fill: {
         type: 'gradient',
         gradient: {
@@ -208,21 +200,52 @@ export class ChartTimelineComponent implements OnInit {
           colorStops: [
             {
               offset: 0,
-              color: '#8DD98B',
+              color: '#7854f7',
               opacity: 0.7,
             },
             {
               offset: 100,
-              color: '#8DD98B',
+              color: '#7854f7',
               opacity: 0.2,
             },
           ],
         },
       },
+      dataLabels: {
+        enabled: false,
+      },
+      markers: {
+        size: 0,
+        colors: ['#8DD98B'],
+        strokeColors: '#8DD98B',
+        strokeWidth: 2,
+        hover: { size: 4 },
+      },
       stroke: {
         curve: 'smooth',
         width: 3,
-        colors: ['#8DD98B'],
+        colors: ['#7854f7'],
+      },
+      tooltip: {
+        enabled: true,
+        theme: 'dark',
+        x: {
+          format: 'dd MMM',
+        },
+        custom: ({ seriesIndex, dataPointIndex, w }) => {
+          const value = w.config.series[seriesIndex].data[dataPointIndex];
+          const category = w.config.xaxis.categories[dataPointIndex];
+
+          // Find the corresponding metric translation
+          const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
+          const translatedMetric = this.getTranslation(metricKey) || metricKey;
+
+          return `
+            <div style="padding: 10px; background: #333; color: #fff;">
+              <strong>${translatedMetric}</strong>: ${value}<br>
+            </div>
+          `;
+        },
       },
       grid: {
         borderColor: '#e7e7e7',
@@ -233,120 +256,87 @@ export class ChartTimelineComponent implements OnInit {
       },
     };
   }
-  getTranslation(key: string) {
-    return this.translationService.getStatisticsTranslation(key);
-  }
 
-  ngOnInit() {
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-      console.log("hey",this.selectedMetric,this.selectedValue,this.getTranslation(this.selectedMetric));
-        this.selectedMetric=this.getTranslation(this.selectedValue);
-        this.metrics = {
-          Overall: [
-            { key: 'data1', label:'CPU Utilization', name: this.getTranslation("CPU Utilization")},
-            { key: 'data2', label:'Robot Utilization', name: this.getTranslation("Robot Utilization")},
-            { key: 'data3', label:'Memory' , name:this.getTranslation("Memory")},
-            { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
-            { key: 'data5', label:'Idletime' , name:this.getTranslation("Idletime")},
-            { key: 'data6', label:'Error', name:this.getTranslation("Error")},
-            { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
-          ],
-          robot: [
-            { key: 'data1', label:'CPU Utilization', name:this.getTranslation("CPU Utilization")},
-            { key: 'data3', label:'Memory', name:this.getTranslation("Memory") },
-            { key: 'data4', label:'Network' , name:this.getTranslation("Network")},
-            { key: 'data5', label:'Idletime', name:this.getTranslation("Idletime") },
-            { key: 'data6', label:'Error', name:this.getTranslation("Error")},
-            { key: 'data7', label:'Battery', name:this.getTranslation("Battery")},
-          ],
-        // Overall: [
-        //   { key: 'data1', label: this.getTranslation("cpuUtilization"),name: 'CPU Utilization'},
-        //   { key: 'data2', label: this.getTranslation("robotUtilization"),name:'Robot Utilization' },
-        //   { key: 'data3', label: this.getTranslation("memory"),name:'Memory' },
-        //   { key: 'data4', label: this.getTranslation("network"),name:'Network' },
-        //   { key: 'data5', label: this.getTranslation("idleTime"),name:'Idletime' },
-        //   { key: 'data6', label: this.getTranslation("error"),name:'Error'},
-        //   { key: 'data7', label: this.getTranslation("battery"),name:'Battery'},
-        // ],
-        // robot: [
-        //   { key: 'data1', label: this.getTranslation("cpuUtilization"),name: 'CPU Utilization'},
-        //   { key: 'data3', label: this.getTranslation("memory"),name:'Memory' },
-        //   { key: 'data4', label: this.getTranslation("network"),name:'Network' },
-        //   { key: 'data5', label: this.getTranslation("idleTime"),name:'Idletime' },
-        //   { key: 'data6', label: this.getTranslation("error"),name:'Error'},
-        //   { key: 'data7', label: this.getTranslation("battery"),name:'Battery'},
-        // ],
-      };
-
-      this.cdRef.detectChanges();
-    });
+  async ngOnInit() {
     this.currentFilter = 'today';
     this.selectedMap = this.projectService.getMapData();
-    if (!this.selectedMap) {
-      this.selectedMap = 'N/A';
-      return;
-    }
-    this.getLiveRoboInfo().then((names) => {
-      this.roboNames = names;
+    if (!this.selectedMap) return;
+
+    this.mapRobos = await this.getRobos();
+    this.roboNames = this.swapRobos();
+
+    const isFleet = this.isFleetService.isFleet$.subscribe((status) => {
+      this.isFleetMode = status;
+      this.roboNames = this.swapRobos();
+      this.selectedType = 'Overall';
     });
-    this.currentFilter = 'today';
+
+    this.subscriptions.push(isFleet);
+
     this.updateChart('data1', 'CPU Utilization');
-    this.getLiveRoboInfo();
-    // console.log(this.getLiveRoboInfo);
   }
 
-  // Fetch Robo Names from API
-  async getLiveRoboInfo(): Promise<string[]> {
-    if(!this.selectedMap) return [];
+  swapRobos() {
+    if (!this.selectedMap) return;
+    if (this.isFleetMode) {
+      return this.mapRobos.roboPos?.map((robo: any) => {
+        return {
+          roboName: robo.roboDet.roboName || 'Unknown Robo',
+          roboId: robo.roboDet.id,
+        };
+      });
+    }
+
+    return this.mapRobos.simMode?.map((robo: any) => {
+      return {
+        roboName: robo.roboName || 'Unknown Robo',
+        roboId: robo.amrId,
+      };
+    });
+  }
+
+  async getRobos(): Promise<any> {
     try {
+      // this.selectedMap.id
       const response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/robo-configuration/get-robos/${this.selectedMap.id}`,
+        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.selectedMap.mapName}`,
         {
           method: 'GET',
           credentials: 'include',
         }
       );
-      // console.log(response);
 
-      const data = await response.json();
-      // console.log(data);
-      if (!data.populatedRobos || data.msg !== 'data sent!') {
-        console.log(data);
-        console.error('Invalid API response');
-        return [];
-      }
-      return data.populatedRobos.map((robo: any) => {
-        return {
-          roboName: robo.roboName || 'Unknown Robo',
-          roboId: robo.amrId,
-        };
-      });
+      let data = await response.json();
+      if (data.error || !data || !data.map) return [];
+      const { roboPos, simMode } = data.map;
+      return { roboPos, simMode };
     } catch (error) {
-      console.error('Error fetching robot names:', error);
-      return [];
+      return null;
     }
+  }
+
+  getTranslation(key: string) {
+    return this.translationService.getStatisticsTranslation(key);
   }
 
   // Update the selected type
   updateSelection(type: string, robo: any): void {
     this.selectedType = type;
     this.selectedRobo = robo;
-
-    // this.getTimeStampsOfDay()
+    this.updateChart(this.selectedDataKey, this.selectedMetric);
   }
+
   // Get metrics based on the selected type
   getMetrics(type: string): any[] {
     return type === 'Overall' ? this.metrics.Overall : this.metrics.robot;
   }
 
   updateChart(dataKey: string, metricName: string): void {
-    if (!this.selectedMap) {
-      console.log('No map has been selected!');
-      return;
-    }
-    this.selectedValue = metricName;
+    if (!this.selectedMap) return;
+
+    this.selectedDataKey = dataKey;
     this.selectedMetric = metricName;
-    
+
     const updateFunctions: { [key: string]: () => void } = {
       data1: this.updateCpuUtil.bind(this),
       data2: this.updateRoboUtil.bind(this),
@@ -358,81 +348,72 @@ export class ChartTimelineComponent implements OnInit {
     };
 
     const updateFunction = updateFunctions[dataKey];
-    if (updateFunction) {
-      updateFunction();
-    } else {
-      console.log(`No update function found for dataKey: ${dataKey}`);
-    }
+    if (updateFunction) updateFunction();
+    else console.log(`No update function found for dataKey: ${dataKey}`);
   }
 
   applyFilter(event: any): void {
     this.currentFilter = event.target.value.toLowerCase();
-    // console.log(this.currentFilter, 'current filter'); // console.log(this.currentFilter)
+    // console.log(this.currentFilter, 'current filter');
     const metricToDataKey: { [key: string]: string } = {
       'CPU Utilization': 'data1',
       'Robot Utilization': 'data2',
       Memory: 'data3',
-      // 'Battery': 'data7',
       Network: 'data4',
-      // 'Memory': 'data3',
-      // 'Network': 'data4',
       'Idle Time': 'data5',
       Error: 'data6',
       Battery: 'data7',
     };
 
+    this.clearIntervals();
+
     const dataKey = metricToDataKey[this.selectedMetric];
-    if (dataKey) {
-      this.updateChart(dataKey, this.selectedMetric);
-    } else {
-      console.log(
-        `No dataKey found for selectedMetric: ${this.selectedMetric}`
-      );
-    }
+    if (dataKey) this.updateChart(dataKey, this.selectedMetric);
   }
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 12) {
-    // console.log(data);
-    const limitedData = data.length > limit ? data.slice(-limit) : data;
-    const limitedTime = time.length > limit ? time.slice(-limit) : time;
-
-    // this.chartOptions.series = [{ name: seriesName, data: limitedData }];
-    // console.log("plot chart fn",seriesName,"--",data,"---",time,"--",limit)
     this.chart.updateOptions(
       {
-        series: [{ name: seriesName, data: limitedData }],
-        xaxis: { categories: limitedTime },
+        series: [{ name: seriesName, data: data }],
+        xaxis: { categories: time },
       },
       false, // Don't replot the entire chart
       true // Smooth transitions
     );
   }
 
-  async fetchChartData(
-    endpoint: string,
-    timeSpan: string,
-    startTime: string,
-    endTime: string
-  ) {
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
-    // console.log(this.selectedType, '++++++++++++++++++++++');
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          metrics: this.selectedType,
-          roboId: this.selectedRobo ? this.selectedRobo.roboId : null,
-          timeSpan: timeSpan, // e.g. 'Daily' or 'Weekly'
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-      }
-    );
-    // console.log(response);
-    return await response.json();
+  async fetchChartData(endpoint: string, timeSpan: string) {
+    if (this.abortControllers.has(endpoint))
+      this.abortControllers.get(endpoint)?.abort();
+
+    const abortController = new AbortController(); // we can abort one or more requests as when we desired to..
+    this.abortControllers.set(endpoint, abortController);
+    try {
+      let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
+
+      const response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            metrics: this.selectedType,
+            roboId: this.selectedRobo ? this.selectedRobo.roboId : null,
+            timeSpan: timeSpan, // e.g. 'Daily' or 'Weekly'
+            timeStamp1: timeStamp1,
+            timeStamp2: timeStamp2,
+          }),
+          signal: abortController.signal,
+        }
+      );
+      return await response.json();
+    } catch (error) {
+      console.log('Error while fetching chart datum : ', error);
+      return;
+    } finally {
+      this.abortControllers.delete(endpoint);
+    }
   }
 
   getTimeStampsOfDay() {
@@ -467,7 +448,6 @@ export class ChartTimelineComponent implements OnInit {
   }
 
   monthStartOfDay() {
-    // Get the current date
     let currentDate = new Date();
     // Subtract 1 month from the current date
     let lastMonthDate = new Date();
@@ -475,582 +455,264 @@ export class ChartTimelineComponent implements OnInit {
     return Math.floor(new Date(lastMonthDate).setHours(0, 0, 0) / 1000);
   }
 
+  // < ---------- >
+
   async updateCpuUtil() {
-    // this.chartOptions.xaxis.range = 12; // get use of it..
-    // console.log(this.cpuUtilTimeInterval,"interval")
-    this.clearAllIntervals(this.cpuUtilTimeInterval); //argu is null
-    // console.log(this.currentFilter,"current filter") // current val is null
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.cpuUtilTimeInterval);
-      this.cpuUtilTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'cpu-utilization',
-        this.currentFilter,
-        '',
-        ''
-      );
-
-      if (data.cpuUtil) {
-        let len = data.cpuUtil.CPU_Utilization?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.cpuUtilArr =
-            data.cpuUtil.CPU_Utilization[len]['CPU_Utilization'];
-        else
-          this.cpuUtilArr = data.cpuUtil.CPU_Utilization.map((stat: any) => {
-            return stat ? stat.cummulativeCPU_Utilization : 0;
-          });
-        this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart(
-        'CPU Utilization',
-        this.cpuUtilArr,
-        this.cpuXaxisSeries,
-        30
-      );
-      return;
-    }
-
+    this.clearAllIntervals(this.cpuUtilTimeInterval);
     if (this.cpuUtilTimeInterval) return;
 
     const data = await this.fetchChartData(
       'cpu-utilization',
-      this.currentFilter,
-      '',
-      ''
+      this.currentFilter
     );
-    // console.log(data,"data =======cpu") //hold the chart data
-    if (data.cpuUtil) {
-      let len = data.cpuUtil.CPU_Utilization?.length - 1;
-      if (this.selectedType !== 'Overall')
-        this.cpuUtilArr = data.cpuUtil.CPU_Utilization[len]['CPU_Utilization'];
-      else
-        this.cpuUtilArr = data.cpuUtil.CPU_Utilization.map((stat: any) => {
-          return stat ? stat.cummulativeCPU_Utilization : 0;
-        });
 
-      this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization.map(
-        (stat: any, index: any) => (index += 1)
+    if (data?.cpuUtil?.CPU_Utilization) {
+      this.cpuUtilArr = data.cpuUtil.CPU_Utilization?.map(
+        (stat: any) => stat.CPU_Utilization
       );
-      // this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization.map( (stat: any) => stat.time );
+      this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization?.map(
+        (stat: any) => stat.TimeStamp * 1000
+      );
+    } else {
+      this.cpuUtilArr.length = 0;
+      this.cpuXaxisSeries.length = 0;
     }
+
     this.plotChart('CPU Utilization', this.cpuUtilArr, this.cpuXaxisSeries);
 
-    this.cpuUtilTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'cpu-utilization',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.cpuUtil) {
-        let len = data.cpuUtil.CPU_Utilization?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.cpuUtilArr =
-            data.cpuUtil.CPU_Utilization[len]['CPU_Utilization'];
-        else
-          this.cpuUtilArr = data.cpuUtil.CPU_Utilization.map((stat: any) => {
-            return stat ? stat.cummulativeCPU_Utilization : 0;
-          });
-        this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      // console.log("throughPut 3")
-      this.plotChart('CPU Utilization', this.cpuUtilArr, this.cpuXaxisSeries);
-    }, 1000 * 2);
+    // this.cpuUtilTimeInterval = setInterval(async () => {
+    //   const data = await this.fetchChartData(
+    //     'cpu-utilization',
+    //     this.currentFilter
+    //   );
+    //   if (data?.cpuUtil?.CPU_Utilization) {
+    //     this.cpuUtilArr = data.cpuUtil.CPU_Utilization?.map(
+    //       (stat: any) => stat.CPU_Utilization
+    //     );
+    //     this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization?.map(
+    //       (stat: any) => stat.TimeStamp * 1000
+    //     );
+    //   } else {
+    //     this.cpuUtilArr.length = 0;
+    //     this.cpuXaxisSeries.length = 0;
+    //   }
+
+    //   this.plotChart('CPU Utilization', this.cpuUtilArr, this.cpuXaxisSeries);
+    // }, 1000 * 2);
   }
 
   async updateRoboUtil() {
-    // this.chartOptions.xaxis.range = 12; // get use of it..
     this.clearAllIntervals(this.roboUtilTimeInterval);
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.roboUtilTimeInterval);
-      this.roboUtilTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'robo-utilization',
-        this.currentFilter,
-        '',
-        ''
-      );
-      // console.log(data,'------------------------');
-      if (data.roboUtil) {
-        this.roboUtilArr = data.roboUtil.Robot_Utilization.map((stat: any) => {
-          let res;
-          for (let key in stat) {
-            res = stat[key];
-            // console.log(key, '-----------------');
-          }
-          return res;
-        });
-        // console.log(data.roboUtil,'-------------------')
-        this.roboXaxisSeries = data.roboUtil.Robot_Utilization.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart(
-        'Robot Utilization',
-        this.roboUtilArr,
-        this.roboXaxisSeries,
-        30
-      );
-      return;
-    }
-
     if (this.roboUtilTimeInterval) return;
 
     const data = await this.fetchChartData(
       'robo-utilization',
-      this.currentFilter,
-      '',
-      ''
+      this.currentFilter
     );
-    console.log(data, 'data robot util');
-    if (data.roboUtil) {
-      this.roboUtilArr = data.roboUtil.Robot_Utilization.map((stat: any) => {
-        let res;
-        for (let key in stat) {
-          res = stat[key];
-          // console.log(key, '-----------------');
-        }
-        return res;
-      });
-      this.roboXaxisSeries = data.roboUtil.Robot_Utilization.map(
-        (stat: any, index: any) => (index += 1)
+
+    if (data?.roboUtil?.Robot_Utilization) {
+      this.roboUtilArr = data.roboUtil.Robot_Utilization.map(
+        (stat: any) => stat.Robot_Utilization
       );
+      this.roboXaxisSeries = data.roboUtil.Robot_Utilization.map(
+        (stat: any) => stat.TimeStamp * 1000
+      );
+    } else {
+      this.roboUtilArr.length = 0;
+      this.roboXaxisSeries.length = 0;
     }
+
     this.plotChart('Robot Utilization', this.roboUtilArr, this.roboXaxisSeries);
 
-    this.roboUtilTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'robo-utilization',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.roboUtil) {
-        this.roboUtilArr = data.roboUtil.Robot_Utilization.map((stat: any) => {
-          let res;
-          for (let key in stat) {
-            res = stat[key];
-            // console.log(key, '-----------------');
-          }
-          return res;
-        });
-        this.roboXaxisSeries = data.roboUtil.Robot_Utilization.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart(
-        'Robot Utilization',
-        this.roboUtilArr,
-        this.roboXaxisSeries
-      );
-    }, 1000 * 2);
+    // this.roboUtilTimeInterval = setInterval(async () => {
+    //   const data = await this.fetchChartData(
+    //     'robo-utilization',
+    //     this.currentFilter
+    //   );
+    //   if (data?.roboUtil) {
+    //     this.roboUtilArr = data.roboUtil.Robot_Utilization.map(
+    //       (stat: any) => stat.Robot_Utilization
+    //     );
+    //     this.roboXaxisSeries = data.roboUtil.Robot_Utilization.map(
+    //       (stat: any) => stat.TimeStamp * 1000
+    //     );
+    //   }
+    //   this.plotChart(
+    //     'Robot Utilization',
+    //     this.roboUtilArr,
+    //     this.roboXaxisSeries
+    //   );
+    // }, 1000 * 2);
   }
 
   async updateBattery() {
     this.clearAllIntervals(this.batteryTimeInterval);
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.batteryTimeInterval);
-      this.batteryTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'battery',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.batteryStat) {
-        let len = data.batteryStat.BatteryPercentage?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.batteryArr =
-            data.batteryStat.BatteryPercentage[len]['batteryPercentage'];
-        else
-          this.batteryArr = data.batteryStat.BatteryPercentage.map(
-            (stat: any) => {
-              return stat ? stat.cummulativebatteryPercentage : 0;
-            }
-          );
-        this.batteryXaxisSeries = data.batteryStat.BatteryPercentage.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart('Battery', this.batteryArr, this.batteryXaxisSeries, 30);
-      return;
-    }
-
     if (this.batteryTimeInterval) return;
-    const data = await this.fetchChartData(
-      'battery',
-      this.currentFilter,
-      '',
-      ''
-    );
+
+    const data = await this.fetchChartData('battery', this.currentFilter);
+
     if (data.batteryStat && data.batteryStat.BatteryPercentage) {
-      let len = data.batteryStat.BatteryPercentage?.length - 1;
-      if (this.selectedType !== 'Overall')
-        this.batteryArr =
-          data.batteryStat.BatteryPercentage[len]['batteryPercentage'];
-      else
-        this.batteryArr = data.batteryStat.BatteryPercentage.map(
-          (stat: any) => {
-            return stat ? stat.cummulativebatteryPercentage : 0;
-          }
-        );
-      this.batteryXaxisSeries = data.batteryStat.BatteryPercentage.map(
-        (stat: any, index: any) => (index += 1)
+      this.batteryArr = data.batteryStat.BatteryPercentage.map(
+        (stat: any) => stat.BatteryPercentage
       );
+      this.batteryXaxisSeries = data.batteryStat.BatteryPercentage.map(
+        (stat: any) => stat.TimeStamp * 1000
+      );
+    } else {
+      this.batteryArr.length = 0;
+      this.batteryXaxisSeries.length = 0;
     }
 
     this.plotChart('Battery', this.batteryArr, this.batteryXaxisSeries);
 
-    this.batteryTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'battery',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.batteryStat) {
-        let len = data.batteryStat.BatteryPercentage?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.batteryArr =
-            data.batteryStat.BatteryPercentage[len]['batteryPercentage'];
-        else
-          this.batteryArr = data.batteryStat.BatteryPercentage.map(
-            (stat: any) => {
-              return stat ? stat.cummulativebatteryPercentage : 0;
-            }
-          );
-        this.batteryXaxisSeries = data.batteryStat.BatteryPercentage.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart('Battery', this.batteryArr, this.batteryXaxisSeries);
-    }, 1000 * 2);
+    // this.batteryTimeInterval = setInterval(async () => {
+    //   const data = await this.fetchChartData('battery', this.currentFilter);
+    //   if (data.batteryStat) {
+    //     this.batteryArr = data.batteryStat.BatteryPercentage.map(
+    //       (stat: any) => stat.BatteryPercentage
+    //     );
+    //     this.batteryXaxisSeries = data.batteryStat.BatteryPercentage.map(
+    //       (stat: any) => stat.TimeStamp * 1000
+    //     );
+    //   }
+    //   this.plotChart('Battery', this.batteryArr, this.batteryXaxisSeries);
+    // }, 1000 * 2);
   }
 
   async updateMemory() {
     this.clearAllIntervals(this.memoryTimeInterval);
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.memoryTimeInterval);
-      this.memoryTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'memory',
-        this.currentFilter,
-        '',
-        ''
-      );
-      // console.log(data,"======network=====")
-      if (data.memoryStat) {
-        this.memoryArr = data.memoryStat.Memory.map((stat: any) => {
-          let res;
-          for (let key in stat) {
-            res = stat[key];
-            // console.log(key, '-----------------');
-          }
-          return res;
-        });
-        this.memoryXaxisSeries = data.memoryStat.Memory.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart('Memory', this.memoryArr, this.memoryXaxisSeries, 30);
-      return;
-    }
-
     if (this.memoryTimeInterval) return;
 
-    const data = await this.fetchChartData(
-      'memory',
-      this.currentFilter,
-      '',
-      ''
-    );
-    console.log(data, '=======memory=======');
-    if (data.memoryStat) {
-      this.memoryArr = data.memoryStat.Memory.map((stat: any) => {
-        let res;
-        for (let key in stat) {
-          res = stat[key];
-          // console.log(key, '-----------------');
-        }
-        return res;
-      });
+    const data = await this.fetchChartData('memory', this.currentFilter);
+
+    if (data.memoryStat?.Memory) {
+      this.memoryArr = data.memoryStat.Memory.map((stat: any) => stat.Memory);
       this.memoryXaxisSeries = data.memoryStat.Memory.map(
-        (stat: any, index: any) => (index += 1)
+        (stat: any) => stat.TimeStamp * 1000
       );
+    } else {
+      this.memoryArr.length = 0;
+      this.memoryXaxisSeries.length = 0;
     }
-    this.plotChart('Memory', this.memoryArr, this.memoryXaxisSeries);
 
     this.plotChart('Memory', this.memoryArr, this.memoryXaxisSeries);
-    this.memoryTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'memory',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.memoryStat) {
-        this.memoryArr = data.memoryStat.Memory.map((stat: any) => {
-          let res;
-          for (let key in stat) {
-            res = stat[key];
-            // console.log(key, '-----------------');
-          }
-          return res;
-        });
-        this.memoryXaxisSeries = data.memoryStat.Memory.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart('Memory', this.memoryArr, this.memoryXaxisSeries);
-    }, 1000 * 2);
+
+    // this.memoryTimeInterval = setInterval(async () => {
+    //   const data = await this.fetchChartData('memory', this.currentFilter);
+    //   if (data.memoryStat) {
+    //     this.memoryArr = data.memoryStat.Memory.map((stat: any) => stat.Memory);
+    //     this.memoryXaxisSeries = data.memoryStat.Memory.map(
+    //       (stat: any) => stat.TimeStamp * 1000
+    //     );
+    //   }
+    //   this.plotChart('Memory', this.memoryArr, this.memoryXaxisSeries);
+    // }, 1000 * 2);
   }
 
   async updateNetwork() {
     this.clearAllIntervals(this.networkTimeInterval);
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.networkTimeInterval);
-      this.networkTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'network',
-        this.currentFilter,
-        '',
-        ''
-      );
-      // console.log(data,"======network=====")
-      if (data.networkUtil) {
-        let len = data.networkUtil.Network?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.networkArr = data.networkUtil.Network[len]['Network'];
-        else
-          this.networkArr = data.networkUtil.Network.map((stat: any) => {
-            return stat ? stat.cummulativeNetwork : 0;
-          });
-        this.networkXaxisSeries = data.networkUtil.Network.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart('Network', this.networkArr, this.networkXaxisSeries, 30);
-      return;
-    }
-
     if (this.networkTimeInterval) return;
-    const data = await this.fetchChartData(
-      'memory',
-      this.currentFilter,
-      '',
-      ''
-    );
+
+    const data = await this.fetchChartData('network', this.currentFilter);
+
     if (data.networkUtil && data.networkUtil.Network) {
-      let len = data.networkUtil.Network?.length - 1;
-      if (this.selectedType !== 'Overall')
-        this.networkArr = data.networkUtil.Network[len]['Network'];
-      else
-        this.networkArr = data.networkUtil.Network.map((stat: any) => {
-          return stat ? stat.cummulativeNetwork : 0;
-        });
-      this.networkXaxisSeries = data.networkUtil.Network.map(
-        (stat: any, index: any) => (index += 1)
+      this.networkArr = data.networkUtil.Network.map(
+        (stat: any) => stat.Network
       );
+      this.networkXaxisSeries = data.networkUtil.Network.map(
+        (stat: any) => stat.TimeStamp * 1000
+      );
+    } else {
+      this.networkArr.length = 0;
+      this.networkXaxisSeries.length = 0;
     }
 
     this.plotChart('Network', this.networkArr, this.networkXaxisSeries);
-    this.networkTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'network',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.networkUtil) {
-        let len = data.networkUtil.Network?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.networkArr = data.networkUtil.Network[len]['Network'];
-        else
-          this.networkArr = data.networkUtil.Network.map((stat: any) => {
-            return stat ? stat.cummulativeNetwork : 0;
-          });
-        this.networkXaxisSeries = data.networkUtil.Network.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart('Network', this.networkArr, this.networkXaxisSeries);
-    }, 1000 * 2);
+
+    // this.networkTimeInterval = setInterval(async () => {
+    //   const data = await this.fetchChartData('network', this.currentFilter);
+    //   if (data.networkUtil) {
+    //     this.networkArr = data.networkUtil.Network.map(
+    //       (stat: any) => stat.Network
+    //     );
+    //     this.networkXaxisSeries = data.networkUtil.Network.map(
+    //       (stat: any) => stat.TimeStamp * 1000
+    //     );
+    //   }
+    //   this.plotChart('Network', this.networkArr, this.networkXaxisSeries);
+    // }, 1000 * 2);
   }
 
   async updateIdleTime() {
     this.clearAllIntervals(this.idleTimeInterval);
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.idleTimeInterval);
-      this.idleTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'idle-time',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.idleTime) {
-        let len = data.idleTime.IdleTime?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.idleTimeArr = data.idleTime.IdleTime[len]['IdleTime'];
-        else
-          this.idleTimeArr = data.idleTime.IdleTime.map((stat: any) => {
-            return stat ? stat.cummulativeIdleTime : 0;
-          });
-        this.idleTimeXaxisSeries = data.idleTime.IdleTime.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart(
-        'Idle Time',
-        this.idleTimeArr,
-        this.idleTimeXaxisSeries,
-        30
-      );
-      return;
-    }
 
     if (this.idleTimeInterval) return;
 
-    const data = await this.fetchChartData(
-      'idle-time',
-      this.currentFilter,
-      '',
-      ''
-    );
+    const data = await this.fetchChartData('idle-time', this.currentFilter);
     if (data.idleTime && data.idleTime.IdleTime) {
-      let len = data.idleTime.IdleTime?.length - 1;
-      if (this.selectedType !== 'Overall')
-        this.idleTimeArr = data.idleTime.IdleTime[len]['IdleTime'];
-      else
-        this.idleTimeArr = data.idleTime.IdleTime.map((stat: any) => {
-          return stat ? stat.cummulativeIdleTime : 0;
-        });
-      this.idleTimeXaxisSeries = data.idleTime.IdleTime.map(
-        (stat: any, index: any) => (index += 1)
+      this.idleTimeArr = data.idleTime.IdleTime.map(
+        (stat: any) => stat.IdleTime
       );
+      this.idleTimeXaxisSeries = data.idleTime.IdleTime.map(
+        (stat: any) => stat.TimeStamp * 1000
+      );
+    } else {
+      this.idleTimeArr.length = 0;
+      this.idleTimeXaxisSeries.length = 0;
     }
 
     this.plotChart('Idle Time', this.idleTimeArr, this.idleTimeXaxisSeries);
 
-    this.idleTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'idle-time',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.idleTime) {
-        let len = data.idleTime.IdleTime?.length - 1;
-        if (this.selectedType !== 'Overall')
-          this.idleTimeArr = data.idleTime.IdleTime[len]['IdleTime'];
-        else
-          this.idleTimeArr = data.idleTime.IdleTime.map((stat: any) => {
-            return stat ? stat.cummulativeIdleTime : 0;
-          });
-        this.idleTimeXaxisSeries = data.idleTime.IdleTime.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      this.plotChart('Idle Time', this.idleTimeArr, this.idleTimeXaxisSeries);
-    }, 1000 * 2);
+    // this.idleTimeInterval = setInterval(async () => {
+    //   const data = await this.fetchChartData('idle-time', this.currentFilter);
+    //   if (data.idleTime) {
+    //     this.idleTimeArr = data.idleTime.IdleTime.map(
+    //       (stat: any) => stat.IdleTime
+    //     );
+    //     this.idleTimeXaxisSeries = data.idleTime.IdleTime.map(
+    //       (stat: any) => stat.TimeStamp * 1000
+    //     );
+    //   }
+    //   this.plotChart('Idle Time', this.idleTimeArr, this.idleTimeXaxisSeries);
+    // }, 1000 * 2);
   }
 
   async updateErr() {
     this.clearAllIntervals(this.errTimeInterval);
-    if (this.currentFilter === 'week' || this.currentFilter === 'month') {
-      clearInterval(this.errTimeInterval);
-      this.errTimeInterval = 0;
-      const data = await this.fetchChartData(
-        'robo-err',
-        this.currentFilter,
-        '',
-        ''
-      );
-      if (data.roboErr) {
-        if (this.selectedType !== 'Overall') {
-          let len = data.roboErr.RobotError?.length - 1;
-          this.errorArr = data.roboErr.RobotError[len]['RobotError'];
-          this.errRateXaxisSeries = data.roboErr.RobotError[len][
-            'RobotError'
-          ].map((stat: any, index: any) => (index += 1));
-        } else {
-          this.errorArr = data.roboErr.cummulativeRobotError.map(
-            (stat: any) => {
-              return stat ? stat.cummulativeRobotError : 0;
-            }
-          );
-          this.errRateXaxisSeries = data.roboErr.cummulativeRobotError.map(
-            (stat: any, index: any) => (index += 1)
-          );
-        }
-      }
-      // console.log(this.errorArr, 'error arr');
-      this.plotChart('Error', this.errorArr, this.errRateXaxisSeries, 30);
-      return;
-    }
-
     if (this.errTimeInterval) return;
-    const data = await this.fetchChartData(
-      'robo-err',
-      this.currentFilter,
-      '',
-      ''
-    );
-    // console.log((data.roboErr.RobotError)?.length-1)
-    if (data.roboErr) {
-      if (this.selectedType !== 'Overall') {
-        let len = data.roboErr.RobotError?.length - 1;
-        this.errorArr = data.roboErr.RobotError[len]['RobotError'];
-        this.errRateXaxisSeries = data.roboErr.RobotError[len][
-          'RobotError'
-        ].map((stat: any, index: any) => (index += 1));
-      } else {
-        this.errorArr = data.roboErr.cummulativeRobotError.map((stat: any) => {
-          return stat ? stat.cummulativeRobotError : 0;
-        });
-        this.errRateXaxisSeries = data.roboErr.cummulativeRobotError.map(
-          (stat: any, index: any) => (index += 1)
-        );
-      }
-      // this.errRateXaxisSeries = data.roboErr.RobotError.map(
-      //   (stat: any, index: any) => (index += 1)
-      // );
+
+    const data = await this.fetchChartData('robo-err', this.currentFilter);
+
+    if (data.roboErr?.RobotError) {
+      this.errorArr = data.roboErr.RobotError.map(
+        (stat: any) => stat.RobotError
+      );
+      this.errRateXaxisSeries = data.roboErr.RobotError.map(
+        (stat: any) => stat.TimeStamp * 1000
+      );
+    } else {
+      this.errorArr.length = 0;
+      this.errRateXaxisSeries.length = 0;
     }
 
     this.plotChart('Error', this.errorArr, this.errRateXaxisSeries);
-    this.errTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'robo-err',
-        this.currentFilter,
-        '',
-        ''
-      );
-      // console.log((data.roboErr.RobotError)?.length-1)
-      if (data.roboErr) {
-        if (this.selectedType !== 'Overall') {
-          let len = data.roboErr.RobotError?.length - 1;
-          this.errorArr = data.roboErr.RobotError[len]['RobotError'];
-          this.errRateXaxisSeries = data.roboErr.RobotError[len][
-            'RobotError'
-          ].map((stat: any, index: any) => (index += 1));
-        } else {
-          this.errorArr = data.roboErr.cummulativeRobotError.map(
-            (stat: any) => {
-              return stat ? stat.cummulativeRobotError : 0;
-            }
-          );
-          this.errRateXaxisSeries = data.roboErr.cummulativeRobotError.map(
-            (stat: any, index: any) => (index += 1)
-          );
-        }
-      }
-      this.plotChart('Error', this.errorArr, this.errRateXaxisSeries);
-    }, 1000 * 2);
+
+    // this.errTimeInterval = setInterval(async () => {
+    //   const data = await this.fetchChartData('robo-err', this.currentFilter);
+
+    //   if (data.roboErr) {
+    //     this.errorArr = data.roboErr.RobotError.map(
+    //       (stat: any) => stat.RobotError
+    //     );
+    //     this.errRateXaxisSeries = data.roboErr.RobotError.map(
+    //       (stat: any) => stat.TimeStamp * 1000
+    //     );
+    //   }
+    //   this.plotChart('Error', this.errorArr, this.errRateXaxisSeries);
+    // }, 1000 * 2);
   }
+
+  // < ---------- >
 
   clearAllIntervals(currInterval: any) {
     if (currInterval !== this.cpuUtilTimeInterval) {
@@ -1083,13 +745,40 @@ export class ChartTimelineComponent implements OnInit {
     }
   }
 
+  clearIntervals() {
+    if (this.cpuUtilTimeInterval) {
+      clearInterval(this.cpuUtilTimeInterval);
+      this.cpuUtilTimeInterval = null;
+    }
+    if (this.roboUtilTimeInterval) {
+      clearInterval(this.roboUtilTimeInterval);
+      this.roboUtilTimeInterval = null;
+    }
+    if (this.batteryTimeInterval) {
+      clearInterval(this.batteryTimeInterval);
+      this.batteryTimeInterval = null;
+    }
+    if (this.memoryTimeInterval) {
+      clearInterval(this.memoryTimeInterval);
+      this.memoryTimeInterval = null;
+    }
+    if (this.networkTimeInterval) {
+      clearInterval(this.networkTimeInterval);
+      this.networkTimeInterval = null;
+    }
+    if (this.idleTimeInterval) {
+      clearInterval(this.idleTimeInterval);
+      this.idleTimeInterval = null;
+    }
+    if (this.errTimeInterval) {
+      clearInterval(this.errTimeInterval);
+      this.errTimeInterval = null;
+    }
+  }
+
   ngOnDestroy() {
-    if (this.cpuUtilTimeInterval) clearInterval(this.cpuUtilTimeInterval);
-    if (this.roboUtilTimeInterval) clearInterval(this.roboUtilTimeInterval);
-    if (this.batteryTimeInterval) clearInterval(this.batteryTimeInterval);
-    if (this.memoryTimeInterval) clearInterval(this.memoryTimeInterval);
-    if (this.networkTimeInterval) clearInterval(this.networkTimeInterval);
-    if (this.idleTimeInterval) clearInterval(this.idleTimeInterval);
-    if (this.errTimeInterval) clearInterval(this.errTimeInterval);
+    this.clearIntervals();
+    this.abortControllers.forEach((controller) => controller?.abort()); // forEach(val, key, map/arr/..)
+    this.abortControllers.clear();
   }
 }

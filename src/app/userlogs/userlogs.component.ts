@@ -513,7 +513,10 @@ export class Userlogscomponent {
 
   showTable(table: string) {
     this.currentTable = table;
-    console.log('clicked');
+    if(this.currentTable="task"){
+      
+    }
+    console.log('clicked',this.currentTable);
     this.setPaginatedData();
   }
 

@@ -135,7 +135,12 @@
 
 .btn-rob{
   display:flex;
-  justify-content:flex-end;
+  justify-content:center;
+}
+.blurred-disabled {
+  filter: blur(2px); /* Blurs the button */
+  cursor: not-allowed; /* Shows a disabled cursor */
+  opacity: 0.6; /* Reduces visibility */
 }
 
 
@@ -184,8 +189,7 @@
 }
 
 .rob-inp, .rob-inp1, .rob-inp2,.rob-inp3{
-  padding: 6px;
-  display: flex;
+  padding-bottom: 4px;
   flex-direction: row;
   align-content: center;
   justify-content: space-between;
@@ -832,7 +836,7 @@ tr:nth-child(even) {
   border-radius: 10px;
   filter: drop-shadow(0px 4px 0.5px rgba(225, 223, 223, 0.333));
   width: 505px;
-  justify-content: space-between;
+  justify-content: space-around;
 }
 .dateInput1,.dateInput2{
   display: flex;

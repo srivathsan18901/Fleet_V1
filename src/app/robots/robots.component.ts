@@ -80,6 +80,7 @@ export class RobotsComponent implements OnInit {
   isFleet: boolean = false; // Store the emitted value
   private subscriptions: Subscription[] = [];
 
+  selectedMap: any | null = null;
   private routerSubscription: Subscription | undefined; // Subscription to track navigation changes
 
   liveRoboInterval: ReturnType<typeof setInterval> | null = null;
@@ -90,16 +91,18 @@ export class RobotsComponent implements OnInit {
     private router: Router, // Inject Router
     private isFleetService: IsFleetService,
     private translationService: TranslationService
-  ) {}
+  ) {
+    if (!this.selectedMap) this.selectedMap = this.projectService.getMapData();
+  }
 
   async ngOnInit() {
+    
+    this.selectedMap = this.projectService.getIsMapSet();
     this.mapDetails = this.projectService.getMapData();
     if (!this.mapDetails) return;
-    // console.log(this.liveRobos,'====================================')
-    // this.updateLiveRoboInfo();
     let grossFactSheet = await this.fetchAllRobos();
     this.robots = grossFactSheet.map((robo) => {
-      robo.imageUrl = '../../assets/robots/agv1.png';
+      robo.imageUrl = '../../assets/robots/Kaynes.png';
       if (robo.networkstrength < 20) robo.SignalStrength = 'Weak';
       else if (robo.networkstrength < 40) robo.SignalStrength = 'Medium';
       else if (robo.networkstrength < 80) robo.SignalStrength = 'Full';
@@ -110,8 +113,8 @@ export class RobotsComponent implements OnInit {
     // Subscribe to the isFleet$ observable
     const fleetSub = this.isFleetService.isFleet$.subscribe(
       (status: boolean) => {
-        // this.isFleet = status; // Update the value whenever it changes
-        this.isFleet = true;
+        this.isFleet = status; // Update the value whenever it changes
+        // this.isFleet = true;
       }
     );
 
@@ -142,9 +145,11 @@ export class RobotsComponent implements OnInit {
       this.isFleetService.setIsFleet(this.isFleet); // Sync the state with the service
     }
   }
+
   getTranslation(key: string) {
     return this.translationService.getRobotsTranslation(key);
   }
+
   // Fetch robots from the API
   async fetchAllRobos(): Promise<any[]> {
     const response = await fetch(
@@ -188,11 +193,13 @@ export class RobotsComponent implements OnInit {
     this.robots = this.robots.map((robo) => {
       robots.forEach((liveRobo: any) => {
         if (robo.id == liveRobo.id) {
-          robo.error = liveRobo.robotError;
+          robo.error = liveRobo.robotError ? liveRobo.robotError : 0;
           robo.battery = liveRobo.battery.toFixed(2);
           robo.batteryPercentage = liveRobo.battery.toFixed(2);
           robo.currentTask = liveRobo.current_task;
-          robo.status = liveRobo.isConnected ? this.getTranslation('Active') : this.getTranslation("Inactive");
+          robo.status = liveRobo.isConnected
+            ? this.getTranslation('Active')
+            : this.getTranslation('Inactive');
           robo.isConnected = liveRobo.isConnected;
           robo.distance = liveRobo.DISTANCE;
           robo.temperature = liveRobo.robotTemperature;
@@ -202,7 +209,8 @@ export class RobotsComponent implements OnInit {
           robo.cpuutilization = liveRobo.CPU_Utilization;
           robo.DropCount = liveRobo.DropCount;
           // robo.error = liveRobo.robotError;
-          robo.isCharging = liveRobo.robot_state == "CHARGESTATE" ? true : false;
+          robo.isCharging =
+            liveRobo.robot_state == 'CHARGESTATE' ? true : false;
           robo.currentspeed = liveRobo['Robot Speed'];
           robo.averagespeed = liveRobo['Robot Speed'];
         }

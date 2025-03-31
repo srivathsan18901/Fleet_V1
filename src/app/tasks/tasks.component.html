@@ -29,26 +29,64 @@
         </div>
 
       </div>
-      <div style="display: flex ; position: absolute; gap: 10px;top: 140px; right: 20px;">
       <div *ngIf="isButtonDisabled">
-        <button class="AT-btn" (click)="toggleAssignTask()"> {{ getTranslation('assign_task') }} </button>
-       <!-- <button class="AT-btn" (click)="toggleAssignTask()" > <img src="../../assets/Task.svg" style="float:left;margin-right:0.5em">{{ getTranslation('assign_task') }}</button> -->
-      </div>
-      <div class="filter">
-        <img src="../../assets/filter.svg" class="filter-img">
-      <div class="status-filter">
-        <label for="status-filter">{{ getTranslation('Status') }}:</label>
-        <select id="status-filter" (change)="onStatusFilter($event)">
-          <option value="">{{ getTranslation('All') }}</option>
-          <option value="COMPLETED">{{ getTranslation('Completed') }}</option>
-          <option value="INPROGRESS">{{ getTranslation('In Progress') }}</option>
-          <option value="CANCELLED">{{ getTranslation('Cancelled') }}</option>
-          <option value="FAILED">{{ getTranslation('Failed') }}</option>
-          <option value="NOTASSIGNED">{{ getTranslation('Not Assigned') }}</option>
-        </select>
-      </div>
-      <button (click)="clearFilters()" class="clr-btn">{{ getTranslation('Clear') }}</button>
-      </div>
+        <button class="AT-Btn" (click)="toggleAssignTask()">
+          <div class="svg-wrapper-1">
+            <div class="svg-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <path fill="none" d="M0 0h24v24H0z"></path>
+                <path fill="currentColor" d="M1.946 9.315c-.522-.174-.527-.455.01-.634l19.087-6.362c.529-.176.832.12.684.638l-5.454 19.086c-.15.529-.455.547-.679.045L12 14l6-8-8 6-8.054-2.685z"></path>
+              </svg>
+            </div>
+          </div>
+          <span>{{getTranslation("assign_task")}}</span>
+        </button>     
+       </div>
+      <div style="display: flex ; position: absolute; gap: 10px;top: 150px; right: 45px;">
+        <div style="position: relative;">
+          <div style="display: flex; position: absolute; gap: 10px; top: -15px; right: -25px;; border-radius: 10px; padding: 10px; background-color: #f7f7f7; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <button (click)="openFilterPopup()" class="filter-btn">
+              <img src="../../assets/filter.svg" class="filter-img">
+              {{ getTranslation('Filter') }}
+            </button>
+            <button (click)="clearFilters()" class="clr-fil-btn">{{ getTranslation('Clear') }}</button>
+          </div>
+          <div *ngIf="isFilterPopupVisible" class="filter-popup">
+            <div class="filter-content">
+              <div style="display: flex ; align-items: center; justify-content: space-between;">
+              <h3 style="margin: 0;font-weight: bold;color: #FF5C5C;">{{ getTranslation('filter_options') }}</h3>
+              <button class="close-btn" (click)="closeFilterPopup()" style="    color: red; border: 1px solid red; padding: 5px 8px; border-radius: 50%;">✖</button>
+              </div>
+              <!-- Date Range Filter -->
+              <div>
+              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
+              <input type="datetime-local" [(ngModel)]="filterOptions.startDateTime" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+              </div>
+              <div>
+              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
+              <input type="datetime-local" [(ngModel)]="filterOptions.endDateTime"  style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+              </div>
+              <!-- Status Filter -->
+              <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
+              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('status') }}:</label>
+              <select [(ngModel)]="filterOptions.status" style="border: 1px solid #ff5c5c; width: -webkit-fill-available; border-radius: 5px; color: #FF5C5C;padding: 5px;">
+                <option value="">{{ getTranslation('All') }}</option>
+                <option value="COMPLETED">{{ getTranslation('Completed') }}</option>
+                <option value="INPROGRESS">{{ getTranslation('In Progress') }}</option>
+                <option value="CANCELLED">{{ getTranslation('Cancelled') }}</option>
+                <option value="FAILED">{{ getTranslation('Failed') }}</option>
+                <option value="NOTASSIGNED">{{ getTranslation('Not Assigned') }}</option>
+                <option value="ASSIGNED">{{ getTranslation('Assigned') }}</option>
+              </select>
+             </div>
+              <!-- Buttons -->
+              <div class="filter-actions">
+                <button style="    background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters()">{{ getTranslation('apply') }}</button>
+                <button style="    background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="clearFilters()">{{ getTranslation('Clear') }}</button>
+              </div>
+            </div>
+          </div>
+          </div>
     </div>
       <!-- Table -->
       <div class="table-container">
@@ -57,7 +95,8 @@
             <table class="table">
               <thead >
                 <tr>                  
-                  <th>{{ getTranslation('S.no') }}</th>
+                  <th>{{ getTranslation('S.no') }}</th>                  
+                  <th>{{ getTranslation('Date and time') }} </th>
                   <th>{{ getTranslation('Task ID') }}</th>
                   <th>{{ getTranslation('Task Type') }}</th>
                   <th>{{ getTranslation('Status') }}</th>
@@ -74,7 +113,7 @@
               <tbody>
                 <!-- Show No Data Row with image and message -->
                <tr *ngIf="paginatedData.length === 0">
-                <td colspan="8" class="no-data">
+                <td colspan="9" class="no-data">
                   <div class="no-data-container">
                     <img src="../assets/no-data.png" alt="No Data" class="no-data-image">
                     <p class="no-data-text">{{ getTranslation('No data found') }}</p>
@@ -90,6 +129,7 @@
     <ng-container *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId">
       <tr [class.paused]="item.paused">
         <td>{{ item.sNo }}</td>
+        <td>{{ item.TimeStamp }}</td>
         <td>{{ item.taskId }}</td>
         <td>{{ getTranslation(item.taskType) }}</td>
         <td>{{ getTranslation(item.status) }}</td>
@@ -164,7 +204,7 @@
         </td>        
       </tr>
       <tr *ngIf="expandedRowMap[item.taskId]">
-        <td colspan="8" class="expanded-row">
+        <td colspan="9" class="expanded-row">
           <div class="card bg-white justify-content-center p-3">
             <div class="progress-container">
               <div *ngFor="let step of getSteps(item); let i = index" class="step"> 

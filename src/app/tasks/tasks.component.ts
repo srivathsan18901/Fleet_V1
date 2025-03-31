@@ -35,32 +35,25 @@ export class TasksComponent implements OnInit, AfterViewInit {
   paginatedData: any[] = [];
   selectedStatus: string = '';
   selectedRobot: string = '';
-
+  nodata: string = '';
+  autoRefreshInterval: any;
+  taskData: any;
   liveTasksInterval: ReturnType<typeof setInterval> | null = null;
   tasksSignalController: AbortController | null = null;
-
+  isFilterPopupVisible = false;
+  filterOptions = {
+    startDateTime: '',
+    endDateTime: '',
+    taskType: '',
+    status: ''
+  };
+  originalTaskData = []; // Store the original unfiltered data
   private langSubscription!: Subscription;
 
   isFilterApplied: boolean = false;
   isOnSearchApplied: boolean = false;
-  isTaskDropDowned: boolean = false;
+  // isTaskDropDowned: boolean = false;
 
-  onRobotFilter(event: any) {
-    this.selectedRobot = event.target.value;
-    this.applyFilters();
-  }
-  applyFilters() {
-    this.filteredTaskData = this.tasks.filter((task: any) => {
-      const statusMatch = this.selectedStatus
-        ? task.status === this.selectedStatus
-        : true;
-      const robotMatch = this.selectedRobot
-        ? task.roboName === this.selectedRobot
-        : true;
-      return statusMatch && robotMatch;
-    });
-    this.setPaginatedData(); // Update paginated data based on filtered results
-  }
   expandedRowMap: { [key: string]: boolean } = {}; // Track expanded rows
   expandedRowId: string | null = null; // Track the currently open row
 
@@ -91,6 +84,143 @@ export class TasksComponent implements OnInit, AfterViewInit {
       icon: '../../assets/Iconsfortask/Comp.svg',
     },
   ];
+
+  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
+
+  constructor(
+    private exportService: ExportService,
+    private projectService: ProjectService,
+    private messageService: MessageService,
+    private translationService: TranslationService,
+    private paginatorIntl: MatPaginatorIntl,
+    private isFleetService: IsFleetService,
+    private router: Router,
+    private nodeGraphService: NodeGraphService,
+    private cdRef: ChangeDetectorRef,
+    private eRef: ElementRef
+  ) { this.filteredTaskData = [];}
+  openFilterPopup() {
+    this.isFilterPopupVisible = !this.isFilterPopupVisible;
+  }
+  closeFilterPopup() {
+    this.isFilterPopupVisible = false;
+  }
+  isButtonDisabled:boolean=true;
+  async ngOnInit() {
+    if (!JSON.parse(this.projectService.getInitializeMapSelected())){
+      this.isButtonDisabled = false;
+    }
+    this.mapData = this.projectService.getMapData();
+
+    if (!this.mapData) this.nodata = 'No Map Selected';
+    else this.nodata = 'No data found';
+
+    this.paginatorIntl.itemsPerPageLabel =
+      this.getTranslation('Items per page'); // Modify the text
+    this.paginatorIntl.changes.next();
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.defaultSteps = [
+          {
+            label: this.getTranslation('Not Assigned'),
+            icon: '../../assets/Iconsfortask/NA.svg',
+          },
+          {
+            label: this.getTranslation('assigned'),
+            icon: '../../assets/Iconsfortask/Ass.svg',
+          },
+          {
+            label: this.getTranslation('In Progress'),
+            icon: '../../assets/Iconsfortask/IP.svg',
+          },
+          {
+            label: this.getTranslation('Completed'),
+            icon: '../../assets/Iconsfortask/Comp.svg',
+          },
+        ];
+        this.paginatorIntl.itemsPerPageLabel =
+          this.getTranslation('Items per page');
+        this.paginatorIntl.changes.next();
+      }
+    );
+    if (!this.mapData) return;
+    await this.fetchTasks();
+
+    let grossFactSheet = await this.fetchAllRobos();
+    // this.setPaginatedData();
+
+    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
+      // this.isFleet = status; // Update the value whenever it changes
+      if (status)
+        this.robotList = grossFactSheet.map((robo) => {
+          return robo.id;
+        });
+      else this.robotList = await this.getSimRobos();
+    });
+
+    this.liveTasksInterval = setInterval(async () => {
+      if (this.tasksSignalController) this.tasksSignalController.abort();
+      await this.fetchTasks();
+    }, 1000 * 4);
+
+    // Auto-update search and filters every second
+    // this.autoRefreshInterval = setInterval(() => {
+    //   this.autoRefreshTasks();
+    // }, 1000);
+  }
+
+  getTranslation(key: string) {
+    return this.translationService.getTasksTranslation(key);
+  }
+
+  onRobotFilter(event: any) {
+    this.selectedRobot = event.target.value;
+    this.applyFilters();
+  }
+
+  applyFilters() {
+    // Validate date range
+    if (this.filterOptions.startDateTime && this.filterOptions.endDateTime) {
+      const startDate = new Date(this.filterOptions.startDateTime);
+      const endDate = new Date(this.filterOptions.endDateTime);
+      
+      if (endDate < startDate) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Invalid Date Range',
+          detail: 'End date/time cannot be before start date/time',
+          life: 3000
+        });
+        return; // Don't apply filters if validation fails
+      }
+    }
+  
+    this.filteredTaskData = this.tasks.filter((task: any) => {
+      // Convert task timestamp to Date object for comparison
+      const taskDate = new Date(task.TimeStamp);
+      
+      // Date Range Filter
+      const dateMatch = 
+        (!this.filterOptions.startDateTime || taskDate >= new Date(this.filterOptions.startDateTime)) &&
+        (!this.filterOptions.endDateTime || taskDate <= new Date(this.filterOptions.endDateTime));
+      
+      // Status Filter
+      const statusMatch = 
+        !this.filterOptions.status || 
+        task.status === this.filterOptions.status;
+      
+      // Robot Filter (if you have this field)
+      const robotMatch = 
+        !this.selectedRobot || 
+        task.roboName === this.selectedRobot;
+      
+      return dateMatch && statusMatch && robotMatch;
+    });
+    
+    this.isFilterApplied = true;
+    this.setPaginatedData();
+    this.closeFilterPopup(); // Close the popup after applying filters
+  }
 
   // Function to get steps with cancellation tracking
   getSteps(item: any) {
@@ -157,22 +287,22 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   clearFilters() {
-    this.selectedStatus = '';
+    this.filterOptions = {
+      startDateTime: '',
+      endDateTime: '',
+      taskType: '',
+      status: ''
+    };
     this.selectedRobot = '';
-
-    // Reset the value of the select elements
-    const statusFilterElement = document.getElementById(
-      'status-filter'
-    ) as HTMLSelectElement;
-    const robotFilterElement = document.getElementById(
-      'robot-filter'
-    ) as HTMLSelectElement;
-
-    if (statusFilterElement) statusFilterElement.value = '';
-    if (robotFilterElement) robotFilterElement.value = '';
-
-    // Reapply filters to display all data
-    this.applyFilters();
+    this.selectedStatus = '';
+    this.isFilterApplied = false;
+    
+    // Reset the filtered data to show all tasks
+    this.filteredTaskData = [...this.tasks];
+    this.setPaginatedData();
+    
+    // Close the filter popup if open
+    this.closeFilterPopup();
   }
 
   onPause(item: any) {
@@ -236,7 +366,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     );
 
     let data = await response.json();
-
+    console.log(data, 'duyfjgghjgg');
     let sNo = 1;
     if (data.tasks) {
       const { tasks } = data.tasks;
@@ -251,89 +381,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
       }));
       // this.filteredTaskData = this.tasks;
       this.updateData(); // Ensure pagination and filtered data are updated
+      this.taskData = this.tasks;
+      console.log(this.taskData, 'taskdata');
     }
   }
-
-  @ViewChild(MatPaginator) paginator: MatPaginator | undefined;
-
-  constructor(
-    private exportService: ExportService,
-    private projectService: ProjectService,
-    private messageService: MessageService,
-    private translationService: TranslationService,
-    private paginatorIntl: MatPaginatorIntl,
-    private isFleetService: IsFleetService,
-    private router: Router,
-    private nodeGraphService: NodeGraphService,
-    private cdRef: ChangeDetectorRef,
-    private eRef: ElementRef
-  ) {}
-  getTranslation(key: string) {
-    return this.translationService.getTasksTranslation(key);
-  }
-  isButtonDisabled: boolean = true;
-  async ngOnInit() {
-    if (!JSON.parse(this.projectService.getInitializeMapSelected())){
-      this.isButtonDisabled = false;
-    }
-    this.mapData = this.projectService.getMapData();
-    // timeStamp1 = 1728930600;
-    // timeStamp2 = 1729050704;
-
-    this.paginatorIntl.itemsPerPageLabel =
-      this.getTranslation('Items per page'); // Modify the text
-    this.paginatorIntl.changes.next();
-    this.langSubscription = this.translationService.currentLanguage$.subscribe(
-      (val) => {
-        this.defaultSteps = [
-          {
-            label: this.getTranslation('Not Assigned'),
-            icon: '../../assets/Iconsfortask/NA.svg',
-          },
-          {
-            label: this.getTranslation('assigned'),
-            icon: '../../assets/Iconsfortask/Ass.svg',
-          },
-          {
-            label: this.getTranslation('In Progress'),
-            icon: '../../assets/Iconsfortask/IP.svg',
-          },
-          {
-            label: this.getTranslation('Completed'),
-            icon: '../../assets/Iconsfortask/Comp.svg',
-          },
-        ];
-        this.paginatorIntl.itemsPerPageLabel =
-          this.getTranslation('Items per page');
-        this.paginatorIntl.changes.next();
-      }
-    );
-    if (!this.mapData) return;
-    await this.fetchTasks();
-
-    let grossFactSheet = await this.fetchAllRobos();
-    // this.setPaginatedData();
-
-    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
-      // this.isFleet = status; // Update the value whenever it changes
-      if (status)
-        this.robotList = grossFactSheet.map((robo) => {
-          return robo.id;
-        });
-      else this.robotList = await this.getSimRobos();
-    });
-
-    this.liveTasksInterval = setInterval(async () => {
-      if (this.tasksSignalController) this.tasksSignalController.abort();
-      await this.fetchTasks();
-    }, 1000 * 4);
-
-    // Auto-update search and filters every second
-    this.autoRefreshInterval = setInterval(() => {
-      this.autoRefreshTasks();
-    }, 1000);
-  }
-  autoRefreshInterval: any;
 
   autoRefreshTasks() {
     if (this.isFilterApplied || this.isOnSearchApplied) {
@@ -370,7 +421,19 @@ export class TasksComponent implements OnInit, AfterViewInit {
     let sNo = 1;
     if (tasks)
       this.tasks = tasks.map((task: any) => {
-        // if(task.task_status.status === "COMPLETED")
+        let TimeStamp = new Date(task.TimeStamp * 1000); //..
+        let formattedTimeStamp =
+          TimeStamp.toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+          }) +
+          ', ' +
+          TimeStamp.toLocaleTimeString('en-IN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true,
+          });
         return {
           sNo: sNo++,
           taskId: task.task_id,
@@ -379,37 +442,35 @@ export class TasksComponent implements OnInit, AfterViewInit {
             : 'N/A',
           status: task.task_status.status,
           roboName: task.agent_ID,
-          // sourceLocation: task.sub_task[0]?.source_location
-          //   ? task.sub_task[0]?.source_location
-          //   : 'N/A',
+          TimeStamp: formattedTimeStamp,
           destinationLocation: task.sub_task[0]?.source_location || 'N/A',
         };
       });
     // this.filteredTaskData = this.tasks;
 
-    if (
-      (this.isFilterApplied || this.isOnSearchApplied) &&
-      !this.isTaskDropDowned
-    ) {
-      this.filteredTaskData = this.tasks.filter((updatedTask) => {
-        for (let task of this.filteredTaskData) {
+    if (this.isFilterApplied || this.isOnSearchApplied) {
+      // !this.isTaskDropDowned
+      this.filteredTaskData = this.filteredTaskData.filter((updatedTask) => {
+        // swap tasks with filteredTaskData
+        for (let task of this.tasks) {
           if (task.taskId == updatedTask.taskId) return true;
         }
         return false;
       });
-      this.setPaginatedData();
-    }
-    // else
-    else if (
-      !this.isFilterApplied &&
-      !this.isOnSearchApplied &&
-      !this.isTaskDropDowned
-    ) {
-      this.filteredTaskData = this.tasks;
-      this.setPaginatedData();
-    }
-  }
 
+      this.setPaginatedData();
+    }
+    if (!this.isFilterApplied) {
+      this.filteredTaskData = [...this.tasks];
+    }
+    
+    this.setPaginatedData();
+  }
+  formatDateForInput(dateString: string): string {
+    if (!dateString) return '';
+    const date = new Date(dateString);
+    return date.toISOString().slice(0, 16); // Formats to "YYYY-MM-DDTHH:MM"
+  }
   async toggleAssignTask() {
     this.nodeGraphService.setLocalize(false);
     this.nodeGraphService.setAssignTask(true);
@@ -463,7 +524,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   isDisabled(status: string): boolean {
     return (
-      status === 'COMPLETED' || status === 'CANCELLED' || status === 'FAILED'
+      status === 'COMPLETED' ||
+      status === 'CANCELLED' ||
+      status === 'FAILED' 
     ); // || status === 'INPROGRESS'
   }
 
@@ -532,19 +595,21 @@ export class TasksComponent implements OnInit, AfterViewInit {
   cancelAssign(item: any) {
     item.showDropdown = false;
     item.showReassDropdown = false;
-    this.isTaskDropDowned = false;
+    // this.isTaskDropDowned = false;
   }
+
   toggleDropdown(item: any) {
     // console.log(item.selectedRobot);
     item.selectedRobot = '';
     item.showDropdown = true;
-    this.isTaskDropDowned = true;
+    // this.isTaskDropDowned = true;
   }
+
   reassignRobot(item: any) {
     item.selectedRobot = '';
     item.showReassDropdown = true; // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
-    this.isTaskDropDowned = true;
+    // this.isTaskDropDowned = true;
   }
 
   shouldShowPaginator(): boolean {
@@ -559,8 +624,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // this.setPaginatedData(); // Update paginated data
     //...
     if (
-      (this.isFilterApplied || this.isOnSearchApplied) &&
-      !this.isTaskDropDowned
+      this.isFilterApplied ||
+      this.isOnSearchApplied
+      // !this.isTaskDropDowned
     ) {
       this.filteredTaskData = this.tasks.filter((updatedTask) => {
         for (let task of this.filteredTaskData) {
@@ -573,8 +639,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // else
     else if (
       !this.isFilterApplied &&
-      !this.isOnSearchApplied &&
-      !this.isTaskDropDowned
+      !this.isOnSearchApplied
+      // !this.isTaskDropDowned
     ) {
       this.filteredTaskData = this.tasks;
       this.setPaginatedData();
@@ -715,4 +781,5 @@ export class TasksComponent implements OnInit, AfterViewInit {
   ngOnDestroy() {
     if (this.liveTasksInterval) clearInterval(this.liveTasksInterval);
   }
+  
 }

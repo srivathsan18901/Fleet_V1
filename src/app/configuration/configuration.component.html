@@ -138,9 +138,7 @@
         <div class="date-filters" *ngIf="currentTable === 'Environment'">
           <div class="date-inputs">
             <div class="dateInput1">
-              <label for="start-date">{{
-                getTranslation("Start Date:")
-              }}</label>
+              <label for="start-date">{{ getTranslation("Start Date:") }}</label>
               <input
                 pInputText
                 type="date"
@@ -149,7 +147,8 @@
                 (ngModelChange)="onDateChange($event, 'start')"
                 [min]="minDate"
                 [max]="maxDate"
-                style="height: 35px; width: 150px"
+                style="height: 35px; width: fit-content"
+                (click)="openCalendar($event)"
               />
             </div>
             <div class="dateInput2">
@@ -162,7 +161,8 @@
                 (ngModelChange)="onDateChange($event, 'end')"
                 [min]="minDate"
                 [max]="maxDate"
-                style="height: 35px; width: 150px"
+                style="height: 35px; width: fit-content"
+                (click)="openCalendar($event)"
               />
             </div>
           </div>

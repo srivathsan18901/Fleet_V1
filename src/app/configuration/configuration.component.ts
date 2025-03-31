@@ -1428,7 +1428,12 @@ export class ConfigurationComponent implements AfterViewInit {
     }
     this.filterData(); // Call filter logic after date change
   }
-
+  
+  openCalendar(event: Event) {
+    const target = event.target as HTMLInputElement;
+    target.showPicker(); // Opens the native date picker on supported browsers
+  }
+  
   setCurrentTable(table: string) {
     this.currentTable = table;
   }
