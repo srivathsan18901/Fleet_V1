@@ -2347,17 +2347,7 @@ export class DashboardComponent implements AfterViewInit {
     ctx.restore(); // Reset transformation after drawing the map
 
     for (let [index, robotId] of Object.keys(robotsData).entries()) {
-      const {
-        posX,
-        posY,
-        yaw,
-        state,
-        errState,
-        path,
-        payload,
-        battery,
-        current_task,
-      } = robotsData[robotId];
+      const { posX, posY, yaw, state, errState, path, payload, battery, current_task, } = robotsData[robotId];
 
       const scaledPosX = posX;
       const scaledPosY = posY;

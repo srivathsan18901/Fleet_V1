@@ -68,6 +68,8 @@ export class Userlogscomponent {
   }
   activeHeaderKey: string = 'Task Logs'; // Store the key instead
   activeHeader: string = this.getTranslation(this.activeHeaderKey);
+  subHeaderKey : string = 'taskErrorLogs'
+  activeSubHeader: any= this.getTranslation(this.subHeaderKey);
 
   async ngOnInit() {
     this.mapData = this.projectService.getMapData();
@@ -500,6 +502,19 @@ export class Userlogscomponent {
     }
   }
 
+  subHeader(button: string): string {
+    switch (button) {
+      case 'task':
+        return 'taskErrorLogs';
+      case 'robot':
+        return 'robotErrorLogs';
+      case 'fleet':
+        return 'fleetErrorLogs';
+      default:
+        return 'taskErrorLogs';
+    }
+  }
+  
   setActiveButton(button: string) {
     this.activeButton = button;
     this.isTransitioning = true;
@@ -507,15 +522,15 @@ export class Userlogscomponent {
       this.activeButton = button;
       this.activeHeaderKey = this.getHeaderKey(button); // Store key instead of translated string
       this.activeHeader = this.getTranslation(this.activeHeaderKey);
+      this.subHeaderKey = this.subHeader(button); // Store key instead of translated string
+      this.activeSubHeader = this.getTranslation(this.subHeaderKey);
       this.isTransitioning = false;
     }, 200); // 300ms matches the CSS transition duration
   }
 
+
   showTable(table: string) {
     this.currentTable = table;
-    if(this.currentTable="task"){
-      
-    }
     console.log('clicked',this.currentTable);
     this.setPaginatedData();
   }

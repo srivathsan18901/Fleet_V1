@@ -29,7 +29,7 @@
         </div>
 
       </div>
-      <div *ngIf="isButtonDisabled">
+      <div *ngIf="isButtonDisabled" class="AT-CLS">
         <button class="AT-Btn" (click)="toggleAssignTask()">
           <div class="svg-wrapper-1">
             <div class="svg-wrapper">
@@ -42,7 +42,7 @@
           <span>{{getTranslation("assign_task")}}</span>
         </button>     
        </div>
-      <div style="display: flex ; position: absolute; gap: 10px;top: 150px; right: 45px;">
+      <div style="display: flex ; position: absolute; gap: 10px; top: 150px; right: 45px;">
         <div style="position: relative;">
           <div style="display: flex; position: absolute; gap: 10px; top: -15px; right: -25px;; border-radius: 10px; padding: 10px; background-color: #f7f7f7; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
             <button (click)="openFilterPopup()" class="filter-btn">

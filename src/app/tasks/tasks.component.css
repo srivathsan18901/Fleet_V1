@@ -51,14 +51,19 @@
     width: 23px;
     height: 13px;
   }
-
+  .AT-CLS{
+    width: fit-content;
+    position: absolute;
+    right: 210px;
+    top: 140px;
+  }
   /* Table Container Styling */
   .table-container {
     width: 100%;
     display: flex;
     flex-direction: column;    
     margin-left: 15px;
-    margin-top: 50px;
+    margin-top: 110px;
     overflow: hidden;
   }
   .table-wrapper {
