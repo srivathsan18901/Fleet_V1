@@ -2432,11 +2432,7 @@ export class DashboardComponent implements AfterViewInit {
           robo.errState,
           clr
         );
-        if (robo.imgState === 'MOVESTATE') {
-          this.enablePath = true;
-        } else {
-          this.enablePath = false;
-        }
+
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
@@ -2470,11 +2466,6 @@ export class DashboardComponent implements AfterViewInit {
           robo.errState,
           clr
         );
-        if (robo.imgState === 'MOVESTATE') {
-          this.enablePath = true;
-        } else {
-          this.enablePath = false;
-        }
         if (
           robo.imgState === 'LOADSTATE' ||
           robo.imgState === 'UNLOADSTATE' ||
