@@ -44,7 +44,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     startDateTime: '',
     endDateTime: '',
     taskType: '',
-    status: ''
+    status: '',
   };
   originalTaskData = []; // Store the original unfiltered data
   private langSubscription!: Subscription;
@@ -55,6 +55,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   expandedRowMap: { [key: string]: boolean } = {}; // Track expanded rows
   expandedRowId: string | null = null; // Track the currently open row
+
+  robos: any[] = [];
+  simRobos: any[] = [];
 
   // Mapping statuses to step index
   statusStepMap: { [key: string]: number } = {
@@ -97,10 +100,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private nodeGraphService: NodeGraphService,
     private cdRef: ChangeDetectorRef,
     private eRef: ElementRef
-  ) { this.filteredTaskData = [];}
+  ) {
+    this.filteredTaskData = [];
+  }
 
   async ngOnInit() {
-    if (!JSON.parse(this.projectService.getInitializeMapSelected())) this.isButtonDisabled = false;
+    if (!JSON.parse(this.projectService.getInitializeMapSelected()))
+      this.isButtonDisabled = false;
     this.mapData = this.projectService.getMapData();
 
     if (!this.mapData) this.nodata = this.getTranslation('no_map_selected');
@@ -137,16 +143,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (!this.mapData) return;
     await this.fetchTasks();
 
-    let grossFactSheet = await this.fetchAllRobos();
-    // this.setPaginatedData();
+    this.robos = await this.fetchAllRobos();
+    this.simRobos = await this.getSimRobos();
 
-    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
-      // this.isFleet = status; // Update the value whenever it changes
-      if (status)
-        this.robotList = grossFactSheet.map((robo) => {
-          return robo.id;
-        });
-      else this.robotList = await this.getSimRobos();
+    this.isFleetService.isFleet$.subscribe((status: boolean) => {
+      if (status) this.robotList = this.robos.map((robo) => robo.id);
+      else this.robotList = this.simRobos;
+      // console.log(this.robotList);
     });
 
     this.liveTasksInterval = setInterval(async () => {
@@ -166,7 +169,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   closeFilterPopup() {
     this.isFilterPopupVisible = false;
   }
-  isButtonDisabled:boolean=true;
+  isButtonDisabled: boolean = true;
 
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
@@ -182,40 +185,40 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (this.filterOptions.startDateTime && this.filterOptions.endDateTime) {
       const startDate = new Date(this.filterOptions.startDateTime);
       const endDate = new Date(this.filterOptions.endDateTime);
-      
+
       if (endDate < startDate) {
         this.messageService.add({
           severity: 'error',
           summary: 'Invalid Date Range',
           detail: 'End date/time cannot be before start date/time',
-          life: 3000
+          life: 3000,
         });
         return; // Don't apply filters if validation fails
       }
     }
-  
+
     this.filteredTaskData = this.tasks.filter((task: any) => {
       // Convert task timestamp to Date object for comparison
       const taskDate = new Date(task.TimeStamp);
-      
+
       // Date Range Filter
-      const dateMatch = 
-        (!this.filterOptions.startDateTime || taskDate >= new Date(this.filterOptions.startDateTime)) &&
-        (!this.filterOptions.endDateTime || taskDate <= new Date(this.filterOptions.endDateTime));
-      
+      const dateMatch =
+        (!this.filterOptions.startDateTime ||
+          taskDate >= new Date(this.filterOptions.startDateTime)) &&
+        (!this.filterOptions.endDateTime ||
+          taskDate <= new Date(this.filterOptions.endDateTime));
+
       // Status Filter
-      const statusMatch = 
-        !this.filterOptions.status || 
-        task.status === this.filterOptions.status;
-      
+      const statusMatch =
+        !this.filterOptions.status || task.status === this.filterOptions.status;
+
       // Robot Filter (if you have this field)
-      const robotMatch = 
-        !this.selectedRobot || 
-        task.roboName === this.selectedRobot;
-      
+      const robotMatch =
+        !this.selectedRobot || task.roboName === this.selectedRobot;
+
       return dateMatch && statusMatch && robotMatch;
     });
-    
+
     this.isFilterApplied = true;
     this.setPaginatedData();
     this.closeFilterPopup(); // Close the popup after applying filters
@@ -290,16 +293,16 @@ export class TasksComponent implements OnInit, AfterViewInit {
       startDateTime: '',
       endDateTime: '',
       taskType: '',
-      status: ''
+      status: '',
     };
     this.selectedRobot = '';
     this.selectedStatus = '';
     this.isFilterApplied = false;
-    
+
     // Reset the filtered data to show all tasks
     this.filteredTaskData = [...this.tasks];
     this.setPaginatedData();
-    
+
     // Close the filter popup if open
     this.closeFilterPopup();
   }
@@ -365,7 +368,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     );
 
     let data = await response.json();
-    console.log(data, 'duyfjgghjgg');
+    // console.log(data);
+
     let sNo = 1;
     if (data.tasks) {
       const { tasks } = data.tasks;
@@ -375,7 +379,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
         taskType: task.sub_task[0]?.task_type || 'N/A',
         status: task.task_status.status,
         roboName: task.agent_ID,
-        // sourceLocation: task.sub_task[0]?.source_location || 'N/A',
         destinationLocation: task.sub_task[0]?.source_location || 'N/A',
       }));
       // this.filteredTaskData = this.tasks;
@@ -459,15 +462,14 @@ export class TasksComponent implements OnInit, AfterViewInit {
       });
 
       this.setPaginatedData();
-    }
-    else if (!this.isFilterApplied && !this.isOnSearchApplied) {
+    } else if (!this.isFilterApplied && !this.isOnSearchApplied) {
       // !this.isTaskDropDowned
       this.filteredTaskData = this.tasks;
       this.setPaginatedData();
     }
     // if (!this.isFilterApplied) {
     //   this.filteredTaskData = [...this.tasks];
-    // }   
+    // }
     // this.setPaginatedData();
   }
   formatDateForInput(dateString: string): string {
@@ -528,9 +530,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   isDisabled(status: string): boolean {
     return (
-      status === 'COMPLETED' ||
-      status === 'CANCELLED' ||
-      status === 'FAILED' 
+      status === 'COMPLETED' || status === 'CANCELLED' || status === 'FAILED'
     ); // || status === 'INPROGRESS'
   }
 
@@ -785,5 +785,4 @@ export class TasksComponent implements OnInit, AfterViewInit {
   ngOnDestroy() {
     if (this.liveTasksInterval) clearInterval(this.liveTasksInterval);
   }
-  
 }
