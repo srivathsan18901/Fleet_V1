@@ -45,6 +45,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     endDateTime: '',
     taskType: '',
     status: '',
+    robotId: ''
   };
   originalTaskData = []; // Store the original unfiltered data
   private langSubscription!: Subscription;
@@ -149,7 +150,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.isFleetService.isFleet$.subscribe((status: boolean) => {
       if (status) this.robotList = this.robos.map((robo) => robo.id);
       else this.robotList = this.simRobos;
-      // console.log(this.robotList);
+      console.log(this.robotList);
     });
 
     this.liveTasksInterval = setInterval(async () => {
@@ -213,8 +214,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
         !this.filterOptions.status || task.status === this.filterOptions.status;
 
       // Robot Filter (if you have this field)
-      const robotMatch =
-        !this.selectedRobot || task.roboName === this.selectedRobot;
+      const robotMatch = 
+      !this.filterOptions.robotId || 
+      task.roboName == this.filterOptions.robotId;
 
       return dateMatch && statusMatch && robotMatch;
     });
@@ -294,7 +296,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
       endDateTime: '',
       taskType: '',
       status: '',
+      robotId: ''
     };
+    this.searchQuery = '';
     this.selectedRobot = '';
     this.selectedStatus = '';
     this.isFilterApplied = false;
@@ -389,7 +393,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   autoRefreshTasks() {
-    if (this.isFilterApplied || this.isOnSearchApplied) {
+    if (this.isFilterApplied || this.isOnSearchApplied ) {
       this.filterTasks(); // Reapply filters
     } else {
       this.setPaginatedData(); // Just update the paginated data
@@ -451,7 +455,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       });
     // this.filteredTaskData = this.tasks;
 
-    if (this.isFilterApplied || this.isOnSearchApplied) {
+    if (this.isFilterApplied || this.isOnSearchApplied || this.isTaskDropDowned) {
       // !this.isTaskDropDowned
       this.filteredTaskData = this.filteredTaskData.filter((updatedTask) => {
         // swap tasks with filteredTaskData
