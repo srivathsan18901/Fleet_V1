@@ -856,6 +856,7 @@ input[type="datetime-local"]::-webkit-calendar-picker-indicator {
   background-color: #ff5c5c;
   color: white;
   border: none;
+  width: max-content;
   padding: 5px 10px;
   border-radius: 5px;
   cursor: pointer;

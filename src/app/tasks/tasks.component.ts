@@ -103,8 +103,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (!JSON.parse(this.projectService.getInitializeMapSelected())) this.isButtonDisabled = false;
     this.mapData = this.projectService.getMapData();
 
-    if (!this.mapData) this.nodata = 'No Map Selected';
-    else this.nodata = 'No data found';
+    if (!this.mapData) this.nodata = this.getTranslation('no_map_selected');
+    else this.nodata = this.getTranslation('No data found');
 
     this.paginatorIntl.itemsPerPageLabel =
       this.getTranslation('Items per page'); // Modify the text
