@@ -400,19 +400,19 @@
                   </td>
                   <td class="iconTable">
                     <button 
-                    class="sel-btn" 
-                    [ngClass]="{
-                      'deselect-btn': item.mapName === this.selectedMap?.mapName, 
-                      'blurred-disabled': userrole === 'User'
-                    }" 
-                    (click)="selectMap(item)">
-                    {{
-                      item.mapName === this.selectedMap?.mapName
-                        ? getTranslation("Deselect")
-                        : getTranslation("Select")
-                    }}
-                  </button>
-                  
+                      class="sel-btn" 
+                      [ngClass]="{
+                        'deselect-btn': item.mapName === this.selectedMap?.mapName, 
+                        'blurred-disabled': userrole === 'User'
+                      }"
+                      [disabled]="userrole === 'User'"
+                      (click)="selectMap(item)">
+                      {{
+                        item.mapName === this.selectedMap?.mapName
+                          ? getTranslation('Deselect')
+                          : getTranslation('Select')
+                      }}
+                    </button>
                   </td>
                   <td class="iconTable" *ngIf=" configurationPermissions.environment.enabled === true && configurationPermissions.environment.edit === true " [attr.data-content]="editButtonText">
                     <div class="exportBtn">
