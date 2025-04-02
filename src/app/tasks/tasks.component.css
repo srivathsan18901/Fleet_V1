@@ -66,8 +66,9 @@
   }
   .table-responsive {
     width: 100%;
-    overflow: hidden; /* Prevents table header from moving */
-  }
+    overflow: hidden;
+    /*Preventstableheaderfrommoving*/border-radius: 5px ;
+}
   .table-body {
     max-height: 300px; /* Adjust based on your needs */
     overflow-y: auto; /* Enables vertical scrolling */

@@ -2193,7 +2193,7 @@ export class DashboardComponent implements AfterViewInit {
     IDLESTATE: '#065baa',
     MOVESTATE: '#08ad66',
     DOCKSTATE: '#a3cfe8',
-    UNDOCKSTATE: '#a3cfe8',
+    UNDOCKSTATE: '#232eaca4',
     LOADSTATE: '#f5adae',
     UNLOADSTATE: '#533621',
     CHARGESTATE: '#9900cc',
