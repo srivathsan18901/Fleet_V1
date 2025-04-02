@@ -19,7 +19,7 @@
       <div class="search-filter-container" >
         <!-- Search Bar -->
         <div class="search-box">
-          <input type="text" (input)="onSearch($event)" placeholder="{{ getTranslation('Search For Tasks...') }}" />
+          <input type="text" (input)="onSearch($event)" placeholder="{{ getTranslation('Search For Tasks...') }}" [value]="searchQuery"/>
           <button class="search-btn">
             <img
               src="../../assets/icons/download-removebg-preview.png"
@@ -81,10 +81,13 @@
              </div>
              <!-- Robot ID Filter -->
              <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
-             <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('robot_id') }}:</label>
-             <select [(ngModel)]="filterOptions.status" style="border: 1px solid #ff5c5c; width: -webkit-fill-available; border-radius: 5px; color: #FF5C5C;padding: 5px;">
-
-             </select>
+              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('robot_id') }}:</label>
+              <select [(ngModel)]="filterOptions.robotId" style="border: 1px solid #ff5c5c; width: -webkit-fill-available; border-radius: 5px; color: #FF5C5C;padding: 5px;">
+                <option value="">{{ getTranslation('All') }}</option>
+                <option *ngFor="let robotId of robotList" [value]="robotId">
+                  {{ robotId }}
+                </option>
+              </select>
             </div>
               <!-- Buttons -->
               <div class="filter-actions">
