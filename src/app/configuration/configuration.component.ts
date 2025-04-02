@@ -26,6 +26,7 @@ import { UserPermissionService } from '../services/user-permission.service';
 import { TranslationService } from '../services/translation.service';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { NodeGraphService } from '../services/nodegraph.service';
+import { IsFleetService } from '../services/shared/is-fleet.service';
 
 interface Poll {
   ip: string;
@@ -84,6 +85,7 @@ export class ConfigurationComponent implements AfterViewInit {
   userManagementData: any;
   username: string | null = null;
   userrole: string | null = null;
+  isFleetMode: boolean = false;
 
   // formData: any;
   isPopupOpen: boolean = false;
@@ -151,7 +153,8 @@ export class ConfigurationComponent implements AfterViewInit {
     private cookieService: CookieService,
     private userPermissionService: UserPermissionService,
     private translationService: TranslationService,
-    private paginatorIntl: MatPaginatorIntl
+    private paginatorIntl: MatPaginatorIntl,
+    private isFleetService: IsFleetService
   ) {
     this.filteredEnvData = [...this.EnvData];
   }
@@ -160,6 +163,9 @@ export class ConfigurationComponent implements AfterViewInit {
   editButtonText: string = '';
   exportButtonText: string = '';
   async ngOnInit() {
+    const isFleet = this.isFleetService.isFleet$.subscribe((status) => {
+      this.isFleetMode = status;
+    });
     this.paginatorIntl.itemsPerPageLabel =
       this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next(); // Notify paginator about the change
@@ -445,14 +451,30 @@ export class ConfigurationComponent implements AfterViewInit {
       );
       let data = await response.json();
 
-      console.log(data);
       if (data.nameUpdated) {
-        await this.ngOnInit();
+        if (mapNameEdit){
+          this.projectService.updateMapNameInCookie(this.editedMapName, this.editedSiteName);
+          if(this.selectedMap) this.selectedMap.mapName = this.editedMapName;
+          this.EnvData = this.EnvData.map((envMap: any) => {
+            if (envMap.mapName == map.mapName)
+              envMap.mapName = this.editedMapName;
+            return envMap;
+          });
+        }
+        else
+          this.EnvData = this.EnvData.map((envMap: any) => {
+            if (envMap.mapName == map.mapName)
+              envMap.siteName = this.editedSiteName;
+            return envMap;
+          });
+
+        // this.filteredEnvData = this.EnvData;
         this.messageService.add({
           severity: 'success',
-          detail: this.getTranslation('mapSiteUpdated'),
+          detail: 'mapSiteUpdated',
         });
       }
+
       if (data.error)
         console.log('error while updating map/site name : ', data.error);
     } catch (error) {
@@ -956,20 +978,16 @@ export class ConfigurationComponent implements AfterViewInit {
       this.projectService.setInitializeMapSelected(false); // confirm it..
       this.projectService.setIsMapSet(false);
       if (!this.EnvData.length) return;
-      this.selectedMap = this.EnvData[0];
-      // const response = await fetch(
-      //   `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.EnvData[0]?.mapName}`
-      // );
-      // if (!response.ok)
-      //   console.error('Error while fetching map data : ', response.status);
-      // let data = await response.json();
-      // let { map } = data;
+
+      this.updateDefaultMap(null);
+
       await this.ngOnInit();
       return;
     }
     // Select a new map
     this.selectedMap = map;
     await this.loadMapData(map);
+    await this.updateDefaultMap(map);
 
     // Store the selected map in localStorage or service
     if (this.selectedMap) {
@@ -997,31 +1015,39 @@ export class ConfigurationComponent implements AfterViewInit {
       imgUrl: data.map.imgUrl,
     });
 
-    let isMapLoaded = false;
-
-    if (data.map) {
-      this.nodeGraphService.mapName = map.mapName;
-      this.nodeGraphService.siteName = map.siteName;
-      this.nodeGraphService.roboPos = data.map.roboPos;
-      this.nodeGraphService.setNodes(data.map.nodes);
-      this.nodeGraphService.setEdges(data.map.edges);
-      isMapLoaded = await this.nodeGraphService.updateEditedMap();
-    }
-
-    if (isMapLoaded) {
-      this.messageService.add({
-        severity: 'success',
-        detail: this.getTranslation('mapSelected'),
-      });
-    } else {
-      this.messageService.add({
-        severity: 'warn',
-        detail: this.getTranslation('mapDeselected'),
-      });
-    }
-
     if (this.projectService.getIsMapSet()) return;
     this.projectService.setIsMapSet(true);
+  }
+
+  async updateDefaultMap(map: any) {
+    let currProject = this.projectService.getSelectedProject();
+    if (!currProject) return;
+ 
+    let defaultMapBody = {
+      projectId: currProject._id,
+      mapId: map ? map.id : '',
+      mapName: map ? map.mapName : '',
+      siteName: map ? map.siteName : '',
+    };
+ 
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project/set-default-map`,
+      {
+        method: 'PUT',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(defaultMapBody),
+      }
+    );
+ 
+    let data = await response.json();
+    if (data.error || !data.mapUpdated) return;
+    if (map && data.mapUpdated)
+      this.messageService.add({
+        severity: 'success',
+        summary: 'Success',
+        detail: 'Default Map has been updated',
+      });
   }
 
   async getMapImgUrl(map: any): Promise<any> {

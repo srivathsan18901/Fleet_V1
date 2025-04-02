@@ -241,7 +241,6 @@ export class LoginComponent {
       .then(async (data) => {
         // console.log(data.user.projects);
         if (data.isUserInSession) {
-          // alert(data.msg);
           Swal.fire({
             position: 'center',
             icon: 'warning',
@@ -257,8 +256,6 @@ export class LoginComponent {
           let { permissions } = data.user;
           this.userPermissionService.setPermissions(permissions);
           if (data.user.role === 'User') {
-            // console.log('user initilalized')
-
             if (!data.user.projects || !data.user.projects.length) {
               this.messageService.add({
                 severity: 'warn',
@@ -272,12 +269,8 @@ export class LoginComponent {
               name: data.user.name,
               role: data.user.role,
             });
-            let project_data = {
-              _id: data.user.projects[0].projectId,
-              projectName: data.user.projects[0].projectName,
-              createdAt: JSON.stringify(new Date()), // data.projects[0].createdAt
-              updatedAt: JSON.stringify(new Date()), // data.projects[0].createdAt
-            };
+
+            await this.setProject(data.user.projects[0].projectId);
 
             let bodyData = {
               name: this.authService.getUser().name,
@@ -297,9 +290,6 @@ export class LoginComponent {
               this.authService.logout(); // yet to look at it..
               return;
             }
-
-            this.projectService.setSelectedProject(project_data);
-            this.projectService.setProjectCreated(true);
             this.messageService.add({
               severity: 'success',
               summary: `${this.getTranslation("Welcome")} ${data.user.projects[0].projectName}`,
@@ -387,5 +377,56 @@ export class LoginComponent {
       console.log('Error in set project session : ', error);
       return null;
     }
+  }
+
+  async setProject(projectId: string) {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-project/${projectId}`,
+      { method: 'GET', credentials: 'include' }
+    );
+    let data = await response.json();
+ 
+    let project_data = {
+      _id: data.project._id,
+      projectName: data.project.projectName,
+      createdAt: data.project.createdAt,
+      updatedAt: data.project.updatedAt,
+    };
+ 
+    await this.openWithDefaultMap(data.project.defaultMap);
+ 
+    this.projectService.setSelectedProject(project_data);
+    this.projectService.setProjectCreated(true);
+  }
+ 
+  async openWithDefaultMap(defaultMap: any): Promise<void> {
+    if (!defaultMap.mapId || !defaultMap.mapName) return;
+    await this.loadMapData(defaultMap.mapName, defaultMap.siteName);
+  }
+ 
+  async loadMapData(mapName: string, siteName: string) {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${mapName}`
+    );
+    if (!response.ok)
+      console.error('Error while fetching map data : ', response.status);
+    let data = await response.json();
+ 
+    if (data.error || !data.isExists) return;
+ 
+    const { map } = data;
+ 
+    this.projectService.setMapData({
+      id: map._id,
+      mapName: map.mapName,
+      siteName: siteName,
+      date: null,
+      createdAt: map.createdAt,
+      imgUrl: map.imgUrl,
+    });
+ 
+    if (this.projectService.getIsMapSet()) return;
+    this.projectService.setIsMapSet(true);
+    this.projectService.setInitializeMapSelected(true);
   }
 }

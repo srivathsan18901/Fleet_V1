@@ -232,20 +232,20 @@ export class ChartTimelineComponent implements OnInit {
         x: {
           format: 'dd MMM',
         },
-        custom: ({ seriesIndex, dataPointIndex, w }) => {
-          const value = w.config.series[seriesIndex].data[dataPointIndex];
-          const category = w.config.xaxis.categories[dataPointIndex];
+        // custom: ({ seriesIndex, dataPointIndex, w }) => {
+        //   const value = w.config.series[seriesIndex].data[dataPointIndex];
+        //   const category = w.config.xaxis.categories[dataPointIndex];
 
-          // Find the corresponding metric translation
-          const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
-          const translatedMetric = this.getTranslation(metricKey) || metricKey;
+        //   // Find the corresponding metric translation
+        //   const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
+        //   const translatedMetric = this.getTranslation(metricKey) || metricKey;
 
-          return `
-            <div style="padding: 10px; background: #333; color: #fff;">
-              <strong>${translatedMetric}</strong>: ${value}<br>
-            </div>
-          `;
-        },
+        //   return `
+        //     <div style="padding: 10px; background: #333; color: #fff;">
+        //       <strong>${translatedMetric}</strong>: ${value}<br>
+        //     </div>
+        //   `;
+        // },
       },
       grid: {
         borderColor: '#e7e7e7',

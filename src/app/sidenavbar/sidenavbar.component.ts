@@ -35,6 +35,7 @@ export class SidenavbarComponent implements OnInit {
   projectName: string | null = null;
   username: string | null = null;
   userrole: string = '';
+  isUser: boolean = false;
   robotActivities: any[] = [];
   fleetActivities: any[] = [];
   selectedMap: any | null = null;
@@ -45,6 +46,8 @@ export class SidenavbarComponent implements OnInit {
   isNotificationVisible = false;
   languageArrowState = false;
   isFleetUp: boolean = false; // Set to true or false based on your logic
+  // isAmqpUp: boolean = false;
+  private autoCloseTimeout: any;
   notifications: any[] = [];
   private subscriptions: Subscription[] = [];
   processedErrors: Set<string>; // To track processed errors
@@ -55,6 +58,42 @@ export class SidenavbarComponent implements OnInit {
   fleetStatusInterval: ReturnType<typeof setInterval> | null = null;
   notificationInterval: ReturnType<typeof setInterval> | null = null;
   sessionCheck: ReturnType<typeof setInterval> | null = null;
+  selectedProject: any | null = null;
+
+  fleetIconUrl: string = '../assets/fleet_icon.png';
+  simulationIconUrl: string = '../assets/simulation_icon.png';
+
+  // language
+  flags: Flag[] = [
+    {
+      flagComp: '<img src="../../assets/Language/Eng.svg">',
+      nameTag: 'ENG',
+      order: 0,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Jap.svg">',
+      nameTag: 'JAP',
+      order: 1,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Fre.svg">',
+      nameTag: 'FRE',
+      order: 2,
+    },
+    {
+      flagComp: '<img src="../../assets/Language/Ger.svg">',
+      nameTag: 'GER',
+      order: 3,
+    },
+  ];
+
+  flagSvg = this.flags[0].flagComp;
+  flagName = this.flags[0].nameTag;
+
+  isFleet: boolean = false;
+
+  roboStatusController: AbortController | null = null;
+  taskErrController: AbortController | null = null;
 
   constructor(
     private authService: AuthService,
@@ -72,9 +111,7 @@ export class SidenavbarComponent implements OnInit {
     this.userManagementData = this.userPermissionService.getPermissions();
     this.processedErrors = new Set<string>(); // yet to noify later..
   }
-  getProjectTranslation(key: string) {
-    return this.translationService.getProjectSetupTranslation(key);
-  }
+
   async ngOnInit() {
     for (let flag of this.flags) {
       if (flag.nameTag === this.translationService.getCurrentLang()) {
@@ -84,50 +121,11 @@ export class SidenavbarComponent implements OnInit {
       }
     }
 
-    this.renderer.listen('document', 'click', (event: Event) => {
-      const target = event.target as HTMLElement;
-      const notificationElement = this.eRef.nativeElement.querySelector(
-        '.notification-popup'
-      );
-      const profileElement =
-        this.eRef.nativeElement.querySelector('.Profile-popup');
-      const languageDropdownElement =
-        this.eRef.nativeElement.querySelector('.language-dropdown');
-      const languageToggleElement =
-        this.eRef.nativeElement.querySelector('.language-toggle');
-      if (
-        this.showProfilePopup &&
-        profileElement &&
-        !profileElement.contains(target) &&
-        !target.classList.contains('PPicon') // Profile icon
-      ) {
-        this.showProfilePopup = false;
-      }
-      if (
-        this.showNotificationPopup &&
-        notificationElement &&
-        !notificationElement.contains(target) &&
-        !target.classList.contains('Nlogo') // Notification icon
-      ) {
-        this.showNotificationPopup = false;
-      }
-
-      // Close Language Dropdown
-      if (
-        this.languageArrowState && // Check if the dropdown is open
-        languageDropdownElement &&
-        !languageDropdownElement.contains(target) &&
-        languageToggleElement !== target && // Ensure the toggle is excluded
-        !languageToggleElement.contains(target)
-      ) {
-        this.languageArrowState = false; // Close the language dropdown
-      }
-    });
     this.selectedProject = this.projectService.getSelectedProject();
     this.projectName = this.selectedProject.projectName;
     this.subscription = this.projectService.isFleetUp$.subscribe(
       async (status) => {
-        console.log('Fleet status changed:', status);
+        // console.log('Fleet status changed:', status);
         await this.recordFleetStatus(status); // change the method by storing it in cookie, later for sure!!!
       }
     );
@@ -146,6 +144,7 @@ export class SidenavbarComponent implements OnInit {
     if (user) {
       this.username = user.name;
       this.userrole = this.getTranslation(user.role);
+      this.isUser = this.userrole == 'User' ? true : false;
     }
     // console.log(this.getTranslation(user.role));
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
@@ -176,7 +175,7 @@ export class SidenavbarComponent implements OnInit {
           )}</span>`,
           showConfirmButton: true,
         });
-        this.logout();
+        this.authService.logout();
         return;
       }
     }, 1000 * 5);
@@ -196,9 +195,6 @@ export class SidenavbarComponent implements OnInit {
   get iconUrl(): string {
     return this.isFleet ? this.fleetIconUrl : this.simulationIconUrl;
   }
-
-  fleetIconUrl: string = '../assets/fleet_icon.png';
-  simulationIconUrl: string = '../assets/simulation_icon.png';
 
   get buttonLabel(): string {
     // console.log("button lable")
@@ -268,86 +264,31 @@ export class SidenavbarComponent implements OnInit {
     let data = await response.json();
 
     this.isFleetUp = data.fleetUp ? true : false;
+    this.toggleFleetMode(data.isFleetMode);
 
     let prevFleetStatus = this.projectService.getIsFleetUp();
     if (prevFleetStatus === this.isFleetUp) return; // && this.isAmqpUp
     this.projectService.setIsFleetUp(this.isFleetUp); // && this.isAmqpUp
   }
 
-  // not called anywhere..
-  async getFleetLogStatus() {
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
-    );
-    const data = await response.json();
-    if (!data.map || data.error) return;
-    this.fleetActivities = data.objs;
-    if (!('objects' in this.fleetActivities)) return;
-    let { objs }: any = this.fleetActivities;
-    if (!objs.length) return;
-
-    objs.forEach((robot: any) => {
-      if (robot.fleet_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
-          // [errorType, errors] => [key, value]
-          // if (errorType === "NO ERROR") continue;
-          for (let error of errors as any[]) {
-            let err_type = [
-              'EMERGENCY STOP',
-              'LIDAR_ERROR',
-              'DOCKING ERROR',
-              'LOADING ERROR',
-              'NO ERROR',
-            ]; //Robot Errors List from RabbitMQ
-            let criticality = 'Normal';
-
-            if (
-              err_type.includes(err_type[0]) ||
-              err_type.includes(err_type[3])
-            )
-              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
-            else if (
-              err_type.includes(err_type[1]) ||
-              err_type.includes(err_type[2])
-            )
-              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
-
-            let notificationKey = `${error.description}`;
-            if (this.processedErrors?.has(notificationKey)) continue;
-            this.processedErrors?.add(notificationKey);
-
-            this.notifications.push({
-              label: `${criticality}`,
-              message: `${error.description}`,
-              type:
-                criticality === 'Critical'
-                  ? 'red'
-                  : criticality === 'Warning'
-                  ? 'yellow'
-                  : 'green',
-            });
-
-            this.cdRef.detectChanges(); // yet to notify..
-          }
-        }
-      }
-    });
+  toggleFleetMode(fleetMode: number) {
+    let currentMode = sessionStorage.getItem('isFleet') == 'true' ? 0 : 1;
+    if (currentMode == fleetMode) return;
+    this.isFleet = !fleetMode ? true : false;
+    this.isFleetService.setIsFleet(this.isFleet);
+    sessionStorage.setItem('isFleet', String(this.isFleet));
   }
-  isImage: boolean = false;
-  isFleet: boolean = false;
-  get buttonClass(): string {
-    return this.isFleet ? 'fleet-background' : 'simulation-background';
-  }
+
   async getRoboStatus(): Promise<void> {
+    if (this.roboStatusController) this.roboStatusController.abort();
+    this.roboStatusController = new AbortController();
+
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
       {
         method: 'GET',
         credentials: 'include',
+        signal: this.roboStatusController.signal,
       }
     );
 
@@ -359,7 +300,7 @@ export class SidenavbarComponent implements OnInit {
     if (!('robots' in this.robotActivities)) return;
 
     let { robots }: any = this.robotActivities;
-    if (!robots.length) return;
+    if (!robots?.length) return;
 
     robots.forEach((robot: any) => {
       if (robot.robot_errors) {
@@ -412,6 +353,9 @@ export class SidenavbarComponent implements OnInit {
   }
 
   async getTaskErrs(): Promise<void> {
+    if (this.taskErrController) this.taskErrController.abort();
+    this.taskErrController = new AbortController();
+
     let establishedTime = new Date(this.selectedMap.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
     const response = await fetch(
@@ -425,6 +369,7 @@ export class SidenavbarComponent implements OnInit {
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
+        signal: this.taskErrController.signal,
       }
     );
     const data = await response.json();
@@ -503,23 +448,34 @@ export class SidenavbarComponent implements OnInit {
     this.showProfilePopup = false;
     this.showNotificationPopup = false;
   }
+
   truncateUsername(username: any) {
     if (username.length > 10) {
       return username.substring(0, 10) + '...';
     }
     return username;
   }
+
   toggleProfilePopup() {
     this.showProfilePopup = !this.showProfilePopup;
     this.showNotificationPopup = false;
     this.languageArrowState = false;
   }
+
+  get buttonClass(): string {
+    return this.isFleet ? 'fleet-background' : 'simulation-background';
+  }
+  getProjectTranslation(key: string) {
+    return this.translationService.getProjectSetupTranslation(key);
+  }
+
   toggleNotificationPopup(event: Event) {
     event.stopPropagation();
     this.showNotificationPopup = !this.showNotificationPopup;
     this.showProfilePopup = false;
     this.languageArrowState = false;
   }
+
   toggleSidebar(isEnlarged: boolean) {
     this.isSidebarEnlarged = isEnlarged;
   }
@@ -533,41 +489,16 @@ export class SidenavbarComponent implements OnInit {
       .then((res) => res.json())
       .then((data) => {
         if (data.isCookieDeleted) {
-          this.projectService.clearProjectData();
-          this.projectService.clearMapData();
-          this.projectService.clearIsMapSet();
           this.authService.logout();
-          this.userPermissionService.deletePermissions();
-          this.router.navigate(['/']);
+          // this.projectService.clearProjectData();
+          // this.projectService.clearMapData();
+          // this.projectService.clearIsMapSet();
+          // this.userPermissionService.deletePermissions();
+          // this.router.navigate(['/']);
         }
       })
       .catch((err) => console.log(err));
   }
-
-  // language
-
-  flags: Flag[] = [
-    {
-      flagComp: '<img src="../../assets/Language/Eng.svg">',
-      nameTag: 'ENG',
-      order: 0,
-    },
-    {
-      flagComp: '<img src="../../assets/Language/Jap.svg">',
-      nameTag: 'JAP',
-      order: 1,
-    },
-    {
-      flagComp: '<img src="../../assets/Language/Fre.svg">',
-      nameTag: 'FRE',
-      order: 2,
-    },
-    {
-      flagComp: '<img src="../../assets/Language/Ger.svg">',
-      nameTag: 'GER',
-      order: 3,
-    },
-  ];
 
   trackFlag(index: number, flag: any): number {
     return flag.order; // Use the unique identifier for tracking
@@ -579,9 +510,6 @@ export class SidenavbarComponent implements OnInit {
     this.showProfilePopup = false;
   }
 
-  flagSvg = this.flags[0].flagComp;
-  flagName = this.flags[0].nameTag;
-
   changeFlag(order: number) {
     const selectedLanguage = this.flags[order].nameTag;
     this.flagSvg = this.flags[order].flagComp;
@@ -591,6 +519,7 @@ export class SidenavbarComponent implements OnInit {
   getTranslation(key: string) {
     return this.translationService.getsideNavTranslation(key);
   }
+
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);
     let startTimeOfDay = this.getStartOfDay(establishedTime);
@@ -603,7 +532,7 @@ export class SidenavbarComponent implements OnInit {
   getStartOfDay(establishedTime: Date) {
     return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
-  selectedProject: any | null = null;
+
   async exportProject() {
     if (!this.selectedProject) return;
     const response = await fetch(
@@ -640,6 +569,7 @@ export class SidenavbarComponent implements OnInit {
     link.click();
     document.body.removeChild(link);
   }
+
   ngOnDestroy() {
     if (this.notificationInterval) clearInterval(this.notificationInterval);
     if (this.fleetStatusInterval) clearInterval(this.fleetStatusInterval);

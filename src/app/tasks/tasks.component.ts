@@ -24,7 +24,6 @@ import { Router } from '@angular/router';
   styleUrls: ['./tasks.component.css'],
 })
 export class TasksComponent implements OnInit, AfterViewInit {
-  i: any;
   uniqueRobotNames: string[] = [];
   mapData: any | null = null;
   searchQuery: string = '';
@@ -52,7 +51,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   isFilterApplied: boolean = false;
   isOnSearchApplied: boolean = false;
-  // isTaskDropDowned: boolean = false;
+  isTaskDropDowned: boolean = false;
 
   expandedRowMap: { [key: string]: boolean } = {}; // Track expanded rows
   expandedRowId: string | null = null; // Track the currently open row
@@ -99,17 +98,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private cdRef: ChangeDetectorRef,
     private eRef: ElementRef
   ) { this.filteredTaskData = [];}
-  openFilterPopup() {
-    this.isFilterPopupVisible = !this.isFilterPopupVisible;
-  }
-  closeFilterPopup() {
-    this.isFilterPopupVisible = false;
-  }
-  isButtonDisabled:boolean=true;
+
   async ngOnInit() {
-    if (!JSON.parse(this.projectService.getInitializeMapSelected())){
-      this.isButtonDisabled = false;
-    }
+    if (!JSON.parse(this.projectService.getInitializeMapSelected())) this.isButtonDisabled = false;
     this.mapData = this.projectService.getMapData();
 
     if (!this.mapData) this.nodata = 'No Map Selected';
@@ -159,7 +150,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     });
 
     this.liveTasksInterval = setInterval(async () => {
-      if (this.tasksSignalController) this.tasksSignalController.abort();
       await this.fetchTasks();
     }, 1000 * 4);
 
@@ -168,6 +158,15 @@ export class TasksComponent implements OnInit, AfterViewInit {
     //   this.autoRefreshTasks();
     // }, 1000);
   }
+
+  openFilterPopup() {
+    this.isFilterPopupVisible = !this.isFilterPopupVisible;
+  }
+
+  closeFilterPopup() {
+    this.isFilterPopupVisible = false;
+  }
+  isButtonDisabled:boolean=true;
 
   getTranslation(key: string) {
     return this.translationService.getTasksTranslation(key);
@@ -395,6 +394,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   async fetchTasks() {
+    if (this.tasksSignalController) this.tasksSignalController.abort();
     this.tasksSignalController = new AbortController();
 
     let establishedTime = new Date(this.mapData.createdAt); // created time of map..
@@ -460,11 +460,15 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
       this.setPaginatedData();
     }
-    if (!this.isFilterApplied) {
-      this.filteredTaskData = [...this.tasks];
+    else if (!this.isFilterApplied && !this.isOnSearchApplied) {
+      // !this.isTaskDropDowned
+      this.filteredTaskData = this.tasks;
+      this.setPaginatedData();
     }
-    
-    this.setPaginatedData();
+    // if (!this.isFilterApplied) {
+    //   this.filteredTaskData = [...this.tasks];
+    // }   
+    // this.setPaginatedData();
   }
   formatDateForInput(dateString: string): string {
     if (!dateString) return '';
@@ -595,21 +599,21 @@ export class TasksComponent implements OnInit, AfterViewInit {
   cancelAssign(item: any) {
     item.showDropdown = false;
     item.showReassDropdown = false;
-    // this.isTaskDropDowned = false;
+    this.isTaskDropDowned = false;
   }
 
   toggleDropdown(item: any) {
     // console.log(item.selectedRobot);
     item.selectedRobot = '';
     item.showDropdown = true;
-    // this.isTaskDropDowned = true;
+    this.isTaskDropDowned = true;
   }
 
   reassignRobot(item: any) {
     item.selectedRobot = '';
     item.showReassDropdown = true; // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
-    // this.isTaskDropDowned = true;
+    this.isTaskDropDowned = true;
   }
 
   shouldShowPaginator(): boolean {

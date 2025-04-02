@@ -56,24 +56,10 @@ export class ThroughputComponent {
     private cdRef: ChangeDetectorRef,
     private translationService: TranslationService,
   ) {
-    const seriesData = {
-      hourlyDataSeries1: {
-        picks: [0, 110, 91, 55, 101, 129, 122, 69, 91, 148],
-        datestime: [],
-      },
-    };
-
-    const totalPicks = seriesData.hourlyDataSeries1.picks.reduce(
-      (acc, val) => acc + val,
-      0
-    );
-    const numberOfDataPoints = seriesData.hourlyDataSeries1.picks.length;
-    this.averagePercentage = totalPicks / numberOfDataPoints;
-
     this.chartOptions = {
       series: [
         {
-          name: this.getTranslation("picks"),
+          name: this.getTranslation('picks'),
           data: this.throughputArr,
           color: '#F71717', // Using preferred color
         },
@@ -119,17 +105,16 @@ export class ThroughputComponent {
           color: '#959494',
         },
       },
-      labels: seriesData.hourlyDataSeries1.datestime,
+      // labels: seriesData.hourlyDataSeries1.datestime,
       xaxis: {
         type: 'datetime',
         tickAmount: 10,
         labels: {
+          datetimeUTC: false,
           format: 'HH:mm',
         },
       },
-      yaxis: {
-        opposite: true,
-      },
+      yaxis: {},
       legend: {
         horizontalAlign: 'left',
         fontFamily: 'Arial, Helvetica, sans-serif',
@@ -149,7 +134,7 @@ export class ThroughputComponent {
         this.chartOptions = {
           series: [
             {
-              name: this.getTranslation("picks"),
+              name: this.getTranslation('picks'),
               data: this.throughputArr,
               color: '#F71717', // Using preferred color
             },
@@ -200,12 +185,11 @@ export class ThroughputComponent {
             type: 'datetime',
             tickAmount: 10,
             labels: {
+              datetimeUTC: false,
               format: 'HH:mm',
             },
           },
-          yaxis: {
-            opposite: true,
-          },
+          yaxis: {},
           legend: {
             horizontalAlign: 'left',
             fontFamily: 'Arial, Helvetica, sans-serif',
@@ -246,26 +230,24 @@ export class ThroughputComponent {
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 5) {
     // limit: number = 12
-    const limitedData = data.length > limit ? data.slice(-limit) : data;
-    const limitedTime = time.length > limit ? time.slice(-limit) : time;
+    // const limitedData = data.length > limit ? data.slice(-limit) : data;
+    // const limitedTime = time.length > limit ? time.slice(-limit) : time;
 
     this.chartOptions = {
       ...this.chartOptions,
-      series: [{ name: 'Throughput', data: limitedData, color: '#ff7373' }],
+      series: [{ name: 'Throughput', data: data, color: '#ff7373' }],
       xaxis: {
-        // ...this.chartOptions.xaxis, // only if needed..
-        categories: limitedTime,
+        categories: time,
+        type: 'datetime',
+        labels: {
+          datetimeUTC: false,
+          format: 'HH:mm',
+        },
       },
     };
   }
 
-  async fetchChartData(
-    endpoint: string,
-    timeSpan: string,
-    startTime: string,
-    endTime: string
-  ) {
-    // alter to date..
+  async fetchChartData(endpoint: string, timeSpan: string) {
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay();
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/graph/${endpoint}/${this.selectedMap.id}`,
@@ -289,28 +271,14 @@ export class ThroughputComponent {
 
     if (this.throuputTimeInterval) return;
 
-    const data = await this.fetchChartData(
-      'throughput',
-      this.currentFilter,
-      '',
-      ''
-    );
+    const data = await this.fetchChartData('throughput', this.currentFilter);
 
     let { Stat } = data.throughput;
-    // console.log(Stat);
 
     if (data.throughput) {
-      // this.throughputArr = data.throughput.map((stat: any) => stat.rate);
       this.throughputArr = Stat.map((stat: any) => stat.TotalThroughPutPerHour);
       this.throughputXaxisSeries = Stat.map(
-        // (stat: any) => stat.time
-        (stat: any) =>
-          new Date().toLocaleString('en-IN', {
-            // month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
+        (stat: any) => stat.TimeStamp * 1000
       );
     }
     this.plotChart(
@@ -320,25 +288,15 @@ export class ThroughputComponent {
     ); // this.selectedMetric..
 
     this.throuputTimeInterval = setInterval(async () => {
-      const data = await this.fetchChartData(
-        'throughput',
-        this.currentFilter,
-        '',
-        ''
-      );
+      const data = await this.fetchChartData('throughput', this.currentFilter);
       let { Stat } = data.throughput;
 
       if (data.throughput) {
         this.throughputArr = Stat.map(
           (stat: any) => stat.TotalThroughPutPerHour
         );
-        this.throughputXaxisSeries = Stat.map((stat: any) =>
-          new Date().toLocaleString('en-IN', {
-            // month: 'short',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-          })
+        this.throughputXaxisSeries = Stat.map(
+          (stat: any) => stat.TimeStamp * 1000
         );
       }
 
@@ -360,7 +318,9 @@ export class ThroughputComponent {
   }
 
   getStartOfDay() {
-    return Math.floor(new Date().setHours(0, 0, 0) / 1000);
+    // return Math.floor(new Date().setHours(0, 0, 0) / 1000);
+    let oneHourEar = new Date().getHours() - 1;
+    return Math.floor(new Date().setHours(oneHourEar) / 1000);
   }
 
   clearTroughputInterval() {

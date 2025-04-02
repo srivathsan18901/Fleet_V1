@@ -14,6 +14,7 @@ import { ExportFileService } from '../services/export-file.service';
 import { AreaChartComponent } from '../area-chart/area-chart.component';
 import { GradientDonutComponent } from '../gradient-donut/gradient-donut.component';
 import { NgxSpinnerService } from 'ngx-spinner';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-statistics',
@@ -84,7 +85,10 @@ export class StatisticsComponent {
     this.subscriptions.push(fleetSub);
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
-    if (!this.selectedMap) return;
+    if (!this.selectedMap){
+      this.showAlert(); 
+      return;
+    }
     // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
     await this.getGrossStatus();
 
@@ -108,6 +112,18 @@ export class StatisticsComponent {
       }
     }, 1000 * 10);
   }
+
+  showAlert() {
+    setTimeout(() => {
+      Swal.fire({
+        position: 'center',
+        icon: 'info',
+        html: `<span style="font-size: 20px;">Select Map to view its Statistics !</span>`,
+        showConfirmButton: true,
+      });
+    }, 250);
+  }
+
 
   getSeverity(arg0: any) {
     throw new Error('Method not implemented.');
@@ -219,9 +235,6 @@ export class StatisticsComponent {
     let establishedTime = new Date(this.selectedMap.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
 
-    // timeStamp1 = 1728930600;
-    // timeStamp2 = 1729050704;
-
     let endPoint = '/fleet-tasks/curr-task-activities';
 
     if (this.abortControllers.has(endPoint))
@@ -288,7 +301,9 @@ export class StatisticsComponent {
   }
 
   async fetchTasksStatus(): Promise<number[]> {
-    let establishedTime = new Date(this.selectedMap.createdAt);
+    let startEstablishTime = new Date().setHours(0, 0, 0, 0);
+    let establishedTime = new Date(startEstablishTime);
+
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime); // yet to take, in seri..
 
     let endPoint = '/fleet-tasks';

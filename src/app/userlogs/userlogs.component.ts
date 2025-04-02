@@ -27,8 +27,6 @@ export class Userlogscomponent {
   isPopupVisible: boolean | undefined;
   isTransitioning: boolean = false;
   activeButton: string = 'task'; // Default active button
-  // activeHeader: string = this.getTranslation("Task Logs"); // Default header
-  // private activeHeaderKey: string = this.getTranslation("Task Logs");
   currentTable = 'task';
   currentTab: any;
   filteredTaskData: any[] = [];
@@ -39,23 +37,31 @@ export class Userlogscomponent {
   paginatedData2: any[] = [];
   initialRoboInfos: any[] = []; // to store data of initial robo details..
   mapDetails: any | null = null;
-  // Your task data
+
   taskData: any[] = [];
   filteredRobots: any[] = []; // To store filtered robots
   roboerrors: any[] = [];
   roboErr: any[] = [];
+
   // Your robot data
   robotData: any[] = [];
 
   // Your fleet data
   fleetData: any[] = [];
   isFleet: boolean = false; // Store the emitted value
-  private subscriptions: Subscription[] = [];
+  // private subscriptions: Subscription[] = [];
+
+  robots: any[] = [];
+  liveRobos: any[] = [];
 
   robotLogInterval: ReturnType<typeof setInterval> | null = null;
   taskLogInterval: ReturnType<typeof setInterval> | null = null;
   fleetLogInterval: ReturnType<typeof setInterval> | null = null;
-  private langSubscription!: Subscription;
+  // private langSubscription!: Subscription;
+
+  // activeHeaderKey: string = 'Task Logs'; // Store the key instead
+  // activeHeader: string = this.getTranslation(this.activeHeaderKey);
+
   constructor(
     private cdRef: ChangeDetectorRef,
     private exportService: ExportService,
@@ -77,12 +83,12 @@ export class Userlogscomponent {
       console.log('Seems no map has been selected');
       return;
     }
-    this.getTaskLogs();
+
     this.modeService.currentMode$.subscribe((mode) => {
       this.currentMode = mode; // React to mode updates
       // console.log(this.currentMode,"dkjnonvofpsp")
     });
-    // this.subscriptions.push(fleetSub);
+
     const savedIsFleet = sessionStorage.getItem('isFleet');
     if (savedIsFleet !== null) {
       this.isFleet = savedIsFleet === 'true'; // Convert string to boolean
@@ -91,49 +97,49 @@ export class Userlogscomponent {
 
     this.onModeChange(this.currentMode);
     await this.fetchRobos();
+
+    this.showTable('task');
+  }
+
+  getTranslation(key: string) {
+    return this.translationService.getErrorTranslation(key);
+  }
+
+  async ngAfterViewInit() {
+    this.setPaginatedData();
+  }
+
+  showTable(table: string) {
+    this.clearAllInterval();
+
+    this.currentTable = table;
+    if (this.currentTable == 'task') this.fetchTaskErr();
+    else if (this.currentTable == 'robot') this.fetchRoboErr();
+    else if (this.currentTable == 'fleet') this.fetchFleetErr();
+  }
+
+  async fetchTaskErr() {
+    await this.getTaskLogs();
+    this.setPaginatedData();
+    this.taskLogInterval = setInterval(async () => {
+      await this.getTaskLogs();
+      this.setPaginatedData();
+    }, 1000 * 3);
+  }
+
+  async fetchRoboErr() {
     // data rendering
     await this.getRoboLogs();
     this.robotLogInterval = setInterval(async () => {
       await this.getRoboLogs();
     }, 1000 * 3);
-    await this.getTaskLogs();
-    this.taskLogInterval = setInterval(async () => {
-      await this.getTaskLogs();
-    }, 1000 * 3);
+  }
+
+  async fetchFleetErr() {
     this.getFleetLogs();
     this.fleetLogInterval = setInterval(async () => {
       await this.getFleetLogs();
     }, 1000 * 3);
-    this.langSubscription = this.translationService.currentLanguage$.subscribe(
-      (val) => {
-        this.activeHeader = this.getTranslation(this.activeHeaderKey);
-        this.cdRef.detectChanges();
-      }
-    );
-  }
-  getTranslation(key: string) {
-    return this.translationService.getErrorTranslation(key);
-  }
-  async ngAfterViewInit() {
-    this.setPaginatedData();
-  }
-
-  onModeChange(newMode: string) {
-    this.currentMode = newMode; // Update mode on event
-    console.log('Mode changed to:', newMode);
-  }
-
-  getTimeStampsOfDay(establishedTime: Date) {
-    let currentTime = Math.floor(new Date().getTime() / 1000);
-    let startTimeOfDay = this.getStartOfDay(establishedTime);
-    return {
-      timeStamp1: startTimeOfDay,
-      timeStamp2: currentTime,
-    };
-  }
-  getStartOfDay(establishedTime: Date) {
-    // console.log(establishedTime.toLocaleDateString(),'locale')
-    return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
 
   async getTaskLogs() {
@@ -153,8 +159,8 @@ export class Userlogscomponent {
       }
     );
     let data = await response.json();
-    const { taskErr } = data;
-    this.taskData = data.taskErr
+    // const { taskErr } = data;
+    this.taskData = data?.taskErr
       ?.map((taskErr: any) => {
         if (taskErr === null) return null;
 
@@ -178,8 +184,9 @@ export class Userlogscomponent {
         };
       })
       .filter((Err: any) => Err !== null);
-    this.filteredTaskData = this.taskData;
-    this.setPaginatedData();
+
+    this.filteredTaskData =
+      this.taskData && this.taskData.length ? this.taskData : [];
   }
 
   async fetchRobos() {
@@ -201,6 +208,7 @@ export class Userlogscomponent {
         this.robots = map.roboPos;
       });
   }
+
   async getLiveRoboInfo(): Promise<any[]> {
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`,
@@ -214,17 +222,12 @@ export class Userlogscomponent {
     if (!data.map || data.error) return [];
     return data.robos;
   }
-  robots: any[] = [];
-  liveRobos: any[] = [];
-  updateLiveRoboInfo() {
-    // console.log(this.robots);
 
+  updateLiveRoboInfo() {
     if (!('robots' in this.liveRobos)) {
       this.robots = this.initialRoboInfos;
       return;
     }
-
-    //Robotstatus
 
     let { robots }: any = this.liveRobos;
     if (!robots.length) this.robots = this.initialRoboInfos;
@@ -237,7 +240,6 @@ export class Userlogscomponent {
       return robo;
     });
     this.filteredRobots = this.robots;
-    this.setPaginatedData();
     this.roboerrors = this.robots.map((robo) => {
       return {
         name: robo.roboDet.roboName,
@@ -250,9 +252,10 @@ export class Userlogscomponent {
   async getRoboLogs() {
     this.liveRobos = await this.getLiveRoboInfo();
     this.updateLiveRoboInfo();
-    // this.roboErr=[];
+    this.roboErr = [];
+
     this.roboerrors.forEach((robo) => {
-      // console.log(robo.error);
+      if (!robo || !robo.error) return;
       let date = new Date();
       let createdAt = date.toLocaleString('en-IN', {
         month: 'short',
@@ -261,7 +264,8 @@ export class Userlogscomponent {
         hour: 'numeric',
         minute: 'numeric',
       });
-      if (robo.error['EMERGENCY STOP'].length) {
+
+      if (robo.error['EMERGENCY STOP']?.length) {
         robo.error['EMERGENCY STOP'].forEach((error: any) => {
           this.roboErr.push({
             name: robo.name,
@@ -272,7 +276,7 @@ export class Userlogscomponent {
           });
         });
       }
-      if (robo.error['MANUAL MODE'].length) {
+      if (robo.error['MANUAL MODE']?.length) {
         robo.error['MANUAL MODE'].forEach((error: any) => {
           this.roboErr.push({
             name: robo.name,
@@ -283,7 +287,7 @@ export class Userlogscomponent {
           });
         });
       }
-      if (robo.error['LIDAR_ERROR'].length) {
+      if (robo.error['LIDAR_ERROR']?.length) {
         robo.error['LIDAR_ERROR'].forEach((error: any) => {
           this.roboErr.push({
             name: robo.name,
@@ -294,7 +298,7 @@ export class Userlogscomponent {
           });
         });
       }
-      if (robo.error['WAIT FOR ACK'].length) {
+      if (robo.error['WAIT FOR ACK']?.length) {
         robo.error['WAIT FOR ACK'].forEach((error: any) => {
           this.roboErr.push({
             name: robo.name,
@@ -305,7 +309,7 @@ export class Userlogscomponent {
           });
         });
       }
-      if (robo.error['Dock Failed'].length) {
+      if (robo.error['Dock Failed']?.length) {
         robo.error['Dock Failed'].forEach((error: any) => {
           this.roboErr.push({
             name: robo.name,
@@ -316,8 +320,8 @@ export class Userlogscomponent {
           });
         });
       }
-      if (robo.error['Trolley Detection'].length) {
-        robo.error['Trolley Detection'].forEach((error: any) => {
+      if (robo.error['LOCALIZATION_ERROR']?.length) {
+        robo.error['LOCALIZATION_ERROR'].forEach((error: any) => {
           this.roboErr.push({
             name: robo.name,
             error: error.name,
@@ -327,7 +331,7 @@ export class Userlogscomponent {
           });
         });
       }
-      if (robo.error['Docking Complete'].length) {
+      if (robo.error['Docking Complete']?.length) {
         robo.error['Docking Complete'].forEach((error: any) => {
           this.roboErr.push({
             name: robo.name,
@@ -345,7 +349,7 @@ export class Userlogscomponent {
 
   getFleetLogs() {
     fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/fleet-logss/${this.mapData.id}`,
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/fleet-logs/${this.mapData.id}`,
       {
         method: 'POST',
         credentials: 'include',
@@ -356,8 +360,6 @@ export class Userlogscomponent {
       }
     )
       .then((response) => {
-        // if (!response.ok)
-        //   throw new Error(`Error with the statusCode of ${response.status}`);
         return response.json();
       })
       .then((data) => {
@@ -384,8 +386,8 @@ export class Userlogscomponent {
         this.filteredTaskData2 = this.fleetData;
         this.setPaginatedData();
       })
-      .catch((err) => {
-        console.log(err);
+      .catch((error) => {
+        console.log(error);
       });
   }
 
@@ -406,6 +408,7 @@ export class Userlogscomponent {
       );
     }
   }
+
   onSearch(event: Event): void {
     const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
     this.searchInput = inputValue; // Store the search input value
@@ -473,6 +476,25 @@ export class Userlogscomponent {
     throw new Error('Method not implemented.');
   }
 
+  onModeChange(newMode: string) {
+    this.currentMode = newMode; // Update mode on event
+    console.log('Mode changed to:', newMode);
+  }
+
+  getTimeStampsOfDay(establishedTime: Date) {
+    let currentTime = Math.floor(new Date().getTime() / 1000);
+    let startTimeOfDay = this.getStartOfDay(establishedTime);
+    return {
+      timeStamp1: startTimeOfDay,
+      timeStamp2: currentTime,
+    };
+  }
+
+  getStartOfDay(establishedTime: Date) {
+    // console.log(establishedTime.toLocaleDateString(),'locale')
+    return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
+  }
+
   exportAsPDF() {
     throw new Error('Method not implemented.');
   }
@@ -514,7 +536,7 @@ export class Userlogscomponent {
         return 'taskErrorLogs';
     }
   }
-  
+
   setActiveButton(button: string) {
     this.activeButton = button;
     this.isTransitioning = true;
@@ -528,15 +550,21 @@ export class Userlogscomponent {
     }, 200); // 300ms matches the CSS transition duration
   }
 
-
-  showTable(table: string) {
-    this.currentTable = table;
-    console.log('clicked',this.currentTable);
-    this.setPaginatedData();
-  }
-
   setCurrentTable(table: string) {
     this.currentTable = table;
+  }
+
+  ShowExpBtn():boolean {
+    switch (this.currentTable) {
+      case 'task':
+        return this.taskData.length == 0;
+      case 'robot':
+        return this.robotData.length == 0;
+      case 'fleet':
+        return this.fleetData.length == 0;
+      default:
+        return false;
+    }
   }
 
   getCurrentTableData() {
@@ -695,9 +723,16 @@ export class Userlogscomponent {
     // Implement your date range filtering logic here
   }
 
-  ngOnDestroy() {
+  clearAllInterval() {
     if (this.robotLogInterval) clearInterval(this.robotLogInterval);
     if (this.taskLogInterval) clearInterval(this.taskLogInterval);
     if (this.fleetLogInterval) clearInterval(this.fleetLogInterval);
+  }
+
+  ngOnDestroy() {
+    // if (this.robotLogInterval) clearInterval(this.robotLogInterval);
+    // if (this.taskLogInterval) clearInterval(this.taskLogInterval);
+    // if (this.fleetLogInterval) clearInterval(this.fleetLogInterval);
+    this.clearAllInterval();
   }
 }

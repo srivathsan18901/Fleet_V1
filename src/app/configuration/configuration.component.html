@@ -401,7 +401,10 @@
                   <td class="iconTable">
                     <button 
                     class="sel-btn" 
-                    [ngClass]="{'deselect-btn': item.mapName === this.selectedMap?.mapName}" 
+                    [ngClass]="{
+                      'deselect-btn': item.mapName === this.selectedMap?.mapName, 
+                      'blurred-disabled': userrole === 'User'
+                    }" 
                     (click)="selectMap(item)">
                     {{
                       item.mapName === this.selectedMap?.mapName

@@ -544,7 +544,6 @@ export class ProjectsetupComponent {
         let isProjInSession = await this.setProjectInSession(bodyData);
 
         if (isProjInSession) {
-          // alert('Project already in use!');
           Swal.fire({
             position: 'center',
             icon: 'warning',
@@ -555,6 +554,8 @@ export class ProjectsetupComponent {
           });
           return;
         }
+        
+        await this.openWithDefaultMap(data.project.defaultMap);
 
         this.projectService.setSelectedProject(project_data);
         this.projectService.setProjectCreated(true);
@@ -606,5 +607,36 @@ export class ProjectsetupComponent {
       console.log('Error in set project session : ', error);
       return null;
     }
+  }
+
+  async openWithDefaultMap(defaultMap: any): Promise<void> {
+    if (!defaultMap.mapId || !defaultMap.mapName) return;
+    await this.loadMapData(defaultMap.mapName, defaultMap.siteName);
+  }
+ 
+  async loadMapData(mapName: string, siteName: string) {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${mapName}`
+    );
+    if (!response.ok)
+      console.error('Error while fetching map data : ', response.status);
+    let data = await response.json();
+ 
+    if (data.error || !data.isExists) return;
+ 
+    const { map } = data;
+ 
+    this.projectService.setMapData({
+      id: map._id,
+      mapName: map.mapName,
+      siteName: siteName,
+      date: null,
+      createdAt: map.createdAt,
+      imgUrl: map.imgUrl,
+    });
+ 
+    if (this.projectService.getIsMapSet()) return;
+    this.projectService.setIsMapSet(true);
+    this.projectService.setInitializeMapSelected(true);
   }
 }

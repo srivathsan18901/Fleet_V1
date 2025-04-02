@@ -79,6 +79,13 @@
                 <option value="ASSIGNED">{{ getTranslation('Assigned') }}</option>
               </select>
              </div>
+             <!-- Robot ID Filter -->
+             <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
+             <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('Robot Name') }}:</label>
+             <select [(ngModel)]="filterOptions.status" style="border: 1px solid #ff5c5c; width: -webkit-fill-available; border-radius: 5px; color: #FF5C5C;padding: 5px;">
+
+             </select>
+            </div>
               <!-- Buttons -->
               <div class="filter-actions">
                 <button style="    background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters()">{{ getTranslation('apply') }}</button>

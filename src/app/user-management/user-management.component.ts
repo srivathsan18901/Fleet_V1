@@ -25,6 +25,7 @@ interface projectList {
   createdAt: string;
   assigned: boolean;
   isDisabled: boolean;
+  defaultMap: string;
 }
 @Component({
   selector: 'app-user-management',
@@ -72,15 +73,20 @@ export class UserManagementComponent implements OnInit {
   activeTab: string = 'General'; // Default tab
   deleteButtonText: string = '';
   editButtonText: string = '';
+  defaultMap: string = 'none';
   
   private languageSubscription!: Subscription;
   private langSubscription: String = 'ENG';
 
   async ngOnInit(): Promise<void> {
     this.selectedProject = this.projectService.getSelectedProject();
-    this.paginatorIntl.itemsPerPageLabel =
-      this.getTranslation('Items per page'); // Modify the text
+    this.defaultMap = this.projectService.getMapData()
+      ? this.projectService.getMapData().mapName
+      : 'None';
+
+    this.paginatorIntl.itemsPerPageLabel = this.getTranslation('Items per page'); // Modify the text
     this.paginatorIntl.changes.next();
+
     this.deleteButtonText = this.getTranslation('Delete');
     this.editButtonText = this.getTranslation('edit');
     this.translationService.currentLanguage$.subscribe(
@@ -141,23 +147,24 @@ export class UserManagementComponent implements OnInit {
         // this.cdRef.detectChanges();
       }
     );
+
     if (!this.selectedProject && !this.selectedProject._id) {
       console.log('no project selected!');
       return;
     }
     let user = this.authService.getUser();
-    if (!user) {
-      console.log('Current user state not found');
-      return;
-    }
+    if (!user) return;
+
     this.currUserName = user.name;
     this.fetchUsers();
     await this.fetchProjectList();
     this.setPaginatedData();
   }
+
   getTranslation(key: string) {
     return this.translationService.getUserManagementTranslation(key);
   }
+
   userPermissionState = [
     [
       false,
@@ -304,6 +311,7 @@ export class UserManagementComponent implements OnInit {
         name: project.projectName,
         assigned: false,
         isDisabled: false,
+        defaultMap: project.defaultMap.mapName || 'None',
         createdAt: createdAt,
         createdOn: project.createdAt,
       };

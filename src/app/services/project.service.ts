@@ -107,6 +107,13 @@ export class ProjectService {
     this.cookieService.delete('map-data', '/');
   }
 
+  updateMapNameInCookie(mapName: string, siteName: string){
+    let map = this.getMapData();
+    if(!map) return;
+    map.mapName = mapName;
+    this.setMapData(map);
+  }
+
   getMapData() {
     const storedMap = this.cookieService.get('map-data');
     return storedMap ? JSON.parse(storedMap) : null;

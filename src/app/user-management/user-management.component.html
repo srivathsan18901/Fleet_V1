@@ -660,6 +660,7 @@
                 <th class="px-4 py-4 text-left">{{getTranslation('Project Name')}}</th>
                 <th class="px-4 py-4 text-left">{{getTranslation('Created At')}}</th>
                 <th class="px-4 py-4">{{getTranslation('Assign Project')}}</th>
+                <th class ="px-4 py-4"> Default Map </th>
               </tr>
             </thead>
             <!-- Table Body -->
@@ -686,6 +687,7 @@
                     {{ project.assigned ? getTranslation('Un-assign') : getTranslation('Assign') }}
                   </button>
                 </td>
+                <td class="px-4 py-2 text-center">{{ project.defaultMap }}</td>
               </tr>
             </tbody>
           </table>
