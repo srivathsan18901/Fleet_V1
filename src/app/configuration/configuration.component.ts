@@ -452,16 +452,18 @@ export class ConfigurationComponent implements AfterViewInit {
       let data = await response.json();
 
       if (data.nameUpdated) {
-        if (mapNameEdit){
-          this.projectService.updateMapNameInCookie(this.editedMapName, this.editedSiteName);
-          if(this.selectedMap) this.selectedMap.mapName = this.editedMapName;
+        if (mapNameEdit) {
+          this.projectService.updateMapNameInCookie(
+            this.editedMapName,
+            this.editedSiteName
+          );
+          if (this.selectedMap) this.selectedMap.mapName = this.editedMapName;
           this.EnvData = this.EnvData.map((envMap: any) => {
             if (envMap.mapName == map.mapName)
               envMap.mapName = this.editedMapName;
             return envMap;
           });
-        }
-        else
+        } else
           this.EnvData = this.EnvData.map((envMap: any) => {
             if (envMap.mapName == map.mapName)
               envMap.siteName = this.editedSiteName;
@@ -981,7 +983,8 @@ export class ConfigurationComponent implements AfterViewInit {
 
       this.updateDefaultMap(null);
 
-      await this.ngOnInit();
+      // await this.ngOnInit();
+      this.selectedMap = this.projectService.getMapData();
       return;
     }
     // Select a new map
@@ -1022,14 +1025,14 @@ export class ConfigurationComponent implements AfterViewInit {
   async updateDefaultMap(map: any) {
     let currProject = this.projectService.getSelectedProject();
     if (!currProject) return;
- 
+
     let defaultMapBody = {
       projectId: currProject._id,
       mapId: map ? map.id : '',
       mapName: map ? map.mapName : '',
       siteName: map ? map.siteName : '',
     };
- 
+
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project/set-default-map`,
       {
@@ -1039,7 +1042,7 @@ export class ConfigurationComponent implements AfterViewInit {
         body: JSON.stringify(defaultMapBody),
       }
     );
- 
+
     let data = await response.json();
     if (data.error || !data.mapUpdated) return;
     if (map && data.mapUpdated)
@@ -1454,12 +1457,12 @@ export class ConfigurationComponent implements AfterViewInit {
     }
     this.filterData(); // Call filter logic after date change
   }
-  
+
   openCalendar(event: Event) {
     const target = event.target as HTMLInputElement;
     target.showPicker(); // Opens the native date picker on supported browsers
   }
-  
+
   setCurrentTable(table: string) {
     this.currentTable = table;
   }
