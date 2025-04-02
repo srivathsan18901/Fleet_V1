@@ -81,7 +81,7 @@
              </div>
              <!-- Robot ID Filter -->
              <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
-             <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('Robot Name') }}:</label>
+             <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('robot_id') }}:</label>
              <select [(ngModel)]="filterOptions.status" style="border: 1px solid #ff5c5c; width: -webkit-fill-available; border-radius: 5px; color: #FF5C5C;padding: 5px;">
 
              </select>
@@ -107,7 +107,7 @@
                   <th>{{ getTranslation('Task ID') }}</th>
                   <th>{{ getTranslation('Task Type') }}</th>
                   <th>{{ getTranslation('Status') }}</th>
-                  <th>{{ getTranslation('Robot Name') }}</th>
+                  <th>{{ getTranslation('robot_id') }}</th>
                   <th>{{ getTranslation('Destination') }}</th>
                   <th>{{ getTranslation('assign_robots') }}</th>    
                   <th>{{ getTranslation('Actions') }}</th>                
@@ -140,7 +140,7 @@
         <td>{{ item.taskId }}</td>
         <td>{{ getTranslation(item.taskType) }}</td>
         <td>{{ getTranslation(item.status) }}</td>
-        <td>{{ item.roboName }}</td>
+        <td>{{ item.roboName < 0 ? "--":item.roboName }}</td>
         <td>{{ item.destinationLocation }}</td>
         <td>
           <div style="display: flex; align-items: center; gap: 10px;">
