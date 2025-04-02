@@ -153,12 +153,12 @@
                   <option value="" disabled selected>{{ getTranslation('select') }}</option>
                   <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
                 </select>
-                <div>
-                  <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
-                    {{ getTranslation('confirm') }}
+                <div style="display: flex; gap: 20px; font-weight:bold; font-size:15px">
+                  <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="ASS-BTN">
+                    &#10004; <!-- Check Mark -->
                   </button>
-                  <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
-                    {{ getTranslation('Cancel') }}
+                  <button  (click)="cancelAssign(item)" class="CAN-BTN">
+                    &#x2613; <!-- Cross Mark -->
                   </button>
                 </div>
               </ng-container>
@@ -173,12 +173,12 @@
                     <option value="" disabled selected>{{ getTranslation('select') }}</option>
                     <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
                   </select>
-                  <div>
-                    <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
-                      {{ getTranslation('confirm') }}
+                  <div style="display: flex; gap: 20px; font-weight:bold; font-size:15px">
+                    <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="ASS-BTN">
+                      &#10004; <!-- Check Mark -->
                     </button>
-                    <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
-                      {{ getTranslation('Cancel') }}
+                    <button  (click)="cancelAssign(item)" class="CAN-BTN">
+                      &#x2613; <!-- Cross Mark -->
                     </button>
                   </div>
                 </ng-container>

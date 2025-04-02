@@ -386,7 +386,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   autoRefreshTasks() {
-    if (this.isFilterApplied || this.isOnSearchApplied) {
+    if (this.isFilterApplied || this.isOnSearchApplied ) {
       this.filterTasks(); // Reapply filters
     } else {
       this.setPaginatedData(); // Just update the paginated data
@@ -448,7 +448,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       });
     // this.filteredTaskData = this.tasks;
 
-    if (this.isFilterApplied || this.isOnSearchApplied) {
+    if (this.isFilterApplied || this.isOnSearchApplied || this.isTaskDropDowned) {
       // !this.isTaskDropDowned
       this.filteredTaskData = this.filteredTaskData.filter((updatedTask) => {
         // swap tasks with filteredTaskData
