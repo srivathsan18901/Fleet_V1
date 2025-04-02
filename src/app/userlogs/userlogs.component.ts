@@ -41,7 +41,6 @@ export class Userlogscomponent {
   taskData: any[] = [];
   filteredRobots: any[] = []; // To store filtered robots
   roboerrors: any[] = [];
-  roboErr: any[] = [];
 
   // Your robot data
   robotData: any[] = [];
@@ -49,18 +48,22 @@ export class Userlogscomponent {
   // Your fleet data
   fleetData: any[] = [];
   isFleet: boolean = false; // Store the emitted value
-  // private subscriptions: Subscription[] = [];
 
   robots: any[] = [];
   liveRobos: any[] = [];
 
-  robotLogInterval: ReturnType<typeof setInterval> | null = null;
   taskLogInterval: ReturnType<typeof setInterval> | null = null;
+  robotLogInterval: ReturnType<typeof setInterval> | null = null;
   fleetLogInterval: ReturnType<typeof setInterval> | null = null;
-  // private langSubscription!: Subscription;
 
-  // activeHeaderKey: string = 'Task Logs'; // Store the key instead
-  // activeHeader: string = this.getTranslation(this.activeHeaderKey);
+  taskController: AbortController | null = null;
+  robotController: AbortController | null = null;
+  fleetController: AbortController | null = null;
+
+  activeHeaderKey: string = 'Task Logs'; // Store the key instead
+  activeHeader: string = this.getTranslation(this.activeHeaderKey);
+  subHeaderKey: string = 'taskErrorLogs';
+  activeSubHeader: any = this.getTranslation(this.subHeaderKey);
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -72,21 +75,13 @@ export class Userlogscomponent {
   ) {
     this.mapData = this.projectService.getMapData();
   }
-  activeHeaderKey: string = 'Task Logs'; // Store the key instead
-  activeHeader: string = this.getTranslation(this.activeHeaderKey);
-  subHeaderKey : string = 'taskErrorLogs'
-  activeSubHeader: any= this.getTranslation(this.subHeaderKey);
 
   async ngOnInit() {
     this.mapData = this.projectService.getMapData();
-    if (!this.mapData) {
-      console.log('Seems no map has been selected');
-      return;
-    }
+    if (!this.mapData) return;
 
     this.modeService.currentMode$.subscribe((mode) => {
       this.currentMode = mode; // React to mode updates
-      // console.log(this.currentMode,"dkjnonvofpsp")
     });
 
     const savedIsFleet = sessionStorage.getItem('isFleet');
@@ -96,7 +91,7 @@ export class Userlogscomponent {
     }
 
     this.onModeChange(this.currentMode);
-    await this.fetchRobos();
+    this.fetchRobos();
 
     this.showTable('task');
   }
@@ -107,6 +102,19 @@ export class Userlogscomponent {
 
   async ngAfterViewInit() {
     this.setPaginatedData();
+  }
+
+  fetchRobos() {
+    fetch(
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.mapData.mapName}`,
+      { method: 'GET', credentials: 'include' }
+    )
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.map || data.error) return;
+        const { map } = data;
+        this.robots = map.roboPos;
+      });
   }
 
   showTable(table: string) {
@@ -123,7 +131,7 @@ export class Userlogscomponent {
     this.setPaginatedData();
     this.taskLogInterval = setInterval(async () => {
       await this.getTaskLogs();
-      this.setPaginatedData();
+      // this.setPaginatedData();
     }, 1000 * 3);
   }
 
@@ -136,16 +144,20 @@ export class Userlogscomponent {
   }
 
   async fetchFleetErr() {
-    this.getFleetLogs();
+    await this.getFleetLogs();
     this.fleetLogInterval = setInterval(async () => {
       await this.getFleetLogs();
     }, 1000 * 3);
   }
 
   async getTaskLogs() {
-    this.mapData = this.projectService.getMapData();
+    if (!this.mapData) return;
     let establishedTime = new Date(this.mapData.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+
+    if (this.taskController) this.taskController.abort();
+    this.taskController = new AbortController();
+
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
       {
@@ -156,13 +168,16 @@ export class Userlogscomponent {
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
+        signal: this.taskController.signal,
       }
     );
     let data = await response.json();
-    // const { taskErr } = data;
-    this.taskData = data?.taskErr
-      ?.map((taskErr: any) => {
-        if (taskErr === null) return null;
+    if (data.error || !data.taskErr) return;
+
+    const { taskErr } = data;
+    this.taskData = taskErr
+      .map((taskErr: any) => {
+        if (taskErr == null) return null;
 
         let dateCreated = new Date(taskErr.TaskAddTime * 1000);
         const formattedDateTime = `${dateCreated.toLocaleDateString('en-IN', {
@@ -189,206 +204,59 @@ export class Userlogscomponent {
       this.taskData && this.taskData.length ? this.taskData : [];
   }
 
-  async fetchRobos() {
-    fetch(
-      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.mapData.mapName}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-      }
-    )
-      .then((response) => response.json())
-      .then((data) => {
-        if (!data.map || data.error) {
-          return;
-        }
-        const { map } = data;
+  async getRoboLogs() {
+    // if (!this.mapData) return;
+    let establishedTime = new Date(this.mapData.createdAt);
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
 
-        // Check if the image URL is accessible
-        this.robots = map.roboPos;
-      });
-  }
+    if (this.robotController) this.robotController.abort();
+    this.robotController = new AbortController();
 
-  async getLiveRoboInfo(): Promise<any[]> {
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`,
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/robo-logs/${this.mapData.id}`,
       {
-        method: 'GET',
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
+        body: JSON.stringify({
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+        signal: this.robotController.signal,
       }
     );
+    let data = await response.json();
+    if (data.error || !data.roboLogs) return;
+    this.roboerrors = data.roboLogs;
 
-    const data = await response.json();
-    if (!data.map || data.error) return [];
-    return data.robos;
+    this.paginatedData1 = this.roboerrors;
   }
 
-  updateLiveRoboInfo() {
-    if (!('robots' in this.liveRobos)) {
-      this.robots = this.initialRoboInfos;
-      return;
-    }
+  async getFleetLogs() {
+    let establishedTime = new Date(this.mapData.createdAt);
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
 
-    let { robots }: any = this.liveRobos;
-    if (!robots.length) this.robots = this.initialRoboInfos;
-    this.robots = this.robots.map((robo) => {
-      robots.forEach((liveRobo: any) => {
-        if (robo.roboDet.id == liveRobo.id) {
-          robo.errors = liveRobo.robot_errors;
-        }
-      });
-      return robo;
-    });
-    this.filteredRobots = this.robots;
-    this.roboerrors = this.robots.map((robo) => {
-      return {
-        name: robo.roboDet.roboName,
-        error: robo.errors,
-        id: robo.roboDet.id,
-      };
-    });
-  }
+    if (this.fleetController) this.fleetController.abort();
+    this.fleetController = new AbortController();
 
-  async getRoboLogs() {
-    this.liveRobos = await this.getLiveRoboInfo();
-    this.updateLiveRoboInfo();
-    this.roboErr = [];
-
-    this.roboerrors.forEach((robo) => {
-      if (!robo || !robo.error) return;
-      let date = new Date();
-      let createdAt = date.toLocaleString('en-IN', {
-        month: 'short',
-        year: 'numeric',
-        day: 'numeric',
-        hour: 'numeric',
-        minute: 'numeric',
-      });
-
-      if (robo.error['EMERGENCY STOP']?.length) {
-        robo.error['EMERGENCY STOP'].forEach((error: any) => {
-          this.roboErr.push({
-            name: robo.name,
-            error: error.name,
-            description: error.description,
-            id: robo.id,
-            dateTime: createdAt,
-          });
-        });
-      }
-      if (robo.error['MANUAL MODE']?.length) {
-        robo.error['MANUAL MODE'].forEach((error: any) => {
-          this.roboErr.push({
-            name: robo.name,
-            error: error.name,
-            description: error.description,
-            id: robo.id,
-            dateTime: createdAt,
-          });
-        });
-      }
-      if (robo.error['LIDAR_ERROR']?.length) {
-        robo.error['LIDAR_ERROR'].forEach((error: any) => {
-          this.roboErr.push({
-            name: robo.name,
-            error: error.name,
-            description: error.description,
-            id: robo.id,
-            dateTime: createdAt,
-          });
-        });
-      }
-      if (robo.error['WAIT FOR ACK']?.length) {
-        robo.error['WAIT FOR ACK'].forEach((error: any) => {
-          this.roboErr.push({
-            name: robo.name,
-            error: error.name,
-            description: error.description,
-            id: robo.id,
-            dateTime: createdAt,
-          });
-        });
-      }
-      if (robo.error['Dock Failed']?.length) {
-        robo.error['Dock Failed'].forEach((error: any) => {
-          this.roboErr.push({
-            name: robo.name,
-            error: error.name,
-            description: error.description,
-            id: robo.id,
-            dateTime: createdAt,
-          });
-        });
-      }
-      if (robo.error['LOCALIZATION_ERROR']?.length) {
-        robo.error['LOCALIZATION_ERROR'].forEach((error: any) => {
-          this.roboErr.push({
-            name: robo.name,
-            error: error.name,
-            description: error.description,
-            id: robo.id,
-            dateTime: createdAt,
-          });
-        });
-      }
-      if (robo.error['Docking Complete']?.length) {
-        robo.error['Docking Complete'].forEach((error: any) => {
-          this.roboErr.push({
-            name: robo.name,
-            error: error.name,
-            description: error.description,
-            id: robo.id,
-            dateTime: createdAt,
-          });
-        });
-      }
-    });
-    // console.log(this.roboErr);
-    this.paginatedData1 = this.roboErr;
-  }
-
-  getFleetLogs() {
-    fetch(
+    let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/err-logs/fleet-logs/${this.mapData.id}`,
       {
         method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          timeStamp1: '',
-          timeStamp2: '',
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
         }),
+        signal: this.fleetController.signal,
       }
-    )
-      .then((response) => {
-        return response.json();
-      })
-      .then((data) => {
-        const { fleetLogs } = data;
-        this.fleetData = fleetLogs.map((fleetErr: any) => {
-          const date = new Date();
-          const formattedDateTime = `${date.toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          })}, ${date.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          })}`;
-          return {
-            dateTime: formattedDateTime,
-            moduleName: fleetErr.moduleName,
-            errCode: fleetErr.errCode,
-            criticality: fleetErr.criticality,
-            desc: fleetErr.desc,
-          };
-        });
-        this.filteredTaskData2 = this.fleetData;
-        this.setPaginatedData();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+    );
+    let data = await response.json();
+    if (data.error || !data.fleetLogs) return;
+    this.fleetData = data.fleetLogs;
+
+    this.filteredTaskData2 = this.fleetData;
   }
 
   setPaginatedData() {
@@ -554,7 +422,7 @@ export class Userlogscomponent {
     this.currentTable = table;
   }
 
-  ShowExpBtn():boolean {
+  ShowExpBtn(): boolean {
     switch (this.currentTable) {
       case 'task':
         return this.taskData.length == 0;
