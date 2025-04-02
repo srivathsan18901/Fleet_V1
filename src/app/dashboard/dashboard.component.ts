@@ -287,9 +287,9 @@ export class DashboardComponent implements AfterViewInit {
   async ngOnInit() {
     this.isInLive = this.projectService.getInLive();
     this.currentProject = this.projectService.getSelectedProject();
-    this.langSubscription = this.translationService.currentLanguage$.subscribe(
-      (val) => {}
-    );
+    // this.langSubscription = this.translationService.currentLanguage$.subscribe(
+    //   (val) => {}
+    // );
     const fleetSub = this.isFleetService.isFleet$.subscribe((status) => {
       this.isFleet = status;
       this.updateUI(); // Update UI based on the current state
@@ -298,7 +298,7 @@ export class DashboardComponent implements AfterViewInit {
     this.subscriptions.push(fleetSub);
     const savedIsFleet = sessionStorage.getItem('isFleet');
 
-    this.isFleetService.abortFleetStatusSignal(); // remove if interrupting opts...
+    // this.isFleetService.abortFleetStatusSignal(); // remove if interrupting opts...
 
     this.roboToLocalize = this.nodeGraphService.getRoboToLocalize();
     this.isPause = await this.projectService.getIsFleetHalted();
@@ -2347,7 +2347,17 @@ export class DashboardComponent implements AfterViewInit {
     ctx.restore(); // Reset transformation after drawing the map
 
     for (let [index, robotId] of Object.keys(robotsData).entries()) {
-      const { posX, posY, yaw, state, errState, path, payload, battery, current_task, } = robotsData[robotId];
+      const {
+        posX,
+        posY,
+        yaw,
+        state,
+        errState,
+        path,
+        payload,
+        battery,
+        current_task,
+      } = robotsData[robotId];
 
       const scaledPosX = posX;
       const scaledPosY = posY;

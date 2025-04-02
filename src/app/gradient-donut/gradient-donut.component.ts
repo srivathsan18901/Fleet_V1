@@ -69,7 +69,7 @@ export class GradientDonutComponent implements OnInit {
     return val + ' - ' + opts.w.globals.series[opts.seriesIndex];
   };
   @ViewChild('chart') chart!: ChartComponent;
-
+  @Input() colors: string[] = []; // Array of colors for each segment
   public chartOptions: Partial<ChartOptions> | any;
 
   constructor(
@@ -98,6 +98,7 @@ export class GradientDonutComponent implements OnInit {
               enabled: false
             }
           },
+          colors: this.colors,
           plotOptions: {
             pie: {
               startAngle: this.startAngle,
@@ -189,6 +190,7 @@ export class GradientDonutComponent implements OnInit {
           enabled: false,
         },
       },
+      colors: this.colors,
       plotOptions: {
         pie: {
           startAngle: this.startAngle,
@@ -275,6 +277,7 @@ export class GradientDonutComponent implements OnInit {
         ...this.chartOptions, // Keep existing settings
         series: this.series,
         labels: this.labels,
+        colors: this.colors,
         title: {
           text: this.titleText, // Update title dynamically
           align: 'left',
