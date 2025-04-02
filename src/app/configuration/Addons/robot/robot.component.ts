@@ -150,8 +150,8 @@ export class RobotComponent {
 
   constructor(
     private translationService: TranslationService,
-    private projectService: ProjectService,    
-    private messageService: MessageService,
+    private projectService: ProjectService,
+    private messageService: MessageService
   ) {}
 
   async ngOnInit() {
@@ -273,14 +273,14 @@ export class RobotComponent {
   }
 
   async saveGrossRoboParams(project: any) {
-    this.dockParams.dockingType = Number(this.dockParams.dockingType)
-    this.chargeParams.dockingType = Number(this.chargeParams.dockingType)
+    this.dockParams.dockingType = Number(this.dockParams.dockingType);
+    this.chargeParams.dockingType = Number(this.chargeParams.dockingType);
 
     let bodyData = {
       projectId: project._id,
       robotParams: {
         DockParam: this.dockParams,
-        UnDockParam: this.unDockParams,
+        UndockParam: this.unDockParams,
         ChargeParam: this.chargeParams,
         MoveParam: this.moveParams,
         BatteryParam: this.batteryParams,
@@ -302,7 +302,7 @@ export class RobotComponent {
     if (data.error) {
       this.messageService.add({
         severity: 'error',
-        detail: this.getConfigTranslation("robotConfigError"),
+        detail: this.getConfigTranslation('robotConfigError'),
       });
       return;
     }
@@ -310,13 +310,12 @@ export class RobotComponent {
     if (data.isRoboParamsConfigured) {
       this.messageService.add({
         severity: 'success',
-        detail: this.getConfigTranslation("robotConfigSuccess"),
+        detail: this.getConfigTranslation('robotConfigSuccess'),
       });
-    }
-    else{
+    } else {
       this.messageService.add({
         severity: 'warn',
-        detail: this.getConfigTranslation("robotConfigNotSet"),
+        detail: this.getConfigTranslation('robotConfigNotSet'),
       });
     }
   }
