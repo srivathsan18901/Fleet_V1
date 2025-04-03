@@ -915,6 +915,7 @@ new slider button */
   height: 48px;
   margin: auto;
   position: relative;
+  animation: shadow324 0.5s linear infinite;
 }
 
 .loader:before {
@@ -1001,6 +1002,7 @@ new slider button */
   animation: rotateChart 1.5s linear infinite;
 }
 
+
 .chart-loader::after {
   content: "";
   width: 60px;
@@ -1048,13 +1050,6 @@ new slider button */
   margin-top: 20px;
   height: 125px;
   margin-top: 5rem;
-}
-
-.loading-text {
-  font-size: 14px;
-  color: #ff6666; /* Light red text */
-  margin-top: 10px;
-  font-weight: bold;
 }
 
 .custom-loader {
