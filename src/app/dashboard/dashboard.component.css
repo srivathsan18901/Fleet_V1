@@ -1059,3 +1059,8 @@ input:checked ~ .slider {
 .AT-btn2:active {
   transform: translate(2px ,2px);
 }
+
+.no-data-text{
+display: flex;
+justify-content:center;
+}

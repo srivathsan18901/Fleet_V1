@@ -294,10 +294,10 @@
     <!-- enable robots dropdown -->
     <div class="dropdown" *ngIf="isImage">
       <button
-      class="dropdown-button"
-      (click)="toggleDropdown()"
-      [disabled]="isTaskAssignedOrIsLocalize"
-      [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize, 'active-button': !isTaskAssignedOrIsLocalize}"
+        class="dropdown-button"
+        (click)="toggleDropdown()"
+        [disabled]="isTaskAssignedOrIsLocalize"
+        [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize, 'active-button': !isTaskAssignedOrIsLocalize}"
       >
         {{ getTranslation('enableRobot') }}
         <svg
@@ -315,97 +315,66 @@
           />
         </svg>
       </button>
-
-      <!-- Dropdown content, will only display if robots are present -->
+    
+      <!-- Dropdown content -->
       <div class="dropdown-content" *ngIf="isDropdownOpen">
+        
+        <!-- Fleet Mode -->
         <div *ngIf="isFleet">
-          <div *ngFor="let robot of robos; let i = index" class="dropdown-item">
-            <span>{{ robot.roboDet.id }}</span>
-            <span [title]="robot.roboDet.roboName">
-              {{ robot.roboDet.roboName | slice:0:5 }}...
-            </span>
-            
-            <label class="switch">
-              <input
-                type="checkbox"
-                [(ngModel)]="robot.isActive"
-                (change)="activateRobot(robot)"
-                [disabled]="!isFleetUp || robot.isActive"
-              />
-              <div class="slider"></div>
-              <div class="slider-card">
-                <div class="slider-card-face slider-card-front"></div>
-                <div class="slider-card-face slider-card-back"></div>
-              </div>
-            </label>
-
-            <!-- Delete icon with click event -->
-            <!-- <button class="enable-delete-button" (click)="deleteRobot(robot, i)">
-              <svg
-                width="25"
-                height="25"
-                viewBox="0 0 25 25"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="12.5" cy="12.5" r="12.5" fill="black" />
-                <path
-                  d="M10.8333 5L10 5.75H5V7.25H20V5.75H15L14.1667 5H10.8333ZM6.1377 8.75L7.41048 18.6978C7.52048 19.4403 8.23083 20 9.0625 20H15.9359C16.7675 20 17.4787 19.4411 17.5895 18.6919L18.8623 8.75H6.1377Z"
-                  fill="white"
+          <div *ngIf="robos.length > 0; else noFleetData">
+            <div *ngFor="let robot of robos; let i = index" class="dropdown-item">
+              <span>{{ robot.roboDet.id }}</span>
+              <span [title]="robot.roboDet.roboName">
+                {{ robot.roboDet.roboName | slice:0:5 }}...
+              </span>
+              
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="robot.isActive"
+                  (change)="activateRobot(robot)"
+                  [disabled]="!isFleetUp || robot.isActive"
                 />
-              </svg>
-            </button> -->
+                <div class="slider"></div>
+              </label>
+            </div>
           </div>
         </div>
+    
+        <!-- Simulation Mode -->
         <div *ngIf="!isFleet">
-          <div *ngFor="let robot of simMode; let i = index" class="dropdown-item" >
-            <span>{{ robot.amrId }}</span>
-            <span [title]="robot.roboName">
-              {{ robot.roboName | slice:0:5 }}...
-            </span>
-            
-            <label class="switch">
-              <input
-                type="checkbox"
-                [(ngModel)]="robot.isActive"
-                (change)="activateRobot(robot)"
-                [disabled]="!isFleetUp || robot.isActive"
-                [ngClass]="{
-                  active: robot.isActive,
-                  inactive: !robot.isActive
-                }"
-              />
-              <div class="slider"></div>
-              <div class="slider-card">
-                <div class="slider-card-face slider-card-front"></div>
-                <div class="slider-card-face slider-card-back"></div>
-              </div>
-            </label>
-
-            <!-- Delete icon with click event -->
-            <button
-              class="enable-delete-button"
-              (click)="deleteRobot(robot, i)"
-            >
-              <svg
-                width="25"
-                height="25"
-                viewBox="0 0 25 25"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle cx="12.5" cy="12.5" r="12.5" fill="black" />
-                <path
-                  d="M10.8333 5L10 5.75H5V7.25H20V5.75H15L14.1667 5H10.8333ZM6.1377 8.75L7.41048 18.6978C7.52048 19.4403 8.23083 20 9.0625 20H15.9359C16.7675 20 17.4787 19.4411 17.5895 18.6919L18.8623 8.75H6.1377Z"
-                  fill="white"
+          <div *ngIf="simMode.length > 0; else noSimData">
+            <div *ngFor="let robot of simMode; let i = index" class="dropdown-item">
+              <span>{{ robot.amrId }}</span>
+              <span [title]="robot.roboName">
+                {{ robot.roboName | slice:0:5 }}...
+              </span>
+    
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  [(ngModel)]="robot.isActive"
+                  (change)="activateRobot(robot)"
+                  [disabled]="!isFleetUp || robot.isActive"
                 />
-              </svg>
-            </button>
+                <div class="slider"></div>
+              </label>
+            </div>
           </div>
         </div>
+    
+        <!-- No Data Templates -->
+        <ng-template #noFleetData>
+          <p class="no-data-text">No robots available e</p>
+        </ng-template>
+    
+        <ng-template #noSimData>
+          <p class="no-data-text">No robots available</p>
+        </ng-template>
+    
       </div>
     </div>
-
+    
     <!-- fleet and simulation -->
     <!-- <button
       class="indication-button"
