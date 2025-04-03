@@ -36,6 +36,7 @@ export class StatisticsComponent {
 
   notifications: any[] = [];
   taskErrNotifications: any[] = [];
+  isLive: boolean = false;
 
   isFleet: boolean = false;
   isFleetMode: boolean = false;
@@ -89,6 +90,7 @@ export class StatisticsComponent {
       this.showAlert(); 
       return;
     }
+    this.isLive = this.projectService.getInLive();
     // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
     await this.getGrossStatus();
 
