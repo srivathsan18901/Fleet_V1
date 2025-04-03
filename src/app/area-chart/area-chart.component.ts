@@ -127,7 +127,7 @@ export class AreaChartComponent implements OnInit {
         toolbar: {
           show: true, // Keep the toolbar visible
           tools: {
-            download: true,
+            download: false,
           },
         },
       },
