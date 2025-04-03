@@ -67,7 +67,7 @@
   .table-responsive {
     width: 100%;
     overflow: hidden;
-    /*Preventstableheaderfrommoving*/border-radius: 5px ;
+    border-radius: 7px 7px 0 0;
 }
   .table-body {
     max-height: 300px; /* Adjust based on your needs */
