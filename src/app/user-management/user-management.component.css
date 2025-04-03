@@ -113,11 +113,11 @@ p {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 150px; /* Adjust height as needed */
+  /* height: 150px; Adjust height as needed */
 }
 
 .no-data-image {
-  width: 100px;
+  width: 17%;
   height: auto;
   margin-bottom: 0rem;
 }
