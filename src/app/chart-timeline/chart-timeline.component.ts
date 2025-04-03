@@ -163,7 +163,7 @@ export class ChartTimelineComponent implements OnInit {
         toolbar: {
           show: true, // Keep the toolbar visible
           tools: {
-            download: true, // Disable only the download menu
+            download: false, // Disable only the download menu
           },
         },
       },
