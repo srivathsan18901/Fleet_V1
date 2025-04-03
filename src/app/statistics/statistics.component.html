@@ -226,7 +226,7 @@
               <tr>
                 <th>{{ getTranslation('taskId') }}</th>
                 <th>{{ getTranslation('taskName') }}</th>
-                <th>{{ getTranslation('robotName') }}</th>
+                <th>{{ getTranslation('robotId') }}</th>
                 <th>{{ getTranslation('status') }}</th>
               </tr>
             </thead>
@@ -245,7 +245,7 @@
               <tr *ngFor="let activity of filteredOperationActivities | slice:0:10">
                 <td>{{ activity.taskId }}</td>
                 <td>{{ getTaskTranslation(activity.taskName) }}</td>
-                <td>{{ activity.robotName }}</td>
+                <td>{{ activity.robotName < 0 ? "--" : activity.robotName}}</td>
                 <td>{{ getTaskTranslation(activity.status) }}</td>
               </tr>
             </tbody>
