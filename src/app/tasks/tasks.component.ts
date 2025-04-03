@@ -448,7 +448,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
             ? task.sub_task[0]?.task_type
             : 'N/A',
           status: task.task_status.status,
-          roboName: task.agent_ID,
+          robotID: task.agent_ID,
           TimeStamp: formattedTimeStamp,
           destinationLocation: task.sub_task[0]?.source_location || 'N/A',
         };
@@ -698,7 +698,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   exportData(format: string) {
-    const data = this.tasks;
+    const data = this.tasks.map(item => ({
+      ...item,
+      robotID: item.robotID < 0 ? "--" : item.robotID // or item.robotID if that's the field name
+    }));
 
     try {
       switch (format) {
@@ -711,7 +714,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
                 taskId: '',
                 taskType: '',
                 status: '',
-                roboName: '',
+                robotID: '',
                 destinationLocation: '',
               },
             ];
@@ -735,7 +738,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
                 taskId: '',
                 taskType: '',
                 status: '',
-                roboName: '',
+                robotID: '',
                 destinationLocation: '',
               },
             ];

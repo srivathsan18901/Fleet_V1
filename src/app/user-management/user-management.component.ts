@@ -478,7 +478,7 @@ export class UserManagementComponent implements OnInit {
     },
     {
       order: 3,
-      nameTag: this.getTranslation('error'),
+      nameTag: this.getTranslation('error_logs'),
       icon: '../../assets/icons/Logs_icons.svg',
       enabled: false,
       description: this.getTranslation(
