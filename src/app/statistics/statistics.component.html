@@ -183,7 +183,7 @@
           </app-gradient-donut>
         </ng-container>
         <ng-template #noData>
-          <div *ngIf="!isLoading" class="no-data-card">
+          <div *ngIf="isLive == false" class="no-data-card">
             <img src="../../assets/No data.gif" class="gif">
             <p>{{ getTranslation('noDataFound') }}</p>
           </div>
