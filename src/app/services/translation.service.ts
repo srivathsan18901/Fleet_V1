@@ -1413,6 +1413,7 @@ export class TranslationService {
       'Manufacturer': 'Manufacturer',
       'Serial Number': 'Serial Number',
       'Attachment Type': 'Attachment Type',
+      'robot_id': 'Robot ID',
       'NOT_SET': 'NOT_SET',
       'LIFTER': 'LIFTER',
       'Open': 'Open',
@@ -1531,6 +1532,7 @@ export class TranslationService {
     JAP: {
       "Environment": "環境",
       "Robot": "ロボット",
+      'robot_id': 'ロボットID',
       "robot": "ロボット",
       'mapSelected': 'マップが選択されました',
       'mapDeselected': 'マップが選択解除されました',
@@ -1719,6 +1721,7 @@ export class TranslationService {
     FRE: {
       "Environment": "Environnement",
       "Robot": "Robot",
+      'robot_id': 'ID du robot',
       'mapSelected': 'Carte sélectionnée',
       'mapDeselected': 'Carte désélectionnée',
       "robot": "Robot",
@@ -1908,6 +1911,7 @@ export class TranslationService {
     GER: {
       "Environment": "Umgebung",
       "Robot": "Roboter",
+      'robot_id': 'Roboter-ID',
       'mapSelected': 'Karte ausgewählt',
       'mapDeselected': 'Karte abgewählt',
       "Fleet": "Flotte",
