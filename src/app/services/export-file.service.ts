@@ -221,7 +221,7 @@ export class ExportFileService {
         // Taskname
         {
           image: blank_img,
-          width: 90,
+          width: 170,
           height: 20,
           absolutePosition: { x: 130, y: 135 },
         },
