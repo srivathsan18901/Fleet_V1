@@ -173,9 +173,9 @@
           <!-- Loader -->
         <!-- <div *ngIf="isLoading" class="loader-container">
           <div class="loader"></div>
-          <p class="loader-text">Loading...</p>
-        </div> -->
-        <ng-container *ngIf="hasData(); else noData">
+          <p class="loader-text">Loading...</p> -->
+        <!-- </div> -->
+        <ng-container *ngIf="hasData() ; else noData">
           <app-gradient-donut
             [series]="operationPie"
             [labels]="[
@@ -199,7 +199,7 @@
         <ng-template #noData>
           <div class="no-data-card">
             <img src="../../assets/No data.gif" class="gif">
-            <p>{{ getTranslation('noTaskFound') }}</p>
+            <p>{{ getTranslation('noTask') }}</p>
           </div>
         </ng-template>
       </div>
