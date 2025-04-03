@@ -109,9 +109,13 @@ export class SidenavbarComponent implements OnInit {
     private translationService: TranslationService
   ) {
     this.userManagementData = this.userPermissionService.getPermissions();
-    this.processedErrors = new Set<string>(); // yet to noify later..
+    this.processedErrors = new Set<string>(); // yet to noify later..    
   }
-
+  closeAllPopups() {
+    this.showProfilePopup = false;
+    this.showNotificationPopup = false;
+    this.languageArrowState = false;
+  }
   async ngOnInit() {
     for (let flag of this.flags) {
       if (flag.nameTag === this.translationService.getCurrentLang()) {
