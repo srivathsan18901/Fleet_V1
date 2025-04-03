@@ -864,6 +864,26 @@ new slider button */
   margin-bottom: 0rem;
 }
 
+.no-data-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 315px;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #888;
+  background-color: #fff;
+}
+
+.gif{
+  width:50% ;
+  height:75% ;
+}
+
+
 .no-data-text {
   font-size: 16px;
   font-family: "graphik", Arial,  sans-serif;
