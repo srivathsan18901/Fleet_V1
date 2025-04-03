@@ -531,6 +531,7 @@ export class TranslationService {
       robotName: "Robot Name",
       status: "Status",
       noData: "No data found",
+      noTask: "No task found",
       'taskDetails': 'Task Details',
       'confidential': 'Confidential',
       'taskStatistics': 'TASK STATISTICS',
