@@ -156,6 +156,11 @@
         ></app-area-chart>
       </div>
       <div class="donut-chart-container">
+          <!-- Loader -->
+        <div *ngIf="isLoading" class="loader-container">
+          <div class="loader"></div>
+          <p class="loading-text">Loading...</p>
+        </div>
         <ng-container *ngIf="hasData(); else noData">
           <app-gradient-donut
             [series]="operationPie"
@@ -178,7 +183,7 @@
           </app-gradient-donut>
         </ng-container>
         <ng-template #noData>
-          <div class="no-data-card">
+          <div *ngIf="!isLoading" class="no-data-card">
             <img src="../../assets/No data.gif" class="gif">
             <p>{{ getTranslation('noDataFound') }}</p>
           </div>
