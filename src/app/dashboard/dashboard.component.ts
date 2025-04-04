@@ -2137,7 +2137,7 @@ export class DashboardComponent implements AfterViewInit {
               payload: robot.payload_status,
             };
 
-            // console.log(robot.id, robot.pose.position.x, robot.pose.position.y);
+            console.log(robot.id, robot.pose.position.x, robot.pose.position.y,robot.path,"igheiorghoiejvopierjoiejfpoef");
             this.simMode = this.nodeGraphService.getsimMode();
             this.roboIDColor = this.nodeGraphService.getRoboIdClr();
             ctx.clearRect(0, 0, canvas.width, canvas.height);

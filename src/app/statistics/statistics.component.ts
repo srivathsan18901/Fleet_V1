@@ -42,6 +42,8 @@ export class StatisticsComponent {
   isFleetMode: boolean = false;
   isExpInProgress: boolean = false;
 
+  isDataLoaded: boolean = false;
+
   statisticsData: any = {
     systemThroughput: 0,
     systemThroughputChange: 0,
@@ -82,7 +84,7 @@ export class StatisticsComponent {
       this.cdRef.detectChanges();
       // console.log(status);
     });
-    this.hasData();
+    // this.hasData();
     this.subscriptions.push(fleetSub);
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
@@ -97,12 +99,14 @@ export class StatisticsComponent {
     if (this.isFleet) {
       this.operationPie = await this.fetchTasksStatus();
       this.exportFileService.taskData = this.operationPie;
+      this.isDataLoaded = this.hasData();
     }
     if (this.isFleet) await this.getTaskNotifications();
     this.taskStatus_interval = setInterval(async () => {
       if (this.isFleet) {
         this.operationPie = await this.fetchTasksStatus();
         this.exportFileService.taskData = this.operationPie;
+        this.isDataLoaded = this.hasData();
       }
     }, 1000 * 10);
     this.operationActivities = await this.fetchCurrTasksStatus();
@@ -385,7 +389,7 @@ export class StatisticsComponent {
   }
   
   hasData(): boolean {
-    return this.operationPie && this.operationPie.some(value => value > 0);
+    return this.operationPie.some((value) => value > 0);
   }
   
   
