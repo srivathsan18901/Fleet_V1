@@ -43,7 +43,7 @@
         <div class="stat-card stat-card-1">
           <div class="stat-value" style="display: flex; justify-content: space-between;">
             {{ getTranslation('systemThroughput') }}
-            <img src="../../assets/info.svg"  matTooltip="This represents system throughput. Higher values indicate better performance." matTooltipPosition="right">
+            <img src="../../assets/info.svg"  matTooltip="Number of tasks expected to be completed per hour." matTooltipPosition="right">
           </div>
           <h2>{{ statisticsData.systemThroughput }}</h2>
           <div class="stat-change positive">
@@ -73,7 +73,7 @@
         <div class="stat-card stat-card-2">
           <div class="stat-value" style="display: flex; justify-content: space-between;">
             {{ getTranslation('systemUptime') }}
-            <img src="../../assets/info.svg" matTooltip="This represents system systemUptime. Higher values indicate better performance." matTooltipPosition="right">
+            <img src="../../assets/info.svg" matTooltip="The percentage of total time that the system is up and running." matTooltipPosition="right">
           </div>
           <!-- <h2>{{ statisticsData.systemUptime || getTranslation('loading') }}</h2> -->
           <h2>{{ statisticsData.systemUptime }}</h2>
@@ -103,7 +103,7 @@
         <div class="stat-card stat-card-3">
           <div class="stat-value" style="display: flex; justify-content: space-between;">
             {{ getTranslation('successRate') }} 
-            <img src="../../assets/info.svg" matTooltip="This represents system successRate. Higher values indicate better performance." matTooltipPosition="right">
+            <img src="../../assets/info.svg" matTooltip="The measure of successful completion of tasks." matTooltipPosition="right">
           </div>
         
           <!-- <h2>{{ statisticsData.successRate || 'Loading...' }}</h2> -->
@@ -134,7 +134,7 @@
         <div class="stat-card stat-card-4">
           <div class="stat-value" style="display: flex; justify-content: space-between;">
             {{ getTranslation('responsiveness') }}
-            <img src="../../assets/info.svg" matTooltip="This represents system responsiveness. Higher values indicate better performance." matTooltipPosition="right">
+            <img src="../../assets/info.svg" matTooltip="The average time required for the system to assign an incoming task(s) to the robot(s)." matTooltipPosition="right">
           </div>
           <!-- <h2>{{ statisticsData.responsiveness ||  getTranslation('loading')  }}</h2> -->
           <h2>{{ statisticsData.responsiveness }}</h2>
