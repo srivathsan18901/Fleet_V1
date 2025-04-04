@@ -266,6 +266,11 @@ export class DashboardComponent implements AfterViewInit {
   }
   toggleHeatmap() {
     this.showHeatMap = !this.showHeatMap;
+    if (this.showHeatMap == true){
+      this.messageService.add({severity:'info', summary:'Heatmap is turned ON', detail:'Disable Heat Map to access entities',sticky: true}); //working
+    }else{
+      this.messageService.clear();
+    }
   }
 
   // Get the appropriate icon based on the state

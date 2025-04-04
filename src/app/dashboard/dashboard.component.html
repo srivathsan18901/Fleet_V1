@@ -544,6 +544,8 @@
             src="../../assets/CanvasOptions/Heatmap.svg"
             class="ModelCanvas"
             (click)="toggleHeatmap()"
+            severity="success"
+            label="Show Single"
             [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
             [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
           />
