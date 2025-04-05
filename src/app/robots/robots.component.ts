@@ -64,7 +64,10 @@ export class RobotsComponent implements OnInit {
     'agv3.png',
     // Add more images from assets/robots
   ];
+ 
+  @ViewChild('cardScrollContainer', { static: false }) cardScrollContainer!: ElementRef;
 
+  responsiveOptions: any[] | undefined;
   currentSignalClass: string = 'none'; // Default class
   robots: Robot[] = [];
   // robots: any[] = [];
@@ -145,6 +148,19 @@ export class RobotsComponent implements OnInit {
       this.isFleetService.setIsFleet(this.isFleet); // Sync the state with the service
     }
   }
+
+  scrollLeft(): void {
+    const container = this.cardScrollContainer.nativeElement;
+    const scrollAmount = container.querySelector('.card')?.offsetWidth || 600;
+    container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+  }
+  
+  scrollRight(): void {
+    const container = this.cardScrollContainer.nativeElement;
+    const scrollAmount = container.querySelector('.card')?.offsetWidth || 600;
+    container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+  }
+  
 
   getTranslation(key: string) {
     return this.translationService.getRobotsTranslation(key);

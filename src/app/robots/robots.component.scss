@@ -32,6 +32,10 @@
   display: flex;
   gap: 2rem;
   overflow-x: auto;
+  margin-left: 4rem;
+  margin-right: 2rem;
+  width: auto;
+  min-width: 50vw;
   padding: 2rem;
   flex-wrap: wrap; /* Wrap content for smaller screens */
 
@@ -242,7 +246,7 @@ body, .card, .popup-menu {
   }
   /* Styles for the card */
   .card {
-    width: 300px;
+    min-width: 18vw;
     border-radius: 20px;
     background: linear-gradient(135deg, #ffffff, #ffffff);
     padding: 5px;
@@ -254,6 +258,12 @@ body, .card, .popup-menu {
     position: relative; /* Important for positioning the icon */
     
   }
+
+  @media (max-width: 1300px) {
+    .card {
+        min-width:15vw;
+    }
+}
 
 
 .card:hover {
@@ -814,6 +824,95 @@ border-radius: 2px; /* Rounded edges matching the container */
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
   }
+}
+
+
+//slider styles
+/* From Uiverse.io by JaydipPrajapati1910 */ 
+.wrapper {
+  top: 40%;
+  position: fixed;
+  z-index: 100;
+  margin-right: 2rem;
+  display: flex;
+  justify-content: flex-start;
+  align-content: center;
+  align-items: center;
+}
+
+.right{
+  justify-content: flex-end !important;
+  right: -1.8rem;
+}
+
+.wrapper .icon {
+  position: relative;
+  background: #fff;
+  border: 1px solid #000000;
+  border-radius: 50%;
+  margin: 10px;
+  width: 50px;
+  height: 50px;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .tooltip {
+  position: absolute;
+  top: 0;
+  font-size: 14px;
+  background: #fff;
+  color: #fff;
+  padding: 5px 8px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .tooltip::before {
+  position: absolute;
+  content: "";
+  height: 8px;
+  width: 8px;
+  background: #fff;
+  bottom: -3px;
+  left: 50%;
+  transform: translate(-50%) rotate(45deg);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.wrapper .icon:hover .tooltip {
+  top: -45px;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+.wrapper .icon:hover span,
+.wrapper .icon:hover .tooltip {
+  text-shadow: 0px -1px 0px rgba(255, 255, 255, 0.1);
+}
+
+.wrapper svg {
+  fill: #da2020;
+}
+
+.wrapper span:hover,
+.wrapper svg:hover,
+.wrapper .black:hover,
+.wrapper .black:hover .tooltip,
+.wrapper .black:hover .tooltip::before {
+  background: #222;
+  color: white;
+  fill: white;
 }
 
 
