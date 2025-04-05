@@ -1356,6 +1356,7 @@ export class DashboardComponent implements AfterViewInit {
     }
     this.disableMoveTocharge = false;
   }
+  showPathButton: boolean = false;
 
   addRightClickListener(canvas: HTMLCanvasElement) {
     canvas.addEventListener('contextmenu', async (event) => {
@@ -1387,6 +1388,8 @@ export class DashboardComponent implements AfterViewInit {
         ) {
           // Show the popup at the clicked position
           await this.isChargingNode();
+          this.updatedrobo = robo;
+          this.showPathButton = robo.showPath === true; // 👈 check if showPath is true
           this.showPopup(event.clientX, event.clientY);
           this.updatedrobo = robo;
 
