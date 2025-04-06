@@ -32,7 +32,7 @@
         <!-- Card Container -->
         <!-- <div class="card" *ngFor="let robot of robots" (click)="openRobotDetail(robot)"> -->
       <div class="slider-container">
-        <ul class="wrapper">
+        <ul class="wrapper" *ngIf="this.isFleet === true">
           <li class="icon black" (click)="scrollLeft()">
             <span class="tooltip">Left</span>
             <span><svg viewBox="0 0 16 16" class="bi bi-chevron-double-left" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
@@ -2005,7 +2005,7 @@
 
 
         </div>
-        <ul class="wrapper right">
+        <ul class="wrapper right" *ngIf="this.isFleet === true">
           <li class="icon black" (click)="scrollRight()">
             <span class="tooltip">Right</span>
             <span><svg viewBox="0 0 16 16" class="bi bi-chevron-double-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
