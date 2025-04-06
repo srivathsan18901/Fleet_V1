@@ -41,7 +41,8 @@
           </svg></span>
         </li>
         </ul>
-        <div class="card-container-wrapper mt-4 w-full flex h-full" #cardScrollContainer >
+        <div class="card-container-wrapper mt-4 w-full flex h-full"      #cardScrollContainer
+        (wheel)="onMouseWheel($event)" >
   
             <span *ngIf="this.robots.length === 0 && this.isFleet === true || this.isFleet === false" class="flex w-full h-full items-center justify-center flex-col">
               

@@ -160,6 +160,22 @@ export class RobotsComponent implements OnInit {
     const scrollAmount = container.querySelector('.card')?.offsetWidth || 600;
     container.scrollBy({ left: scrollAmount, behavior: 'smooth' });
   }
+
+  onMouseWheel(event: WheelEvent): void {
+    event.preventDefault();
+  
+    const scrollAmount = event.deltaY; // use native delta
+    const container = this.cardScrollContainer.nativeElement;
+  
+    container.scrollBy({
+      left: scrollAmount,
+      behavior: 'auto'  // or 'smooth' if you want eased scroll
+    });
+  }
+  
+
+  
+  
   
 
   getTranslation(key: string) {
