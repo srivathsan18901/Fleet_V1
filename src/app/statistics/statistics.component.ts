@@ -84,7 +84,7 @@ export class StatisticsComponent {
       this.cdRef.detectChanges();
       // console.log(status);
     });
-    // this.hasData();
+    this.hasData();
     this.subscriptions.push(fleetSub);
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
@@ -108,7 +108,7 @@ export class StatisticsComponent {
         this.exportFileService.taskData = this.operationPie;
         this.isDataLoaded = this.hasData();
       }
-    }, 1000 * 10);
+    }, 1000 * 5);
     this.operationActivities = await this.fetchCurrTasksStatus();
     this.filteredOperationActivities = this.operationActivities;
     this.currTaskStatus_interval = setInterval(async () => {
@@ -116,7 +116,7 @@ export class StatisticsComponent {
         let currTasks = await this.fetchCurrTasksStatus();
         this.filteredOperationActivities = currTasks;
       }
-    }, 1000 * 10);
+    }, 1000 * 5);
   }
 
   showAlert() {
