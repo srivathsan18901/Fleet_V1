@@ -45,13 +45,13 @@ export class StatisticsComponent {
   isDataLoaded: boolean = false;
 
   statisticsData: any = {
-    systemThroughput: 0,
+    systemThroughput: 'Loading...',
     systemThroughputChange: 0,
-    systemUptime: 0,
+    systemUptime: 'Loading...',
     systemUptimeChange: 0,
-    successRate: 0,
+    successRate: 'Loading...',
     successRateChange: 0,
-    responsiveness: 0,
+    responsiveness: 'Loading...',
     responsivenessChange: 0,
   }; // Initialize the array with mock data
 
@@ -88,8 +88,8 @@ export class StatisticsComponent {
     this.subscriptions.push(fleetSub);
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
-    if (!this.selectedMap){
-      this.showAlert(); 
+    if (!this.selectedMap) {
+      this.showAlert();
       return;
     }
     this.isLive = this.projectService.getInLive();
@@ -130,7 +130,6 @@ export class StatisticsComponent {
     }, 250);
   }
 
-
   getSeverity(arg0: any) {
     throw new Error('Method not implemented.');
   }
@@ -141,7 +140,6 @@ export class StatisticsComponent {
 
   onViewAllClick() {
     this.router.navigate(['/tasks']); // Navigate to tasks page
-    console.log('hey');
   }
 
   setView(view: string): void {
@@ -306,7 +304,7 @@ export class StatisticsComponent {
     return [];
   }
 
-  isLoading: boolean = true;  // Initially, set to true to show the loader
+  isLoading: boolean = true; // Initially, set to true to show the loader
 
   async fetchTasksStatus(): Promise<number[]> {
     let startEstablishTime = new Date().setHours(0, 0, 0, 0);
@@ -346,13 +344,13 @@ export class StatisticsComponent {
     if (!data.tasks?.tasks) return [0, 0, 0, 0, 0, 0];
     const { tasks } = data.tasks;
 
-    // ["completed", "In-progress", "todo", "err", "cancelled"];
-    let tasksStatus = [0, 0, 0, 0, 0, 0];
     let tot_tasks = 0;
+    let tasksStatus = [0, 0, 0, 0, 0, 0];
+
+    // ["completed", "In-progress", "todo", "err", "cancelled"];
     if (tasks) {
-      let tasksStatusArr = tasks.map((task: any) => {
-        return task.task_status.status;
-      });
+      let tasksStatusArr = tasks.map((task: any) => task.task_status.status);
+
       for (let task of tasksStatusArr) {
         if (task === 'COMPLETED') tasksStatus[0] += 1;
         else if (task === 'ACCEPTED') tasksStatus[1] += 1;
@@ -366,33 +364,30 @@ export class StatisticsComponent {
         else if (task === 'FAILED' || task === 'REJECTED') tasksStatus[4] += 1;
         else if (task === 'CANCELLED') tasksStatus[5] += 1;
       }
-      for (let taskStatus of tasksStatus) {
-        tot_tasks += taskStatus;
-      }
-      let completedTasks = tasksStatus[0];
-      let errorTasks = tasksStatus[4];
-      let cancelledTasks = tasksStatus[5];
-      let inProgressTasks = tasksStatus[2];
-      if (isNaN(completedTasks) || isNaN(errorTasks) || isNaN(cancelledTasks)) {
-        this.statisticsData.successRate = 'Loading...';
-      } else {
-        this.statisticsData.successRate = (
-          ((completedTasks + errorTasks + cancelledTasks) /
-            (completedTasks + errorTasks + cancelledTasks + inProgressTasks)) *
-            100 || 0
-        ).toFixed(2);
-        this.exportFileService.successRate = this.statisticsData.successRate;
-      }
-      return tasksStatus;
+      for (let taskStatus of tasksStatus) tot_tasks += taskStatus;
     }
-    return [0, 0, 0, 0, 0, 0];
+
+    let completedTasks = tasksStatus[0];
+    let errorTasks = tasksStatus[4];
+    let cancelledTasks = tasksStatus[5];
+    let inProgressTasks = tasksStatus[2];
+    if (isNaN(completedTasks) || isNaN(errorTasks) || isNaN(cancelledTasks))
+      this.statisticsData.successRate = 'Loading...';
+    else {
+      this.statisticsData.successRate = (
+        ((completedTasks + errorTasks + cancelledTasks) /
+          (completedTasks + errorTasks + cancelledTasks + inProgressTasks)) *
+          100 || 0
+      ).toFixed(2);
+      this.exportFileService.successRate = this.statisticsData.successRate;
+    }
+    return tasksStatus;
   }
-  
+
   hasData(): boolean {
     return this.operationPie.some((value) => value > 0);
   }
-  
-  
+
   noData = 'fnvnvd';
   async generatePdf() {
     if (!this.isFleet) {
