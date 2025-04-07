@@ -36,6 +36,7 @@ export class StatisticsComponent {
 
   notifications: any[] = [];
   taskErrNotifications: any[] = [];
+  isLive: boolean = false;
 
   isFleet: boolean = false;
   isFleetMode: boolean = false;
@@ -81,7 +82,7 @@ export class StatisticsComponent {
       this.cdRef.detectChanges();
       // console.log(status);
     });
-
+    this.hasData();
     this.subscriptions.push(fleetSub);
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
@@ -89,6 +90,7 @@ export class StatisticsComponent {
       this.showAlert(); 
       return;
     }
+    this.isLive = this.projectService.getInLive();
     // this.isFleetService.abortFleetStatusSignal(); // yet to notify..
     await this.getGrossStatus();
 
@@ -300,86 +302,80 @@ export class StatisticsComponent {
     return [];
   }
 
+  isLoading: boolean = true;  // Initially, set to true to show the loader
+
   async fetchTasksStatus(): Promise<number[]> {
+    this.isLoading = true; // Start loader before the request
+  
     let startEstablishTime = new Date().setHours(0, 0, 0, 0);
     let establishedTime = new Date(startEstablishTime);
-
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime); // yet to take, in seri..
-
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+  
     let endPoint = '/fleet-tasks';
-
-    if (this.abortControllers.has(endPoint))
+  
+    if (this.abortControllers.has(endPoint)) {
       this.abortControllers.get(endPoint)?.abort();
-
+    }
+  
     const abortController = new AbortController();
     this.abortControllers.set(endPoint, abortController);
-
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mapId: this.selectedMap.id,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-        signal: abortController.signal,
+  
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mapId: this.selectedMap.id,
+            timeStamp1: timeStamp1,
+            timeStamp2: timeStamp2,
+          }),
+          signal: abortController.signal,
+        }
+      );
+  
+      let data = await response.json();
+  
+      if (data.error) {
+        console.log('Error occurred while getting tasks status:', data.error);
+        this.isLoading = false;
+        return [0, 0, 0, 0, 0, 0]; // No data case
       }
-    );
-    // if(!response.ok) throw new Error(`Error occured with status code of : ${response.status}`)
-    let data = await response.json();
-
-    if (data.error) {
-      console.log('Err occured while getting tasks status : ', data.error);
-      return [0, 0, 0, 0, 0, 0];
-    }
-    if (!data.tasks?.tasks) return [0, 0, 0, 0, 0, 0];
-    const { tasks } = data.tasks;
-
-    // ["completed", "In-progress", "todo", "err", "cancelled"];
-    let tasksStatus = [0, 0, 0, 0, 0, 0];
-    let tot_tasks = 0;
-    if (tasks) {
-      let tasksStatusArr = tasks.map((task: any) => {
-        return task.task_status.status;
-      });
-      for (let task of tasksStatusArr) {
-        if (task === 'COMPLETED') tasksStatus[0] += 1;
-        else if (task === 'ACCEPTED') tasksStatus[1] += 1;
-        else if (
-          task === 'INPROGRESS' ||
-          task === 'DROPPED' ||
-          task === 'PICKED'
-        )
-          tasksStatus[2] += 1;
-        else if (task === 'NOTASSIGNED') tasksStatus[3] += 1;
-        else if (task === 'FAILED' || task === 'REJECTED') tasksStatus[4] += 1;
-        else if (task === 'CANCELLED') tasksStatus[5] += 1;
+  
+      const { tasks } = data.tasks;
+      let tasksStatus = [0, 0, 0, 0, 0, 0];
+  
+      if (tasks) {
+        let tasksStatusArr = tasks.map((task: any) => task.task_status.status);
+  
+        for (let task of tasksStatusArr) {
+          if (task === 'COMPLETED') tasksStatus[0] += 1;
+          else if (task === 'ACCEPTED') tasksStatus[1] += 1;
+          else if (['INPROGRESS', 'DROPPED', 'PICKED'].includes(task))
+            tasksStatus[2] += 1;
+          else if (task === 'NOTASSIGNED') tasksStatus[3] += 1;
+          else if (['FAILED', 'REJECTED'].includes(task)) tasksStatus[4] += 1;
+          else if (task === 'CANCELLED') tasksStatus[5] += 1;
+        }
       }
-      for (let taskStatus of tasksStatus) {
-        tot_tasks += taskStatus;
-      }
-      let completedTasks = tasksStatus[0];
-      let errorTasks = tasksStatus[4];
-      let cancelledTasks = tasksStatus[5];
-      let inProgressTasks = tasksStatus[2];
-      if (isNaN(completedTasks) || isNaN(errorTasks) || isNaN(cancelledTasks)) {
-        this.statisticsData.successRate = 'Loading...';
-      } else {
-        this.statisticsData.successRate = (
-          ((completedTasks + errorTasks + cancelledTasks) /
-            (completedTasks + errorTasks + cancelledTasks + inProgressTasks)) *
-            100 || 0
-        ).toFixed(2);
-        this.exportFileService.successRate = this.statisticsData.successRate;
-      }
+  
+      this.isLoading = false; // Stop the loader when response arrives
       return tasksStatus;
+    } catch (error) {
+      console.error('Fetch error:', error);
+      this.isLoading = false;
+      return [0, 0, 0, 0, 0, 0]; // No data case
     }
-    return [0, 0, 0, 0, 0, 0];
   }
-
+  
+  hasData(): boolean {
+    return this.operationPie && this.operationPie.some(value => value > 0);
+  }
+  
+  
+  noData = 'fnvnvd';
   async generatePdf() {
     if (!this.isFleet) {
       alert('fleet is in down!');
@@ -413,6 +409,10 @@ export class StatisticsComponent {
       notification.message.toLowerCase().includes(query)
     );
   }
+
+  // hasData(): boolean {
+  //   return this.operationPie.some((value) => value > 0);
+  // }
 
   getTimeStampsOfDay(establishedTime: Date) {
     let currentTime = Math.floor(new Date().getTime() / 1000);

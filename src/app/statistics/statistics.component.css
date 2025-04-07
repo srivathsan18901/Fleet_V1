@@ -587,6 +587,7 @@ h2 {
   stroke-linejoin: round;
 }
 
+
 .stat-chart svg {
   width: 100%;
   height: auto;
@@ -864,6 +865,26 @@ new slider button */
   margin-bottom: 0rem;
 }
 
+.no-data-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  height: 315px;
+  border: 1px solid #fff;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #888;
+  background-color: #fff;
+}
+
+.gif{
+  width:50% ;
+  height:75% ;
+}
+
+
 .no-data-text {
   font-size: 16px;
   font-family: "graphik", Arial,  sans-serif;
@@ -871,6 +892,210 @@ new slider button */
   text-align: center;
 }
 
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 125px;
+  margin-top: 5rem;
+}
+
+.loader-text {
+  margin-top: 10px; /* Space between loader and text */
+  font-size: 16px;
+  color: #f08080;
+  font-weight: bold;
+}
 
 
+/* From Uiverse.io by alexruix */ 
+.loader {
+  width: 48px;
+  height: 48px;
+  margin: auto;
+  position: relative;
+  animation: shadow324 0.5s linear infinite;
+}
 
+.loader:before {
+  content: '';
+  width: 48px;
+  height: 5px;
+  background: #f0808050;
+  position: absolute;
+  top: 60px;
+  left: 0;
+  border-radius: 50%;
+  animation: shadow324 0.5s linear infinite;
+}
+
+.loader:after {
+  content: '';
+  width: 100%;
+  height: 100%;
+  background: #f08080;
+  position: absolute;
+  top: 0;
+  left: 0;
+  border-radius: 4px;
+  animation: jump7456 0.5s linear infinite;
+}
+
+@keyframes jump7456 {
+  15% {
+    border-bottom-right-radius: 3px;
+  }
+
+  25% {
+    transform: translateY(9px) rotate(22.5deg);
+  }
+
+  50% {
+    transform: translateY(18px) scale(1, .9) rotate(45deg);
+    border-bottom-right-radius: 40px;
+  }
+
+  75% {
+    transform: translateY(9px) rotate(67.5deg);
+  }
+
+  100% {
+    transform: translateY(0) rotate(90deg);
+  }
+}
+
+@keyframes shadow324 {
+
+  0%,
+    100% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(1.2, 1);
+  }
+}
+
+
+.chart-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.chart-loader {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  position: relative;
+  background: conic-gradient(
+    #f08080 10%, 
+    rgba(240, 128, 128, 0.2) 10% 30%, 
+    #00E396 30% 50%, 
+    rgba(0, 227, 150, 0.2) 50% 70%, 
+    #008FFB 70% 90%, 
+    rgba(0, 143, 251, 0.2) 90%
+  );
+  animation: rotateChart 1.5s linear infinite;
+}
+
+
+.chart-loader::after {
+  content: "";
+  width: 60px;
+  height: 60px;
+  background-color: white;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.loader-text {
+  margin-top: 12px;
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+  text-align: center;
+  animation: fadeText 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes rotateChart {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes fadeText {
+  0% {
+    opacity: 0.3;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  height: 125px;
+  margin-top: 5rem;
+}
+
+.custom-loader {
+  width: 70px;
+  height: 70px;
+  background: #ff6666; /* Changed to light red */
+  border-radius: 50px;
+  -webkit-mask: radial-gradient(circle 31px at 50% calc(100% + 13px), #000 95%, #0000) top 4px left 50%,
+    radial-gradient(circle 31px, #000 95%, #0000) center,
+    radial-gradient(circle 31px at 50% -13px, #000 95%, #0000) bottom 4px left 50%,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  -webkit-mask-repeat: no-repeat;
+  animation: cu10 1.5s infinite;
+}
+
+/* Original color: */
+/* background: #ffa600; */
+
+@keyframes cu10 {
+  0% {
+    -webkit-mask-size: 0    18px, 0    18px, 0    18px, auto;
+  }
+
+  16.67% {
+    -webkit-mask-size: 100% 18px, 0    18px, 0    18px, auto;
+  }
+
+  33.33% {
+    -webkit-mask-size: 100% 18px, 100% 18px, 0    18px, auto;
+  }
+
+  50% {
+    -webkit-mask-size: 100% 18px, 100% 18px, 100% 18px, auto;
+  }
+
+  66.67% {
+    -webkit-mask-size: 0    18px, 100% 18px, 100% 18px, auto;
+  }
+
+  83.33% {
+    -webkit-mask-size: 0    18px, 0    18px, 100% 18px, auto;
+  }
+
+  100% {
+    -webkit-mask-size: 0    18px, 0    18px, 0    18px, auto;
+  }
+}
