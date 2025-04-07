@@ -15,7 +15,6 @@ import { environment } from '../../environments/environment.development';
 import { TranslationService } from '../services/translation.service';
 import { Subscription } from 'rxjs';
 
-
 export type ChartOptions = {
   series: ApexAxisChartSeries;
   chart: ApexChart;
@@ -41,20 +40,22 @@ export class ThroughputComponent {
   public averagePercentage: number = 0;
   @Input() ONBtn!: boolean;
 
+  private langSubscription!: Subscription;
+
   seriesData: any[] = [];
   currentFilter: string = 'today';
   isInLive: boolean = false;
 
   selectedMap: any | null = null;
   throughputArr: number[] = [0];
-  throughputXaxisSeries: string[] = [];
+  throughputXaxisSeries: Date[] = [new Date()];
 
   throuputTimeInterval: any | null = null;
 
   constructor(
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
-    private translationService: TranslationService,
+    private translationService: TranslationService
   ) {
     this.chartOptions = {
       series: [
@@ -123,11 +124,7 @@ export class ThroughputComponent {
       },
     };
   }
-  getTranslation(key: string) {
-    return this.translationService.getDashboardTranslation(key);
-  }
-  private langSubscription!: Subscription;
-  
+
   async ngOnInit() {
     this.langSubscription = this.translationService.currentLanguage$.subscribe(
       (val) => {
@@ -198,7 +195,8 @@ export class ThroughputComponent {
           },
         };
         this.cdRef.detectChanges();
-      });
+      }
+    );
     this.selectedMap = this.projectService.getMapData();
     this.isInLive = this.projectService.getInLive();
     if (!this.isInLive) return;
@@ -229,13 +227,9 @@ export class ThroughputComponent {
   }
 
   plotChart(seriesName: string, data: any[], time: any[], limit: number = 5) {
-    // limit: number = 12
-    // const limitedData = data.length > limit ? data.slice(-limit) : data;
-    // const limitedTime = time.length > limit ? time.slice(-limit) : time;
-
     this.chartOptions = {
       ...this.chartOptions,
-      series: [{ name: 'Throughput', data: data, color: '#ff7373' }],
+      series: [{ name: seriesName, data: data, color: '#ff7373' }],
       xaxis: {
         categories: time,
         type: 'datetime',
@@ -263,6 +257,10 @@ export class ThroughputComponent {
       }
     );
     return await response.json();
+  }
+
+  getTranslation(key: string) {
+    return this.translationService.getDashboardTranslation(key);
   }
 
   async updateThroughput() {
