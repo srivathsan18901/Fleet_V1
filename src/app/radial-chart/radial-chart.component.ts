@@ -5,7 +5,7 @@ import {
   Input,
   ViewChild,
   EventEmitter,
-  OnDestroy 
+  OnDestroy,
 } from '@angular/core';
 import {
   ApexNonAxisChartSeries,
@@ -50,12 +50,13 @@ export class RadialChartComponent implements OnInit {
   totCount: string = '0';
 
   roboStatusInterval: ReturnType<typeof setInterval> | null = null;
+  robosCountController: AbortController | null = null;
 
   constructor(
     private projectService: ProjectService,
     private isFleetService: IsFleetService,
     private cdRef: ChangeDetectorRef,
-    private translationService: TranslationService,
+    private translationService: TranslationService
   ) {
     this.chartOptions = {
       series: this.roboStatePie,
@@ -98,50 +99,51 @@ export class RadialChartComponent implements OnInit {
   }
   private langSubscription!: Subscription;
   async ngOnInit() {
-    this.langSubscription = this.translationService.currentLanguage$.subscribe((val) => {
-      this.chartOptions = {
-        series: this.roboStatePie,
-        chart: {
-          height: 300,
-          type: 'radialBar',
-        },
-        plotOptions: {
-          radialBar: {
-            dataLabels: {
-              name: {
-                fontSize: '30px',
+    this.langSubscription = this.translationService.currentLanguage$.subscribe(
+      (val) => {
+        this.chartOptions = {
+          series: this.roboStatePie,
+          chart: {
+            height: 300,
+            type: 'radialBar',
+          },
+          plotOptions: {
+            radialBar: {
+              dataLabels: {
+                name: {
+                  fontSize: '30px',
+                },
+                value: {
+                  fontSize: '26px',
+                  fontWeight: 600,
+                },
+                total: {
+                  show: true,
+                  label: this.getTranslation('total'),
+                  formatter: () => this.totCount, // Dynamic total count
+                },
               },
-              value: {
-                fontSize: '26px',
-                fontWeight: 600,
+              track: {
+                background: '#e0e0e0', // Track background color (grayish)
               },
-              total: {
-                show: true,
-                label: this.getTranslation('total'),
-                formatter: () => this.totCount, // Dynamic total count
-              },
-            },
-            track: {
-              background: '#e0e0e0', // Track background color (grayish)
             },
           },
-        },
-        fill: {
-          colors: ['#59ED9D', '#FECC6A', '#FF6E6E'], // Green, Yellow, Red
-        },
-        stroke: {
-          lineCap: 'round', // Rounded end of bars for better visual
-        },
-        labels: ['Active', 'Inactive', 'Error'], // Label names
-      };
-      this.cdRef.detectChanges();
-    });
+          fill: {
+            colors: ['#59ED9D', '#FECC6A', '#FF6E6E'], // Green, Yellow, Red
+          },
+          stroke: {
+            lineCap: 'round', // Rounded end of bars for better visual
+          },
+          labels: ['Active', 'Inactive', 'Error'], // Label names
+        };
+        this.cdRef.detectChanges();
+      }
+    );
     // this.isFleetService.isFleet$.subscribe((value) => { // use for later..
     //   this.isFleet = value; // React to changes
     //   console.log('isFleet in RadialChartComponent:', this.isFleet);
     // });
     this.isFleet = sessionStorage.getItem('isFleet') == 'true' ? true : false;
-    
 
     await this.getMapDetails();
 
@@ -184,22 +186,25 @@ export class RadialChartComponent implements OnInit {
     this.totCount = this.totalRobots.toString();
   }
 
-  applyFilter(filter: string) {
-    this.currentFilter = filter;
-    this.updateChartWithFilter();
-  }
+  // applyFilter(filter: string) {
+  //   this.currentFilter = filter;
+  //   this.updateChartWithFilter();
+  // }
 
-  async updateChartWithFilter() {
-    this.roboStatePie = await this.getRobosStates();
-    this.chartOptions.series = [...this.roboStatePie];
-  }
+  // async updateChartWithFilter() {
+  //   this.roboStatePie = await this.getRobosStates();
+  //   this.chartOptions.series = [...this.roboStatePie];
+  // }
 
   async getRobosStates(): Promise<number[]> {
+    if (this.robosCountController) this.robosCountController.abort();
+    this.robosCountController = new AbortController();
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.mapData.id}`,
       {
         method: 'GET',
         credentials: 'include',
+        signal: this.robosCountController.signal,
       }
     );
 
@@ -207,21 +212,17 @@ export class RadialChartComponent implements OnInit {
     if (!data.map || data.error) return [0, 0, 0];
 
     let robots = data.robos;
-    // console.log("hAI",data.robos)
-    if (!data.robos) return [0, 0, 0];
 
     let active_robos = 0;
     let err_robos = 0;
 
-    if (!robots.robots) return [0, 0, 0];
-    robots.robots.forEach((robo: any) => {
-      active_robos += robo.enableRobot;
+    if (robots?.robots)
+      robots.robots.forEach((robo: any) => {
+        active_robos += robo.isConnected ? 1 : 0;
 
-      if (robo.robotError != 0) err_robos += 1;
-      // if ('EMERGENCY STOP' == robo.robotError || 'LIDAR_ERROR' == robo.robotError) err_robos += 1;
-    });
+        if (robo.robot_errors?.length) err_robos += 1;
+      });
 
-    // console.log("tot robos : ", [active_robos , this.totalRobots-active_robos , err_robos]);
     return [active_robos, this.totalRobots - active_robos, err_robos];
   }
 
