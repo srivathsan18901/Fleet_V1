@@ -152,6 +152,19 @@
   box-sizing: border-box;
 }
 
+.no-data-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 315px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #888;
+  background-color: #f9f9f9;
+}
+
 /* Styling for the robot activity and notifications containers */
 .operation-activity-container,
 .notifications-container {
