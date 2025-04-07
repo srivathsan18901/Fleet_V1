@@ -167,7 +167,7 @@ export class RobotDetailPopupComponent {
   truncateValue(value: number): string {
     const valueString = value.toString(); // Convert number to string
     if (valueString.length > 3) {
-      return valueString.slice(0, 3) + '...'; // Truncate and append '...'
+      return valueString.slice(0, 4) + '...'; // Truncate and append '...'
     }
     return valueString; // Return the whole string if 3 or fewer digits
   }

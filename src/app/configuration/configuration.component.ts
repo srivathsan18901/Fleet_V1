@@ -2028,7 +2028,7 @@ export class ConfigurationComponent implements AfterViewInit {
       this.updateRobo();
       return;
     }
-    let amrId = 0;
+    let amrId = 1;
     if (this.robotData.length)
       amrId = this.robotData[this.robotData.length - 1].amrId + 1;
     const dateInSecs = Math.round(Date.now() / 1000);
@@ -2217,7 +2217,7 @@ export class ConfigurationComponent implements AfterViewInit {
 
     // Create new robots based on robotCount
     let newRobots = [];
-    for (let i = 0; i < this.robotCount; i++) {
+    for (let i = 1; i < this.robotCount; i++) {
       newRobots.push({
         amrId: existingSimRobos.length + i, // ID based on total robots
         roboName: `MR${existingSimRobos.length + i}00`, // Unique name
