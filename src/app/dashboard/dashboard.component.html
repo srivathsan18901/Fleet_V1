@@ -292,7 +292,7 @@
     <!-- <canvas *ngIf="showModelCanvas" #modelCanvas id="modelCanvas" ></canvas> -->
 
     <!-- enable robots dropdown -->
-    <div class="dropdown" *ngIf="isImage">
+    <div class="dropdown" *ngIf="isImage" matTooltip="Enable the robot to take task" matTooltipPosition="right">
       <button
         class="dropdown-button"
         (click)="toggleDropdown()"
