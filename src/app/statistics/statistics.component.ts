@@ -81,7 +81,7 @@ export class StatisticsComponent {
       this.cdRef.detectChanges();
       // console.log(status);
     });
-
+    this.hasData();
     this.subscriptions.push(fleetSub);
     this.router.navigate(['/statistics/operation']); // Default to operation view
     this.selectedMap = this.projectService.getMapData();
@@ -412,6 +412,10 @@ export class StatisticsComponent {
     this.filteredNotifications = this.notifications.filter((notification) =>
       notification.message.toLowerCase().includes(query)
     );
+  }
+
+  hasData(): boolean {
+    return this.operationPie.some((value) => value > 0);
   }
 
   getTimeStampsOfDay(establishedTime: Date) {
