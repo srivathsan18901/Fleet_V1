@@ -9,6 +9,7 @@ import {
 import { HeatmapService } from '../services/heatmap-service.service';
 import { NodeGraphService } from '../services/nodegraph.service';
 import HeatMap from 'heatmap-ts';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-heatmap',
@@ -32,6 +33,7 @@ export class HeatmapComponent implements OnChanges {
 
   constructor(
     private heatmapService: HeatmapService,
+    private messageService: MessageService,
     private nodeGraphService: NodeGraphService
   ) {}
 
@@ -42,6 +44,15 @@ export class HeatmapComponent implements OnChanges {
   }
 
   ngOnInit() {
+    
+  // this.messageService.add({
+  //   key: 'heatmap',
+  //   severity: 'info',
+  //   summary: 'Heatmap Toggled',
+  //   detail: 'Heatmap is ON',
+  //   sticky: true // this makes it NOT auto-dismiss
+  // });
+  
     this.origin = this.heatmapService.getOrigin();
     this.ratio = this.heatmapService.getRatio();
     this.zoomLevel = this.nodeGraphService.getZoomLevel();
@@ -66,8 +77,7 @@ export class HeatmapComponent implements OnChanges {
     this.heatmapService.addHeatmapData(
       this.heatmapId,
       this.getHeatmapData(this.heatmap)
-    );
-    // console.log(this.getHeatmapData(this.heatmap));
+    );  // console.log(this.getHeatmapData(this.heatmap));
   }
 
   ngAfterViewInit(): void {

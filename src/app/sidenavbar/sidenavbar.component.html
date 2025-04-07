@@ -156,6 +156,7 @@
         class="icon1"
         routerLink="/dashboard"
         routerLinkActive="active"
+        (click)="closeAllPopups()"
       >
         <img
           src="../../assets/icons/dashboard_icon copy.svg"
@@ -170,6 +171,7 @@
         class="icon2"
         routerLink="/statistics"
         routerLinkActive="active"
+        (click)="closeAllPopups()"
       >
         <img src="../../assets/icons/Statistics.svg" alt="" class="Slogo" />
         <span class="label">{{ getTranslation('statistics') }}</span>
@@ -180,6 +182,7 @@
         class="icon3"
         routerLink="/robots"
         routerLinkActive="active"
+        (click)="closeAllPopups()"
       >
         <img
           src="../../assets/icons/Statistics_icon.svg"
@@ -206,6 +209,7 @@
         class="icon5"
         routerLink="/Reports"
         routerLinkActive="active"
+        (click)="closeAllPopups()"
       >
         <img src="../../assets/icons/Logs_icons.svg" alt="" class="Llogo" />
         <span class="label">{{ getTranslation('errorLogs') }}</span>
@@ -215,6 +219,7 @@
         class="icon6"
         routerLink="/tasks"
         routerLinkActive="active"
+        (click)="closeAllPopups()"
       >
         <img src="../../assets/icons/Tasks_icons.svg" alt="" class="Llogo" />
         <span class="label">{{ getTranslation('tasks') }}</span>
@@ -227,6 +232,7 @@
         class="icon7"
         routerLink="/usermanagement"
         routerLinkActive="active"
+        (click)="closeAllPopups()"
       >
         <img
           src="../../assets/icons/Usermanagement_icons.svg"
@@ -251,9 +257,6 @@
 </div>
 
 <!-- notification popup -->
-
-
-
 <div *ngIf="showLogoutConfirmation" class="confirmation-popup-overlay">
   <div class="confirmation-popup">
     <div class="Img">
