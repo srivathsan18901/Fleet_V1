@@ -32,7 +32,7 @@
         <!-- Card Container -->
         <!-- <div class="card" *ngFor="let robot of robots" (click)="openRobotDetail(robot)"> -->
       <div class="slider-container">
-        <ul class="wrapper" *ngIf="this.isFleet === true">
+        <ul class="wrapper" *ngIf="this.isFleet === true && filteredRobots.length >= 3">
           <li class="icon black" (click)="scrollLeft()">
             <span class="tooltip">Left</span>
             <span><svg viewBox="0 0 16 16" class="bi bi-chevron-double-left" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
@@ -44,7 +44,7 @@
         <div class="card-container-wrapper mt-4 w-full flex h-full"      #cardScrollContainer
         (wheel)="onMouseWheel($event)" >
   
-            <span *ngIf="this.robots.length === 0 && this.isFleet === true || this.isFleet === false" class="flex w-full h-full items-center justify-center flex-col">
+            <span *ngIf="this.robots.length === 0 && this.isFleet === true || this.isFleet === false || filteredRobots.length == 0" class="flex w-full h-full items-center justify-center flex-col">
               
                <span class="flex size-[450px] -mt-14">
 
@@ -1906,11 +1906,11 @@
                 </div>
             </div>
         </div>
+
           <!-- <div *ngFor="let robot of robots">
 
             <app-battery [batteryPercentage]="robot.batteryPercentage" [isCharging]="robot.ischarging"></app-battery>
           </div> -->
-
       <!-- Add Robot Popup -->
       <!-- <div *ngIf="showPopup" class="popup-overlay" (click)="togglePopup()">
         <div class="popup" (click)="$event.stopPropagation()">
@@ -1942,9 +1942,6 @@
               name="S.no"
               required
             /> -->
-
-
-
             <!-- <div class="flex">
               <button type="submit">Add Robot</button>
               <button type="button" (click)="togglePopup()">Cancel</button>
@@ -1952,7 +1949,6 @@
           </form>
         </div>
       </div> -->
-
       <!-- Edit Robot Popup -->
       <!-- <div *ngIf="isEditPopupOpen" class="popup-overlay">
         <div class="popup">
@@ -2003,9 +1999,8 @@
         </div>
       </div> -->
 
-
         </div>
-        <ul class="wrapper right" *ngIf="this.isFleet === true">
+        <ul class="wrapper right" *ngIf="this.isFleet === true && filteredRobots.length >= 3">
           <li class="icon black" (click)="scrollRight()">
             <span class="tooltip">Right</span>
             <span><svg viewBox="0 0 16 16" class="bi bi-chevron-double-right" fill="currentColor" height="16" width="16" xmlns="http://www.w3.org/2000/svg">

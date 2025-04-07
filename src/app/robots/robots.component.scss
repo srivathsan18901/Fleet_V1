@@ -847,8 +847,8 @@ border-radius: 2px; /* Rounded edges matching the container */
 
 .wrapper .icon {
   position: relative;
-  background: #fff;
-  border: 1px solid #000000;
+  background: #FF7373;
+  // border: 1px solid #000000;
   border-radius: 50%;
   margin: 10px;
   width: 50px;
@@ -902,7 +902,7 @@ border-radius: 2px; /* Rounded edges matching the container */
 }
 
 .wrapper svg {
-  fill: #da2020;
+  fill: #fff;
 }
 
 .wrapper span:hover,
@@ -910,9 +910,32 @@ border-radius: 2px; /* Rounded edges matching the container */
 .wrapper .black:hover,
 .wrapper .black:hover .tooltip,
 .wrapper .black:hover .tooltip::before {
-  background: #222;
+  background: #FF7373;
   color: white;
   fill: white;
 }
 
+.card-container-wrapper {
+  scrollbar-width: thin; /* for Firefox */
+  scrollbar-color: #FF7373 transparent; /* Firefox */
+
+  /* For WebKit (Chrome, Safari, Edge) */
+}
+
+.card-container-wrapper::-webkit-scrollbar {
+  height: 8px; /* Horizontal scrollbar height */
+}
+
+.card-container-wrapper::-webkit-scrollbar-track {
+  background: #FF7373;
+}
+
+.card-container-wrapper::-webkit-scrollbar-thumb {
+  background-color: #FF7373;
+  border-radius: 10px;
+}
+
+.card-container-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #FF7373;
+}
 
