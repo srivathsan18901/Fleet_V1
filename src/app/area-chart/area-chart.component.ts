@@ -72,16 +72,16 @@ export class AreaChartComponent implements OnInit {
   private abortControllers: Map<string, AbortController> = new Map();
 
   throughputArr: number[] = [0];
-  throughputXaxisSeries: string[] = [];
+  throughputXaxisSeries: Date[] = [new Date()];
 
   starvationArr: number[] = [0];
-  starvationXaxisSeries: string[] = [];
+  starvationXaxisSeries: Date[] = [new Date()];
 
   pickAccuracyArr: number[] = [0];
-  pickAccXaxisSeries: string[] = [];
+  pickAccXaxisSeries: Date[] = [new Date()];
 
   errRateArr: number[] = [0];
-  errRateXaxisSeries: string[] = [];
+  errRateXaxisSeries: Date[] = [new Date()];
 
   throuputTimeInterval: ReturnType<typeof setInterval> | null = null;
   starvationTimeInterval: ReturnType<typeof setInterval> | null = null;
@@ -132,7 +132,7 @@ export class AreaChartComponent implements OnInit {
         },
       },
       xaxis: {
-        categories: [],
+        categories: this.throughputXaxisSeries,
         type: 'datetime', // Important: Uses timestamps directly
         tickAmount: 6,
         labels: {
@@ -245,7 +245,20 @@ export class AreaChartComponent implements OnInit {
 
     this.updateChart('data1', 'Throughput');
   }
-
+  getTooltipText(): string {
+    switch(this.selectedMetric) {
+      case 'Throughput':
+        return 'Number of tasks expected to be completed per hour.';
+      case 'starvationRate':
+        return 'The rate at which the system is responding to the unassigned tasks. Lower the starvation rate higher the system throughput.';
+      case 'pickAccuracy':
+        return 'Total number of tasks picked successfully. ';
+      case 'errorRate':
+        return 'The rate of measure of errors in the tasks.';
+      default:
+        return 'Performance metric information';
+    }
+  }
   async getLiveRoboInfo(): Promise<string[]> {
     if (!this.selectedMap) return [];
     try {
@@ -711,6 +724,13 @@ export class AreaChartComponent implements OnInit {
     this.chartInstance.updateOptions({
       animations: {
         enabled: false,
+      },
+      
+      toolbar: {
+        show: true, // Keep the toolbar visible
+        tools: {
+          download: false,
+        },
       },
       xaxis: {
         labels: {
