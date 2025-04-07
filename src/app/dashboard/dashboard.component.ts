@@ -1685,6 +1685,7 @@ export class DashboardComponent implements AfterViewInit {
       }
       let isOverRobot = false;
       let robotId = null;
+      let robotName = null;
       let battery = null;
       let taskId = '';
       let errState = null;
@@ -1700,7 +1701,10 @@ export class DashboardComponent implements AfterViewInit {
             imgY >= roboY - imageSize &&
             imgY <= roboY + imageSize
           ) {
+            console.log(this.simMode);
+            
             isOverRobot = true;
+            robotName = robo.roboName;
             robotId = robo.amrId;
             battery = robo.battery ? robo.battery.toFixed(2) : 0;
             taskId = robo.current_task ? robo.current_task : 'N/A';
@@ -1729,6 +1733,11 @@ export class DashboardComponent implements AfterViewInit {
                             <label class="idlabel">${this.getTranslation(
                               'robotID'
                             )} : ${robotId}</label>
+                          </div>
+                                                    <div>
+                            <label class="idlabel">${this.getTranslation(
+                              'robot_name'
+                            )} : ${robotName}</label>
                           </div>
                           <div>
                             <label class="idlabel">${this.getTranslation(
@@ -1763,6 +1772,7 @@ export class DashboardComponent implements AfterViewInit {
             imgY <= roboY + imageSize
           ) {
             isOverRobot = true;
+            robotName = robo.roboDet.roboName;            
             robotId = robo.roboDet.id;
             battery = robo.battery ? robo.battery.toFixed(2) : 0;
             taskId = robo.current_task ? robo.current_task : 'N/A';
@@ -1788,6 +1798,9 @@ export class DashboardComponent implements AfterViewInit {
                         <div><label class="idlabel">${this.getTranslation(
                           'robotID'
                         )} : ${robotId}</label></div>
+                        <div><label class="idlabel">${this.getTranslation(
+                          'robot_name'
+                        )} : ${robotName}</label></div>
                         <div><label class="idlabel">${this.getTranslation(
                           'battery'
                         )} : ${battery}%</label></div>
@@ -2133,17 +2146,9 @@ export class DashboardComponent implements AfterViewInit {
               errState: errState,
               battery: robot.battery,
               current_task: robot.current_task,
-              path: robot.robot_state === 'MOVESTATE' ? robot.agentPath : [], // robot.agentPath.length = 0
+              path: robot.robot_state === 'MOVESTATE' ? robot.agentPath : [], // robot.agentPath.length = 0,
               payload: robot.payload_status,
             };
-
-            console.log(
-              robot.id,
-              robot.pose.position.x,
-              robot.pose.position.y,
-              robot.path,
-              'igheiorghoiejvopierjoiejfpoef'
-            );
             this.simMode = this.nodeGraphService.getsimMode();
             this.roboIDColor = this.nodeGraphService.getRoboIdClr();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -2412,6 +2417,7 @@ export class DashboardComponent implements AfterViewInit {
             robo.errState = errState[0];
             robo.payload = payload;
             robo.battery = battery;
+            robo.showPath = state === 'MOVESTATE' ? true : false;
             robo.current_task = current_task;
             if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
               robo.isActive = true;
@@ -2430,6 +2436,7 @@ export class DashboardComponent implements AfterViewInit {
           robo.imgState = state;
           robo.errState = errState[0];
           robo.payload = payload;
+          robo.showPath = state === 'MOVESTATE' ? true : false;
           robo.battery = battery;
           robo.current_task = current_task;
           if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
