@@ -375,9 +375,8 @@ export class DashboardComponent implements AfterViewInit {
     this.nodeGraphService.setShowModelCanvas(false);
     this.showModelCanvas = false; // no need in later..
     this.cdRef.detectChanges();
-    if (!this.isInLive) {
-      this.initSimRoboPos();
-    }
+    if (!this.isInLive) this.initSimRoboPos();
+
     this.redrawCanvas(); // yet to look at it... and stay above initSimRoboPos()
     if (this.nodeGraphService.getAssignTask()) this.updateCurrentRoboList();
     this.loadCanvas();
@@ -876,10 +875,7 @@ export class DashboardComponent implements AfterViewInit {
       this.showEdges = false;
     }
     this.showModelCanvas = this.nodeGraphService.getShowModelCanvas();
-    if (this.isInLive) {
-      // this.initSimRoboPos();
-      await this.getLivePos();
-    }
+    if (this.isInLive) await this.getLivePos();
 
     if (this.nodeGraphService.getShowModelCanvas()) {
       // this.showModelCanvas use instead..
@@ -1854,13 +1850,12 @@ export class DashboardComponent implements AfterViewInit {
       }
     );
     const data = await response.json();
-  
+
     // Update robot list
     this.robotList = data.robots || [];
-  
+
     return data;
   }
-  
 
   async activateRobot(robot: any) {
     let fleetUp = this.projectService.getIsFleetUp();
@@ -2137,7 +2132,13 @@ export class DashboardComponent implements AfterViewInit {
               payload: robot.payload_status,
             };
 
-            console.log(robot.id, robot.pose.position.x, robot.pose.position.y,robot.path,"igheiorghoiejvopierjoiejfpoef");
+            console.log(
+              robot.id,
+              robot.pose.position.x,
+              robot.pose.position.y,
+              robot.path,
+              'igheiorghoiejvopierjoiejfpoef'
+            );
             this.simMode = this.nodeGraphService.getsimMode();
             this.roboIDColor = this.nodeGraphService.getRoboIdClr();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
