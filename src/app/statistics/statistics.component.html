@@ -41,7 +41,10 @@
       <div class="statistics-container">
         <!-- Stat card 1 -->
         <div class="stat-card stat-card-1">
-          <div class="stat-value">{{ getTranslation('systemThroughput') }}</div>
+          <div class="stat-value" style="display: flex; justify-content: space-between;">
+            {{ getTranslation('systemThroughput') }}
+            <img src="../../assets/info.svg"  matTooltip="This represents system throughput. Higher values indicate better performance." matTooltipPosition="right">
+          </div>
           <h2>{{ statisticsData.systemThroughput }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.systemThroughputChange }}% <span>&uarr;</span> -->
@@ -68,8 +71,12 @@
 
         <!-- Stat card 2 -->
         <div class="stat-card stat-card-2">
-          <div class="stat-value">{{ getTranslation('systemUptime') }}</div>
-          <h2>{{ statisticsData.systemUptime || getTranslation('loading') }}</h2>
+          <div class="stat-value" style="display: flex; justify-content: space-between;">
+            {{ getTranslation('systemUptime') }}
+            <img src="../../assets/info.svg" matTooltip="This represents system systemUptime. Higher values indicate better performance." matTooltipPosition="right">
+          </div>
+          <!-- <h2>{{ statisticsData.systemUptime || getTranslation('loading') }}</h2> -->
+          <h2>{{ statisticsData.systemUptime }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.systemUptimeChange }}% <span>&uarr;</span> -->
           </div>
@@ -94,7 +101,11 @@
 
         <!-- Stat card 3 -->
         <div class="stat-card stat-card-3">
-          <div class="stat-value">{{ getTranslation('successRate') }}</div>
+          <div class="stat-value" style="display: flex; justify-content: space-between;">
+            {{ getTranslation('successRate') }} 
+            <img src="../../assets/info.svg" matTooltip="This represents system successRate. Higher values indicate better performance." matTooltipPosition="right">
+          </div>
+        
           <!-- <h2>{{ statisticsData.successRate || 'Loading...' }}</h2> -->
           <h2>{{ statisticsData.successRate || getTranslation('loading')}}</h2>
           <div class="stat-change negative">
@@ -121,8 +132,12 @@
 
         <!-- Stat card 4 -->
         <div class="stat-card stat-card-4">
-          <div class="stat-value">{{ getTranslation('responsiveness') }}</div>
-          <h2>{{ statisticsData.responsiveness ||  getTranslation('loading')  }}</h2>
+          <div class="stat-value" style="display: flex; justify-content: space-between;">
+            {{ getTranslation('responsiveness') }}
+            <img src="../../assets/info.svg" matTooltip="This represents system responsiveness. Higher values indicate better performance." matTooltipPosition="right">
+          </div>
+          <!-- <h2>{{ statisticsData.responsiveness ||  getTranslation('loading')  }}</h2> -->
+          <h2>{{ statisticsData.responsiveness }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.responsivenessChange }}% <span>&uarr;</span> -->
           </div>
