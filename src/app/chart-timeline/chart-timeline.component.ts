@@ -63,25 +63,25 @@ export class ChartTimelineComponent implements OnInit {
   private langSubscription!: Subscription;
   // Updated data sets..
   cpuUtilArr: number[] = [0];
-  cpuXaxisSeries: string[] = [];
+  cpuXaxisSeries: Date[] = [new Date()];
 
   roboUtilArr: number[] = [0];
-  roboXaxisSeries: string[] = [];
+  roboXaxisSeries: Date[] = [new Date()];
 
   batteryArr: number[] = [0];
-  batteryXaxisSeries: string[] = [];
+  batteryXaxisSeries: Date[] = [new Date()];
 
   memoryArr: number[] = [0];
-  memoryXaxisSeries: string[] = [];
+  memoryXaxisSeries: Date[] = [new Date()];
 
   networkArr: number[] = [0];
-  networkXaxisSeries: string[] = [];
+  networkXaxisSeries: Date[] = [new Date()];
 
   idleTimeArr: number[] = [0];
-  idleTimeXaxisSeries: string[] = [];
+  idleTimeXaxisSeries: Date[] = [new Date()];
 
   errorArr: number[] = [0];
-  errRateXaxisSeries: string[] = [];
+  errRateXaxisSeries: Date[] = [new Date()];
 
   cpuUtilTimeInterval: any | null = null;
   roboUtilTimeInterval: any | null = null;
@@ -168,7 +168,7 @@ export class ChartTimelineComponent implements OnInit {
         },
       },
       xaxis: {
-        categories: [],
+        categories: this.cpuXaxisSeries,
         type: 'datetime', // Important: Uses timestamps directly
         tickAmount: 6,
         labels: {
@@ -186,9 +186,9 @@ export class ChartTimelineComponent implements OnInit {
             colors: '#9aa0ac',
             fontSize: '12px',
           },
-          // formatter: function (value: number) {
-          //   return value.toFixed(1); // Ensure two decimal places
-          // },
+          formatter: function (value: number) {
+            return value.toFixed(0); // Ensure two decimal places
+          },
         },
       },
       fill: {
@@ -232,20 +232,20 @@ export class ChartTimelineComponent implements OnInit {
         x: {
           format: 'dd MMM',
         },
-        // custom: ({ seriesIndex, dataPointIndex, w }) => {
-        //   const value = w.config.series[seriesIndex].data[dataPointIndex];
-        //   const category = w.config.xaxis.categories[dataPointIndex];
+        custom: ({ seriesIndex, dataPointIndex, w }) => {
+          const value = w.config.series[seriesIndex].data[dataPointIndex];
+          const category = w.config.xaxis.categories[dataPointIndex];
 
-        //   // Find the corresponding metric translation
-        //   const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
-        //   const translatedMetric = this.getTranslation(metricKey) || metricKey;
+          // Find the corresponding metric translation
+          const metricKey = w.config.series[seriesIndex].name; // Assuming name corresponds to the key
+          const translatedMetric = this.getTranslation(this.selectedMetric);
 
-        //   return `
-        //     <div style="padding: 10px; background: #333; color: #fff;">
-        //       <strong>${translatedMetric}</strong>: ${value}<br>
-        //     </div>
-        //   `;
-        // },
+          return `
+            <div style="padding: 10px; background: #333; color: #fff;">
+              <strong>${translatedMetric}</strong>: ${value}<br>
+            </div>
+          `;
+        },
       },
       grid: {
         borderColor: '#e7e7e7',
@@ -256,7 +256,26 @@ export class ChartTimelineComponent implements OnInit {
       },
     };
   }
-
+  getMetricTooltip(): string {
+    switch(this.selectedMetric) {
+      case 'CPU Utilization':
+        return  'The measure of utilization of CPU.';
+      case 'Robot Utilization':
+        return 'How effectively the robots are being utilised by the system.';
+      case 'Memory':
+        return  'The memory utilization of the robot.';
+      case 'Network':
+        return  'The measure of how good the network bandwidth is.';
+      case 'Idletime':
+        return 'The time for which all the robots are in idle.';
+      case 'Error':
+        return 'The Error records for which if the robot is in error state';
+      case 'Battery':
+        return 'The average utilization of battery by all the robots in the system';
+      default:
+        return 'Performance metric information';
+    }
+  }
   async ngOnInit() {
     this.currentFilter = 'today';
     this.selectedMap = this.projectService.getMapData();
