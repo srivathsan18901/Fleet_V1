@@ -1849,8 +1849,6 @@ export class DashboardComponent implements AfterViewInit {
     // this.liveRobos = // yet to look at it..
   }
 
-  robotList: any[] = []; // Store robots list
-
   async enable_robot(robot: any) {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/enable-robot`,
@@ -1867,12 +1865,7 @@ export class DashboardComponent implements AfterViewInit {
         }),
       }
     );
-    const data = await response.json();
-
-    // Update robot list
-    this.robotList = data.robots || [];
-
-    return data;
+    return await response.json();
   }
 
   async activateRobot(robot: any) {
