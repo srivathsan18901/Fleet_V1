@@ -588,6 +588,13 @@ canvas {
   }
 }
 
+.no-robots-text {
+  padding: 8px;
+  text-align: center;
+  font-style: italic;
+  color: #999;
+}
+
 
 /* no map */
 .no-map-container {
