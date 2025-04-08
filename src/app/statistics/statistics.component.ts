@@ -304,8 +304,6 @@ export class StatisticsComponent {
     return [];
   }
 
-  isLoading: boolean = true; // Initially, set to true to show the loader
-
   async fetchTasksStatus(): Promise<number[]> {
     let startEstablishTime = new Date().setHours(0, 0, 0, 0);
     let establishedTime = new Date(startEstablishTime);
@@ -319,54 +317,69 @@ export class StatisticsComponent {
 
     const abortController = new AbortController();
     this.abortControllers.set(endPoint, abortController);
-  
-    // try {
-      let response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            mapId: this.selectedMap.id,
-            timeStamp1: timeStamp1,
-            timeStamp2: timeStamp2,
-          }),
-          signal: abortController.signal,
-        }
-      );
-  
-      let data = await response.json();
-  
-      if (data.error) {
-        this.isLoading = false;
-        return [0, 0, 0, 0, 0, 0]; // No data case
+
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapId: this.selectedMap.id,
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+        signal: abortController.signal,
       }
-  
-      const { tasks } = data.tasks;
-      let tasksStatus = [0, 0, 0, 0, 0, 0];
-  
-      if (tasks) {
-        let tasksStatusArr = tasks.map((task: any) => task.task_status.status);
-  
-        for (let task of tasksStatusArr) {
-          if (task === 'COMPLETED') tasksStatus[0] += 1;
-          else if (task === 'ACCEPTED') tasksStatus[1] += 1;
-          else if (['INPROGRESS', 'DROPPED', 'PICKED'].includes(task))
-            tasksStatus[2] += 1;
-          else if (task === 'NOTASSIGNED') tasksStatus[3] += 1;
-          else if (['FAILED', 'REJECTED'].includes(task)) tasksStatus[4] += 1;
-          else if (task === 'CANCELLED') tasksStatus[5] += 1;
-        }
+    );
+    // if(!response.ok) throw new Error(`Error occured with status code of : ${response.status}`)
+    let data = await response.json();
+
+    if (data.error) {
+      console.log('Err occured while getting tasks status : ', data.error);
+      return [0, 0, 0, 0, 0, 0];
+    }
+
+    if (!data.tasks?.tasks) return [0, 0, 0, 0, 0, 0];
+    const { tasks } = data.tasks;
+
+    // ["completed", "In-progress", "todo", "err", "cancelled"];
+    let tasksStatus = [0, 0, 0, 0, 0, 0];
+    let tot_tasks = 0;
+
+    if (tasks) {
+      let tasksStatusArr = tasks.map((task: any) => task.task_status.status);
+      for (let task of tasksStatusArr) {
+        if (task === 'COMPLETED') tasksStatus[0] += 1;
+        else if (task === 'ACCEPTED') tasksStatus[1] += 1;
+        else if (
+          task === 'INPROGRESS' ||
+          task === 'DROPPED' ||
+          task === 'PICKED'
+        )
+          tasksStatus[2] += 1;
+        else if (task === 'NOTASSIGNED') tasksStatus[3] += 1;
+        else if (task === 'FAILED' || task === 'REJECTED') tasksStatus[4] += 1;
+        else if (task === 'CANCELLED') tasksStatus[5] += 1;
       }
-  
-      this.isLoading = false; // Stop the loader when response arrives
-      return tasksStatus;
-    // } catch (error) {
-    //   console.error('Fetch error:', error);
-    //   this.isLoading = false;
-    //   return [0, 0, 0, 0, 0, 0]; // No data case
-    // }
+      for (let taskStatus of tasksStatus) tot_tasks += taskStatus;
+    }
+
+    let completedTasks = tasksStatus[0];
+    let errorTasks = tasksStatus[4];
+    let cancelledTasks = tasksStatus[5];
+    let inProgressTasks = tasksStatus[2];
+    if (isNaN(completedTasks) || isNaN(errorTasks) || isNaN(cancelledTasks)) {
+      this.statisticsData.successRate = 'Loading...';
+    } else {
+      this.statisticsData.successRate = (
+        ((completedTasks + errorTasks + cancelledTasks) /
+          (completedTasks + errorTasks + cancelledTasks + inProgressTasks)) *
+          100 || 0
+      ).toFixed(2);
+      this.exportFileService.successRate = this.statisticsData.successRate;
+    }
+    return tasksStatus;
   }
 
   hasData(): boolean {
