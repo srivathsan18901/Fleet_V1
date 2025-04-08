@@ -31,7 +31,7 @@ export class UptimeComponent {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private projectService:ProjectService
+    private projectService: ProjectService
   ) {
     this.chartOptions = {
       series: [this.uptimePercentage],
@@ -45,10 +45,10 @@ export class UptimeComponent {
           offsetY: -10,
           offsetX: -20,
           startAngle: -90,
-          endAngle: 90,          
+          endAngle: 90,
           hollow: {
             size: '50%', // Adjusted for better visual balance
-          },          
+          },
           track: {
             background: '#fee8e8', // Light gray for a soft background
             strokeWidth: '100%',
@@ -58,9 +58,9 @@ export class UptimeComponent {
               top: 3,
               left: 0,
               blur: 4,
-              opacity: 0.24
-            }
-          },          
+              opacity: 0.24,
+            },
+          },
           dataLabels: {
             name: {
               show: false,
@@ -130,8 +130,11 @@ export class UptimeComponent {
     // console.log(data);
     if (data.error) return;
     let { systemUptime } = data;
-    this.uptimePercentage = systemUptime;
-    
+    systemUptime = parseFloat(systemUptime);
+
+    this.uptimePercentage =
+      systemUptime >= 0 && systemUptime <= 100 ? systemUptime : 0;
+
     this.chartOptions.series = [this.uptimePercentage];
   }
 }
