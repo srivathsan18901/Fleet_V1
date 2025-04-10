@@ -130,6 +130,7 @@ export class DashboardComponent implements AfterViewInit {
   mapImageY: number = 0; // To store the Y position of the map image
   draggingRobo: any = null; // Holds the robot being dragged
   selectedRobo: any = null;
+  toast: boolean = false;
   taskAction: string = 'MOVE';
   roboToAssign: string | null = 'Default';
   sourceLocation: any | null = null;
@@ -146,6 +147,7 @@ export class DashboardComponent implements AfterViewInit {
   updatedrobo: any;
   isFleetUp: boolean = false;
   liveRobos: any | null = null;
+  enable: boolean=false
   // canvas loader
   canvasloader: boolean = true;
   canvasNoImage: boolean = false;
@@ -731,13 +733,26 @@ export class DashboardComponent implements AfterViewInit {
   toggleShowPath() {
     this.isShowPath = !this.isShowPath;
     this.nodeGraphService.setIsShowPath(this.isShowPath);
+    console.log(this.enable,"enabled")
     if (this.isShowPath) {
-      this.messageService.add({
-        severity: 'info',
-        summary: this.getTranslation('Robot Path is Visible'),
-        detail: this.getTranslation('Path for all robots are now visible'),
-        life: 4000,
-      });
+      console.log("clicked",this.isFleetUp)
+      if(this.toast == true && this.isFleetUp == true && this.enable == true){
+        this.messageService.add({
+          severity: 'info',
+          summary: this.getTranslation('Robot Path is Visible'),
+          detail: this.getTranslation('Path for all robots are now visible'),
+          life: 4000,
+        });
+        console.log(this.toast,"if")
+      }else if((this.toast == false || this.enable == false) || this.isFleetUp == false ){
+        this.messageService.add({
+          severity: 'warn',
+          summary: this.getTranslation('Robot Path is Visible'),
+          detail: this.getTranslation('No Robot has been Initialized'),
+          life: 4000,
+        });
+        console.log(this.toast,"else")
+      }
     } else {
       this.messageService.add({
         severity: 'info',
@@ -1873,28 +1888,36 @@ export class DashboardComponent implements AfterViewInit {
     if (!fleetUp) return;
 
     robot.enabled = true;
+    this.enable  = true
     let data = await this.enable_robot(robot);
 
     if (!this.isFleet)
       this.simMode = this.simMode.map((robo) => {
-        if (robo.amrId === robot.amrId && data.isRoboEnabled)
+        if (robo.amrId === robot.amrId && data.isRoboEnabled){
           robo.isActive = true;
-        else if (robo.amrId === robot.amrId && !data.isRoboEnabled)
+          this.enable  = true;
+          }
+        else if (robo.amrId === robot.amrId && !data.isRoboEnabled){
           robo.isActive = false;
-
+          this.enable  = false;
+        }
         return robo;
       });
 
     if (this.isFleet)
       this.robos = this.robos.map((robo) => {
-        if (robo.roboDet.id === robot.roboDet.id && data.isRoboEnabled)
+        if (robo.roboDet.id === robot.roboDet.id && data.isRoboEnabled){
           robo.isActive = true;
-        else if (robo.roboDet.id === robot.roboDet.id && !data.isRoboEnabled)
+          this.enable  = true;
+          }
+        else if (robo.roboDet.id === robot.roboDet.id && !data.isRoboEnabled){
           robo.isActive = false;
+          this.enable  = false;
+          }
         return robo;
       });
-
     if (data.isRoboEnabled) {
+      this.enable  = true;
       this.messageService.add({
         severity: 'info',
         summary: `${robot.roboName || robot.roboDet.roboName} `,
@@ -1902,6 +1925,7 @@ export class DashboardComponent implements AfterViewInit {
         life: 4000,
       });
     } else {
+      this.enable = false
       this.messageService.add({
         severity: 'error',
         summary: `${robot.roboName || robot.roboDet.roboName}`,
@@ -2414,7 +2438,9 @@ export class DashboardComponent implements AfterViewInit {
             robo.current_task = current_task;
             if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
               robo.isActive = true;
+              this.toast  = true;
           }
+         
           return robo;
         });
       }
@@ -2434,7 +2460,9 @@ export class DashboardComponent implements AfterViewInit {
           robo.current_task = current_task;
           if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
             robo.isActive = true;
+            this.toast  = true;
         }
+        console.log(state,"dkjbhefiboe")
         return robo;
       });
     }
