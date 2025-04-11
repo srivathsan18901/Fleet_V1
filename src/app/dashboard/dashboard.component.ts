@@ -747,7 +747,7 @@ export class DashboardComponent implements AfterViewInit {
       }else if((this.toast == false || this.enable == false) || this.isFleetUp == false ){
         this.messageService.add({
           severity: 'warn',
-          summary: this.getTranslation('Robot Path is Visible'),
+          summary: this.getTranslation('Robot Path is not Visible'),
           detail: this.getTranslation('No Robot has been Initialized'),
           life: 4000,
         });
@@ -2440,7 +2440,7 @@ export class DashboardComponent implements AfterViewInit {
               robo.isActive = true;
               this.toast  = true;
           }
-         
+          console.log(state,"fleet")
           return robo;
         });
       }
