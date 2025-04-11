@@ -736,7 +736,7 @@ export class DashboardComponent implements AfterViewInit {
     console.log(this.enable,"enabled")
     if (this.isShowPath) {
       console.log("clicked",this.isFleetUp)
-      if(this.toast == true && this.isFleetUp == true && this.enable == true){
+      if(this.toast == true && this.isFleetUp == true && this.enable == false){
         this.messageService.add({
           severity: 'info',
           summary: this.getTranslation('Robot Path is Visible'),
@@ -745,6 +745,7 @@ export class DashboardComponent implements AfterViewInit {
         });
         console.log(this.toast,"if")
       }else if((this.toast == false || this.enable == false) || this.isFleetUp == false ){
+        this.isShowPath=false;
         this.messageService.add({
           severity: 'warn',
           summary: this.getTranslation('Robot Path is not Visible'),
