@@ -46,7 +46,7 @@
       <div class="stat-card stat-card-1">
         <div class="stat-value" style="display: flex; justify-content: space-between;">
           {{ getTranslation('averageSpeed') }}
-          <img src="../../assets/info.svg" matTooltip="The Average speed of the robot in the system." matTooltipPosition="right">
+          <img src="../../assets/info.svg" matTooltip="{{this.getTranslation('avg_speed_desc')}}" matTooltipPosition="right">
         </div>
         <h2>{{ statisticsData.averageSpeed || getTranslation('loading') }}</h2>
         <div class="stat-change positive">
@@ -75,7 +75,7 @@
       <div class="stat-card stat-card-2">
         <div class="stat-value" style="display: flex; justify-content: space-between;">
           {{ getTranslation('totalDistance') }}
-          <img src="../../assets/info.svg" matTooltip="The Distance covered by the robot in the system." matTooltipPosition="right">
+          <img src="../../assets/info.svg" matTooltip="{{this.getTranslation('distance_covered_desc')}}" matTooltipPosition="right">
         </div>
         <h2>{{ statisticsData.totalDistance || getTranslation('loading') }}</h2>
         <div class="stat-change positive">
@@ -104,7 +104,7 @@
       <div class="stat-card stat-card-3">
         <div class="stat-value" style="display: flex; justify-content: space-between;">
           {{ getTranslation('robotUtilization') }}
-          <img src="../../assets/info.svg" matTooltip="How effectively the robot is being utilised by the system." matTooltipPosition="right">
+          <img src="../../assets/info.svg" matTooltip="{{this.getTranslation('utilisation_desc')}}" matTooltipPosition="right">
         </div>
         <h2>{{ statisticsData.robotUtilization || getTranslation('loading') }}</h2>
         <div class="stat-change negative">
@@ -133,7 +133,7 @@
       <div class="stat-card stat-card-4">
         <div class="stat-value" style="display: flex; justify-content: space-between;">
           {{ getTranslation('networkConnection') }}
-          <img src="../../assets/info.svg" matTooltip="The measure of how good the network bandwidth is." matTooltipPosition="right">
+          <img src="../../assets/info.svg" matTooltip="{{this.getTranslation('bandwidth_desc')}}" matTooltipPosition="right">
         </div>
         <h2>{{ statisticsData.networkConnection|| getTranslation('loading') }}</h2>
         <div class="stat-change positive">

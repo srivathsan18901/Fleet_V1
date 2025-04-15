@@ -259,21 +259,21 @@ export class ChartTimelineComponent implements OnInit {
   getMetricTooltip(): string {
     switch(this.selectedMetric) {
       case 'CPU Utilization':
-        return  'The measure of utilization of CPU.';
+        return  this.getTranslation("cpu_utilization_desc");
       case 'Robot Utilization':
-        return 'How effectively the robots are being utilised by the system.';
+        return this.getTranslation("robot_utilization_desc");
       case 'Memory':
-        return  'The memory utilization of the robot.';
+        return  this.getTranslation("memory_desc");
       case 'Network':
-        return  'The measure of how good the network bandwidth is.';
+        return  this.getTranslation("network_desc");
       case 'Idletime':
-        return 'The time for which all the robots are in idle.';
+        return this.getTranslation("idletime_desc");
       case 'Error':
-        return 'The Error records for which if the robot is in error state';
+        return this.getTranslation("error_desc");
       case 'Battery':
-        return 'The average utilization of battery by all the robots in the system';
+        return this.getTranslation("battery_desc");
       default:
-        return 'Performance metric information';
+        return this.getTranslation("default_metric_desc");
     }
   }
   async ngOnInit() {

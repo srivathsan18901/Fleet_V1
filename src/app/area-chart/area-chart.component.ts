@@ -248,15 +248,15 @@ export class AreaChartComponent implements OnInit {
   getTooltipText(): string {
     switch(this.selectedMetric) {
       case 'Throughput':
-        return 'Number of tasks expected to be completed per hour.';
+        return this.getTranslation("throughput_tooltip");
       case 'starvationRate':
-        return 'The rate at which the system is responding to the unassigned tasks. Lower the starvation rate higher the system throughput.';
+        return this.getTranslation("starvationRate_tooltip");
       case 'pickAccuracy':
-        return 'Total number of tasks picked successfully. ';
+        return this.getTranslation("pickAccuracy_tooltip");
       case 'errorRate':
-        return 'The rate of measure of errors in the tasks.';
+        return this.getTranslation("errorRate_tooltip");
       default:
-        return 'Performance metric information';
+        return this.getTranslation("default_tooltip");
     }
   }
   async getLiveRoboInfo(): Promise<string[]> {
