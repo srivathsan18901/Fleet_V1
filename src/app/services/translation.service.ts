@@ -510,6 +510,7 @@ export class TranslationService {
       robot: "Robot",
       systemThroughput: "System Throughput",
       systemUptime: "System Uptime",
+      'operations_per_day': 'Operations Per Day',
       successRate: "Success Rate",
       'proud_to_be_part_of': 'Proud to be Part of',
       responsiveness: "Responsiveness",
@@ -594,6 +595,7 @@ export class TranslationService {
     JAP: {
       operation: "操作",
       robot: "ロボット",
+      'operations_per_day': '1日あたりの操作回数',
       'numberOfPicks': 'ピック数',
       'proud_to_be_part_of': '誇りに思います', 
       'exportAsPDF': 'PDFとしてエクスポート',
@@ -679,6 +681,7 @@ export class TranslationService {
     FRE: {
       operation: "Opération",
       robot: "Robot",
+      'operations_per_day': 'Opérations par jour',
       systemThroughput: "Débit du système",
       systemUptime: "Temps de disponibilité",
       'proud_to_be_part_of': 'Fier de faire partie de', 
@@ -764,6 +767,7 @@ export class TranslationService {
     GER: {
       operation: "Betrieb",
       robot: "Roboter",
+      'operations_per_day': 'Operationen pro Tag',
       'exportAsPDF': 'Als PDF exportieren',
       'numberOfPicks': 'Anzahl der Picks',
       systemThroughput: "Systemdurchsatz",
