@@ -81,8 +81,9 @@ export class RobotsComponent implements OnInit {
   editIndex: number | null = null;
   centerIndex: any;
   isFleet: boolean = false; // Store the emitted value
+  isInLive: boolean = false;
   private subscriptions: Subscription[] = [];
-
+  isFleetUp: boolean = false;
   selectedMap: any | null = null;
   private routerSubscription: Subscription | undefined; // Subscription to track navigation changes
 

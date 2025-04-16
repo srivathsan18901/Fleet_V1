@@ -1830,7 +1830,8 @@
               </svg>
 
               </span>
-              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === false"> {{ getTranslation("- Sim Mode has been Enabled -") }}</p>
+              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === false && this.selectedMap === true"> {{ getTranslation("- Sim Mode has been Enabled -") }}</p>
+              <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.selectedMap === false"> {{ getTranslation("- Select Map to view robots -") }}</p>
               <p class="py-4 font-bold text-[24px] text-[#00000050]" *ngIf="this.isFleet === true"> {{ getTranslation("- No Robots Found -") }}</p>
             </span>
 
@@ -1901,6 +1902,7 @@
                         </button>
                       </div>
 
+                    </div>
                     </div>
                     </div>
                 </div>
