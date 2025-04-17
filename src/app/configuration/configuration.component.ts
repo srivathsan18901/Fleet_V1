@@ -76,6 +76,7 @@ export class ConfigurationComponent implements AfterViewInit {
   mapData: any = null;
   isSimulating: boolean = false;
   isPagination: boolean = false;
+  endDateString: string | null = null;
   searchTerm: string = '';
   filteredEnvData: any[] = [];
   filteredipData: any[] = [];
@@ -86,6 +87,7 @@ export class ConfigurationComponent implements AfterViewInit {
   username: string | null = null;
   userrole: string | null = null;
   isFleetMode: boolean = false;
+  dateTouched = false;
 
   // formData: any;
   isPopupOpen: boolean = false;
@@ -1448,18 +1450,47 @@ export class ConfigurationComponent implements AfterViewInit {
     return `${year}-${month}-${day}`;
   }
 
-  onDateChange(value: string, field: 'start' | 'end') {
-    //new
+  onDateChange(event: Event, field: 'start' | 'end') {
+    const value = (event.target as HTMLInputElement).value;
+    const date = value ? new Date(value) : null;
+  
     if (field === 'start') {
-      this.startDate = value ? new Date(value) : null;
-    } else if (field === 'end') {
-      this.endDate = value ? new Date(value) : null;
+      this.startDate = date;
+    } else {
+      this.endDate = date;
     }
-    this.filterData(); // Call filter logic after date change
+  
+    this.filterData(); // Apply your table filtering
   }
+
+  onDateInputChange(event: Event, field: 'start' | 'end') {
+    const target = event.target as HTMLInputElement;
+  
+    if (!target || !target.value) {
+      return;
+    }
+  
+    const value = target.value;
+  
+    if (field === 'start') {
+      this.startDate = new Date(value);
+      if (this.endDate && this.endDate < this.startDate) {
+        this.endDate = null;
+      }
+    } else if (field === 'end') {
+      this.endDate = new Date(value);
+    }
+  
+    this.filterData();
+  }
+  
+  
+  
+  
 
   openCalendar(event: Event) {
     const target = event.target as HTMLInputElement;
+    this.filterData();
     target.showPicker(); // Opens the native date picker on supported browsers
   }
 

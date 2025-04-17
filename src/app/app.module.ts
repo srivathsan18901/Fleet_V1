@@ -86,6 +86,7 @@ import { StepperModule } from 'primeng/stepper';
 import { StepsModule } from 'primeng/steps';
 import { RobotComponent } from './configuration/Addons/robot/robot.component';
 import { TabViewModule } from 'primeng/tabview';
+import { CalendarModule } from 'primeng/calendar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @NgModule({
@@ -177,6 +178,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     StepsModule,
     TooltipModule,
     TabViewModule,
+    CalendarModule,
     // TableModule
   ],
   providers: [

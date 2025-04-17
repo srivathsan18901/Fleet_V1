@@ -510,6 +510,11 @@ tr:nth-child(even) {
   height: 150px; /* Adjust height as needed */
 }
 
+.p-inputtext[type="date"]:not(:valid) {
+  color: gray;
+}
+
+
 .no-data-image {
   width: 11%;
   height: auto;

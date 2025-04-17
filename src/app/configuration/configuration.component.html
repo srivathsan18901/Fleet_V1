@@ -143,8 +143,8 @@
                 pInputText
                 type="date"
                 id="start-date"
-                [ngModel]="startDate ? formatDate(startDate) : null"
-                (ngModelChange)="onDateChange($event, 'start')"
+                [value]="startDate ? formatDate(startDate) : ''"
+                (change)="onDateChange($event, 'start')"
                 [min]="minDate"
                 [max]="maxDate"
                 style="height: 35px; width: fit-content"
@@ -154,16 +154,17 @@
             <div class="dateInput2">
               <label for="end-date">{{ getTranslation("End Date:") }}</label>
               <input
-                pInputText
-                type="date"
-                id="end-date"
-                [ngModel]="endDate ? formatDate(endDate) : null"
-                (ngModelChange)="onDateChange($event, 'end')"
-                [min]="minDate"
-                [max]="maxDate"
-                style="height: 35px; width: fit-content"
-                (click)="openCalendar($event)"
-              />
+              pInputText
+              type="date"
+              id="end-date"
+              [value]="endDate ? formatDate(endDate) : ''"
+              (change)="onDateChange($event, 'end')"
+              [min]="startDate ? formatDate(startDate) : minDate"
+              [max]="maxDate"
+              [disabled]="!startDate"
+              style="height: 35px; width: fit-content"
+              (click)="openCalendar($event)"
+            />
             </div>
           </div>
         </div>
