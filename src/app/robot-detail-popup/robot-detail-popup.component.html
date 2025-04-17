@@ -232,9 +232,9 @@
         </defs>
       </svg>
     </div>
-    <span class="pick-drop-label">{{getTranslation("Total Pick / Drop")}}</span>
+    <span class="pick-drop-label">{{getTranslation("completed_tasks")}}</span>
   </div>
-  <span class="pick-drop-values">{{ data.PickCount || 0}} / {{ data.DropCount || 0}}</span>
+  <span class="pick-drop-values">{{ data.DropCount || 0}}</span>
 </div>
 
 
@@ -372,9 +372,9 @@
           </svg>
         </div>
       </div>
-      <span class="robot-utilization-label">{{getTranslation("Total Distance")}}</span>
+      <span class="robot-utilization-label">{{getTranslation("total_distance_meters")}}</span>
     </div>
-    <span class="robot-utilization-value" [title]="((data.distance| number:'1.2-2')|| 0) + ' m'">{{ data.distance ? (data.distance | number:'1.1-1')?.slice(0, 4) + '..' : '0' }}m</span>
+    <span class="robot-utilization-value" [title]="((data.distance| number:'1.2-2')|| 0)">{{ data.distance ? (data.distance | number:'1.1-1')?.slice(0, 4) + '..' : '0' }}</span>
   </div>
 </div>
 

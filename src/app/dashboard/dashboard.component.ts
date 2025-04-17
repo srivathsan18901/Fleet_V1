@@ -2441,7 +2441,6 @@ export class DashboardComponent implements AfterViewInit {
               robo.isActive = true;
               this.toast  = true;
           }
-          console.log(state,"fleet")
           return robo;
         });
       }
@@ -2463,7 +2462,6 @@ export class DashboardComponent implements AfterViewInit {
             robo.isActive = true;
             this.toast  = true;
         }
-        console.log(state,"dkjbhefiboe")
         return robo;
       });
     }
@@ -2808,7 +2806,6 @@ export class DashboardComponent implements AfterViewInit {
     );
 
     let data = await response.json();
-    console.log(data);
     if (data.error) {
       this.messageService.add({
         severity: 'error',
