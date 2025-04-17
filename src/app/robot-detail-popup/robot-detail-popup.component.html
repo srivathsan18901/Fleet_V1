@@ -374,7 +374,7 @@
       </div>
       <span class="robot-utilization-label">{{getTranslation("total_distance_meters")}}</span>
     </div>
-    <span class="robot-utilization-value" [title]="((data.distance| number:'1.2-2')|| 0)">{{ data.distance ? (data.distance | number:'1.1-1')?.slice(0, 4) + '..' : '0' }}</span>
+    <span class="robot-utilization-value" [title]="((data.distance| number:'1.2-2')|| 0)">{{ data.distance ? (data.distance | number:'1.1-1')?.slice(0, 4) + '...' : '0' }}</span>
   </div>
 </div>
 
