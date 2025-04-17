@@ -45,7 +45,7 @@
             {{ getTranslation('systemThroughput') }}
             <img src="../../assets/info.svg"  matTooltip="{{this.getTranslation('tasks_per_hour_desc')}}" matTooltipPosition="right">
           </div>
-          <h2>{{ statisticsData.systemThroughput }}</h2>
+          <h2>{{ statisticsData.systemThroughput || getTranslation('loading') }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.systemThroughputChange }}% <span>&uarr;</span> -->
           </div>
@@ -76,7 +76,7 @@
             <img src="../../assets/info.svg" matTooltip="{{this.getTranslation('uptime_percentage_desc')}}" matTooltipPosition="right">
           </div>
           <!-- <h2>{{ statisticsData.systemUptime || getTranslation('loading') }}</h2> -->
-          <h2>{{ statisticsData.systemUptime }}</h2>
+          <h2>{{ statisticsData.systemUptime || getTranslation('loading') }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.systemUptimeChange }}% <span>&uarr;</span> -->
           </div>
@@ -137,7 +137,7 @@
             <img src="../../assets/info.svg" matTooltip="{{this.getTranslation('avg_assignment_time_desc')}}" matTooltipPosition="right">
           </div>
           <!-- <h2>{{ statisticsData.responsiveness ||  getTranslation('loading')  }}</h2> -->
-          <h2>{{ statisticsData.responsiveness }}</h2>
+          <h2>{{ statisticsData.responsiveness || getTranslation('loading') }}</h2>
           <div class="stat-change positive">
             <!-- +{{ statisticsData.responsivenessChange }}% <span>&uarr;</span> -->
           </div>

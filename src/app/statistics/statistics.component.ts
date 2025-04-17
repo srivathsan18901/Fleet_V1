@@ -45,13 +45,13 @@ export class StatisticsComponent {
   isDataLoaded: boolean = false;
 
   statisticsData: any = {
-    systemThroughput: 'Loading...',
+    // systemThroughput: this.getTranslation('loading'),
     systemThroughputChange: 0,
-    systemUptime: 'Loading...',
+    // systemUptime: this.getTranslation('loading'),
     systemUptimeChange: 0,
-    successRate: 'Loading...',
+    // successRate: this.getTranslation('loading'),
     successRateChange: 0,
-    responsiveness: 'Loading...',
+    // responsiveness: this.getTranslation('loading'),
     responsivenessChange: 0,
   }; // Initialize the array with mock data
 
