@@ -123,14 +123,13 @@
 }
 .robopopup-content {
   background: white;
-  border-radius: 20px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 30px;
   gap: 20px;
   max-height: 600px;
-  width: auto;
+  width: 90vw;
   text-align: center;
-  /* display: flex; */
-  overflow: auto; /* Enables scrolling within the content */
+  overflow: auto;
 }
 
 .btn-rob{
@@ -143,7 +142,6 @@
   opacity: 0.6; /* Reduces visibility */
 }
 
-
 .flex{
   display: flex;
   justify-content: space-between;
@@ -151,13 +149,13 @@
 }
 
 .rob-btn {
-  width: 215px; /* Set a fixed width for all buttons */
-  padding: 10px;
+  width: 13vw; /* Set a fixed width for all buttons */
+  padding: 13px;
   background-color: red;
   color: white;
   border: none;
   cursor: pointer;
-  margin: 5px;
+  margin: 10px;
   transition: background-color 0.3s ease;
 }
 
@@ -184,13 +182,15 @@
   font-size: 12px;
   font-family: "graphik", Arial,  sans-serif;
 }
-.robopopup-content button{
- margin: 10px;
-}
+// .robopopup-content button{
+// //  margin: 10px;
+// }
 
 .rob-inp, .rob-inp1, .rob-inp2,.rob-inp3{
   padding-bottom: 4px;
   flex-direction: row;
+  display: flex;
+  flex-wrap: wrap;
   align-content: center;
   justify-content: space-between;
   align-items: center;
@@ -203,6 +203,7 @@
   align-items: center;
   margin-right: 36rem;
 }
+
 .robb-inp{
   padding: 6px;
   display: flex;
@@ -369,11 +370,18 @@
   /* table-layout: fixed; */
 }
 
-
+.dropdown{
+  padding: 0.6rem; 
+  width: 12vw; 
+  font-size: 12px; 
+  color: #4b5563; 
+  border: 1px solid #d1d5db; 
+  border-radius: 6px;
+}
 
 .p-inputtext{
   padding: 0 !important;
-  width: 240px;
+  width: 12vw;
   height: 35px !important;
   font-size: 12px !important;
   font-family: "graphik", Arial,  sans-serif;

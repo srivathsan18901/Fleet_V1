@@ -957,39 +957,33 @@
                   name="serialNumber"
                   required
                 />
-              </div>
-              <div
-                style="
-                  margin-top: 1rem;
-                  margin-right: 1rem;
-                  margin-left: 1rem;
-                  margin-bottom: 1rem;
-                "
-              >
+
                 <label
-                  for="attachmentType"
-                  style="margin-right: 1rem; margin-left: 1rem"
-                  >{{ getTranslation("Attachment Type") }}:</label
-                >
-                <select
-                  id="attachmentType"
-                  [(ngModel)]="formData.attachmentType"
-                  name="attachmentType"
-                  required
-                  style="padding: 0.6rem"
-                >
-                  <option value="NOT_SET">
-                    {{ getTranslation("NOT_SET") }}
-                  </option>
-                  <option value="LIFTER">{{ getTranslation("LIFTER") }}</option>
-                  <option value="SINGLECONVEYOR">
-                    {{ getTranslation("SINGLECONVEYOR") }}
-                  </option>
-                  <option value="TWINCONVEYOR">
-                    {{ getTranslation("TWINCONVEYOR") }}
-                  </option>
-                </select>
+                for="attachmentType"
+                style="margin-right: 1rem; margin-left: 1rem"
+                >{{ getTranslation("Attachment Type") }}:</label
+              >
+              <select
+                id="attachmentType"
+                class = 'dropdown'
+                [(ngModel)]="formData.attachmentType"
+                name="attachmentType"
+                required
+              >
+                <option value="NOT_SET">
+                  {{ getTranslation("NOT_SET") }}
+                </option>
+                <option value="LIFTER">{{ getTranslation("LIFTER") }}</option>
+                <option value="SINGLECONVEYOR">
+                  {{ getTranslation("SINGLECONVEYOR") }}
+                </option>
+                <option value="TWINCONVEYOR">
+                  {{ getTranslation("TWINCONVEYOR") }}
+                </option>
+              </select>
+
               </div>
+
               <div class="flex">
                 <div class="robBTN-inp">
                   <button
@@ -1411,7 +1405,7 @@
                   styleClass="custom-dropdown"
                 ></p-dropdown>
               </div>
-              <div class="rob-inp3">
+              <div class="robb-inp">
                 <label for="navigationTypes" style="margin-right: 2rem"
                   >{{ getTranslation("navigationTypes") }}:</label
                 >
