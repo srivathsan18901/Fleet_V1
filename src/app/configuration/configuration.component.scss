@@ -209,7 +209,8 @@
   display: flex;
   flex-direction: row;
   align-content: center;
-  // justify-content: space-between;
+  max-width: 38vw;
+  justify-content: space-between;
   align-items: center;
 }
 .robb-inp1{
