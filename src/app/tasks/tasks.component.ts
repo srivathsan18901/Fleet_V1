@@ -49,6 +49,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
   };
   originalTaskData = []; // Store the original unfiltered data
   private langSubscription!: Subscription;
+  isFirstLoad: boolean = false;
+  isLoading: boolean = false;
 
   isFilterApplied: boolean = false;
   isOnSearchApplied: boolean = false;
@@ -401,81 +403,84 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   async fetchTasks() {
-    if (this.tasksSignalController) this.tasksSignalController.abort();
-    this.tasksSignalController = new AbortController();
-
-    let establishedTime = new Date(this.mapData.createdAt); // created time of map..
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mapId: this.mapData.id,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-        signal: this.tasksSignalController.signal,
-      }
-    );
-    let data = await response.json();
-    // console.log(data, 'task data');
-    if (!data.tasks) return;
-    const { tasks } = data.tasks;
-
-    let sNo = 1;
-    if (tasks)
-      this.tasks = tasks.map((task: any) => {
-        let TimeStamp = new Date(task.TimeStamp * 1000); //..
-        let formattedTimeStamp =
-          TimeStamp.toLocaleDateString('en-IN', {
-            day: '2-digit',
-            month: 'short',
-            year: 'numeric',
-          }) +
-          ', ' +
-          TimeStamp.toLocaleTimeString('en-IN', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-          });
-        return {
-          sNo: sNo++,
-          taskId: task.task_id,
-          taskType: task.sub_task[0]?.task_type
-            ? task.sub_task[0]?.task_type
-            : 'N/A',
-          status: task.task_status.status,
-          robotID: task.agent_ID,
-          TimeStamp: formattedTimeStamp,
-          destinationLocation: task.sub_task[0]?.source_location || 'N/A',
-        };
-      });
-    // this.filteredTaskData = this.tasks;
-
-    if (this.isFilterApplied || this.isOnSearchApplied || this.isTaskDropDowned) {
-      // !this.isTaskDropDowned
-      this.filteredTaskData = this.filteredTaskData.filter((updatedTask) => {
-        // swap tasks with filteredTaskData
-        for (let task of this.tasks) {
-          if (task.taskId == updatedTask.taskId) return true;
+    try {
+      if (this.tasksSignalController) this.tasksSignalController.abort();
+      this.tasksSignalController = new AbortController();
+  
+      if (this.isFirstLoad) this.isLoading = true;
+  
+      let establishedTime = new Date(this.mapData.createdAt); // created time of map..
+      let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+  
+      const response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mapId: this.mapData.id,
+            timeStamp1: timeStamp1,
+            timeStamp2: timeStamp2,
+          }),
+          signal: this.tasksSignalController.signal,
         }
-        return false;
-      });
-
-      this.setPaginatedData();
-    } else if (!this.isFilterApplied && !this.isOnSearchApplied) {
-      // !this.isTaskDropDowned
-      this.filteredTaskData = this.tasks;
-      this.setPaginatedData();
+      );
+  
+      let data = await response.json();
+      if (!data.tasks || data.error) return;
+  
+      const { tasks } = data.tasks;
+      let sNo = 1;
+  
+      if (tasks) {
+        this.tasks = tasks.map((task: any) => {
+          let TimeStamp = new Date(task.TimeStamp * 1000);
+          let formattedTimeStamp =
+            TimeStamp.toLocaleDateString('en-IN', {
+              day: '2-digit',
+              month: 'short',
+              year: 'numeric',
+            }) +
+            ', ' +
+            TimeStamp.toLocaleTimeString('en-IN', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true,
+            });
+  
+          return {
+            sNo: sNo++,
+            taskId: task.task_id,
+            taskType: task.task_type,
+            status: task.task_status.status,
+            robotID: task.agent_ID,
+            TimeStamp: formattedTimeStamp,
+            destinationLocation: task.source_location || 'N/A',
+          };
+        });
+      }
+  
+      if (this.isFilterApplied || this.isOnSearchApplied) {
+        this.filteredTaskData = this.filteredTaskData.filter((updatedTask) => {
+          return this.tasks.some((task) => task.taskId === updatedTask.taskId);
+        });
+  
+        this.setPaginatedData();
+      } else if (!this.isFilterApplied && !this.isOnSearchApplied) {
+        this.filteredTaskData = this.tasks;
+        this.setPaginatedData();
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+    } finally {
+      if (this.isFirstLoad) {
+        this.isLoading = false;
+        this.isFirstLoad = false;
+      }
     }
-    // if (!this.isFilterApplied) {
-    //   this.filteredTaskData = [...this.tasks];
-    // }
-    // this.setPaginatedData();
   }
+
   formatDateForInput(dateString: string): string {
     if (!dateString) return '';
     const date = new Date(dateString);
