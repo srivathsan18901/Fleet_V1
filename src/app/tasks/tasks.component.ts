@@ -45,7 +45,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     endDateTime: '',
     taskType: '',
     status: '',
-    robotId: ''
+    robotId: '',
   };
   originalTaskData = []; // Store the original unfiltered data
   private langSubscription!: Subscription;
@@ -152,12 +152,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
     this.isFleetService.isFleet$.subscribe((status: boolean) => {
       if (status) this.robotList = this.robos.map((robo) => robo.id);
       else this.robotList = this.simRobos;
-      console.log(this.robotList);
+      // console.log(this.robotList);
     });
 
     this.liveTasksInterval = setInterval(async () => {
       await this.fetchTasks();
-    }, 1000 * 4);
+    }, 1000 * 6);
 
     // Auto-update search and filters every second
     // this.autoRefreshInterval = setInterval(() => {
@@ -298,7 +298,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       endDateTime: '',
       taskType: '',
       status: '',
-      robotId: ''
+      robotId: '',
     };
     this.searchQuery = '';
     this.selectedRobot = '';
@@ -395,7 +395,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   autoRefreshTasks() {
-    if (this.isFilterApplied || this.isOnSearchApplied ) {
+    if (this.isFilterApplied || this.isOnSearchApplied) {
       this.filterTasks(); // Reapply filters
     } else {
       this.setPaginatedData(); // Just update the paginated data
@@ -406,12 +406,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
     try {
       if (this.tasksSignalController) this.tasksSignalController.abort();
       this.tasksSignalController = new AbortController();
-  
+
       if (this.isFirstLoad) this.isLoading = true;
-  
+
       let establishedTime = new Date(this.mapData.createdAt); // created time of map..
       let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-  
+
       const response = await fetch(
         `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
         {
@@ -426,13 +426,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
           signal: this.tasksSignalController.signal,
         }
       );
-  
+
       let data = await response.json();
       if (!data.tasks || data.error) return;
-  
+
       const { tasks } = data.tasks;
       let sNo = 1;
-  
+
       if (tasks) {
         this.tasks = tasks.map((task: any) => {
           let TimeStamp = new Date(task.TimeStamp * 1000);
@@ -448,7 +448,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
               minute: '2-digit',
               hour12: true,
             });
-  
+
           return {
             sNo: sNo++,
             taskId: task.task_id,
@@ -460,12 +460,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
           };
         });
       }
-  
+
       if (this.isFilterApplied || this.isOnSearchApplied) {
         this.filteredTaskData = this.filteredTaskData.filter((updatedTask) => {
           return this.tasks.some((task) => task.taskId === updatedTask.taskId);
         });
-  
+
         this.setPaginatedData();
       } else if (!this.isFilterApplied && !this.isOnSearchApplied) {
         this.filteredTaskData = this.tasks;
@@ -736,9 +736,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   exportData(format: string) {
-    const data = this.tasks.map(item => ({
+    const data = this.tasks.map((item) => ({
       ...item,
-      robotID: item.robotID < 0 ? "--" : item.robotID // or item.robotID if that's the field name
+      robotID: item.robotID < 0 ? '--' : item.robotID, // or item.robotID if that's the field name
     }));
 
     try {
@@ -829,5 +829,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   ngOnDestroy() {
     if (this.liveTasksInterval) clearInterval(this.liveTasksInterval);
+    if (this.tasksSignalController) this.tasksSignalController.abort();
   }
 }
