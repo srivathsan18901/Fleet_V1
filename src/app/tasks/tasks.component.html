@@ -60,11 +60,11 @@
               <!-- Date Range Filter -->
               <div>
               <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
-              <input type="datetime-local" [(ngModel)]="filterOptions.startDateTime" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+              <input type="datetime-local" [(ngModel)]="filterOptions.startDateTime" [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
               </div>
               <div>
               <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
-              <input type="datetime-local" [(ngModel)]="filterOptions.endDateTime"  style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+              <input type="datetime-local" [(ngModel)]="filterOptions.endDateTime"  [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
               </div>
               <!-- Status Filter -->
               <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">

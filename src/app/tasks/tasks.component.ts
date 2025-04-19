@@ -405,7 +405,20 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.setPaginatedData(); // Just update the paginated data
     }
   }
+  getMinDate(): string {
+    const fiveYearsAgo = new Date();
+    fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
+    return this.formatDateandtimeForInput(fiveYearsAgo);
+  }
 
+  getMaxDate(): string {
+      const today = new Date();
+      return this.formatDateandtimeForInput(today);
+  }
+
+  formatDateandtimeForInput(date: Date): string {
+      return date.toISOString().slice(0, 16);
+  }
   async fetchTasks() {
     try {
       if (this.tasksSignalController) this.tasksSignalController.abort();
