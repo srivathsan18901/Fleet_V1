@@ -64,8 +64,9 @@ export class RobotsComponent implements OnInit {
     'agv3.png',
     // Add more images from assets/robots
   ];
- 
-  @ViewChild('cardScrollContainer', { static: false }) cardScrollContainer!: ElementRef;
+
+  @ViewChild('cardScrollContainer', { static: false })
+  cardScrollContainer!: ElementRef;
 
   responsiveOptions: any[] | undefined;
   currentSignalClass: string = 'none'; // Default class
@@ -100,7 +101,6 @@ export class RobotsComponent implements OnInit {
   }
 
   async ngOnInit() {
-    
     this.selectedMap = this.projectService.getIsMapSet();
     this.mapDetails = this.projectService.getMapData();
     if (!this.mapDetails) return;
@@ -155,7 +155,7 @@ export class RobotsComponent implements OnInit {
     const scrollAmount = container.querySelector('.card')?.offsetWidth || 600;
     container.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
   }
-  
+
   scrollRight(): void {
     const container = this.cardScrollContainer.nativeElement;
     const scrollAmount = container.querySelector('.card')?.offsetWidth || 600;
@@ -164,20 +164,15 @@ export class RobotsComponent implements OnInit {
 
   onMouseWheel(event: WheelEvent): void {
     event.preventDefault();
-  
+
     const scrollAmount = event.deltaY; // use native delta
     const container = this.cardScrollContainer.nativeElement;
-  
+
     container.scrollBy({
       left: scrollAmount,
-      behavior: 'auto'  // or 'smooth' if you want eased scroll
+      behavior: 'auto', // or 'smooth' if you want eased scroll
     });
   }
-  
-
-  
-  
-  
 
   getTranslation(key: string) {
     return this.translationService.getRobotsTranslation(key);
@@ -245,7 +240,10 @@ export class RobotsComponent implements OnInit {
           robo.isCharging =
             liveRobo.robot_state == 'CHARGESTATE' ? true : false;
           robo.currentspeed = liveRobo['Robot Speed'];
-          robo.averagespeed = liveRobo['Robot Speed'];
+          robo.averagespeed = liveRobo.average_speed;
+          robo.maximumspeed = liveRobo.maximum_speed;
+          robo.averagedockingtime = liveRobo.average_docking_time;
+          robo.averagetransfertime = liveRobo.average_transfer_time;
         }
       });
       return robo;
