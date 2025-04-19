@@ -2,8 +2,13 @@
 <div class="popup-content">
   <!-- <app-fullscreen-button></app-fullscreen-button> -->
     <div class="popup-header">
+      <div style="display: flex">
       <h2>{{data.name}}</h2>
-
+      <div class="status-container">
+        <span class="status-indicator" [ngClass]="data.isConnected ? 'active' : 'inactive'"></span>
+        <span class="status-text">{{ data.isConnected ? getTranslation("Active") : getTranslation("Inactive") }}</span>
+      </div>
+    </div>
       <button class="close-button" (click)="onClose()">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -54,10 +59,10 @@
     </div>
 
     <!-- Status container -->
-    <div class="status-container">
+    <!-- <div class="status-container">
       <span class="status-indicator" [ngClass]="data.isConnected ? 'active' : 'inactive'"></span>
       <span class="status-text">{{ data.isConnected ? getTranslation("Active") : getTranslation("Inactive") }}</span>
-    </div>
+    </div> -->
 
 
     <!-- connect button -->
