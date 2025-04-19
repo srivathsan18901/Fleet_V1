@@ -796,5 +796,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   ngOnDestroy() {
     if (this.liveTasksInterval) clearInterval(this.liveTasksInterval);
+    if (this.tasksSignalController) this.tasksSignalController.abort();
   }
 }
