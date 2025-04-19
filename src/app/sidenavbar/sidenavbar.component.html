@@ -123,7 +123,7 @@
           <p class="msg">{{ getTranslation('profileHello') }}, {{ username }}</p>
           <!-- <p class="Projmsg">Project: {{ projectName }}</p> -->
         </div>
-        <div class="Option_set">
+        <div class="Option_set" *ngIf="!isUser">
           <div class="logoutIcon" (click)="exportProject()">
             <img src="../../assets/Export.svg" alt="" class="Outlogo" />
             <span class="logoutlabel">{{ getTranslation('exportProject') }}</span>

@@ -250,6 +250,7 @@ export class RobotsComponent implements OnInit {
     });
 
     this.filteredRobots = this.robots;
+    this.filterRobots();
   }
 
   openRobotDetail(robot: Robot): void {
