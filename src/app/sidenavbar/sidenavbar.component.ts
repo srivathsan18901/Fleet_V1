@@ -109,7 +109,7 @@ export class SidenavbarComponent implements OnInit {
     private translationService: TranslationService
   ) {
     this.userManagementData = this.userPermissionService.getPermissions();
-    this.processedErrors = new Set<string>(); // yet to noify later..    
+    this.processedErrors = new Set<string>(); // yet to noify later..
   }
   closeAllPopups() {
     this.showProfilePopup = false;
