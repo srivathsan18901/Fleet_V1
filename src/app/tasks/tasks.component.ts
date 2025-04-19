@@ -18,6 +18,8 @@ import { map, Subscription } from 'rxjs';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { NodeGraphService } from '../services/nodegraph.service';
 import { Router } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
+
 @Component({
   selector: 'app-tasks',
   templateUrl: './tasks.component.html',
@@ -49,7 +51,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   };
   originalTaskData = []; // Store the original unfiltered data
   private langSubscription!: Subscription;
-  isFirstLoad: boolean = false;
+  isFirstLoad: boolean = true;
   isLoading: boolean = false;
 
   isFilterApplied: boolean = false;
@@ -102,7 +104,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private router: Router,
     private nodeGraphService: NodeGraphService,
     private cdRef: ChangeDetectorRef,
-    private eRef: ElementRef
+    private eRef: ElementRef,
+    private spinner: NgxSpinnerService
   ) {
     this.filteredTaskData = [];
   }
@@ -145,6 +148,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     );
     if (!this.mapData) return;
     await this.fetchTasks();
+    // this.spinner.show();
 
     this.robos = await this.fetchAllRobos();
     this.simRobos = await this.getSimRobos();
@@ -407,7 +411,10 @@ export class TasksComponent implements OnInit, AfterViewInit {
       if (this.tasksSignalController) this.tasksSignalController.abort();
       this.tasksSignalController = new AbortController();
 
-      if (this.isFirstLoad) this.isLoading = true;
+      if (this.isFirstLoad) {
+        this.isLoading = true;
+        this.spinner.show();
+      }
 
       let establishedTime = new Date(this.mapData.createdAt); // created time of map..
       let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
@@ -477,6 +484,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       if (this.isFirstLoad) {
         this.isLoading = false;
         this.isFirstLoad = false;
+        this.spinner.hide();
       }
     }
   }
