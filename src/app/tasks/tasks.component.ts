@@ -184,7 +184,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   applyFilters() {
-    // Validate date range
     if (this.filterOptions.startDateTime && this.filterOptions.endDateTime) {
       const startDate = new Date(this.filterOptions.startDateTime);
       const endDate = new Date(this.filterOptions.endDateTime);
@@ -200,30 +199,31 @@ export class TasksComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.filteredTaskData = this.tasks.filter((task: any) => {
-      // Convert task timestamp to Date object for comparison
-      const taskDate = new Date(task.TimeStamp);
+    // this.filteredTaskData = this.tasks.filter((task: any) => {
+    //   // Convert task timestamp to Date object for comparison
+    //   const taskDate = new Date(task.TimeStamp);
 
-      // Date Range Filter
-      const dateMatch =
-        (!this.filterOptions.startDateTime ||
-          taskDate >= new Date(this.filterOptions.startDateTime)) &&
-        (!this.filterOptions.endDateTime ||
-          taskDate <= new Date(this.filterOptions.endDateTime));
+    //   // Date Range Filter
+    //   const dateMatch =
+    //     (!this.filterOptions.startDateTime ||
+    //       taskDate >= new Date(this.filterOptions.startDateTime)) &&
+    //     (!this.filterOptions.endDateTime ||
+    //       taskDate <= new Date(this.filterOptions.endDateTime));
 
-      // Status Filter
-      const statusMatch =
-        !this.filterOptions.status || task.status === this.filterOptions.status;
+    //   // Status Filter
+    //   const statusMatch =
+    //     !this.filterOptions.status || task.status === this.filterOptions.status;
 
-      // Robot Filter (if you have this field)
-      const robotMatch = 
-      !this.filterOptions.robotId || 
-      task.roboName == this.filterOptions.robotId;
+    //   // Robot Filter (if you have this field)
+    //   const robotMatch = 
+    //   !this.filterOptions.robotId || 
+    //   task.roboName == this.filterOptions.robotId;
 
-      return dateMatch && statusMatch && robotMatch;
-    });
+    //   return dateMatch && statusMatch && robotMatch;
+    // });
 
     this.isFilterApplied = true;
+    this.updateFilteredData();
     this.setPaginatedData();
     this.closeFilterPopup(); // Close the popup after applying filters
   }
@@ -671,30 +671,63 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   filterTasks(): void {
-    // Filter by search query
-    this.filteredTaskData = this.tasks.filter((task) => {
-      const matchesSearchQuery =
-        this.searchQuery.trim().length === 0 ||
-        Object.values(task).some((val) =>
-          String(val).toLowerCase().includes(this.searchQuery.toLowerCase())
-        );
-
-      // Filter by selected status if any
-      const matchesStatus =
-        this.selectedStatus.trim().length === 0 ||
-        task.status === this.selectedStatus;
-
-      return matchesSearchQuery && matchesStatus;
+    this.isOnSearchApplied = this.searchQuery.trim().length > 0;
+    this.updateFilteredData();
+  }
+  updateFilteredData(): void {
+    this.filteredTaskData = this.tasks.filter((task: any) => {
+      // Apply all filters in parallel
+      return (
+        this.matchesSearchQuery(task) &&
+        this.matchesStatusFilter(task) &&
+        this.matchesDateFilter(task) &&
+        this.matchesRobotFilter(task)
+      );
     });
 
-    if (!this.isFilterApplied) this.isFilterApplied = true;
-
-    // Reset the paginator and update paginated data
     if (this.paginator) {
       this.paginator.firstPage();
     }
-
     this.setPaginatedData();
+  }
+
+  matchesSearchQuery(task: any): boolean {
+    if (this.searchQuery.trim().length === 0) return true;
+    
+    return Object.values(task).some((val) =>
+      String(val).toLowerCase().includes(this.searchQuery.toLowerCase())
+    );
+  }
+
+  matchesStatusFilter(task: any): boolean {
+    if (this.selectedStatus.trim().length === 0 && 
+        !this.filterOptions.status) return true;
+    
+    const statusToCheck = this.filterOptions.status || this.selectedStatus;
+    return task.status === statusToCheck;
+  }
+
+  matchesDateFilter(task: any): boolean {
+    if (!this.filterOptions.startDateTime && !this.filterOptions.endDateTime) {
+      return true;
+    }
+
+    const taskDate = new Date(task.TimeStamp);
+    const startDate = this.filterOptions.startDateTime ? new Date(this.filterOptions.startDateTime) : null;
+    const endDate = this.filterOptions.endDateTime ? new Date(this.filterOptions.endDateTime) : null;
+
+    return (
+      (!startDate || taskDate >= startDate) &&
+      (!endDate || taskDate <= endDate)
+    );
+  }
+
+  matchesRobotFilter(task: any): boolean {
+    const robotFilter = this.filterOptions.robotId || this.selectedRobot;
+    if (!robotFilter) return true;
+    
+    // Check both possible properties (roboName and robotID)
+    return task.roboName == robotFilter || task.robotID == robotFilter;
   }
   // Search method
   onSearch(event: Event): void {
