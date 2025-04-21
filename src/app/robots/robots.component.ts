@@ -320,16 +320,16 @@ export class RobotsComponent implements OnInit {
         return 'loading';
     }
   }
-
   getBatteryColor(batteryPercentage: number): string {
-    if (batteryPercentage >= 20) {
+    if (batteryPercentage >= 75) {
       return 'high'; // Green for high battery
-    } else if (batteryPercentage >= 40) {
+    } else if (batteryPercentage >= 40 ) {
       return 'medium';
     } else {
       return 'low'; // Red for low battery
     }
   }
+
 
   ngOnDestroy(): void {
     // Unsubscribe from router events to prevent memory leaks
