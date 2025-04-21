@@ -21,7 +21,8 @@
 
     <button class="indication-button" [ngClass]="buttonClass">
       <!-- <img [src]="iconUrl" class="icon" alt="Icon" /> -->
-      <span>{{ getTranslation(isFleet ? 'fleetMode' : 'simulation') }}</span>
+      <img style="width: 100px; height: 50px;" [src]=" isFleet ? '../../assets/Operational.svg' : '../../assets/Sim.svg' " />
+      <!-- <span>{{ getTranslation(isFleet ? 'fleetMode' : 'simulation') }}</span> -->
     </button>
 
     <app-fullscreen-button></app-fullscreen-button>
