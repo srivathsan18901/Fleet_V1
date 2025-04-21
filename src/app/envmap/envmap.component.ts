@@ -4112,6 +4112,11 @@ export class EnvmapComponent implements AfterViewInit {
     }
     const canvas = this.overlayCanvas.nativeElement;
     const rect = canvas.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || 
+      event.clientY < rect.top || event.clientY > rect.bottom) {
+    tooltip.style.display = 'none';
+    return;
+    }
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
     const transformedY = canvas.height - y; // yet to remove..
