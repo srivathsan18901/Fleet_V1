@@ -454,7 +454,7 @@ canvas {
 .plottinglayer{
   position: absolute;
   top: 0;
-  left: 0;
+  /* left: 0; */
   max-height: 75vh; /* Ensure content doesn't exceed viewport height */
   max-width: 1420px;
   /* width: 100px;
