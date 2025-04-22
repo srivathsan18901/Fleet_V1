@@ -177,7 +177,22 @@ export class RobotsComponent implements OnInit {
   getTranslation(key: string) {
     return this.translationService.getRobotsTranslation(key);
   }
-
+  get statusMessage(): string | null {
+    if (this.isFleetUp) {
+      return 'server_not_connected';
+    }
+    if (this.isFleet === false && this.selectedMap === true) {
+      return '- Sim Mode has been Enabled -';
+    }
+    if (this.selectedMap === false) {
+      return '- Select Map to view robots -';
+    }
+    if (this.isFleet === true && this.selectedMap === true && !this.isFleetUp) {
+      return '- No Robots Found -';
+    }
+    return null;
+  }
+  
   // Fetch robots from the API
   async fetchAllRobos(): Promise<any[]> {
     const response = await fetch(
