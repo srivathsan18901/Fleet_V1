@@ -312,9 +312,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
     // Reset the filtered data to show all tasks
     this.filteredTaskData = [...this.tasks];
     this.setPaginatedData();
-
-    // Close the filter popup if open
-    this.closeFilterPopup();
+    // this.closeFilterPopup();
   }
 
   onPause(item: any) {
