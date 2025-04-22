@@ -55,23 +55,23 @@
             <div class="filter-content">
               <div style="display: flex ; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0;font-weight: bold;color: #FF5C5C;">{{ getTranslation('filter_options') }}</h3>
-              <button class="close-btn" (click)="closeFilterPopup()" style="    color: red;  padding: 5px 8px; border-radius: 50%;">✖</button>
+              <button class="close-btn" (click)="closeFilterPopup()" style="    color: red;2 pa font-weight:bold ;dding: 5px 8px; border-radius: 50%;">✖</button>
               </div>
               <!-- Date Range Filter -->
               <div style="display: flex;gap: 15px;">
               <div>
-              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
+              <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
               <input type="datetime-local" [(ngModel)]="filterOptions.startDateTime" [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
               </div>
               <div>
-              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
+              <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
               <input type="datetime-local" [(ngModel)]="filterOptions.endDateTime"  [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
               </div>
               </div>
             <div style="display: flex; gap: 15px;">
               <!-- Status Filter -->
               <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
-              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('status') }}:</label>
+              <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('status') }}:</label>
               <select [(ngModel)]="filterOptions.status" style="border: 1px solid #ff5c5c; width: 163px; border-radius: 5px; color: #FF5C5C;padding: 5px;">
                 <option value="">{{ getTranslation('All') }}</option>
                 <option value="COMPLETED">{{ getTranslation('Completed') }}</option>
@@ -84,7 +84,7 @@
              </div>
              <!-- Robot ID Filter -->
              <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
-              <label style="font-size: 10px; color: #FF5C5C;">{{ getTranslation('robot_id') }}:</label>
+              <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('robot_id') }}:</label>
               <select [(ngModel)]="filterOptions.robotId" style="border: 1px solid #ff5c5c; width: 163px; border-radius: 5px; color: #FF5C5C;padding: 5px;">
                 <option value="">{{ getTranslation('All') }}</option>
                 <option *ngFor="let robotId of robotList" [value]="robotId">
