@@ -84,10 +84,7 @@
           <div class="mb-4">
             <button
               class="button"
-              [ngClass]="{
-                'active-button': activeButton === 'task',
-                'transition-active': isTransitioning
-              }"
+              [ngClass]="{ 'active-button': activeButton === 'task', 'transition-active': isTransitioning }"
               (click)="showTable('task')"
               (click)="setActiveButton('task')"
             >
@@ -95,10 +92,7 @@
             </button>
             <button
               class="button"
-              [ngClass]="{
-                'active-button': activeButton === 'robot',
-                'transition-active': isTransitioning
-              }"
+              [ngClass]="{ 'active-button': activeButton === 'robot', 'transition-active': isTransitioning }"
               (click)="showTable('robot')"
               (click)="setActiveButton('robot')"
             >
@@ -127,7 +121,7 @@
         <!-- <div class="table-wrapper"> -->
           <!-- <div class="table-scrollable"> -->
             <!-- Task Table -->
-            <table class="table" *ngIf="currentTable === 'task'">
+            <table class="table" *ngIf="(currentTable === 'task' || 'robot')">
               <thead class="table-header">
                 <tr>
                   <th class="table-header-cell">{{ getTranslation("Date and time") }}</th>
@@ -141,10 +135,10 @@
 
               <tbody
                 class="table-body"
-                *ngIf="currentTable === 'task' && isFleet == true"
+                *ngIf="(currentTable === 'task' || 'robot')"
               >
                 <!-- Show No Data Row with image and message -->
-                <tr *ngIf="paginatedData.length === 0 && isFleet == true">
+                <tr *ngIf="paginatedData.length === 0">
                   <td colspan="8" class="no-data">
                     <div class="no-data-container">
                       <img
@@ -160,23 +154,16 @@
                 <!-- <tr *ngIf="paginatedData.length === 0">
             <td colspan="6" class="iconTable">No data found</td>
           </tr> -->
-                <tr
-                  *ngFor="
-                    let item of paginatedData;
-                    index as i;
-                    trackBy: trackByTaskId
-                  "
-                  [class.paused]="item.paused"
-                >
-                  <td class="table-cell">{{ item.dateTime }}</td>
-                  <td class="table-cell">{{ item.taskId }}</td>
-                  <td class="table-cell">{{ item.taskName }}</td>
-                  <td class="table-cell">{{ item.errCode }}</td>
+                <tr *ngFor=" let item of paginatedData; index as i; trackBy: trackByTaskId " [class.paused]="item.paused" >
+                  <td class="table-cell">{{ item.timestamp }}</td>
+                  <td class="table-cell">{{ item.id }}</td>
+                  <td class="table-cell">{{ item.code }}</td>
                   <td class="table-cell">{{ item.criticality }}</td>
-                  <td class="table-cell">{{ item.desc }}</td>
+                  <td class="table-cell">{{ item.description }}</td>
+                  <td class="table-cell">{{ item.duration }}</td>
                 </tr>
               </tbody>
-              <tbody *ngIf="currentTable === 'task' && isFleet == false">
+              <!-- <tbody *ngIf="(currentTable === 'task' || 'robot') && isFleet == false">
                 <tr *ngIf="isFleet == false">
                   <td colspan="8" class="no-data">
                     <div class="no-data-container">
@@ -189,7 +176,7 @@
                     </div>
                   </td>
                 </tr>
-              </tbody>
+              </tbody> -->
             </table>
           </div>
         </div>
@@ -199,14 +186,10 @@
       <!-- Paginator -->
       <div
         class="paginator-container"
-        *ngIf="
-          currentTable === 'task' &&
-          filteredTaskData.length > 0 &&
-          isFleet == true
-        "
+        *ngIf="(currentTable === 'task' || 'robot') && filteredErrLogsData.length > 0 "
       >
         <mat-paginator
-          [length]="filteredTaskData.length"
+          [length]="filteredErrLogsData.length"
           [pageSize]="10"
           [pageSizeOptions]="[5, 10, 50]"
           (page)="onPageChange()"
@@ -215,172 +198,7 @@
         </mat-paginator>
       </div>
 
-      <div class="table-container">
-        <div class="table-wrapper">
-          <div class="table-scrollable">
-            <!-- Robot Table -->
-            <table class="table" *ngIf="currentTable === 'robot'">
-              <thead class="table-header">
-                <tr>
-                  <th class="table-header-cell">{{ getTranslation("Date and time") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("Robot ID") }}</th>
-                  <!-- <th class="table-header-cell">{{ getTranslation("Robot Name") }}</th> -->
-                  <th class="table-header-cell">{{ getTranslation("Error code") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("Criticality") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("duration") }}</th>
-                </tr>
-              </thead>
 
-              <tbody *ngIf="currentTable === 'robot' && isFleet == true">
-                <!-- Show No Data Row with image and message -->
-                <tr *ngIf="paginatedData1.length === 0 && isFleet == true">
-                  <td colspan="8" class="no-data">
-                    <div class="no-data-container">
-                      <img
-                        src="../../assets/no-data.svg"
-                        alt="No Data"
-                        class="no-data-image"
-                      />
-                      <p class="no-data-text">{{ getTranslation("No data found") }}</p>
-                    </div>
-                  </td>
-                </tr>
-
-                <!-- <tr *ngIf="paginatedData1.length === 0">
-            <td colspan="6" class="iconTable">No data found</td>
-          </tr> -->
-                <tr
-                  *ngFor="
-                    let item of paginatedData1;
-                    index as i;
-                    trackBy: trackByTaskId
-                  "
-                  [class.paused]="item.paused"
-                >
-                  <td class="table-cell">{{ item.dateTime }}</td>
-                  <td class="table-cell">{{ item.id }}</td>
-                  <td class="table-cell">{{ item.name }}</td>
-                  <td class="table-cell">{{ item.error }}</td>
-                  <td class="table-cell">{{ item.criticality }}</td>
-                  <td class="table-cell">{{ item.description }}</td>
-                </tr>
-              </tbody>
-              <tbody *ngIf="currentTable === 'robot' && isFleet == false">
-                <tr *ngIf="paginatedData1.length === 0 && isFleet == false">
-                  <td colspan="8" class="no-data">
-                    <div class="no-data-container">
-                      <img
-                        src="../../assets/simulation.svg"
-                        alt="Simulation Mode"
-                        class="no-data-image"
-                      />
-                      <p class="no-data-text">{{ getTranslation("Sim mode has been enabled") }}</p>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-      <!-- Paginator -->
-      <div
-        class="paginator-container"
-        *ngIf="
-          currentTable === 'robot' && robotData.length > 0 && isFleet == true
-        "
-      >
-        <mat-paginator
-          [length]="robotData.length"
-          [pageSize]="10"
-          [pageSizeOptions]="[5, 10]"
-          (page)="onPageChange()"
-          showFirstLastButtons
-        >
-        </mat-paginator>
-      </div>
-
-      <div class="table-container">
-        <div class="table-wrapper">
-          <div class="table-scrollable">
-            <!-- Fleet Table -->
-            <table class="table" *ngIf="currentTable === 'fleet'">
-              <thead class="table-header">
-                <tr>
-                  <th class="table-header-cell">{{ getTranslation("Date and time") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("Module Name") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("Error code") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("Criticality") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("Description") }}</th>
-                </tr>
-              </thead>
-              <tbody *ngIf="currentTable === 'fleet' && isFleet == true">
-                <!-- Show No Data Row with image and message -->
-                <tr *ngIf="paginatedData2.length === 0 && isFleet == true">
-                  <td colspan="8" class="no-data">
-                    <div class="no-data-container">
-                      <img
-                        src="../../assets/no-data.svg"
-                        alt="No Data"
-                        class="no-data-image"
-                      />
-                      <p class="no-data-text">{{ getTranslation("No data found") }}</p>
-                    </div>
-                  </td>
-                </tr>
-                <!-- <tr *ngIf="paginatedData2.length === 0">
-            <td colspan="6" class="iconTable">No data found</td>
-          </tr> -->
-                <tr
-                  *ngFor="
-                    let item of paginatedData2;
-                    index as i;
-                    trackBy: trackByTaskId
-                  "
-                  [class.paused]="item.paused"
-                >
-                  <td class="table-cell">{{ item.dateTime }}</td>
-                  <td class="table-cell">{{ item.moduleName }}</td>
-                  <td class="table-cell">{{ item.errCode }}</td>
-                  <td class="table-cell">{{ item.criticality }}</td>
-                  <td class="table-cell">{{ item.desc }}</td>
-                </tr>
-              </tbody>
-              <tbody *ngIf="currentTable === 'fleet' && isFleet == false">
-                <tr *ngIf="isFleet == false">
-                  <td colspan="8" class="no-data">
-                    <div class="no-data-container">
-                      <img
-                        src="../../assets/simulation.svg"
-                        alt="Simulation Mode"
-                        class="no-data-image"
-                      />
-                      <p class="no-data-text">{{ getTranslation("Sim mode has been enabled") }}</p>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Paginator -->
-      <div
-        class="paginator-container"
-        *ngIf="
-          currentTable === 'fleet' && fleetData.length > 0 && isFleet == true
-        "
-      >
-        <mat-paginator
-          [length]="fleetData.length"
-          [pageSize]="10"
-          [pageSizeOptions]="[5, 10]"
-          (page)="onPageChange()"
-          showFirstLastButtons
-        >
-        </mat-paginator>
-      </div>
 
       <!-- Export -->
       <div class="export-button-container">

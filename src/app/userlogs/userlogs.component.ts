@@ -29,41 +29,24 @@ export class Userlogscomponent {
   activeButton: string = 'task'; // Default active button
   currentTable = 'task';
   currentTab: any;
-  filteredTaskData: any[] = [];
-  filteredTaskData1: any[] = [];
-  filteredTaskData2: any[] = [];
-  paginatedData: any[] = [];
-  paginatedData1: any[] = [];
-  paginatedData2: any[] = [];
+  filteredErrLogsData: any[] = [];
   initialRoboInfos: any[] = []; // to store data of initial robo details..
   mapDetails: any | null = null;
 
-  taskData: any[] = [];
+  errData: any[] = [];
   filteredRobots: any[] = []; // To store filtered robots
-  roboerrors: any[] = [];
+  paginatedData: any[] = [];
+  roboErr: any[] = [];
 
-  // Your robot data
-  robotData: any[] = [];
+  robotList: number[] = [];
 
-  // Your fleet data
-  fleetData: any[] = [];
   isFleet: boolean = false; // Store the emitted value
 
   robots: any[] = [];
   liveRobos: any[] = [];
 
-  taskLogInterval: ReturnType<typeof setInterval> | null = null;
-  robotLogInterval: ReturnType<typeof setInterval> | null = null;
-  fleetLogInterval: ReturnType<typeof setInterval> | null = null;
-
-  taskController: AbortController | null = null;
-  robotController: AbortController | null = null;
-  fleetController: AbortController | null = null;
-
-  activeHeaderKey: string = 'Task Logs'; // Store the key instead
-  activeHeader: string = this.getTranslation(this.activeHeaderKey);
-  subHeaderKey: string = 'taskErrorLogs';
-  activeSubHeader: any = this.getTranslation(this.subHeaderKey);
+  // activeHeaderKey: string = 'Task Logs'; // Store the key instead
+  // activeHeader: string = this.getTranslation(this.activeHeaderKey);
 
   constructor(
     private cdRef: ChangeDetectorRef,
@@ -75,13 +58,28 @@ export class Userlogscomponent {
   ) {
     this.mapData = this.projectService.getMapData();
   }
+  activeHeaderKey: string = 'Task Logs'; // Store the key instead
+  activeHeader: string = this.getTranslation(this.activeHeaderKey);
+  subHeaderKey: string = 'taskErrorLogs';
+  activeSubHeader: any = this.getTranslation(this.subHeaderKey);
 
   async ngOnInit() {
     this.mapData = this.projectService.getMapData();
     if (!this.mapData) return;
 
+    let grossFactSheet = await this.fetchAllRobos();
+
+    this.isFleetService.isFleet$.subscribe(async (status: boolean) => {
+      // this.isFleet = status; // Update the value whenever it changes
+      if (status)
+        this.robotList = grossFactSheet.map((robo) => {
+          return robo.id;
+        });
+      else this.robotList = await this.getSimRobos();
+    });
+
     this.modeService.currentMode$.subscribe((mode) => {
-      this.currentMode = mode; // React to mode updates
+      this.currentMode = mode;
     });
 
     const savedIsFleet = sessionStorage.getItem('isFleet');
@@ -91,7 +89,6 @@ export class Userlogscomponent {
     }
 
     this.onModeChange(this.currentMode);
-    this.fetchRobos();
 
     this.showTable('task');
   }
@@ -118,36 +115,17 @@ export class Userlogscomponent {
   }
 
   showTable(table: string) {
-    this.clearAllInterval();
-
     this.currentTable = table;
-    if (this.currentTable == 'task') this.fetchTaskErr();
-    else if (this.currentTable == 'robot') this.fetchRoboErr();
-    else if (this.currentTable == 'fleet') this.fetchFleetErr();
+    this.fetchErrorLogs();
   }
 
-  async fetchTaskErr() {
+  taskErrorController: AbortController | null = null;
+  robotErrorController: AbortController | null = null;
+
+  async fetchErrorLogs() {
     await this.getTaskLogs();
     this.setPaginatedData();
-    this.taskLogInterval = setInterval(async () => {
-      await this.getTaskLogs();
-      // this.setPaginatedData();
-    }, 1000 * 3);
-  }
-
-  async fetchRoboErr() {
-    // data rendering
-    await this.getRoboLogs();
-    this.robotLogInterval = setInterval(async () => {
-      await this.getRoboLogs();
-    }, 1000 * 3);
-  }
-
-  async fetchFleetErr() {
-    await this.getFleetLogs();
-    this.fleetLogInterval = setInterval(async () => {
-      await this.getFleetLogs();
-    }, 1000 * 3);
+    setTimeout(() => this.fetchErrorLogs(), 1000 * 4);
   }
 
   async getTaskLogs() {
@@ -155,125 +133,91 @@ export class Userlogscomponent {
     let establishedTime = new Date(this.mapData.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
 
-    if (this.taskController) this.taskController.abort();
-    this.taskController = new AbortController();
+    if (this.taskErrorController) this.taskErrorController.abort();
+    this.taskErrorController = new AbortController();
 
     let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.mapData.id}`,
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
+          type: this.currentTable,
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
-        signal: this.taskController.signal,
+        signal: this.taskErrorController.signal,
       }
     );
     let data = await response.json();
-    if (data.error || !data.taskErr) return;
+    // console.log(data);
 
-    const { taskErr } = data;
-    this.taskData = taskErr
-      .map((taskErr: any) => {
-        if (taskErr == null) return null;
+    if (!data.map || data.error) return;
+    let { errLogs } = data;
+    // console.log(errLogs);
+    this.errData = errLogs.map((error: any) => {
+      return {
+        id: error.id,
+        timestamp: error.timestamp,
+        code: error.code,
+        criticality: error.criticality,
+        description: error.description,
+        duration: error.duration,
+      };
+    });
 
-        let dateCreated = new Date(taskErr.TaskAddTime * 1000);
-        const formattedDateTime = `${dateCreated.toLocaleDateString('en-IN', {
-          day: '2-digit',
-          month: 'short',
-          year: 'numeric',
-        })}, ${dateCreated.toLocaleTimeString('en-IN', {
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: true,
-        })}`;
-        return {
-          dateTime: formattedDateTime,
-          taskId: taskErr.task_id,
-          taskName: taskErr.task_id,
-          errCode: 'Err001',
-          criticality: taskErr.Error_code,
-          desc: 'Robot is in Error State',
-        };
-      })
-      .filter((Err: any) => Err !== null);
-
-    this.filteredTaskData =
-      this.taskData && this.taskData.length ? this.taskData : [];
+    this.filteredErrLogsData = this.errData;
+    // this.errData && this.errData.length ? this.errData : [];
   }
 
-  async getRoboLogs() {
-    // if (!this.mapData) return;
-    let establishedTime = new Date(this.mapData.createdAt);
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-
-    if (this.robotController) this.robotController.abort();
-    this.robotController = new AbortController();
-
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/robo-logs/${this.mapData.id}`,
+  async fetchAllRobos(): Promise<any[]> {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-fms-amrs`,
       {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-        signal: this.robotController.signal,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mapId: this.mapData.id }),
       }
     );
-    let data = await response.json();
-    if (data.error || !data.roboLogs) return;
-    this.roboerrors = data.roboLogs;
 
-    this.paginatedData1 = this.roboerrors;
+    const data = await response.json();
+    return data.robots || [];
   }
 
-  async getFleetLogs() {
-    let establishedTime = new Date(this.mapData.createdAt);
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-
-    if (this.fleetController) this.fleetController.abort();
-    this.fleetController = new AbortController();
-
+  async getSimRobos(): Promise<number[]> {
+    if (!this.mapData) return [];
     let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/fleet-logs/${this.mapData.id}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-        signal: this.fleetController.signal,
-      }
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/${this.mapData.mapName}`
     );
+    if (!response.ok)
+      throw new Error(`Error with status code of ${response.status}`);
     let data = await response.json();
-    if (data.error || !data.fleetLogs) return;
-    this.fleetData = data.fleetLogs;
+    if (!data.map) return [];
+    let map = data.map;
 
-    this.filteredTaskData2 = this.fleetData;
+    let simMode = map.simMode.map((robo: any) => {
+      return robo.amrId;
+    });
+    return simMode;
   }
 
   setPaginatedData() {
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
-      this.paginatedData = this.filteredTaskData.slice(
+      this.paginatedData = this.filteredErrLogsData.slice(
         startIndex,
         startIndex + this.paginator.pageSize
       );
-      this.paginatedData1 = this.filteredTaskData1.slice(
-        startIndex,
-        startIndex + this.paginator.pageSize
-      );
-      this.paginatedData2 = this.filteredTaskData2.slice(
-        startIndex,
-        startIndex + this.paginator.pageSize
-      );
+      // this.paginatedData1 = this.filteredTaskData1.slice(
+      //   startIndex,
+      //   startIndex + this.paginator.pageSize
+      // );
+      // this.paginatedData2 = this.filteredTaskData2.slice(
+      //   startIndex,
+      //   startIndex + this.paginator.pageSize
+      // );
     }
   }
 
@@ -285,36 +229,21 @@ export class Userlogscomponent {
       this.resetSearch(); // Reset data if input is cleared
     } else {
       // Filter the taskData, robotData, and fleetData based on the search input
-      this.filteredTaskData = this.taskData.filter((item) =>
-        Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(inputValue)
-        )
-      );
-      this.filteredTaskData1 = this.robotData.filter((item) =>
-        Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(inputValue)
-        )
-      );
-      this.filteredTaskData2 = this.fleetData.filter((item) =>
+      this.filteredErrLogsData = this.errData.filter((item) =>
         Object.values(item).some((val) =>
           String(val).toLowerCase().includes(inputValue)
         )
       );
     }
 
-    // Reset the paginator after filtering
-    if (this.paginator) {
-      this.paginator.firstPage();
-    }
+    if (this.paginator) this.paginator.firstPage();
 
     this.setPaginatedData(); // Update paginated data after filtering
   }
 
   // Function to reset the search input and data
   resetSearch(): void {
-    this.filteredTaskData = this.taskData;
-    this.filteredTaskData1 = this.robotData;
-    this.filteredTaskData2 = this.fleetData;
+    this.filteredErrLogsData = this.errData;
   }
 
   // Function to clear the search input when the page changes
@@ -330,13 +259,13 @@ export class Userlogscomponent {
 
   onCancel(item: any) {
     // Find the index of the item in the tasks array and remove it
-    const index = this.taskData.indexOf(item);
+    const index = this.errData.indexOf(item);
     if (index > -1) {
-      this.taskData.splice(index, 1); // Remove the task from the tasks array
+      this.errData.splice(index, 1); // Remove the task from the tasks array
     }
 
     // Update the filteredTaskData and reapply pagination
-    this.filteredTaskData = [...this.taskData]; // Ensure it's updated
+    this.filteredErrLogsData = [...this.errData]; // Ensure it's updated
     this.setPaginatedData(); // Recalculate the displayed paginated data
   }
 
@@ -345,8 +274,7 @@ export class Userlogscomponent {
   }
 
   onModeChange(newMode: string) {
-    this.currentMode = newMode; // Update mode on event
-    console.log('Mode changed to:', newMode);
+    this.currentMode = newMode;
   }
 
   getTimeStampsOfDay(establishedTime: Date) {
@@ -425,31 +353,14 @@ export class Userlogscomponent {
   ShowExpBtn(): boolean {
     switch (this.currentTable) {
       case 'task':
-        return this.taskData.length == 0;
-      case 'robot':
-        return this.robotData.length == 0;
-      case 'fleet':
-        return this.fleetData.length == 0;
+        return this.errData.length == 0;
       default:
         return false;
     }
   }
 
-  getCurrentTableData() {
-    switch (this.currentTable) {
-      case 'task':
-        return this.taskData;
-      case 'robot':
-        return this.robotData;
-      case 'fleet':
-        return this.fleetData;
-      default:
-        return [];
-    }
-  }
-
   exportData(format: string) {
-    const data = this.getCurrentTableData();
+    const data = this.errData;
     // let csvHeader:any={};
     let excelHeader: any = {};
     switch (format) {
@@ -564,16 +475,9 @@ export class Userlogscomponent {
     this.activeFilter = filter;
   }
 
-  // onSearch(event: Event): void {
-  //   const inputElement = event.target as HTMLInputElement;
-  //   const query = inputElement.value;
-  //   // Implement your search logic here
-  // }
-
   onDateFilterChange(event: Event): void {
     const selectElement = event.target as HTMLSelectElement;
     const filter = selectElement.value;
-    // Implement your date filter logic here
   }
 
   onDateChange(event: Event): void {
@@ -591,16 +495,5 @@ export class Userlogscomponent {
     // Implement your date range filtering logic here
   }
 
-  clearAllInterval() {
-    if (this.robotLogInterval) clearInterval(this.robotLogInterval);
-    if (this.taskLogInterval) clearInterval(this.taskLogInterval);
-    if (this.fleetLogInterval) clearInterval(this.fleetLogInterval);
-  }
-
-  ngOnDestroy() {
-    // if (this.robotLogInterval) clearInterval(this.robotLogInterval);
-    // if (this.taskLogInterval) clearInterval(this.taskLogInterval);
-    // if (this.fleetLogInterval) clearInterval(this.fleetLogInterval);
-    this.clearAllInterval();
-  }
+  ngOnDestroy() {}
 }
