@@ -127,7 +127,21 @@ export class Userlogscomponent {
     this.setPaginatedData();
     setTimeout(() => this.fetchErrorLogs(), 1000 * 4);
   }
-
+  private formatDate(date: Date): string {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = date.getDate();
+    const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    
+    let hours = date.getHours();
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    const ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    
+    return `${day} ${month} ${year}, ${hours}:${minutes} ${ampm}`;
+  }
+  
   async getTaskLogs() {
     if (!this.mapData) return;
     let establishedTime = new Date(this.mapData.createdAt);
@@ -157,9 +171,11 @@ export class Userlogscomponent {
     let { errLogs } = data;
     // console.log(errLogs);
     this.errData = errLogs.map((error: any) => {
+      const errorDate = new Date(error.timestamp * 1000);
+      const formattedDate = this.formatDate(errorDate);
       return {
         id: error.id,
-        timestamp: error.timestamp,
+        timestamp: formattedDate,
         code: error.code,
         criticality: error.criticality,
         description: error.description,
