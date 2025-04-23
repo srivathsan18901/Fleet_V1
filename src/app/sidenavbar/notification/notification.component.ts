@@ -7,6 +7,8 @@ import {
   OnDestroy,
   ChangeDetectorRef,
   ViewChild,
+  EventEmitter,
+  Output,
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth.service';
@@ -56,6 +58,10 @@ export class NotificationComponent {
     filteredRobotActivities = this.robotActivities;
     selectedMap: any | null = null;
 
+    @Output() notificationOpened = new EventEmitter<void>();
+
+
+
   getTranslation(key: string) {
     return this.translationService.getsideNavTranslation(key);
   }
@@ -65,6 +71,7 @@ export class NotificationComponent {
     this.showNotificationPopup = !this.showNotificationPopup;
     this.showProfilePopup = false;
     this.languageArrowState = false;
+    this.notificationOpened.emit(); // Notify parent to toggle
   }
 
   getNotificationClass(type: string): string {
@@ -238,3 +245,5 @@ export class NotificationComponent {
         }
       }
 }
+
+

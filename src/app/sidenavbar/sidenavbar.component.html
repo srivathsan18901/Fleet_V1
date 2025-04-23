@@ -27,10 +27,10 @@
 
     <app-fullscreen-button></app-fullscreen-button>
 
-    <app-notification></app-notification>
+    <app-notification (notificationOpened)="toggleDialog('notification')" ></app-notification>
 
      <div class="language-selector">
-      <div class="language-toggle" (click)="languageChange()">
+      <div class="language-toggle" (click)="toggleDialog('language')">
         <span class="language-info">
            <div [(innerHTML)]="flagSvg" class="flag-icon"></div>
           <p class="flag-name">{{flagName}}</p> 
@@ -51,7 +51,7 @@
       </div> 
      </div>  
 
-    <div class="Profile" (click)="toggleProfilePopup()">
+    <div class="Profile" (click)="toggleDialog('profile')">
       <img
         src="../../assets/icons/profile.png"
         alt="profile pic"

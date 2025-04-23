@@ -460,11 +460,6 @@ export class SidenavbarComponent implements OnInit {
     return username;
   }
 
-  toggleProfilePopup() {
-    this.showProfilePopup = !this.showProfilePopup;
-    this.showNotificationPopup = false;
-    this.languageArrowState = false;
-  }
 
   get buttonClass(): string {
     return this.isFleet ? 'fleet-background' : 'simulation-background';
@@ -479,6 +474,27 @@ export class SidenavbarComponent implements OnInit {
     this.showProfilePopup = false;
     this.languageArrowState = false;
   }
+
+  toggleDialog(dialog: 'language' | 'profile' | 'notification') {
+    // Close all dialogs first
+    this.languageArrowState = false;
+    this.showProfilePopup = false;
+    this.showNotificationPopup = false;
+  
+    // Then open the selected one
+    switch (dialog) {
+      case 'language':
+        this.languageArrowState = true;
+        break;
+      case 'profile':
+        this.showProfilePopup = true;
+        break;
+      case 'notification':
+        this.showNotificationPopup = true;
+        break;
+    }
+  }
+  
 
   toggleSidebar(isEnlarged: boolean) {
     this.isSidebarEnlarged = isEnlarged;
