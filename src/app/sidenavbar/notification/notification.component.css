@@ -1,0 +1,118 @@
+.notification-popup {
+  position: fixed;
+  top: 55px;
+  right: 75px;
+  width: 350px;
+  max-height: 500px;
+  overflow-y: auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  padding: 16px 20px;
+  display: none;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.notification-popup.show {
+  display: block;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.notification-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 12px;
+}
+
+.notification-popup h3 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+
+/* Notification list */
+.notification-popup ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-popup li {
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  background-color: #f4f4f4;
+  border-left: 5px solid #ff7373;
+  transition: background-color 0.2s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.notification-label {
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+
+.notification-message {
+  color: #555;
+  font-size: 14px;
+}
+
+/* Colors based on type */
+.alert-red {
+  border-left-color: #ff4d4f;
+  background-color: #fff1f0;
+}
+
+.alert-yellow {
+  border-left-color: #ffc107;
+  background-color: #fffbe6;
+}
+
+.alert-green {
+  border-left-color: #28a745;
+  background-color: #e6ffed;
+}
+
+.Clr-BTN {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.clear-all-btn {
+  background-color: #ff7373;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.clear-all-btn:hover {
+  background-color: #ff4c4c;
+}
+
+/* No Notifications */
+.no-notifications {
+  text-align: center;
+  padding: 20px;
+  color: #999;
+}
+
+.no-notifications img {
+  width: 10vw;
+  height: 20vh;
+  margin-left: 3rem;
+}

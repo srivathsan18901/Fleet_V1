@@ -88,6 +88,7 @@ import { RobotComponent } from './configuration/Addons/robot/robot.component';
 import { TabViewModule } from 'primeng/tabview';
 import { CalendarModule } from 'primeng/calendar';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { NotificationComponent } from './sidenavbar/notification/notification.component';
 
 @NgModule({
   declarations: [
@@ -136,6 +137,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     CommunicationComponent,
     TaskComponent,
     HeatmapComponent,
+    NotificationComponent,
   ],
   imports: [
     MatRadioModule,

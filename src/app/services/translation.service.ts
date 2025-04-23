@@ -33,7 +33,7 @@ export class TranslationService {
       fleetMode: 'Fleet Mode',
       simulation: 'Simulation',
       notifications: 'Notifications',
-      noNotifications: 'No notifications to show',
+      noNotifications: ' No new notifications ',
       clearAll: 'Clear',
       confirmLogout: 'Are you sure?',
       logoutMessage: 'Are you sure you want to logout?',

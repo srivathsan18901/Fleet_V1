@@ -1,0 +1,38 @@
+<div class="notification" style=" margin: 8px 5px 0px; cursor: pointer " (click)="toggleNotificationPopup($event)">
+    <i class="pi pi-bell p-mr-4 p-text-secondary" pBadge style="font-size: 1.4rem; color: #ff7373;" [value]="notifications.length" ></i>
+    <div class="notification-popup" [ngClass]="{ show: showNotificationPopup }">
+      <!-- Clear All Button -->
+      <div class="notification-header">
+        <h3>{{ getTranslation('notifications') }}</h3>
+      </div>
+    
+      <!-- Scrollable notification container -->
+      <div class="scrollable-container">
+        <ng-container
+          *ngIf="notifications && notifications.length > 0; else noNotifications"
+        >
+          <ul>
+            <li
+              *ngFor="let notification of notifications"
+              [ngClass]="getNotificationClass(notification.type)"
+            >
+              <span class="notification-label">{{ notification.label }}</span>
+              <span class="notification-message">{{ notification.message }}</span>
+            </li>
+          </ul>
+        </ng-container>
+      </div>
+    
+      <ng-template #noNotifications>
+        <div class="no-notifications">
+          <img src="../../../assets/notifications.svg" />
+          <h2>{{ getTranslation('noNotifications') }}</h2>
+        </div>
+      </ng-template>
+      <div class="Clr-BTN" *ngIf="notifications && notifications.length > 0">
+        <button class="clear-all-btn" (click)="clearAllNotifications()">
+          {{ getTranslation('clearAll') }}
+        </button>
+      </div>
+    </div>
+  </div>
