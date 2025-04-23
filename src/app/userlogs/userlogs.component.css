@@ -108,7 +108,7 @@ th {
 }
 
 td {
-  padding: 5px 20px;
+  padding: 10px 20px;
   text-align: left;
   font-size: 13px;
   font-family: "graphik", Arial,  sans-serif;
@@ -450,12 +450,9 @@ tr:nth-child(even) {
 
 /* Container for paginator */
 .paginator-container {
-  margin-left: 32rem;
   display: flex;
   justify-content: center;
-  margin-top: 10px;
-  top: 39rem;
-  position: absolute;
+  margin-top: 5px;
 }
 
 /* Paginator wrapper */
