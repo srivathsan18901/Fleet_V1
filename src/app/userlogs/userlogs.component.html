@@ -125,10 +125,10 @@
               <thead class="table-header">
                 <tr>
                   <th class="table-header-cell">{{ getTranslation("Date and time") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("Task ID") }}</th>
-                  <th class="table-header-cell">{{ getTranslation("task_type") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("ID") }}</th>
                   <th class="table-header-cell">{{ getTranslation("Error code") }}</th>
                   <th class="table-header-cell">{{ getTranslation("Criticality") }}</th>
+                  <th class="table-header-cell">{{ getTranslation("Description") }}</th>
                   <th class="table-header-cell">{{ getTranslation("duration") }}</th>
                 </tr>
               </thead>
@@ -160,7 +160,7 @@
                   <td class="table-cell">{{ item.code }}</td>
                   <td class="table-cell">{{ item.criticality }}</td>
                   <td class="table-cell">{{ item.description }}</td>
-                  <td class="table-cell">{{ item.duration }}</td>
+                  <td class="table-cell">{{ item.duration }} min</td>
                 </tr>
               </tbody>
               <!-- <tbody *ngIf="(currentTable === 'task' || 'robot') && isFleet == false">
