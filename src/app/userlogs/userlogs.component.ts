@@ -146,45 +146,54 @@ export class Userlogscomponent {
     if (!this.mapData) return;
     let establishedTime = new Date(this.mapData.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-
+  
     if (this.taskErrorController) this.taskErrorController.abort();
     this.taskErrorController = new AbortController();
-
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          type: this.currentTable,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-        signal: this.taskErrorController.signal,
+  
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            type: this.currentTable,
+            timeStamp1: timeStamp1,
+            timeStamp2: timeStamp2,
+          }),
+          signal: this.taskErrorController.signal,
+        }
+      );
+      let data = await response.json();
+  
+      if (!data.map || data.error) return;
+      let { errLogs } = data;
+      
+      this.errData = errLogs.map((error: any) => {
+        const errorDate = new Date(error.timestamp * 1000);
+        const formattedDate = this.formatDate(errorDate);
+        return {
+          id: error.id,
+          timestamp: formattedDate,
+          code: error.code,
+          criticality: error.criticality,
+          description: error.description,
+          duration: error.duration,
+        };
+      });
+  
+      this.filteredErrLogsData = this.errData;
+      
+      // Force change detection and reset paginator after data is loaded
+      this.cdRef.detectChanges();
+      if (this.paginator) {
+        this.paginator.firstPage();
       }
-    );
-    let data = await response.json();
-    // console.log(data);
-
-    if (!data.map || data.error) return;
-    let { errLogs } = data;
-    // console.log(errLogs);
-    this.errData = errLogs.map((error: any) => {
-      const errorDate = new Date(error.timestamp * 1000);
-      const formattedDate = this.formatDate(errorDate);
-      return {
-        id: error.id,
-        timestamp: formattedDate,
-        code: error.code,
-        criticality: error.criticality,
-        description: error.description,
-        duration: error.duration,
-      };
-    });
-
-    this.filteredErrLogsData = this.errData;
-    // this.errData && this.errData.length ? this.errData : [];
+      this.setPaginatedData();
+    } catch (error) {
+      console.error('Error fetching task logs:', error);
+    }
   }
 
   async fetchAllRobos(): Promise<any[]> {
@@ -220,6 +229,7 @@ export class Userlogscomponent {
   }
 
   setPaginatedData() {
+    console.log(this.paginator);
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
       this.paginatedData = this.filteredErrLogsData.slice(
