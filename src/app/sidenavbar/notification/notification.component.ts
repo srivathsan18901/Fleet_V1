@@ -103,7 +103,8 @@ export class NotificationComponent {
     this.errorEventSource = new EventSource(URL);
 
     this.errorEventSource.onmessage = (event) => {
-      const data = JSON.parse(event.data);
+      const erros = JSON.parse(event.data);
+      // console.log(erros);
     };
 
     this.errorEventSource.onerror = (error) => {

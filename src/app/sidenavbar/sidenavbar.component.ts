@@ -420,9 +420,7 @@ export class SidenavbarComponent implements OnInit {
     if (!this.selectedProject) return;
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-project-file/download-project/${this.selectedProject.projectName}`,
-      {
-        credentials: 'include',
-      }
+      { credentials: 'include' }
     );
     if (!response.ok) alert('try once again');
     else {
