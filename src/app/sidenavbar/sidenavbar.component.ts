@@ -56,7 +56,6 @@ export class SidenavbarComponent implements OnInit {
   userManagementData: any;
   private langSubscription!: Subscription;
   fleetStatusInterval: ReturnType<typeof setInterval> | null = null;
-  notificationInterval: ReturnType<typeof setInterval> | null = null;
   sessionCheck: ReturnType<typeof setInterval> | null = null;
   selectedProject: any | null = null;
 
@@ -185,15 +184,6 @@ export class SidenavbarComponent implements OnInit {
     }, 1000 * 5);
 
     if (!this.selectedMap) return;
-    await this.getRoboStatus();
-    await this.getTaskErrs();
-    this.notificationInterval = setInterval(async () => {
-      // only allowed to check if fleet is up
-      if (this.isFleet == true) {
-        await this.getRoboStatus();
-        await this.getTaskErrs(); // or run in indivdual..
-      }
-    }, 1000 * 5); // max to 30 or 60 sec
   }
 
   get iconUrl(): string {
@@ -283,131 +273,6 @@ export class SidenavbarComponent implements OnInit {
     sessionStorage.setItem('isFleet', String(this.isFleet));
   }
 
-  async getRoboStatus(): Promise<void> {
-    if (this.roboStatusController) this.roboStatusController.abort();
-    this.roboStatusController = new AbortController();
-
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
-      {
-        method: 'GET',
-        credentials: 'include',
-        signal: this.roboStatusController.signal,
-      }
-    );
-
-    const data = await response.json();
-    // console.log(data);
-    if (!data.map || data.error) return;
-    this.robotActivities = data.robos;
-
-    if (!('robots' in this.robotActivities)) return;
-
-    let { robots }: any = this.robotActivities;
-    if (!robots?.length) return;
-
-    robots.forEach((robot: any) => {
-      if (robot.robot_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
-          // [errorType, errors] => [key, value]
-          // if (errorType === "NO ERROR") continue;
-          for (let error of errors as any[]) {
-            let err_type = [
-              'EMERGENCY STOP',
-              'LIDAR_ERROR',
-              'DOCKING ERROR',
-              'LOADING ERROR',
-              'NO ERROR',
-            ]; //Robot Errors List from RabbitMQ
-            let criticality = 'Normal';
-
-            if (
-              err_type.includes(err_type[0]) ||
-              err_type.includes(err_type[3])
-            )
-              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
-            else if (
-              err_type.includes(err_type[1]) ||
-              err_type.includes(err_type[2])
-            )
-              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
-
-            let notificationKey = `${error.description}`;
-            if (this.processedErrors?.has(notificationKey)) continue;
-            this.processedErrors?.add(notificationKey);
-
-            this.notifications.push({
-              label: `${criticality}`,
-              message: `${error.description}`,
-              type:
-                criticality === 'Critical'
-                  ? 'red'
-                  : criticality === 'Warning'
-                  ? 'yellow'
-                  : 'green',
-            });
-
-            this.cdRef.detectChanges(); // yet to notify..
-          }
-        }
-      }
-    });
-
-    // console.log(this.notifications, this.processedErrors?.values());
-  }
-
-  async getTaskErrs(): Promise<void> {
-    if (this.taskErrController) this.taskErrController.abort();
-    this.taskErrController = new AbortController();
-
-    let establishedTime = new Date(this.selectedMap.createdAt);
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.selectedMap.id}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          // mapId: this.selectedMap.id,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-        signal: this.taskErrController.signal,
-      }
-    );
-    const data = await response.json();
-    if (!data.map || data.error) return;
-    for (let err of data.taskErr) {
-      if (err === null) continue;
-      // let dateCreated = new Date(err.TaskAddTime * 1000);
-      // {
-      //   status: err.task_status.status,
-      //   taskId: err.task_id,
-      //   timestamp: dateCreated.toLocaleString()
-      // }
-      let notificationKey = `${err.task_status.status} on task ID ${err.task_id}`;
-      if (this.processedErrors?.has(notificationKey)) continue;
-      this.processedErrors?.add(notificationKey);
-      let criticality = 'Normal';
-
-      if (err.Error_code == 'HIGH') criticality = 'Critical';
-      // else if(err.Error_code == "")
-      //   criticality = "Warning";
-
-      this.notifications.push({
-        label: `${criticality}`,
-        message: `${err.task_status.status} on task ID ${err.task_id}`,
-        type:
-          criticality === 'Critical'
-            ? 'red'
-            : criticality === 'Warning'
-            ? 'yellow'
-            : 'green',
-      });
-    }
-  }
-
   // Clear all notifications when the button is clicked
   clearAllNotifications() {
     this.notifications = [];
@@ -460,7 +325,6 @@ export class SidenavbarComponent implements OnInit {
     return username;
   }
 
-
   get buttonClass(): string {
     return this.isFleet ? 'fleet-background' : 'simulation-background';
   }
@@ -480,7 +344,7 @@ export class SidenavbarComponent implements OnInit {
     this.languageArrowState = false;
     this.showProfilePopup = false;
     this.showNotificationPopup = false;
-  
+
     // Then open the selected one
     switch (dialog) {
       case 'language':
@@ -494,7 +358,6 @@ export class SidenavbarComponent implements OnInit {
         break;
     }
   }
-  
 
   toggleSidebar(isEnlarged: boolean) {
     this.isSidebarEnlarged = isEnlarged;
@@ -591,7 +454,6 @@ export class SidenavbarComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    if (this.notificationInterval) clearInterval(this.notificationInterval);
     if (this.fleetStatusInterval) clearInterval(this.fleetStatusInterval);
     if (this.sessionCheck) clearInterval(this.sessionCheck);
   }
