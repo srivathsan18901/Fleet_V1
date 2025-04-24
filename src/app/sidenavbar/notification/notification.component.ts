@@ -56,7 +56,7 @@ export class NotificationComponent {
       "description": "Undefined Pick Location",
       "duration": 7,
       "id": "TASK_001",
-      "timestamp": 1745382454
+      "timestamp": "11:30"
   },
   {
       "code": 5,
@@ -64,7 +64,7 @@ export class NotificationComponent {
       "description": "Pick failed",
       "duration": 1,
       "id": "TASK_002",
-      "timestamp": 1745382454
+      "timestamp": "3:00"
   }];
     robotActivities: any[] = [];
     filteredNotifications = this.notifications;
@@ -214,10 +214,12 @@ export class NotificationComponent {
       console.log(errLogs)
       this.notifications = errLogs.map((error: any)=>{
         const errorDate = new Date(error.timestamp * 1000);
+        const timeOnly = errorDate.toTimeString().slice(0, 5); // Format to HH:mm
+        console.log(timeOnly,"time in hr:mm")
       // const formattedDate = this.formatDate(errorDate);
       return {
         id: error.id,
-        timestamp: errorDate,
+        timestamp: timeOnly,
         code: error.code,
         criticality: error.criticality.toLowerCase(), 
         description: error.description,
