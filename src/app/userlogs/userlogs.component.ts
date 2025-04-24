@@ -175,11 +175,11 @@ export class Userlogscomponent {
         const formattedDate = this.formatDate(errorDate);
         return {
           id: error.id,
-          timestamp: formattedDate,
-          code: error.code,
+          Date_and_Time: formattedDate,
+          Error_Code: error.code,
           criticality: error.criticality,
           description: error.description,
-          duration: error.duration,
+          duration_in_Minutes: error.duration,
         };
       });
   
@@ -229,7 +229,6 @@ export class Userlogscomponent {
   }
 
   setPaginatedData() {
-    console.log(this.paginator);
     if (this.paginator) {
       const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
       this.paginatedData = this.filteredErrLogsData.slice(
@@ -414,11 +413,7 @@ export class Userlogscomponent {
             )[0]);
         }
         excelHeader['length'] = this.structuredFormatter(this.currentTable)[1];
-        this.exportService.exportToExcel(
-          data,
-          `${this.currentTable}DataExport`,
-          excelHeader
-        );
+        this.exportService.exportToExcel( data, `${this.currentTable}DataExport`, excelHeader );
         break;
       case 'pdf':
         this.exportService.exportToPDF(data, `${this.currentTable}DataExport`);
