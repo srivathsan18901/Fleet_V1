@@ -7,12 +7,12 @@
   overflow-y: auto;
   background-color: #ffffff;
   border-radius: 10px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 10px 25px rgb(246 10 10 / 20%);
   z-index: 1000;
   padding: 16px 20px;
   display: none;
   opacity: 0;
-  transform: scale(0.95);
+  transform: translateY(-10px);
   transition: opacity 0.3s ease, transform 0.3s ease;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -20,7 +20,7 @@
 .notification-popup.show {
   display: block;
   opacity: 1;
-  transform: scale(1);
+  transform: translateY(0);
 }
 
 .notification-header {
@@ -51,7 +51,7 @@
   margin-bottom: 10px;
   border-radius: 8px;
   background-color: #f4f4f4;
-  border-left: 5px solid #ff7373;
+  /* border-left: 5px solid transparent  ; */
   transition: background-color 0.2s ease;
   display: flex;
   flex-direction: column;
@@ -67,21 +67,20 @@
   font-size: 14px;
 }
 
-/* Colors based on type */
+
 .alert-red {
-  border-left-color: #ff4d4f;
+  border-left: 5px solid #ff4d4f;
   background-color: #fff1f0;
 }
 
 .alert-yellow {
-  border-left-color: #ffc107;
-  background-color: #fffbe6;
+  border-left: 5px solid #ffc107;
 }
 
 .alert-green {
-  border-left-color: #28a745;
-  background-color: #e6ffed;
+  border-left: 5px solid #28a745;
 }
+
 
 .Clr-BTN {
   display: flex;
@@ -115,4 +114,69 @@
   width: 10vw;
   height: 20vh;
   margin-left: 3rem;
+}
+
+.notification-header-with-icon {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.icon {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.icon-red {
+  background-color: #ff4d4f;
+}
+
+.icon-yellow {
+  background-color: #ffc107;
+}
+
+.icon-green {
+  background-color: #28a745;
+}
+
+.notification-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.close-btn {
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  color: #888;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 10px;
+}
+
+.close-btn:hover {
+  color: #ff4d4f;
+}
+
+.dot {
+  height: 10px;
+  width: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 6px;
+}
+
+.dot.red {
+  background-color: #ff4d4f;
+}
+
+.dot.yellow {
+  background-color: #ffc107;
+}
+
+.dot.green {
+  background-color: #28a745;
 }
