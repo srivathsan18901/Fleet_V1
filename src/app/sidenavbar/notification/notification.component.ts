@@ -50,22 +50,23 @@ export class NotificationComponent {
     showProfilePopup: boolean = false;
     languageArrowState: boolean = false;
     notifications: any[] = [    
-      {
-      "code": 2,
-      "criticality": "medium",
-      "description": "Undefined Pick Location",
-      "duration": 7,
-      "id": "TASK_001",
-      "timestamp": "11:30"
-  },
-  {
-      "code": 5,
-      "criticality": "high",
-      "description": "Pick failed",
-      "duration": 1,
-      "id": "TASK_002",
-      "timestamp": "3:00"
-  }];
+  //     {
+  //     "code": 2,
+  //     "criticality": "medium",
+  //     "description": "Undefined Pick Location",
+  //     "duration": 7,
+  //     "id": "TASK_001",
+  //     "timestamp": "11:30 A.M, 23Apr"
+  // },
+  // {
+  //     "code": 5,
+  //     "criticality": "high",
+  //     "description": "Pick failed",
+  //     "duration": 1,
+  //     "id": "TASK_002",
+  //     "timestamp": "3:00 P.M, 23 Apr"
+  // }
+    ];
     robotActivities: any[] = [];
     filteredNotifications = this.notifications;
     processedErrors: Set<string>; // To track processed errors
@@ -214,12 +215,21 @@ export class NotificationComponent {
       console.log(errLogs)
       this.notifications = errLogs.map((error: any)=>{
         const errorDate = new Date(error.timestamp * 1000);
-        const timeOnly = errorDate.toTimeString().slice(0, 5); // Format to HH:mm
-        console.log(timeOnly,"time in hr:mm")
-      // const formattedDate = this.formatDate(errorDate);
+
+        const options: Intl.DateTimeFormatOptions = {
+          hour: '2-digit',
+          minute: '2-digit',
+          hour12: true,
+          day: '2-digit',
+          month: 'short',
+        };
+      
+        const formattedTime = errorDate.toLocaleTimeString('en-US', options);
+        const formattedDate = errorDate.toLocaleDateString('en-US', { day: '2-digit', month: 'short' });
+      
       return {
         id: error.id,
-        timestamp: timeOnly,
+        timestamp:`${formattedTime}`, // ${formattedDate},  e.g., "06:43 PM, 22-Apr"
         code: error.code,
         criticality: error.criticality.toLowerCase(), 
         description: error.description,
