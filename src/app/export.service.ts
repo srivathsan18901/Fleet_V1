@@ -87,6 +87,19 @@ exportToExcel(data: any[], filename: string, headerStatus: any = {}): void {
 
   // Create a worksheet using updated data with uppercase headers
   const worksheet: XLSX.WorkSheet = XLSX.utils.json_to_sheet(updatedData);
+  // Apply left alignment to all cells (including data rows)
+  const range = XLSX.utils.decode_range(worksheet['!ref']!);
+  for (let row = range.s.r; row <= range.e.r; ++row) {
+    for (let col = range.s.c; col <= range.e.c; ++col) {
+      const cellAddress = XLSX.utils.encode_cell({ r: row, c: col });
+      if (worksheet[cellAddress]) {
+        if (!worksheet[cellAddress].s) {
+          worksheet[cellAddress].s = {};
+        }
+        worksheet[cellAddress].s.alignment = { horizontal: 'left', vertical: 'center' };
+      }
+    }
+  }
 
   // Apply styles to the header row
   const headerRange = XLSX.utils.decode_range(worksheet['!ref']!);

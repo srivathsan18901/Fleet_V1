@@ -146,45 +146,61 @@ export class Userlogscomponent {
     if (!this.mapData) return;
     let establishedTime = new Date(this.mapData.createdAt);
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-
+  
     if (this.taskErrorController) this.taskErrorController.abort();
     this.taskErrorController = new AbortController();
-
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({
-          type: this.currentTable,
-          timeStamp1: timeStamp1,
-          timeStamp2: timeStamp2,
-        }),
-        signal: this.taskErrorController.signal,
+  
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({
+            type: this.currentTable,
+            timeStamp1: timeStamp1,
+            timeStamp2: timeStamp2,
+          }),
+          signal: this.taskErrorController.signal,
+        }
+      );
+      let data = await response.json();
+  
+      if (!data.map || data.error) return;
+      let { errLogs } = data;
+      
+      this.errData = errLogs.map((error: any) => {
+        const errorDate = new Date(error.timestamp * 1000);
+        const formattedDate = this.formatDate(errorDate);
+        return {
+          id: error.id,
+          Date_and_Time: formattedDate,
+          Error_Code: error.code,
+          criticality: error.criticality,
+          description: error.description,
+          duration_in_Minutes: error.duration,
+        };
+      });
+      if (this.searchInput) {
+        this.filteredErrLogsData = this.errData.filter((item) =>
+          Object.values(item).some((val) =>
+            String(val).toLowerCase().includes(this.searchInput.toLowerCase())
+          )
+        );
+      } else {
+        this.filteredErrLogsData = this.errData;
       }
-    );
-    let data = await response.json();
-    // console.log(data);
-
-    if (!data.map || data.error) return;
-    let { errLogs } = data;
-    // console.log(errLogs);
-    this.errData = errLogs.map((error: any) => {
-      const errorDate = new Date(error.timestamp * 1000);
-      const formattedDate = this.formatDate(errorDate);
-      return {
-        id: error.id,
-        timestamp: formattedDate,
-        code: error.code,
-        criticality: error.criticality,
-        description: error.description,
-        duration: error.duration,
-      };
-    });
-
-    this.filteredErrLogsData = this.errData;
-    // this.errData && this.errData.length ? this.errData : [];
+      
+      // Force change detection and reset paginator after data is loaded
+      this.cdRef.detectChanges();
+      if (this.paginator) {
+        this.paginator.firstPage();
+      }
+      this.setPaginatedData();
+    } catch (error) {
+      console.error('Error fetching task logs:', error);
+    }
   }
 
   async fetchAllRobos(): Promise<any[]> {
@@ -238,16 +254,16 @@ export class Userlogscomponent {
   }
 
   onSearch(event: Event): void {
-    const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.searchInput = inputValue; // Store the search input value
+    this.searchQuery = (event.target as HTMLInputElement).value.toLowerCase();
+    this.searchInput = this.searchQuery; // Store the search input value
 
-    if (!inputValue) {
+    if (!this.searchQuery) {
       this.resetSearch(); // Reset data if input is cleared
     } else {
       // Filter the taskData, robotData, and fleetData based on the search input
       this.filteredErrLogsData = this.errData.filter((item) =>
         Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(inputValue)
+          String(val).toLowerCase().includes(this.searchQuery)
         )
       );
     }
@@ -352,6 +368,9 @@ export class Userlogscomponent {
   setActiveButton(button: string) {
     this.activeButton = button;
     this.isTransitioning = true;
+    
+    this.searchInput = '';
+    this.searchQuery = '';
     setTimeout(() => {
       this.activeButton = button;
       this.activeHeaderKey = this.getHeaderKey(button); // Store key instead of translated string
@@ -404,11 +423,7 @@ export class Userlogscomponent {
             )[0]);
         }
         excelHeader['length'] = this.structuredFormatter(this.currentTable)[1];
-        this.exportService.exportToExcel(
-          data,
-          `${this.currentTable}DataExport`,
-          excelHeader
-        );
+        this.exportService.exportToExcel( data, `${this.currentTable}DataExport`, excelHeader );
         break;
       case 'pdf':
         this.exportService.exportToPDF(data, `${this.currentTable}DataExport`);

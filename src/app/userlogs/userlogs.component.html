@@ -24,7 +24,7 @@
           <input
             type="text"
             (input)="onSearch($event)"
-            placeholder="{{ getTranslation('Search For Logs...') }}"
+            placeholder="{{ getTranslation('Search For Logs...') }}" [value]="searchQuery"
           />
           <button class="search-btn">
             <img
@@ -155,12 +155,12 @@
             <td colspan="6" class="iconTable">No data found</td>
           </tr> -->
                 <tr *ngFor=" let item of paginatedData; index as i; trackBy: trackByTaskId " [class.paused]="item.paused" >
-                  <td class="table-cell">{{ item.timestamp }}</td>
+                  <td class="table-cell">{{ item.Date_and_Time }}</td>
                   <td class="table-cell">{{ item.id }}</td>
-                  <td class="table-cell">{{ item.code }}</td>
+                  <td class="table-cell">{{ item.Error_Code }}</td>
                   <td class="table-cell">{{ item.criticality }}</td>
                   <td class="table-cell">{{ item.description }}</td>
-                  <td class="table-cell">{{ item.duration }}</td>
+                  <td class="table-cell">{{ item.duration_in_Minutes }}</td>
                 </tr>
               </tbody>
               <!-- <tbody *ngIf="(currentTable === 'task' || 'robot') && isFleet == false">
