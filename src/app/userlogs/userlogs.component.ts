@@ -182,8 +182,15 @@ export class Userlogscomponent {
           duration_in_Minutes: error.duration,
         };
       });
-  
-      this.filteredErrLogsData = this.errData;
+      if (this.searchInput) {
+        this.filteredErrLogsData = this.errData.filter((item) =>
+          Object.values(item).some((val) =>
+            String(val).toLowerCase().includes(this.searchInput.toLowerCase())
+          )
+        );
+      } else {
+        this.filteredErrLogsData = this.errData;
+      }
       
       // Force change detection and reset paginator after data is loaded
       this.cdRef.detectChanges();
@@ -247,16 +254,16 @@ export class Userlogscomponent {
   }
 
   onSearch(event: Event): void {
-    const inputValue = (event.target as HTMLInputElement).value.toLowerCase();
-    this.searchInput = inputValue; // Store the search input value
+    this.searchQuery = (event.target as HTMLInputElement).value.toLowerCase();
+    this.searchInput = this.searchQuery; // Store the search input value
 
-    if (!inputValue) {
+    if (!this.searchQuery) {
       this.resetSearch(); // Reset data if input is cleared
     } else {
       // Filter the taskData, robotData, and fleetData based on the search input
       this.filteredErrLogsData = this.errData.filter((item) =>
         Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(inputValue)
+          String(val).toLowerCase().includes(this.searchQuery)
         )
       );
     }
@@ -361,6 +368,9 @@ export class Userlogscomponent {
   setActiveButton(button: string) {
     this.activeButton = button;
     this.isTransitioning = true;
+    
+    this.searchInput = '';
+    this.searchQuery = '';
     setTimeout(() => {
       this.activeButton = button;
       this.activeHeaderKey = this.getHeaderKey(button); // Store key instead of translated string

@@ -24,7 +24,7 @@
           <input
             type="text"
             (input)="onSearch($event)"
-            placeholder="{{ getTranslation('Search For Logs...') }}"
+            placeholder="{{ getTranslation('Search For Logs...') }}" [value]="searchQuery"
           />
           <button class="search-btn">
             <img
