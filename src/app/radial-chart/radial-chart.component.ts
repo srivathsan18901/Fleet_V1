@@ -220,7 +220,8 @@ export class RadialChartComponent implements OnInit {
       robots.robots.forEach((robo: any) => {
         active_robos += robo.isConnected ? 1 : 0;
 
-        if (robo.robot_errors?.length) err_robos += 1;
+        if (robo.robot_errors && Object.keys(robo.robot_errors).length)
+          err_robos += 1;
       });
 
     return [active_robos, this.totalRobots - active_robos, err_robos];
