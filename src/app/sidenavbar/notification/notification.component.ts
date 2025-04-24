@@ -105,23 +105,22 @@ export class NotificationComponent {
     this.errorEventSource.onmessage = (event) => {
       const erros = JSON.parse(event.data);
       // console.log(erros);
+      this.notifications = erros.map((error: any) => {
+        return {
+          id: error.id,
+          timestamp: ``, // ${formattedDate},  e.g., "06:43 PM, 22-Apr"
+          code: error.code,
+          criticality: error.criticality.toLowerCase(),
+          description: error.description,
+          duration: error.duration,
+        };
+      });
     };
 
     this.errorEventSource.onerror = (error) => {
       this.errorEventSource.close();
       console.log('Error while fetching notification errors: ', error);
     };
-
-    // this.notifications = .map((error: any) => {
-    //   return {
-    //     id: error.id,
-    //     timestamp: ``, // ${formattedDate},  e.g., "06:43 PM, 22-Apr"
-    //     code: error.code,
-    //     criticality: error.criticality.toLowerCase(),
-    //     description: error.description,
-    //     duration: error.duration,
-    //   };
-    // });
   }
 
   closePopup() {
