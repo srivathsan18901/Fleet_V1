@@ -12,13 +12,19 @@
           *ngIf="notifications && notifications.length > 0; else noNotifications"
         >
           <ul>
-            <li
-              *ngFor="let notification of notifications"
-              [ngClass]="getNotificationClass(notification.type)"
-            >
-              <span class="notification-label">{{ notification.label }}</span>
-              <span class="notification-message">{{ notification.message }}</span>
-            </li>
+            <li *ngFor="let notification of notifications; let i = index"
+            [ngClass]="getNotificationClass(notification.criticality)" (click)="$event.stopPropagation()">
+          <div class="notification-header-row">
+            <div class="notification-label">
+              <span [ngClass]="getDotClass(notification.criticality)"></span>
+              {{ notification.description }}
+            </div>
+            <button class="close-btn" (click)="removeNotification(i)">×</button>
+          </div>
+          <span class="notification-message">{{ notification.timestamp }}</span>
+        </li>
+        
+        
           </ul>
         </ng-container>
       </div>
@@ -30,7 +36,7 @@
         </div>
       </ng-template>
       <div class="Clr-BTN" *ngIf="notifications && notifications.length > 0">
-        <button class="clear-all-btn" (click)="clearAllNotifications()">
+        <button class="clear-all-btn" (click)="clearAllNotifications($event)">
           {{ getTranslation('clearAll') }}
         </button>
       </div>

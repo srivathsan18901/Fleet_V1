@@ -49,18 +49,42 @@ export class NotificationComponent {
     showNotificationPopup: boolean = false;
     showProfilePopup: boolean = false;
     languageArrowState: boolean = false;
-    notifications: any[] = [];
+    notifications: any[] = [    
+      {
+      "code": 2,
+      "criticality": "medium",
+      "description": "Undefined Pick Location",
+      "duration": 7,
+      "id": "TASK_001",
+      "timestamp": 1745382454
+  },
+  {
+      "code": 5,
+      "criticality": "high",
+      "description": "Pick failed",
+      "duration": 1,
+      "id": "TASK_002",
+      "timestamp": 1745382454
+  }];
     robotActivities: any[] = [];
     filteredNotifications = this.notifications;
     processedErrors: Set<string>; // To track processed errors
     roboStatusController: AbortController | null = null;
     taskErrController: AbortController | null = null;
+    mapData: any | null = null;
     filteredRobotActivities = this.robotActivities;
     selectedMap: any | null = null;
 
     @Output() notificationOpened = new EventEmitter<void>();
 
+    
+  ngOnInit(){
+        this.mapData = this.projectService.getMapData();
+    if (!this.mapData) return;
 
+    this.getErrsLogs();
+    console.log("executed")
+  }
 
   getTranslation(key: string) {
     return this.translationService.getsideNavTranslation(key);
@@ -69,28 +93,26 @@ export class NotificationComponent {
   toggleNotificationPopup(event: Event) {
     event.stopPropagation();
     this.showNotificationPopup = !this.showNotificationPopup;
-    this.showProfilePopup = false;
-    this.languageArrowState = false;
     this.notificationOpened.emit(); // Notify parent to toggle
   }
-
-  getNotificationClass(type: string): string {
-    switch (type) {
-      case 'red':
-        return 'alert-red';
-      case 'yellow':
-        return 'alert-yellow';
-      case 'green':
-        return 'alert-green';
-      default:
-        return '';
+  
+  
+  getNotificationClass(criticality: string): string {
+    switch (criticality) {
+      case 'high': return 'alert-red';
+      case 'medium': return 'alert-yellow';
+      case 'low': return 'alert-green';
+      default: return '';
     }
   }
+  
 
-  clearAllNotifications() {
+  clearAllNotifications(event: Event): void {
+    event.stopPropagation(); // ✅ Prevents popup from closing
     this.notifications = [];
     this.processedErrors.clear();
   }
+  
 
     async getRoboStatus(): Promise<void> {
       if (this.roboStatusController) this.roboStatusController.abort();
@@ -165,20 +187,21 @@ export class NotificationComponent {
       // console.log(this.notifications, this.processedErrors?.values());
     }
   
-    async getTaskErrs(): Promise<void> {
+    async getErrsLogs(): Promise<void> {
       if (this.taskErrController) this.taskErrController.abort();
       this.taskErrController = new AbortController();
   
-      let establishedTime = new Date(this.selectedMap.createdAt);
+      let establishedTime = new Date();
       let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+      console.log(timeStamp1, timeStamp2)
       const response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.selectedMap.id}`,
+        `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           credentials: 'include',
           body: JSON.stringify({
-            // mapId: this.selectedMap.id,
+            type: 'task', // 'robot'
             timeStamp1: timeStamp1,
             timeStamp2: timeStamp2,
           }),
@@ -187,34 +210,20 @@ export class NotificationComponent {
       );
       const data = await response.json();
       if (!data.map || data.error) return;
-      for (let err of data.taskErr) {
-        if (err === null) continue;
-        // let dateCreated = new Date(err.TaskAddTime * 1000);
-        // {
-        //   status: err.task_status.status,
-        //   taskId: err.task_id,
-        //   timestamp: dateCreated.toLocaleString()
-        // }
-        let notificationKey = `${err.task_status.status} on task ID ${err.task_id}`;
-        if (this.processedErrors?.has(notificationKey)) continue;
-        this.processedErrors?.add(notificationKey);
-        let criticality = 'Normal';
-  
-        if (err.Error_code == 'HIGH') criticality = 'Critical';
-        // else if(err.Error_code == "")
-        //   criticality = "Warning";
-  
-        this.notifications.push({
-          label: `${criticality}`,
-          message: `${err.task_status.status} on task ID ${err.task_id}`,
-          type:
-            criticality === 'Critical'
-              ? 'red'
-              : criticality === 'Warning'
-              ? 'yellow'
-              : 'green',
-        });
-      }
+      let {errLogs} = data;
+      console.log(errLogs)
+      this.notifications = errLogs.map((error: any)=>{
+        const errorDate = new Date(error.timestamp * 1000);
+      // const formattedDate = this.formatDate(errorDate);
+      return {
+        id: error.id,
+        timestamp: errorDate,
+        code: error.code,
+        criticality: error.criticality.toLowerCase(), 
+        description: error.description,
+        duration: error.duration,
+      };
+      })
     }
 
     getTimeStampsOfDay(establishedTime: Date) {
@@ -244,6 +253,21 @@ export class NotificationComponent {
           this.closePopup();
         }
       }
+
+      
+      getDotClass(criticality: string): string {
+        switch (criticality) {
+          case 'high': return 'dot red';
+          case 'medium': return 'dot yellow';
+          case 'low': return 'dot green';
+          default: return 'dot';
+        }
+      }
+      
+      removeNotification(index: number): void {
+        this.notifications.splice(index, 1);
+      }
+      
 }
 
 
