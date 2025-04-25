@@ -355,44 +355,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
         summary: 'Info',
         detail: 'Task Cancelled',
       });
-      await this.refreshTaskData();
-    }
-  }
-  async refreshTaskData() {
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mapId: this.mapData.id,
-          timeStamp1: this.getTimeStampsOfDay(new Date(this.mapData.createdAt))
-            .timeStamp1,
-          timeStamp2: this.getTimeStampsOfDay(new Date(this.mapData.createdAt))
-            .timeStamp2,
-        }),
-      }
-    );
 
-    let data = await response.json();
-    // console.log(data);
-
-    let sNo = 1;
-    if (data.tasks) {
-      const { tasks } = data.tasks;
-      this.tasks = tasks.map((task: any) => ({
-        sNo: sNo++,
-        taskId: task.task_id,
-        taskType: task.sub_task[0]?.task_type || 'N/A',
-        status: task.task_status.status,
-        roboName: task.agent_ID,
-        destinationLocation: task.sub_task[0]?.source_location || 'N/A',
-      }));
-      // this.filteredTaskData = this.tasks;
-      this.updateData(); // Ensure pagination and filtered data are updated
-      this.taskData = this.tasks;
-      console.log(this.taskData, 'taskdata');
+      this.paginatedData = this.paginatedData.map((task) => {
+        if (task.taskId == item.taskId) task.status = 'CANCELLED';
+        return task;
+      });
     }
   }
 
