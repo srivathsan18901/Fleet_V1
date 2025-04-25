@@ -40,7 +40,7 @@ export class RobotDashboardComponent implements OnInit {
     private router: Router,
     private projectService: ProjectService,
     private cdRef: ChangeDetectorRef,
-    private translationService: TranslationService,
+    private translationService: TranslationService
   ) {
     this.processedErrors = new Set<string>();
   }
@@ -52,18 +52,15 @@ export class RobotDashboardComponent implements OnInit {
     this.selectedMap = this.projectService.getMapData();
     if (!this.selectedMap) return;
     this.robotActivities = await this.getLiveRoboInfo();
-    this.getRoboStatus(); // update only err, warning..
+    this.getErrorLogs(); // update only err, warning..
     this.updateLiveRoboInfo();
     this.filteredRobotActivities = this.robotActivities;
     // this.getFleetGrossStatus();
     this.roboDetInterval = setInterval(async () => {
       this.robotActivities = await this.getLiveRoboInfo();
-      this.getRoboStatus(); // update only err, warning..
+      this.getErrorLogs(); // update only err, warning..
       this.updateLiveRoboInfo();
       this.filteredRobotActivities = this.robotActivities;
-      // console.log(this.filteredRobotActivities);
-
-      // this.filteredRobotActivities = this.robotActivities.flat(); // flat() to convert nested of nested array to single array..
     }, 1000 * 5);
   }
 
@@ -80,11 +77,6 @@ export class RobotDashboardComponent implements OnInit {
     return await response.json();
   }
 
-  // async to synchronous...
-  // async getFleetGrossStatus() {
-  //   const mapId = this.selectedMap.id;
-  // }
-
   async getLiveRoboInfo(): Promise<any[]> {
     const response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/get-live-robos/${this.selectedMap.id}`,
@@ -100,55 +92,58 @@ export class RobotDashboardComponent implements OnInit {
     return data.robos;
   }
 
-  getRoboStatus(): void {
-    if (!('robots' in this.robotActivities)) return;
+  errLogController: AbortController | null = null;
 
-    let { robots }: any = this.robotActivities;
-    if (!robots.length) return;
+  async getErrorLogs(): Promise<void> {
+    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(new Date()); // this.selectedMap.createdAt
 
-    robots.forEach((robot: any) => {
-      if (robot.robot_errors) {
-        for (const [errorType, errors] of Object.entries(robot.robot_errors)) {
-          // [errorType, errors] => [key, value]
-          // if (errorType === "NO ERROR") continue;
-          for (let error of errors as any[]) {
-            let err_type = [
-              'EMERGENCY STOP',
-              'LIDAR_ERROR',
-              'MANUAL MODE',
-              'DOCKING',
-              'NO ERROR',
-            ]; //Robot Errors List from RabbitMQ
-            let criticality = 'Normal';
+    if (this.errLogController) this.errLogController.abort();
+    this.errLogController = new AbortController();
 
-            if (
-              err_type.includes(err_type[0]) ||
-              err_type.includes(err_type[3])
-            )
-              criticality = 'Critical'; // "EMERGENCY STOP", "DOCKING"
-            else if (
-              err_type.includes(err_type[1]) ||
-              err_type.includes(err_type[2])
-            )
-              criticality = 'Warning'; // "LIDAR_ERROR", "MANUAL MODE"
-
-            let notificationKey = `${error.description} on robot ID ${robot.id}`;
-            if (this.processedErrors?.has(notificationKey)) continue;
-            this.processedErrors?.add(notificationKey);
-
-            this.notifications.push({
-              errorName: errorType,
-              roboId: `${robot.type}-${robot.id}`,
-              desc: `${error.description}`,
-            });
-
-            this.cdRef.detectChanges(); // yet to notify..
-          }
-        }
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.selectedMap.id}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          type: 'robot',
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+        signal: this.errLogController.signal,
       }
+    );
+    const data = await response.json();
+
+    if (!data.map || data.error) return;
+
+    const { errLogs } = data;
+    // console.log(errLogs);
+
+    this.notifications = errLogs.map((error: any) => {
+      // let dateCreated = new Date(error.timestamp * 1000);
+      return {
+        roboId: error.id,
+        criticality: error.criticality,
+        description: error.description,
+      };
     });
 
-    //  console.log(this.notifications);
+    this.filteredNotifications = this.notifications;
+  }
+
+  getTimeStampsOfDay(establishedTime: Date) {
+    let currentTime = Math.floor(new Date().getTime() / 1000);
+    let startTimeOfDay = this.getStartOfDay(establishedTime);
+    return {
+      timeStamp1: startTimeOfDay,
+      timeStamp2: currentTime,
+    };
+  }
+
+  getStartOfDay(establishedTime: Date) {
+    return Math.floor(establishedTime.setHours(0, 0, 0) / 1000);
   }
 
   // Clear all notifications when the button is clicked
@@ -201,7 +196,9 @@ export class RobotDashboardComponent implements OnInit {
     // ? `${((tot_robotUtilization / robots.length) * 100).toFixed(2)} %`
     // : "Loading...";
 
-    this.statisticsData.totalDistance = `${(tot_Dis / robots.length).toFixed(1)} m`;
+    this.statisticsData.totalDistance = `${(tot_Dis / robots.length).toFixed(
+      1
+    )} m`;
     // tot_Dis && robots.length
     // ? `${(tot_Dis / robots.length).toFixed(2)} m`
     // : "Loading...";
@@ -266,31 +263,4 @@ export class RobotDashboardComponent implements OnInit {
   ngOnDestroy() {
     if (this.roboDetInterval) clearInterval(this.roboDetInterval);
   }
-
-  // getTotDistance(): string{
-  //   if (!('robots' in this.robotActivities)) return `${0} m`;
-
-  //   let { robots }: any = this.robotActivities;
-  //   if (!robots.length) return `${0} m`;
-
-  //   let tot_Dis = 0;
-  //   for (let i = 0; i < robots.length; i++){
-  //     tot_Dis += robots[i].DISTANCE;
-  //   }
-
-  //   return `${tot_Dis/robots.length} m`;
-  // }
-  // getNetworkConn(): string{
-  //   if (!('robots' in this.robotActivities)) return `${0} dB`;
-
-  //   let { robots }: any = this.robotActivities;
-  //   if (!robots.length) return `${0} dB`;
-
-  //   let tot_Network = 0;
-  //   for (let i = 0; i < robots.length; i++){
-  //     tot_Network += robots[i].NETWORK;
-  //   }
-
-  //   return `${tot_Network/robots.length} dB`;
-  // }
 }

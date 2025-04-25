@@ -264,9 +264,8 @@
           <table class="notifications-table">
           <thead>
             <tr>
-              <th>{{ getTranslation('error') }}</th>
-              <!-- <th>Error</th> -->
               <th>{{ getTranslation('robotId') }}</th>
+              <th>{{ getTranslation('error') }}</th>
               <th>{{ getTranslation('description') }}</th>
             </tr>
           </thead>
@@ -283,9 +282,9 @@
             </tr>
 
             <tr *ngFor="let notification of filteredNotifications | slice:0:10">
-              <td>{{ notification.errorName }}</td>
-                <td>{{ notification.roboId }}</td>
-                <td>{{ notification.desc }}</td>
+              <td>{{ notification.roboId }}</td>
+              <td>{{ notification.criticality }}</td>
+              <td>{{ notification.description }}</td>
             </tr>
           </tbody>
           </table>

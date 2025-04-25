@@ -219,8 +219,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     //     !this.filterOptions.status || task.status === this.filterOptions.status;
 
     //   // Robot Filter (if you have this field)
-    //   const robotMatch = 
-    //   !this.filterOptions.robotId || 
+    //   const robotMatch =
+    //   !this.filterOptions.robotId ||
     //   task.roboName == this.filterOptions.robotId;
 
     //   return dateMatch && statusMatch && robotMatch;
@@ -410,12 +410,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   getMaxDate(): string {
-      const today = new Date();
-      return this.formatDateandtimeForInput(today);
+    const today = new Date();
+    return this.formatDateandtimeForInput(today);
   }
 
   formatDateandtimeForInput(date: Date): string {
-      return date.toISOString().slice(0, 16);
+    return date.toISOString().slice(0, 16);
   }
   async fetchTasks() {
     try {
@@ -712,16 +712,16 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   matchesSearchQuery(task: any): boolean {
     if (this.searchQuery.trim().length === 0) return true;
-    
+
     return Object.values(task).some((val) =>
       String(val).toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
   matchesStatusFilter(task: any): boolean {
-    if (this.selectedStatus.trim().length === 0 && 
-        !this.filterOptions.status) return true;
-    
+    if (this.selectedStatus.trim().length === 0 && !this.filterOptions.status)
+      return true;
+
     const statusToCheck = this.filterOptions.status || this.selectedStatus;
     return task.status === statusToCheck;
   }
@@ -732,19 +732,22 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
 
     const taskDate = new Date(task.TimeStamp);
-    const startDate = this.filterOptions.startDateTime ? new Date(this.filterOptions.startDateTime) : null;
-    const endDate = this.filterOptions.endDateTime ? new Date(this.filterOptions.endDateTime) : null;
+    const startDate = this.filterOptions.startDateTime
+      ? new Date(this.filterOptions.startDateTime)
+      : null;
+    const endDate = this.filterOptions.endDateTime
+      ? new Date(this.filterOptions.endDateTime)
+      : null;
 
     return (
-      (!startDate || taskDate >= startDate) &&
-      (!endDate || taskDate <= endDate)
+      (!startDate || taskDate >= startDate) && (!endDate || taskDate <= endDate)
     );
   }
 
   matchesRobotFilter(task: any): boolean {
     const robotFilter = this.filterOptions.robotId || this.selectedRobot;
     if (!robotFilter) return true;
-    
+
     // Check both possible properties (roboName and robotID)
     return task.roboName == robotFilter || task.robotID == robotFilter;
   }

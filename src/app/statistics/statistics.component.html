@@ -244,7 +244,7 @@
 
               <tr *ngFor="let activity of filteredOperationActivities | slice:0:10">
                 <td>{{ activity.taskId }}</td>
-                <td>{{ getTaskTranslation(activity.taskName) }}</td>
+                <td>{{ getTaskTranslation(activity.taskType) }}</td>
                 <td>{{ activity.robotName < 0 ? "--" : activity.robotName}}</td>
                 <td>{{ getTaskTranslation(activity.status) }}</td>
               </tr>
@@ -270,9 +270,9 @@
           <table class="notifications-table">
             <thead>
               <tr>
-                <th>{{ getTranslation('message') }}</th>
                 <th>{{ getTranslation('taskId') }}</th>
                 <th>{{ getTranslation('timestamp') }}</th>
+                <th>{{ getTranslation('message') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -288,9 +288,9 @@
               </tr>
 
               <tr *ngFor="let notification of filteredTaskNotifications | slice:0:10">
-                <td>{{ notification.status }}</td>
                 <td>{{ notification.taskId }}</td>
-                <td>{{ notification.timestamp }}</td>
+                <td>{{ notification.criticality }}</td>
+                <td>{{ notification.description }}</td>
               </tr>
             </tbody>
           </table>
