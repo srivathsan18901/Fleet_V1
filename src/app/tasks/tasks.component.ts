@@ -219,8 +219,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
     //     !this.filterOptions.status || task.status === this.filterOptions.status;
 
     //   // Robot Filter (if you have this field)
-    //   const robotMatch = 
-    //   !this.filterOptions.robotId || 
+    //   const robotMatch =
+    //   !this.filterOptions.robotId ||
     //   task.roboName == this.filterOptions.robotId;
 
     //   return dateMatch && statusMatch && robotMatch;
@@ -355,44 +355,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
         summary: 'Info',
         detail: 'Task Cancelled',
       });
-      await this.refreshTaskData();
-    }
-  }
-  async refreshTaskData() {
-    const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mapId: this.mapData.id,
-          timeStamp1: this.getTimeStampsOfDay(new Date(this.mapData.createdAt))
-            .timeStamp1,
-          timeStamp2: this.getTimeStampsOfDay(new Date(this.mapData.createdAt))
-            .timeStamp2,
-        }),
-      }
-    );
 
-    let data = await response.json();
-    // console.log(data);
-
-    let sNo = 1;
-    if (data.tasks) {
-      const { tasks } = data.tasks;
-      this.tasks = tasks.map((task: any) => ({
-        sNo: sNo++,
-        taskId: task.task_id,
-        taskType: task.sub_task[0]?.task_type || 'N/A',
-        status: task.task_status.status,
-        roboName: task.agent_ID,
-        destinationLocation: task.sub_task[0]?.source_location || 'N/A',
-      }));
-      // this.filteredTaskData = this.tasks;
-      this.updateData(); // Ensure pagination and filtered data are updated
-      this.taskData = this.tasks;
-      console.log(this.taskData, 'taskdata');
+      this.paginatedData = this.paginatedData.map((task) => {
+        if (task.taskId == item.taskId) task.status = 'CANCELLED';
+        return task;
+      });
     }
   }
 
@@ -410,12 +377,12 @@ export class TasksComponent implements OnInit, AfterViewInit {
   }
 
   getMaxDate(): string {
-      const today = new Date();
-      return this.formatDateandtimeForInput(today);
+    const today = new Date();
+    return this.formatDateandtimeForInput(today);
   }
 
   formatDateandtimeForInput(date: Date): string {
-      return date.toISOString().slice(0, 16);
+    return date.toISOString().slice(0, 16);
   }
   async fetchTasks() {
     try {
@@ -712,16 +679,16 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   matchesSearchQuery(task: any): boolean {
     if (this.searchQuery.trim().length === 0) return true;
-    
+
     return Object.values(task).some((val) =>
       String(val).toLowerCase().includes(this.searchQuery.toLowerCase())
     );
   }
 
   matchesStatusFilter(task: any): boolean {
-    if (this.selectedStatus.trim().length === 0 && 
-        !this.filterOptions.status) return true;
-    
+    if (this.selectedStatus.trim().length === 0 && !this.filterOptions.status)
+      return true;
+
     const statusToCheck = this.filterOptions.status || this.selectedStatus;
     return task.status === statusToCheck;
   }
@@ -732,19 +699,22 @@ export class TasksComponent implements OnInit, AfterViewInit {
     }
 
     const taskDate = new Date(task.TimeStamp);
-    const startDate = this.filterOptions.startDateTime ? new Date(this.filterOptions.startDateTime) : null;
-    const endDate = this.filterOptions.endDateTime ? new Date(this.filterOptions.endDateTime) : null;
+    const startDate = this.filterOptions.startDateTime
+      ? new Date(this.filterOptions.startDateTime)
+      : null;
+    const endDate = this.filterOptions.endDateTime
+      ? new Date(this.filterOptions.endDateTime)
+      : null;
 
     return (
-      (!startDate || taskDate >= startDate) &&
-      (!endDate || taskDate <= endDate)
+      (!startDate || taskDate >= startDate) && (!endDate || taskDate <= endDate)
     );
   }
 
   matchesRobotFilter(task: any): boolean {
     const robotFilter = this.filterOptions.robotId || this.selectedRobot;
     if (!robotFilter) return true;
-    
+
     // Check both possible properties (roboName and robotID)
     return task.roboName == robotFilter || task.robotID == robotFilter;
   }

@@ -101,7 +101,9 @@ export class StatisticsComponent {
       this.exportFileService.taskData = this.operationPie;
       this.isDataLoaded = this.hasData();
     }
-    if (this.isFleet) await this.getTaskNotifications();
+
+    if (this.isFleet) this.getTaskNotifications();
+
     this.taskStatus_interval = setInterval(async () => {
       if (this.isFleet) {
         this.operationPie = await this.fetchTasksStatus();
@@ -109,12 +111,15 @@ export class StatisticsComponent {
         this.isDataLoaded = this.hasData();
       }
     }, 1000 * 5);
+
     this.operationActivities = await this.fetchCurrTasksStatus();
     this.filteredOperationActivities = this.operationActivities;
+
     this.currTaskStatus_interval = setInterval(async () => {
       if (this.isFleet) {
         let currTasks = await this.fetchCurrTasksStatus();
         this.filteredOperationActivities = currTasks;
+        this.getTaskNotifications();
       }
     }, 1000 * 5);
   }
@@ -183,9 +188,9 @@ export class StatisticsComponent {
   }
 
   async getTaskNotifications() {
-    let establishedTime = new Date(this.selectedMap.createdAt);
+    let establishedTime = new Date(); // this.selectedMap.createdAt
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-    let endPoint = '/err-logs/task-logs';
+    let endPoint = '/err-logs';
 
     if (this.abortControllers.has(endPoint))
       this.abortControllers.get(endPoint)?.abort();
@@ -194,13 +199,13 @@ export class StatisticsComponent {
     this.abortControllers.set(endPoint, abortController);
 
     const response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/err-logs/task-logs/${this.selectedMap.id}`,
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.selectedMap.id}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({
-          // mapId: this.selectedMap.id,
+          type: 'task',
           timeStamp1: timeStamp1,
           timeStamp2: timeStamp2,
         }),
@@ -209,17 +214,17 @@ export class StatisticsComponent {
     );
     const data = await response.json();
     if (!data.map || data.error) return;
-    this.taskErrNotifications = data.taskErr
-      .map((err: any) => {
-        if (!err) return null;
-        let dateCreated = new Date(err.TaskAddTime * 1000);
-        return {
-          status: err.task_status.status,
-          taskId: err.task_id,
-          timestamp: dateCreated.toLocaleString(),
-        };
-      })
-      .filter((err: any) => err !== null);
+
+    const { errLogs } = data;
+
+    this.taskErrNotifications = errLogs.map((error: any) => {
+      // let dateCreated = new Date(error.timestamp * 1000);
+      return {
+        taskId: error.id,
+        criticality: error.criticality,
+        description: error.description,
+      };
+    });
     this.filteredTaskNotifications = this.taskErrNotifications;
   }
 
@@ -236,7 +241,7 @@ export class StatisticsComponent {
   }
 
   async fetchCurrTasksStatus(): Promise<any[]> {
-    let establishedTime = new Date(this.selectedMap.createdAt);
+    let establishedTime = new Date(); // this.selectedMap.createdAt
     let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
 
     let endPoint = '/fleet-tasks/curr-task-activities';
@@ -263,6 +268,8 @@ export class StatisticsComponent {
     );
     // if(!response.ok) throw new Error(`Error occured with status code of : ${response.status}`)
     let data = await response.json();
+    // console.log(data);
+
     if (data.error) {
       console.log('Err occured while getting tasks status : ', data.error);
       return [];
@@ -285,9 +292,7 @@ export class StatisticsComponent {
 
         return {
           taskId: task.task_id,
-          taskName: task.sub_task[0]?.task_type
-            ? task.sub_task[0]?.task_type
-            : 'N/A',
+          taskType: task.task_type,
           robotName: task.agent_ID, // agent_name
           status: task.task_status.status,
         };
