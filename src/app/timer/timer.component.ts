@@ -39,13 +39,6 @@ export class TimerComponent {
   ngOnInit() {
     this.initializeTimer();
     this.totalDuration = this.sessionService.getMaxAge();
-    // this.initializeFiveMinuteTimer();
-    // this.subscription = this.projectService.isFleetUp$.subscribe( // uncomment if in case..
-    //   async (status) => {
-    //     console.log('Fleet status changed:', status);
-    //     await this.recordFleetStatus(status); // change the method by storing it in cookie, later for sure!!!
-    //   }
-    // );
   }
 
   ngOnDestroy(): void {
@@ -153,8 +146,7 @@ export class TimerComponent {
     if (this.isLogoutTriggered) return;
     clearInterval(this.logoutTimeout);
     clearInterval(this.fiveMinuteTimeout);
-    this.isLogoutTriggered = true; // yet to commnent in case of not workin..
-    // alert('sry! your session time gonna over now');
+    this.isLogoutTriggered = true; 
     Swal.fire({
       position: 'center',
       icon: 'warning',
