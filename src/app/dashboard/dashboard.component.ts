@@ -643,6 +643,25 @@ export class DashboardComponent implements AfterViewInit {
         return;
       }
     }
+  
+  if (this.isFleet) {
+    for (let robo of this.robos) {
+      const roboX = robo.pos.x;
+      const roboY = robo.pos.y;
+      const imageSize = 25; // Adjust size based on robot image dimensions
+      if (
+        imgX >= roboX - imageSize &&
+        imgX <= roboX + imageSize &&
+        imgY >= roboY - imageSize &&
+        imgY <= roboY + imageSize
+      ) {
+        this.updatedrobo = robo;
+        this.updatedrobo.isInitialized = false;
+        await this.initializeRobo();
+        return;
+      }
+    }
+  }
   }
 
   async initializeRobo() {
@@ -790,7 +809,7 @@ export class DashboardComponent implements AfterViewInit {
     for (let roboId of Array.from(this.roboPathIds)) {
       const path = this.paths.get(roboId);
       if (path) {
-        const clr = this.roboIDColor.get(roboId) || 'black';
+        const clr = this.isFleet ? this.fleetRoboIdColor.get(roboId) || 'black' : this.roboIDColor.get(roboId) || 'black';
         // Draw the robot's path
         path.forEach((node) => {
           this.drawPathNode(ctx, node.x, node.y, clr);
@@ -817,8 +836,8 @@ export class DashboardComponent implements AfterViewInit {
     for (let roboId of keyItr) {
       let path = this.paths.get(roboId);
       if (path) {
-        let clr = this.roboIDColor.get(roboId) || 'black';
-        path.forEach((path) => {
+        let clr = this.isFleet ? this.fleetRoboIdColor.get(roboId) || 'black' : this.roboIDColor.get(roboId) || 'black';
+          path.forEach((path) => {
           if (ctx) this.drawPathNode(ctx, path.x, path.y, clr);
         });
         for (let i = 0; i < path.length - 1; i += 1) {
@@ -1024,7 +1043,7 @@ export class DashboardComponent implements AfterViewInit {
 
     if (this.isFleet) {
       this.robos.forEach((robo) => {
-        let clr = this.roboIDColor.get(robo.roboDet.id) || 'black';
+        let clr = this.fleetRoboIdColor.get(robo.roboDet.id) || 'black';
         this.plotRobo(
           ctx,
           robo.pos.x,
