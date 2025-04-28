@@ -7,7 +7,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class IdleTrackerService implements OnDestroy {
   private idleTimeout: any;
   private idleInterval: any;
-  private idleTime = 20 * 1000; // 20 seconds (adjust as needed)
+  private idleTime = 2 * 1000; // 20 seconds (adjust as needed)
   
   // BehaviorSubject to track idle state
   private idleSubject = new BehaviorSubject<boolean>(false);

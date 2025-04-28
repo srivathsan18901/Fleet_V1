@@ -8,6 +8,7 @@ import { SessionService } from '../services/session.service';
 import { CookieService } from 'ngx-cookie-service';
 import Swal from 'sweetalert2';
 import { TranslationService } from '../services/translation.service';
+import { IdleTrackerService } from '../services/idle-tracker.service';
 @Component({
   selector: 'app-timer',
   templateUrl: './timer.component.html',
@@ -15,6 +16,7 @@ import { TranslationService } from '../services/translation.service';
 })
 export class TimerComponent {
   private subscription: Subscription = new Subscription();
+  private idleSubscription: Subscription = new Subscription();
   totalDuration: number = this.sessionService.getMaxAge() + 60 || 1200; // 20 minutes in seconds
   remainingTime: number = 0; // Initialize with 0
   fiveMinuteRemaining: number = 300; // 5 minutes in seconds
@@ -31,18 +33,30 @@ export class TimerComponent {
     private projectService: ProjectService,
     private sessionService: SessionService,
     private cookieService: CookieService,
-    private translationService: TranslationService
+    private translationService: TranslationService,
+    private idleTracker: IdleTrackerService
   ) {}
   getTranslation(key: string) {
     return this.translationService.getsideNavTranslation(key);
   }
   ngOnInit() {
-    this.initializeTimer();
+    // Subscribe to idle state changes
+    this.idleSubscription = this.idleTracker.idleState$.subscribe(isIdle => {
+      if (isIdle) {
+        this.initializeTimer(); // Start timer when idle
+      } else {
+        this.resetTimer(); // Reset timer when active
+        clearInterval(this.logoutTimeout);
+        clearInterval(this.fiveMinuteTimeout);
+      }
+    });
+
     this.totalDuration = this.sessionService.getMaxAge();
   }
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe(); // Clean up the subscription
+    this.idleSubscription.unsubscribe();
     clearInterval(this.logoutTimeout); // optional..
     clearInterval(this.fiveMinuteTimeout);
   }
@@ -99,6 +113,7 @@ export class TimerComponent {
 
   resetTimer() {
     this.remainingTime = this.totalDuration;
+    
     // localStorage.setItem('timerStartTime', Date.now().toString());
     // localStorage.setItem('lastSession', 'active');
   }
