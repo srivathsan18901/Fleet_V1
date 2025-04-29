@@ -1,0 +1,29 @@
+<p-dialog [(visible)]="visible" modal [closable]="false" [style]="{ width: '60vw' }" [baseZIndex]="10000">
+    <ng-template pTemplate="header">
+      <div class="dialog-header">
+        <span>Developer Options</span>
+        <button class="close-btn" (click)="close()">&#10006;</button>
+      </div>
+    </ng-template>
+  
+    <div class="dialog-body">
+      <div class="sidebar">
+        <ul>
+          <li *ngFor="let item of ['Dashboard','Statistics','Robots','Configuration','Error Logs','Task','User Management']"
+              [class.active]="item === 'Dashboard'">
+            {{ item }}
+          </li>
+        </ul>
+      </div>
+  
+      <div class="content">
+        <div class="grid">
+          <div class="option" *ngFor="let option of options">
+            <label>{{ option }} <span class="dot">●</span></label>
+            <p-inputSwitch [(ngModel)]="toggles[option]"></p-inputSwitch>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-dialog>
+  
