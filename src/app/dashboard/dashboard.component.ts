@@ -263,13 +263,19 @@ export class DashboardComponent implements AfterViewInit {
 
     this.redrawCanvas();
   }
+
   getTranslation(key: string) {
     return this.translationService.getDashboardTranslation(key);
   }
+
   toggleHeatmap() {
     this.showHeatMap = !this.showHeatMap;
     if (this.showHeatMap == true){
-      this.messageService.add({severity:'info', summary:'Heatmap is turned ON', detail:'Disable Heat Map to access entities',sticky: true}); //working
+      this.messageService.add({
+        severity:'info',
+        summary:'Heatmap is turned ON',
+        detail:'Disable Heat Map to access entities',
+        sticky: true}); //working
     }else{
       this.messageService.clear();
     }
@@ -2529,7 +2535,7 @@ export class DashboardComponent implements AfterViewInit {
         const yaw = robo.pos.orientation;
 
         // Draw the robot on the canvas with updated positions and orientation
-        let clr = this.roboIDColor.get(robo.roboDet.id) || 'white';
+        let clr = this.fleetRoboIdColor.get(robo.roboDet.id) || 'white';
         this.plotRobo(
           ctx,
           robotPosX,
@@ -3285,7 +3291,7 @@ export class DashboardComponent implements AfterViewInit {
       this.showModelCanvas = false;
       this.redrawCanvas();
     }
-    if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
+    if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.roboDet.id;
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);
 

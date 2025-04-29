@@ -115,7 +115,8 @@
                   <th>{{ getTranslation('Task Type') }}</th>
                   <th>{{ getTranslation('Status') }}</th>
                   <th>{{ getTranslation('Robot ID') }}</th>
-                  <th>{{ getTranslation('Destination') }}</th>
+                  <th>{{ getTranslation('Destination') }}</th>                  
+                  <th>{{ getTranslation('assign_robots') }}</th>   
                   <th>{{ getTranslation('Actions') }}</th>
                 </tr>
               </thead>
@@ -155,10 +156,12 @@
                     </div>
                   </td>
                 </tr>
+
               
                 <!-- Display data rows -->
-                <ng-container *ngIf="!isLoading && paginatedData.length > 0">
-                  <tr *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId" [class.paused]="item.paused">
+
+                <ng-container *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId">
+                  <tr [class.paused]="item.paused">
                     <td>{{ item.sNo }}</td>
                     <td>{{ item.TimeStamp }}</td>
                     <td>{{ item.taskId }}</td>
@@ -167,6 +170,53 @@
                     <td>{{ item.robotID < 0 ? "--" : item.robotID }}</td>
                     <td>{{ item.destinationLocation }}</td>
                     <td>
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <ng-container *ngIf="item.status === 'NOTASSIGNED'; else assigned">
+                          <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
+                            {{ getTranslation('assign') }}
+                          </button>
+                          <ng-container *ngIf="item.showDropdown">
+                            <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
+                              <option value="" disabled selected>{{ getTranslation('select') }}</option>
+                              <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                            </select>
+                            <div>
+                              <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                                {{ getTranslation('confirm') }}
+                              </button>
+                              <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
+                                {{ getTranslation('Cancel') }}
+                              </button>
+                            </div>
+                          </ng-container>
+                        </ng-container>
+                        <ng-template #assigned>
+                          <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS'  || item.status === 'ACCEPTED' ; else inProgress">
+                            <button  *ngIf="!item.showReassDropdown" (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                              {{ getTranslation('re_assign') }}
+                            </button>
+                            <ng-container *ngIf="item.showReassDropdown">
+                              <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
+                                <option value="" disabled selected>{{ getTranslation('select') }}</option>
+                                <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                              </select>
+                              <div>
+                                <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                                  {{ getTranslation('confirm') }}
+                                </button>
+                                <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
+                                  {{ getTranslation('Cancel') }}
+                                </button>
+                              </div>
+                            </ng-container>
+                          </ng-container>
+                        </ng-template>
+                        <ng-template #inProgress>
+                          <span>{{ item.status }}</span>
+                        </ng-template>
+                      </div>
+                    </td>
+                    <td>
                       <div class="switch-container">
                         <button
                           [ngClass]="{'btn-disabled': isDisabled(item.status), 'btn-cancel': !isDisabled(item.status)}"
@@ -174,11 +224,46 @@
                           class="btn-common"
                           (click)="!isDisabled(item.status) && onCancel(item)">
                           {{ getTranslation('Cancel') }}
+                        </button>  
+                        <button class="arrow-btn" (click)="toggleDetails(item)">
+                          <svg *ngIf="expandedRowMap[item.taskId]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="18 15 12 9 6 15"></polyline> <!-- Up Arrow -->
+                          </svg>
+                          <svg *ngIf="!expandedRowMap[item.taskId]" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline> <!-- Down Arrow -->
+                          </svg>
                         </button>
+                                     
+                      </div>
+                    </td>        
+                  </tr>
+                  <tr *ngIf="expandedRowMap[item.taskId]">
+                    <td colspan="9" class="expanded-row">
+                      <div class="card bg-white justify-content-center p-3">
+                        <div class="progress-container">
+                          <div *ngFor="let step of getSteps(item); let i = index" class="step"> 
+                            <div class="circle-container">
+                              <div
+                                class="circle"
+                                [ngClass]="{
+                                  'completed': i < getCurrentStep(item),
+                                  'in-progress': i === getCurrentStep(item),
+                                  'pending': i > getCurrentStep(item)
+                                }"
+                              >
+                                <img *ngIf="step.icon" [src]="step.icon" alt="{{ step.label }}" class="icon-img" />
+                              </div>
+                              <span class="step-label">{{ step.label }}</span>
+                            </div>
+                            <!-- Line only between circles -->
+                            <div *ngIf="i < getSteps(item).length - 1" class="line" [ngClass]="{'active': i < getCurrentStep(item)}"></div>
+                          </div>
+                        </div>
                       </div>
                     </td>
                   </tr>
-                </ng-container>
+                  
+                  </ng-container>
               </tbody>
               
             </table>
