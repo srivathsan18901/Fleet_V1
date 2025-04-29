@@ -51,6 +51,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   };
   originalTaskData = []; // Store the original unfiltered data
   private langSubscription!: Subscription;
+  isFleetMode :boolean = false;
   isFirstLoad: boolean = true;
   isLoading: boolean = false;
 
@@ -114,6 +115,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
     if (!JSON.parse(this.projectService.getInitializeMapSelected()))
       this.isButtonDisabled = false;
     this.mapData = this.projectService.getMapData();
+
+    const isFleet = this.isFleetService.isFleet$.subscribe((status) => {
+      this.isFleetMode = status;
+      // console.log(this.isFleetMode);
+    });
 
     if (!this.mapData) this.nodata = this.getTranslation('no_map_selected');
     else this.nodata = this.getTranslation('No data found');

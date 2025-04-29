@@ -128,9 +128,11 @@
               <tbody>
                 <!-- Loader shown only during the initial load -->
                 <!-- <tr *ngIf="!isLoading && isFirstLoad"> -->
-                <tr>
-                  <ngx-spinner bdColor = "rgba(0, 0, 0, 0)" size = "default" color = "red" type = "ball-spin" [fullScreen] = "false">
-                  </ngx-spinner>
+                <tr *ngIf="isFleetMode == true && isLoading && isFirstLoad">
+                  <div >
+                    <ngx-spinner class="spinner" bdColor = "rgba(0, 0, 0, 0)" size = "default" color = "red" type = "ball-spin" [fullScreen] = "false">
+                    </ngx-spinner>
+                  </div>
                   <!-- <td colspan="8" class="loading-overlay-cell">
                     <div class="loading-overlay">
                       <div class="dot-spinner">
@@ -148,7 +150,7 @@
                 </tr>
               
                 <!-- Show No Data Row -->
-                <tr *ngIf="!isLoading && paginatedData.length === 0">
+                <tr *ngIf="paginatedData.length === 0 && isFleetMode == false">
                   <td colspan="8" class="no-data">
                     <div class="no-data-container">
                       <img src="../assets/no-data.svg" alt="No Data" class="no-data-image" />
