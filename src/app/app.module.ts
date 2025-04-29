@@ -21,7 +21,6 @@ import { NgApexchartsModule } from 'ng-apexcharts';
 import { ChartComponent } from './chart/chart.component';
 import { UptimeComponent } from './uptime/uptime.component';
 import { ThroughputComponent } from './throughput/throughput.component';
-import { NgxCaptureModule } from 'ngx-capture';
 import { RobotsComponent } from './robots/robots.component';
 import { OperationPieComponent } from './operation-pie/operation-pie.component';
 import { Chart1Component } from './chart1/chart1.component';
@@ -89,6 +88,7 @@ import { TabViewModule } from 'primeng/tabview';
 import { CalendarModule } from 'primeng/calendar';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationComponent } from './sidenavbar/notification/notification.component';
+import { DeveloperOptionsComponent } from './user-management/developer-options/developer-options.component';
 
 @NgModule({
   declarations: [
@@ -138,6 +138,7 @@ import { NotificationComponent } from './sidenavbar/notification/notification.co
     TaskComponent,
     HeatmapComponent,
     NotificationComponent,
+    DeveloperOptionsComponent,
   ],
   imports: [
     MatRadioModule,

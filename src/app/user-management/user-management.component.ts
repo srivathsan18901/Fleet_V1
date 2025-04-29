@@ -45,6 +45,7 @@ export class UserManagementComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   selectedProject: any | null = null;
+  devOptionsVisible = false;
   userId = 0;
   userName = '';
   passWord = '';

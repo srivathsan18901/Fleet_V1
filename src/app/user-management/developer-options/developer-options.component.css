@@ -1,0 +1,76 @@
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    color: red;
+    cursor: pointer;
+  }
+  
+  .dialog-body {
+    display: flex;
+  }
+  
+  .sidebar {
+    width: 30%;
+    padding-right: 1rem;
+    border-right: 1px solid #ccc;
+  }
+  
+  .sidebar ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .sidebar li {
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+  
+  .sidebar li.active {
+    background-color: #ff7373;
+    color: white;
+    font-weight: bold;
+  }
+  
+  .content {
+    width: 70%;
+    padding-left: 1rem;
+  }
+  
+  .grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .option {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 45%;
+    background-color: #fff;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+  }
+  
+  .option label {
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
+  .dot {
+    font-size: 1rem;
+    color: black;
+    margin-left: 6px;
+  }
+  
