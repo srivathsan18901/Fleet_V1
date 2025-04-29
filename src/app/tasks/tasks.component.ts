@@ -116,9 +116,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.isButtonDisabled = false;
     this.mapData = this.projectService.getMapData();
 
-    const isFleet = this.isFleetService.isFleet$.subscribe((status) => {
+    const isFleetUp = this.projectService.isFleetUp$.subscribe((status) => {
       this.isFleetMode = status;
-      // console.log(this.isFleetMode);
+      console.log(this.isFleetMode);
     });
 
     if (!this.mapData) this.nodata = this.getTranslation('no_map_selected');
