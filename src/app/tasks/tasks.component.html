@@ -167,6 +167,53 @@
                     <td>{{ item.robotID < 0 ? "--" : item.robotID }}</td>
                     <td>{{ item.destinationLocation }}</td>
                     <td>
+                      <div style="display: flex; align-items: center; gap: 10px;">
+                        <ng-container *ngIf="item.status === 'NOTASSIGNED' || item.status === 'ACCEPTED'; else assigned">
+                          <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
+                            {{ getTranslation('assign') }}
+                          </button>
+                          <ng-container *ngIf="item.showDropdown">
+                            <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
+                              <option value="" disabled selected>{{ getTranslation('select') }}</option>
+                              <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                            </select>
+                            <div>
+                              <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                                {{ getTranslation('confirm') }}
+                              </button>
+                              <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
+                                {{ getTranslation('Cancel') }}
+                              </button>
+                            </div>
+                          </ng-container>
+                        </ng-container>
+                        <ng-template #assigned>
+                          <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS' ; else inProgress">
+                            <button  *ngIf="!item.showReassDropdown" (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                              {{ getTranslation('re_assign') }}
+                            </button>
+                            <ng-container *ngIf="item.showReassDropdown">
+                              <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
+                                <option value="" disabled selected>{{ getTranslation('select') }}</option>
+                                <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                              </select>
+                              <div>
+                                <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                                  {{ getTranslation('confirm') }}
+                                </button>
+                                <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
+                                  {{ getTranslation('Cancel') }}
+                                </button>
+                              </div>
+                            </ng-container>
+                          </ng-container>
+                        </ng-template>
+                        <ng-template #inProgress>
+                          <span>{{ item.status }}</span>
+                        </ng-template>
+                      </div>
+                    </td>
+                    <td>
                       <div class="switch-container">
                         <button
                           [ngClass]="{'btn-disabled': isDisabled(item.status), 'btn-cancel': !isDisabled(item.status)}"
