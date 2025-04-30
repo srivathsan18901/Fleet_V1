@@ -128,29 +128,15 @@
               <tbody>
                 <!-- Loader shown only during the initial load -->
                 <!-- <tr *ngIf="!isLoading && isFirstLoad"> -->
-                <tr *ngIf="isFleetMode == true && isFirstLoad">
+                <tr *ngIf="isFleetMode == true && isFirstLoad && paginatedData.length >= 1">
                   <div >
                     <ngx-spinner class="spinner" bdColor = "rgba(0, 0, 0, 0)" size = "default" color = "red" type = "ball-spin" [fullScreen] = "false">
                     </ngx-spinner>
                   </div>
-                  <!-- <td colspan="8" class="loading-overlay-cell">
-                    <div class="loading-overlay">
-                      <div class="dot-spinner">
-                        <div class="dot-spinner__dot"></div>
-                        <div class="dot-spinner__dot"></div>
-                        <div class="dot-spinner__dot"></div>
-                        <div class="dot-spinner__dot"></div>
-                        <div class="dot-spinner__dot"></div>
-                        <div class="dot-spinner__dot"></div>
-                        <div class="dot-spinner__dot"></div>
-                        <div class="dot-spinner__dot"></div>
-                      </div>
-                    </div>
-                  </td> -->
                 </tr>
               
                 <!-- Show No Data Row -->
-                <tr *ngIf="paginatedData.length === 0 && isFleetMode == false">
+                <tr *ngIf="paginatedData.length === 0 || isLoading == false ">
                   <td colspan="8" class="no-data">
                     <div class="no-data-container">
                       <img src="../assets/no-data.svg" alt="No Data" class="no-data-image" />
@@ -174,7 +160,7 @@
                     <td>
                       <div style="display: flex; align-items: center; gap: 10px;">
                         <ng-container *ngIf="item.status === 'NOTASSIGNED'; else assigned">
-                          <button *ngIf="!item.showDropdown" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
+                          <button *ngIf="!item.showDropdown" [disabled]="dropdownLocked" (click)="toggleDropdown(item)" class="Assibtn-common Assibtn-cancel">
                             {{ getTranslation('assign') }}
                           </button>
                           <ng-container *ngIf="item.showDropdown">
@@ -182,19 +168,41 @@
                               <option value="" disabled selected>{{ getTranslation('select') }}</option>
                               <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
                             </select>
-                            <div>
-                              <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
-                                {{ getTranslation('confirm') }}
+                            <div class="icon-buttons">
+                              <!-- Confirm Button -->
+                              <button
+                                *ngIf="item.selectedRobot"
+                                (click)="assignRobot(item)"
+                                class="icon-btn confirm"
+                                pTooltip="Confirm"
+                                tooltipPosition="top"
+                                aria-label="Confirm assignment"
+                                tabindex="0"
+                                (keyup.enter)="assignRobot(item)"
+                              >
+                                <i class="pi pi-check"></i>
                               </button>
-                              <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
-                                {{ getTranslation('Cancel') }}
+                            
+                              <!-- Cancel Button -->
+                              <button
+                                (click)="cancelAssign(item)"
+                                class="icon-btn cancel"
+                                pTooltip="Cancel"
+                                tooltipPosition="top"
+                                aria-label="Cancel assignment"
+                                tabindex="0"
+                                (keyup.enter)="cancelAssign(item)"
+                              >
+                                <i class="pi pi-times"></i>
                               </button>
                             </div>
+                            
+                            
                           </ng-container>
                         </ng-container>
                         <ng-template #assigned>
                           <ng-container *ngIf="item.status === 'ASSIGNED' || item.status === 'INPROGRESS'  || item.status === 'ACCEPTED' ; else inProgress">
-                            <button  *ngIf="!item.showReassDropdown" (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
+                            <button  *ngIf="!item.showReassDropdown" [disabled]="dropdownLocked" (click)="reassignRobot(item)" class="Assibtn-common Assibtn-cancel">
                               {{ getTranslation('re_assign') }}
                             </button>
                             <ng-container *ngIf="item.showReassDropdown">
@@ -203,11 +211,13 @@
                                 <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
                               </select>
                               <div>
-                                <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel">
-                                  {{ getTranslation('confirm') }}
+                                <!-- Confirm icon (check) -->
+                                <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel" title="Confirm">
+                                  <i class="pi pi-check"></i>
                                 </button>
-                                <button  (click)="cancelAssign(item)" class="btn-common btn-cancel">
-                                  {{ getTranslation('Cancel') }}
+                                <!-- Cancel icon (close) -->
+                                <button (click)="cancelAssign(item)" class="btn-common btn-cancel" title="Cancel">
+                                  <i class="pi pi-times"></i>
                                 </button>
                               </div>
                             </ng-container>
@@ -263,9 +273,8 @@
                         </div>
                       </div>
                     </td>
-                  </tr>
-                  
-                  </ng-container>
+                  </tr>                
+                </ng-container>
               </tbody>
               
             </table>

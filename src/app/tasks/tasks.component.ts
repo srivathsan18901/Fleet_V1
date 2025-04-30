@@ -14,11 +14,14 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MessageService } from 'primeng/api';
 import { TranslationService } from '../services/translation.service';
 import { MatPaginatorIntl } from '@angular/material/paginator';
-import { map, Subscription } from 'rxjs';
+import { BehaviorSubject, map, Subscription } from 'rxjs';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import { NodeGraphService } from '../services/nodegraph.service';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { interval, Subject } from 'rxjs';
+import { switchMap, takeUntil } from 'rxjs/operators';
+
 
 @Component({
   selector: 'app-tasks',
@@ -40,6 +43,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   autoRefreshInterval: any;
   taskData: any;
   liveTasksInterval: ReturnType<typeof setInterval> | null = null;
+
   tasksSignalController: AbortController | null = null;
   isFilterPopupVisible = false;
   filterOptions = {
@@ -54,6 +58,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
   isFleetMode :boolean = false;
   isFirstLoad: boolean = true;
   isLoading: boolean = false;
+  dropdownLocked = false;
+
 
   isFilterApplied: boolean = false;
   isOnSearchApplied: boolean = false;
@@ -174,6 +180,20 @@ export class TasksComponent implements OnInit, AfterViewInit {
     //   this.autoRefreshTasks();
     // }, 1000);
   }
+
+  updatePaginatedData(newData: any[]) {
+    this.paginatedData = newData.map(newItem => {
+      // Try to find the old item by taskId
+      const existingItem = this.paginatedData.find(oldItem => oldItem.taskId === newItem.taskId);
+      return {
+        ...newItem,
+        showDropdown: existingItem?.showDropdown || false,
+        showReassDropdown: existingItem?.showReassDropdown || false,
+        selectedRobot: existingItem?.selectedRobot || null,
+      };
+    });
+  }
+  
 
   openFilterPopup() {
     this.isFilterPopupVisible = !this.isFilterPopupVisible;
@@ -423,9 +443,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
       const { tasks } = data.tasks;
       let sNo = 1;
+      this.dropdownLocked = true;
 
       if (tasks) {
         this.tasks = tasks.map((task: any) => {
+          const existingTask = this.tasks.find(t => t.taskId === task.task_id); // ✅ define it here
           let TimeStamp = new Date(task.TimeStamp * 1000);
           let formattedTimeStamp =
             TimeStamp.toLocaleDateString('en-IN', {
@@ -448,8 +470,17 @@ export class TasksComponent implements OnInit, AfterViewInit {
             robotID: task.agent_ID,
             TimeStamp: formattedTimeStamp,
             destinationLocation: task.source_location || 'N/A',
+
+                // 👇 Preserve UI state
+            showDropdown: existingTask?.showDropdown || false,
+            showReassDropdown: existingTask?.showReassDropdown || false,
+            selectedRobot: existingTask?.selectedRobot || null
           };
         });
+          // Release the lock after short delay (1.5 seconds)
+          setTimeout(() => {
+            this.dropdownLocked = false;
+          }, 1500);
       }
 
       if (this.isFilterApplied || this.isOnSearchApplied) {

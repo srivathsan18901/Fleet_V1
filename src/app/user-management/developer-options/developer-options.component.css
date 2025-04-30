@@ -1,83 +1,114 @@
 .dialog-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 1.2rem;
-    font-weight: bold;
-    width: 100%;
-  }
-  
-  .close-btn {
-    background: none;
-    border: none;
-    font-size: 1.2rem;
-    color: red;
-    cursor: pointer;
-  }
-  
-  .dialog-body {
-    display: flex;
-  }
-  
-  .sidebar {
-    width: 30%;
-    padding-right: 1rem;
-    border-right: 1px solid #ccc;
-  }
-  
-  .sidebar ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .sidebar li {
-    padding: 10px;
-    cursor: pointer;
-    border-radius: 6px;
-  }
-  
-  .sidebar li.active {
-    background-color: #ff7373;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .content {
-    width: 70%;
-    padding-left: 1rem;
-  }
-  
-  .grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-  }
-  
-  .option {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 45%;
-    background-color: #fff;
-    border: 1px solid #eee;
-    border-radius: 8px;
-    padding: 0.8rem 1rem;
-  }
-  
-  .option label {
-    font-size: 0.95rem;
-    font-weight: 500;
-    display: flex;
-    /* justify-content: space-between; */
-    align-items: center;
-    width: 100%;
-    gap: .5rem;
-    align-items: flex-start;
-  }
-  
-  .dot {
-    font-size: 1rem;
-    color: black;
-    margin-left: 6px;
-  }
-  
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 100%;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  color: red;
+  cursor: pointer;
+}
+
+.dialog-body {
+  display: flex;
+  overflow: hidden; /* Prevent scrolling in dialog body */
+}
+
+.sidebar {
+  width: 30%;
+  padding-right: 1rem;
+  border-right: 1px solid #ccc;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.sidebar li {
+  padding: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.sidebar li.active {
+  background-color: #ff7373;
+  color: white;
+  font-weight: bold;
+}
+
+.content {
+  width: 70%;
+  padding-left: 1rem;
+  position: relative; /* Make content the positioning context for popup */
+  overflow: auto; /* Allow scrolling for options if needed */
+}
+
+.grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 45%;
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+}
+
+.option label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.dot {
+  font-size: 1rem;
+  color: black;
+  margin-left: 6px;
+}
+
+.info-icon {
+  display: inline-block;
+  margin-left: 6px;
+  cursor: pointer;
+  position: relative;
+}
+
+.hover-popup {
+  position: absolute;
+  width: 300px;
+  background: white;
+  border: 1px solid #ccc;
+  padding: 8px;
+  z-index: 9999;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 6px;
+}
+
+.hover-popup img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Ensure dialog content doesn't overflow */
+.p-dialog-content {
+  overflow: hidden;
+  position: relative;
+}

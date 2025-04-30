@@ -90,6 +90,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { NotificationComponent } from './sidenavbar/notification/notification.component';
 import { DeveloperOptionsComponent } from './user-management/developer-options/developer-options.component';
 
+
 @NgModule({
   declarations: [
     AppComponent,
