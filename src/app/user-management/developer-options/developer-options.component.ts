@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-developer-options',
@@ -28,6 +29,8 @@ export class DeveloperOptionsComponent implements OnInit {
     'Task': ['Task Manager', 'Task Stats'],
     'User Management': ['User Roles', 'Login Tracking']
   };
+
+  constructor(private messageService: MessageService) {}
 
 
   ngOnInit() {
@@ -99,6 +102,12 @@ export class DeveloperOptionsComponent implements OnInit {
       const key = this.getKey(option);
       localStorage.setItem(key, value.toString());
     });
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Updated',
+      detail: 'Settings updated successfully!',
+      life: 3000
+    });
   }
   
   resetToStoredValues() {
@@ -106,7 +115,12 @@ export class DeveloperOptionsComponent implements OnInit {
       const stored = localStorage.getItem(this.getKey(option));
       this.toggles[option] = stored === 'true';
     });
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Reset',
+      detail: 'Settings have been reset to saved values.',
+      life: 3000
+    });
   }
-  
 }
 
