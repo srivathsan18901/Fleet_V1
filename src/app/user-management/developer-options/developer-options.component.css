@@ -18,21 +18,32 @@
 
 .dialog-body {
   display: flex;
+  flex-direction: row;
+  height: calc(100% - 50px);
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
+/* SIDEBAR */
 .sidebar {
-  width: 30%;
-  padding-right: 1rem;
-  border-right: 1px solid #ccc;
+  flex: 1 1 220px;
+  padding: 1rem;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  max-width: 250px;
 }
 
 .sidebar ul {
   list-style: none;
   padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .sidebar li {
-  padding: 10px;
+  padding: 20px;
   cursor: pointer;
   border-radius: 6px;
 }
@@ -43,9 +54,11 @@
   font-weight: bold;
 }
 
+/* CONTENT */
 .content {
-  width: 70%;
-  padding-left: 1rem;
+  flex: 3 1 500px;
+  padding: 1rem;
+  overflow: hidden;
 }
 
 .grid {
@@ -69,17 +82,9 @@
   font-size: 0.95rem;
   font-weight: 500;
   display: flex;
-  /* justify-content: space-between; */
-  align-items: center;
-  width: 100%;
-  gap: .5rem;
   align-items: flex-start;
-}
-
-.dot {
-  font-size: 1rem;
-  color: black;
-  margin-left: 6px;
+  gap: 0.5rem;
+  width: 100%;
 }
 
 .info-icon {
@@ -89,6 +94,7 @@
   position: relative;
 }
 
+/* IMAGE PREVIEW */
 .hover-popup {
   position: absolute;
   left: 20px;
@@ -106,4 +112,59 @@
   width: 100%;
   height: auto;
   display: block;
+}
+
+/* RESPONSIVE BEHAVIOR */
+@media (max-width: 1024px) {
+  .dialog-body {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .sidebar, .content {
+    max-width: 100%;
+    flex: 1 1 100%;
+  }
+
+  .option {
+    width: 100%;
+  }
+}
+
+.close-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background-color: white;
+  border: 2px solid red;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* Ensure it appears above other elements */
+}
+
+.close-button svg {
+  width: 20px;
+  height: 20px;
+  fill: red; /* Color for the close icon */
+}
+
+.close-button:hover {
+  background-color: #da2127;
+}
+
+.close-button:hover svg {
+  fill: white; /* Change color on hover */
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+  gap: 1rem;
 }

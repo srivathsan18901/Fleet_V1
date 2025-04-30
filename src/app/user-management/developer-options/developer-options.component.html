@@ -1,16 +1,31 @@
-<p-dialog [(visible)]="visible" modal [closable]="false" [style]="{ width: '80vw', height:'70vh' }" [baseZIndex]="10000" [draggable]="false">
+<p-dialog [(visible)]="visible" modal [closable]="false"
+  [style]="{ width: '80vw', maxHeight: '90vh' }" [contentStyle]="{ overflow: 'auto', height: '100%' }"
+  [baseZIndex]="10000" [draggable]="false">
   <ng-template pTemplate="header">
     <div class="dialog-header">
       <span>Developer Options</span>
-      <button class="close-btn" (click)="close()">&#10006;</button>
+      <button class="close-button" (click)="close()">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          width="24"
+          height="24"
+        >
+          <path fill="none" d="M0 0h24v24H0z" />
+          <path
+            d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+          />
+        </svg>
+      </button>
     </div>
   </ng-template>
 
   <div class="dialog-body">
     <div class="sidebar">
       <ul>
-        <li *ngFor="let item of ['Dashboard','Statistics','Robots','Configuration','Error Logs','Task','User Management']"
-            [class.active]="item === 'Dashboard'">
+        <li  *ngFor="let item of Object.keys(sidebarOptionsMap)"
+        [class.active]="item === selectedSidebar"
+        (click)="selectedSidebar = item">
           {{ item }}
         </li>
       </ul>
@@ -64,6 +79,10 @@
         </div>
         
       </div>
+      <div class="button-row">
+        <button pButton label="Reset" (click)="resetToStoredValues()" class="p-button-secondary"></button>
+        <button pButton label="Update" (click)="updateLocalStorage()" class="p-button-success"></button>
+      </div>      
     </div>
   </div>
 </p-dialog>

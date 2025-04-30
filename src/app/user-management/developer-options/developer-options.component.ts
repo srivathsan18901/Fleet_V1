@@ -10,27 +10,36 @@ export class DeveloperOptionsComponent implements OnInit {
   @Output() visibleChange = new EventEmitter<boolean>();
   popupPosition = { top: '0px', left: '0px' };
   hoveredOption: string | null = null;
+  selectedSidebar = 'Dashboard'; // Default selected section
 
-  options = [
-    'Live Indicator',
-    'Zoom In & Out',
-    'Full Screen',
-    'Pan option',
-    'Fleet / Simulation',
-    'Capture option',
-    'Notification',
-    'Screen Recording',
-    'Profile Popup',
-    'Dashboard',
-  ];
-
+  
+  sidebarItems = ['Dashboard', 'Statistics', 'Robots', 'Configuration', 'Error Logs', 'Task', 'User Management'];
+  
   toggles: { [key: string]: boolean } = {};
 
+  Object = Object; // ✅ expose Object to the template
+
+  sidebarOptionsMap: { [key: string]: string[] } = {
+    'Dashboard': ['Live Indicator', 'Zoom In & Out', 'Full Screen', 'Pan option'],
+    'Statistics': ['Fleet / Simulation', 'Capture option'],
+    'Robots': ['Notification', 'Screen Recording'],
+    'Configuration': ['Profile Popup'],
+    'Error Logs': ['Error Notifications', 'Debug Mode'],
+    'Task': ['Task Manager', 'Task Stats'],
+    'User Management': ['User Roles', 'Login Tracking']
+  };
+
+
   ngOnInit() {
-    this.options.forEach((option) => {
+    Object.values(this.sidebarOptionsMap).flat().forEach(option => {
       const stored = localStorage.getItem(this.getKey(option));
       this.toggles[option] = stored === 'true';
     });
+  }
+
+  
+  get options(): string[] {
+    return this.sidebarOptionsMap[this.selectedSidebar] || [];
   }
 
   toggleOption(option: string) {
@@ -84,4 +93,20 @@ export class DeveloperOptionsComponent implements OnInit {
   onInfoMouseLeave() {
     this.hoveredOption = null;
   }
+
+  updateLocalStorage() {
+    Object.entries(this.toggles).forEach(([option, value]) => {
+      const key = this.getKey(option);
+      localStorage.setItem(key, value.toString());
+    });
+  }
+  
+  resetToStoredValues() {
+    Object.values(this.sidebarOptionsMap).flat().forEach(option => {
+      const stored = localStorage.getItem(this.getKey(option));
+      this.toggles[option] = stored === 'true';
+    });
+  }
+  
 }
+
