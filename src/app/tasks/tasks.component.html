@@ -128,7 +128,7 @@
               <tbody>
                 <!-- Loader shown only during the initial load -->
                 <!-- <tr *ngIf="!isLoading && isFirstLoad"> -->
-                <tr *ngIf="isFleetMode == true && isFirstLoad && paginatedData.length >= 1">
+                <tr >
                   <div >
                     <ngx-spinner class="spinner" bdColor = "rgba(0, 0, 0, 0)" size = "default" color = "red" type = "ball-spin" [fullScreen] = "false">
                     </ngx-spinner>
@@ -136,7 +136,7 @@
                 </tr>
               
                 <!-- Show No Data Row -->
-                <tr *ngIf="paginatedData.length === 0 || isLoading == false ">
+                <tr *ngIf="paginatedData.length === 0">
                   <td colspan="8" class="no-data">
                     <div class="no-data-container">
                       <img src="../assets/no-data.svg" alt="No Data" class="no-data-image" />
