@@ -5,6 +5,7 @@
   font-size: 1.2rem;
   font-weight: bold;
   width: 100%;
+  padding: 10px;
 }
 
 .close-btn {
@@ -17,7 +18,6 @@
 
 .dialog-body {
   display: flex;
-  overflow: hidden; /* Prevent scrolling in dialog body */
 }
 
 .sidebar {
@@ -46,8 +46,6 @@
 .content {
   width: 70%;
   padding-left: 1rem;
-  position: relative; /* Make content the positioning context for popup */
-  overflow: auto; /* Allow scrolling for options if needed */
 }
 
 .grid {
@@ -71,9 +69,10 @@
   font-size: 0.95rem;
   font-weight: 500;
   display: flex;
+  /* justify-content: space-between; */
   align-items: center;
   width: 100%;
-  gap: 0.5rem;
+  gap: .5rem;
   align-items: flex-start;
 }
 
@@ -92,6 +91,8 @@
 
 .hover-popup {
   position: absolute;
+  left: 20px;
+  top: 20px;
   width: 300px;
   background: white;
   border: 1px solid #ccc;
@@ -105,10 +106,4 @@
   width: 100%;
   height: auto;
   display: block;
-}
-
-/* Ensure dialog content doesn't overflow */
-.p-dialog-content {
-  overflow: hidden;
-  position: relative;
 }

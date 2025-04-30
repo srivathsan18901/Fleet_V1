@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ElementRef, Renderer2 } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-developer-options',
@@ -26,8 +26,6 @@ export class DeveloperOptionsComponent implements OnInit {
 
   toggles: { [key: string]: boolean } = {};
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {}
-
   ngOnInit() {
     this.options.forEach((option) => {
       const stored = localStorage.getItem(this.getKey(option));
@@ -51,57 +49,39 @@ export class DeveloperOptionsComponent implements OnInit {
 
   getImageForOption(option: string): string {
     const key = option.replace(/\s+/g, '-').toLowerCase();
-    return `assets/images/${key}.png`;
+    return `assets/images/${key}.png`; // Match image file names accordingly
   }
 
   onInfoMouseEnter(event: MouseEvent, option: string) {
     this.hoveredOption = option;
-
+  
     const iconRect = (event.target as HTMLElement).getBoundingClientRect();
-    const dialogContent = this.el.nativeElement.querySelector('.p-dialog-content');
-    const dialogRect = dialogContent.getBoundingClientRect();
-
-    const popupWidth = 200; // Approximate popup width
-    const popupHeight = 150; // Approximate popup height
-    const margin = 10; // Margin from the icon
-
-    let left = iconRect.right - dialogRect.left + margin;
-    let top = iconRect.top - dialogRect.top;
-
-    // Adjust horizontally to stay within dialog bounds
-    if (left + popupWidth > dialogRect.width) {
-      left = iconRect.left - dialogRect.left - popupWidth - margin;
+    const popupWidth = 200; // approximate width of your popup
+    const popupHeight = 150; // approximate height
+  
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+  
+    let left = iconRect.right + 10;
+    let top = iconRect.top;
+  
+    // Flip to left if overflowing
+    if (left + popupWidth > viewportWidth) {
+      left = iconRect.left - popupWidth - 10;
     }
-
-    // Adjust vertically to stay within dialog bounds
-    if (top + popupHeight > dialogRect.height) {
-      top = dialogRect.height - popupHeight - margin;
+  
+    // Adjust vertically if going off screen
+    if (top + popupHeight > viewportHeight) {
+      top = viewportHeight - popupHeight - 10;
     }
-
-    // Ensure popup doesn't go off the top or left
-    top = Math.max(margin, top);
-    left = Math.max(margin, left);
-
+  
     this.popupPosition = {
       top: `${top}px`,
-      left: `${left}px`,
+      left: `${left}px`
     };
   }
-
+  
   onInfoMouseLeave() {
-    // Delay closing to allow hover on popup
-    setTimeout(() => {
-      if (!this.el.nativeElement.querySelector('.hover-popup:hover')) {
-        this.hoveredOption = null;
-      }
-    }, 100);
-  }
-
-  onPopupMouseEnter(option: string) {
-    this.hoveredOption = option;
-  }
-
-  onPopupMouseLeave() {
     this.hoveredOption = null;
   }
 }
