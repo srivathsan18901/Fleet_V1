@@ -468,156 +468,21 @@
     <!-- Floor Selector -->
     <div class="FloorSelector" *ngIf="ONBtn"></div>
 
-    <!-- <div class="card" style="position: absolute; top: 825px; left: 10px;" *ngIf="isImage">
-      <div style="height: 350px; position: relative;" class="speeddial-tooltip-demo">
-  
-          <p-speedDial
-              [model]="tooltipItems" 
-              class="speeddial-left" 
-              direction="right" 
-              class="custom-speeddial"
-              buttonClass="p-button-rounded p-button-primary"
-              [showIcon]="'pi pi-cog'"
-              [hideIcon]="'pi pi-times'"
-              [tooltipOptions]="{position: 'right',tooltipPosition: 'top'}"
-              [visible]="isVisible"
-          /> 
+    <div class="fab-container2">
+      <button mat-fab class="fab-toggler" (click)="onToggleFab()" >
+        <i class="material-icons" [@fabToggler]="{value: fabTogglerState}">settings</i>
+      </button>
+      <div [@speedDialStagger]="buttons.length">
+        <button  *ngFor="let btn of buttons" 
+                mat-raised-button 
+                class="speed-dial-icon-text" 
+                [class.active]="btn.isActive && btn.isActive()"
+                (click)="onClick(btn)"
+                [matTooltip]="getTranslation(btn.tooltip)" 
+                matTooltipPosition="above">
+          <i class="material-icons">{{btn.icon}}</i>
+        </button>
       </div>
-    </div>  -->
-
-    <!-- Canvas Options (Zoom, Pan, Capture, etc.) -->
-    <div class="CanvasOptions" *ngIf="isImage">
-      <span class="empty" (click)="toggleOptions()">
-        <img src="../../assets/CanvasOptions/setting.svg" />
-      </span>
-      <div class="options">
-        <!-- Zoom In -->
-        <div class="tooltip">
-          <img
-            src="../../assets/CanvasOptions/Zoom.svg"
-            class="Zoom"
-            (click)="zoomIn()"
-          />
-          <span class="tooltiptext">{{getTranslation("zoomIn")}}</span>
-        </div>
-
-        <!-- Zoom Out -->
-        <div class="tooltip">
-          <img
-            src="../../assets/CanvasOptions/ZoomOut.svg"
-            class="ZoomOut"
-            (click)="zoomOut()"
-          />
-          <span class="tooltiptext">{{getTranslation("zoomOut")}}</span>
-        </div>
-
-        <!-- Pan -->
-        <div class="tooltip">
-          <img
-            src="../../assets/CanvasOptions/Pan.svg"
-            class="Expand"
-            (click)="togglePan()"
-          />
-          <span class="tooltiptext">{{getTranslation("pan")}}</span>
-        </div>
-
-        <!-- Capture -->
-        <div class="tooltip" [ngClass]="{ 'active-dashboard': capture }">
-          <img
-          src="../../assets/CanvasOptions/Capture.svg"
-          class="Capture"
-          (click)="captureCanvas()"
-          [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
-          [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
-          />
-          <span class="tooltiptext"  *ngIf="!isTaskAssignedOrIsLocalize" >{{getTranslation("capture")}}</span>
-        </div>
-
-        <!-- Record -->
-        <div class="tooltip" [ngClass]="{ 'active-dashboard': recording }">
-          <img
-            [src]="
-              recording
-                ? '../../assets/CanvasOptions/StopRecord.svg'
-                : '../../assets/CanvasOptions/Record.svg'
-            "
-            class="Save"
-            (click)="toggleRecording()"
-            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
-            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
-            
-          />
-          <span class="tooltiptext"  *ngIf="!isTaskAssignedOrIsLocalize">
-            {{ recording ? getTranslation('stopRecording') : getTranslation('startRecording') }}
-          </span>
-          
-        </div>
-
-        <!-- Dashboard -->
-        <div class="tooltip" [ngClass]="{ 'active-dashboard': showDashboard }">
-          <img
-            src="../../assets/CanvasOptions/Dashboard.svg"
-            class="Pointer"
-            (click)="toggleDashboard()"
-            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
-            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
-          />
-          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">
-            {{ getTranslation('dashboard') }}
-          </span>
-        </div>
-        
-
-        <!-- Model Canvas -->
-        <div class="tooltip" [ngClass]="{ 'active-dashboard': isShowPath }">
-          <img
-            src="../../assets/CanvasOptions/Showpath.svg"
-            class="ModelCanvas"
-            (click)="toggleShowPath()"
-            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
-            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
-          />
-          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('showPath')}}</span>
-        </div>
-        <div class="tooltip" [ngClass]="{ 'active-dashboard': showHeatMap }">
-          <img
-            src="../../assets/CanvasOptions/Heatmap.svg"
-            class="ModelCanvas"
-            (click)="toggleHeatmap()"
-            severity="success"
-            label="Show Single"
-            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
-            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
-          />
-          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('heatMap')}}</span>
-        </div>
-
-        <div class="tooltip" [ngClass]="{ 'active-dashboard': showModelCanvas }">
-          <img
-            src="../../assets/CanvasOptions/Model.svg"
-            class="ModelCanvas"
-            (click)="toggleModelCanvas()"
-            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
-            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
-          />
-          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{getTranslation('mapOption')}}</span>
-        </div>
-
-        <div class="tooltip" *ngIf="isImage && showModelCanvas" [ngClass]="{ 'active-dashboard': showEdges }">
-          <img
-            src="../../assets/edges.svg"
-            class="ModelCanvas"
-            (click)="toggleShowEdges()"
-            [ngClass]="{ 'disabled-button': isTaskAssignedOrIsLocalize }"
-            [style.pointer-events]="isTaskAssignedOrIsLocalize ? 'none' : 'auto'"
-          />
-          <span class="tooltiptext" *ngIf="!isTaskAssignedOrIsLocalize">{{ getTranslation('showEdges') }}</span>
-        </div>
-      </div>
-      <!-- <div class="tooltip">
-        <img src="../../assets/CanvasOptions/live.svg" class="ModelCanvas" (click)="fetchlive()" />
-        <span class="tooltiptext">Go Live</span>
-      </div> -->
     </div>
 
     <!-- <div class="ONBtn1" *ngIf="isImage && showModelCanvas">

@@ -5,6 +5,80 @@
   overflow: hidden;
   /* margin-left: 5%; */
 }
+
+.fab-container2 {
+  position: absolute;
+  bottom: 5px;
+  left: 3px;
+  z-index: 100;
+  display: flex;
+  flex-direction: row; /* Changed from column-reverse to row */
+  align-items: center;
+  
+  > div {
+    display: flex;
+    flex-direction: row; 
+    align-items: center;
+    margin-left: 5px; 
+    
+    button {
+      margin-left: 10px; /* Changed from margin-bottom to margin-left */
+      border-radius: 50%; /* Ensures circular shape */
+      width: 50px; /* Fixed width for perfect circle */
+      height: 50px; /* Fixed height for perfect circle */
+      min-width: auto; /* Override Material default */
+      padding: 0; /* Remove default padding */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #efa7a7; /* Match your main FAB color */
+      color: rgba(253, 250, 250, 0.807);
+      
+      &:hover {
+        background-color: #e05555; 
+        color: white;
+        transform: scale(1.05);
+        transition: transform .2s;
+      }
+    }
+  }
+}
+.material-icons{
+  font-size: 32px; /* Adjust icon size as needed */
+  line-height: 0;
+}
+.fab-toggler {
+  margin-left: 10px; /* Changed from margin-bottom to margin-left */
+  border-radius: 50%; /* Ensures circular shape */
+  width: 60px; /* Fixed width for perfect circle */
+  height: 60px; /* Fixed height for perfect circle */
+  min-width: auto; /* Override Material default */
+  padding: 0; /* Remove default padding */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #ff7373; /* Match your main FAB color */
+  color: rgb(255, 255, 255);
+  z-index: 100;
+
+  &:hover {
+    background-color: #e05555; 
+    color: white;
+    transform: scale(1.05);
+    transition: transform .2s;
+  }
+}
+.speed-dial-icon-text {
+  i.material-icons {
+    font-size: 25px; /* Adjust icon size as needed */
+    line-height: 1;
+  }
+  &.active {
+    background-color: #d85151 !important; /* Or any color you want for active state */
+    color: white !important;
+  }
+}
+
 .chargeTooltip{
   display: none;
   position: absolute;

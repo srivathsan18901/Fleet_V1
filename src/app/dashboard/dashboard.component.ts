@@ -168,7 +168,128 @@ export class DashboardComponent implements AfterViewInit {
   fleetPauseController: AbortController | null = null;
 
   currentProject: any | null = null;
+  fabButtons = [
+    {
+      icon: 'zoom_in',
+      information: 'U heeft op het icoon "zoom in" geklikt',
+      tooltip: 'zoomIn',
+      description: 'Zoom In',
+      action: () => this.zoomIn()
+    },
+    {
+      icon: 'zoom_out',
+      information: 'U heeft op het icoon "zoom out" geklikt',
+      tooltip: 'zoomOut',
+      description: 'Zoom Out',
+      action: () => this.zoomOut(),
+    },
+    {
+      icon: 'pan_tool',
+      information: 'U heeft op het icoon "pan" geklikt',
+      tooltip: 'pan',
+      description: 'Pan',
+      action: () => this.togglePan(),
+      isActive: () => this.isPanning
+    },
+    {
+      icon: 'camera_alt',
+      information: 'U heeft op het icoon "capture" geklikt',
+      tooltip: 'capture',
+      description: 'Capture',
+      action: () => this.captureCanvas(),
+      disabledCondition: 'isTaskAssignedOrIsLocalize',
+      isActive: () => this.capture
+    },
+    {
+      icon: 'fiber_manual_record',
+      information: 'U heeft op het icoon "record" geklikt',
+      tooltip: 'startRecording',
+      description: 'Record',
+      action: () => this.toggleRecording(),
+      isActive: () => this.recording,
+      activeIcon: 'stop',
+      disabledCondition: 'isTaskAssignedOrIsLocalize'
+    },
+    {
+      icon: 'dashboard',
+      information: 'U heeft op het icoon "dashboard" geklikt',
+      tooltip: 'dashboard',
+      description: 'Dashboard',
+      action: () => this.toggleDashboard(),
+      disabledCondition: 'isTaskAssignedOrIsLocalize',
+      isActive: () => this.showDashboard
+    },
+    {
+      icon: 'timeline',
+      information: 'U heeft op het icoon "show path" geklikt',
+      tooltip: 'showPath',
+      description: 'Show Path',
+      action: () => this.toggleShowPath(),
+      disabledCondition: 'isTaskAssignedOrIsLocalize',
+      isActive: () => this.isShowPath
+    },
+    {
+      icon: 'whatshot',
+      information: 'U heeft op het icoon "heatmap" geklikt',
+      tooltip: 'heatMap',
+      description: 'Heat Map',
+      action: () => this.toggleHeatmap(),
+      disabledCondition: 'isTaskAssignedOrIsLocalize',
+      isActive: () => this.showHeatMap
+    },
+    {
+      icon: 'map',
+      information: 'U heeft op het icoon "model canvas" geklikt',
+      tooltip: 'mapOption',
+      description: 'Model Canvas',
+      isActive: () => this.nodeGraphService.getShowModelCanvas(),
+      action: () => {
+        this.toggleModelCanvas();
+        // Refresh buttons to update show edges visibility
+        if (this.buttons.length) {
+          this.showItems();
+        }
+      },
+      disabledCondition: 'isTaskAssignedOrIsLocalize'
+    },
+    {
+      icon: 'polyline',
+      information: 'U heeft op het icoon "show edges" geklikt',
+      tooltip: 'showEdges',
+      description: 'Show Edges',
+      isActive: () => this.showEdges,
+      action: () => this.toggleShowEdges(),
+      disabledCondition: 'isTaskAssignedOrIsLocalize',
+      showCondition: () => this.isImage && this.showModelCanvas
+    }
+  ];
+  fabTogglerState = 'inactive';
 
+  showItems() {
+    this.fabTogglerState = 'active';
+    this.buttons = this.fabButtons.filter(btn => {
+      if (btn.showCondition && !btn.showCondition()) {
+        return false;
+      }
+      return true;
+    });
+  }
+
+  hideItems() {
+    this.fabTogglerState = 'inactive';
+    this.buttons = [];
+  }
+  onClick(btn: any) {
+    console.log(btn.information);
+    if (btn.action) {
+      btn.action();
+    }
+  }
+
+  buttons:any = [];
+  onToggleFab() {
+    this.buttons.length ? this.hideItems() : this.showItems();
+  }
   async deleteRobot(robot: any, index: number) {
     // console.log(robot);
     let response = await fetch(
