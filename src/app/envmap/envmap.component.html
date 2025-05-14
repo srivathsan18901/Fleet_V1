@@ -294,6 +294,17 @@
       <div #nodeDetailsPopup class="node-details-popup" >
       <div class="sampleCSS">
         <div class="node_al">
+          <button class="closenode-btn" (click)="closeNodeDetailsPopup()"> <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+          >
+            <path fill="none" d="M0 0h24v24H0z" />
+            <path
+              d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+            />
+          </svg></button>
         <div class="node_details">
           <h2>{{getTranslation("details_for_node_id")}} : {{ selectedNode?.nodeId }} </h2>
           <!-- <h2 class="Label">Node ID:  {{ selectedNode?.nodeId }}</h2> -->
@@ -482,10 +493,14 @@
             <div *ngIf="validationError" class="node-validation-error">*{{ validationError }}</div>
           </div>
           <div class="Node-btn">
-            <button class="Delnode-btn" (click)="deleteSelectedNode()">{{getTranslation('delete_node')}}</button>
+            <button class="Delnode-btn" (click)="deleteSelectedNode()">{{getTranslation('Delete')}}</button>
+            <button class="Delnode-btn" (click)="disableNode()">
+              {{ selectedNode?.disabled ? getTranslation('enable') : getTranslation('disable') }}
+            </button>
+            
             <!-- <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, orientationInput.value)">Save</button> use for later--> 
             <button class="savenode-btn" (click)="saveNodeDetails(xInput.value, yInput.value, yInput.value)">{{getTranslation('save')}}</button>
-            <button class="closenode-btn" (click)="closeNodeDetailsPopup()">{{getTranslation('close')}}</button>
+            <!-- <button class="closenode-btn" (click)="closeNodeDetailsPopup()">{{getTranslation('close')}}</button> -->
           </div>
         </div>
        </div>
@@ -1002,6 +1017,16 @@
     <div>
       <button type="button" (click)="confirmDelete()">{{getTranslation("Confirm")}}</button>
       <button type="button" (click)="cancelDelete()">{{getTranslation("Cancel")}}</button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="isBlockpopup" class="popup-overlay1">
+  <div class="popup-content1">
+    <p>{{getTranslation("confirm_disable_block_node")}}</p>
+    <div>
+      <button type="button" (click)="confirmBlock()">{{getTranslation("Confirm")}}</button>
+      <button type="button" (click)="cancelBlock()">{{getTranslation("Cancel")}}</button>
     </div>
   </div>
 </div>

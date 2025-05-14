@@ -2512,8 +2512,13 @@ export class TranslationService {
   };  
   private envMapTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
     ENG: {
+      'block': 'Block',
+      'unblock': 'Unblock',
+      'enable': 'Enable',
+      'disable': 'Disable',
       "SavingMap": "Saving Map...",
       "SelectInsertMapFile": "Select and insert Map file",
+      'confirm_disable_block_node': 'Are you sure you want to disable or block the node?',
       "Upload": "Upload",
       "MapName": "Map Name",
       "EnterMapName": "Enter map name",
@@ -2708,6 +2713,11 @@ export class TranslationService {
       
     },
     JAP: {
+      'block': 'ブロック',
+      'unblock': 'ブロック解除',
+      'enable': '有効化',
+      'confirm_disable_block_node': 'ノードを無効化またはブロックしてもよろしいですか？',
+      'disable': '無効化',
       "SavingMap": "マップを保存しています...",
       "SelectInsertMapFile": "マップファイルを選択して挿入",
       "Upload": "アップロード",
@@ -2906,7 +2916,12 @@ export class TranslationService {
        
     },
     FRE: {
+      'block': 'Bloquer',
+      'unblock': 'Débloquer',
+      'enable': 'Activer',
+      'disable': 'Désactiver',
       "SavingMap": "Enregistrement de la carte...",
+      'confirm_disable_block_node': 'Êtes-vous sûr de vouloir désactiver ou bloquer le nœud ?',
       "SelectInsertMapFile": "Sélectionner et insérer le fichier de carte",
       "Upload": "Télécharger",
       "MapName": "Nom de la carte",
@@ -3104,6 +3119,11 @@ export class TranslationService {
     'enter_maximum_voltage': 'Entrez la tension maximale',
     },
     GER: {
+      'block': 'Blockieren',
+      'unblock': 'Entsperren',
+      'enable': 'Aktivieren',
+      'disable': 'Deaktivieren',
+      'confirm_disable_block_node': 'Möchten Sie den Knoten wirklich deaktivieren oder blockieren?',
       "SavingMap": "Karte wird gespeichert...",
       "SelectInsertMapFile": "Wählen und Karten-Datei einfügen",
       "Upload": "Hochladen",

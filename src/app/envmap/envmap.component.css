@@ -471,6 +471,28 @@ canvas {
   height: 35px;
   color: #000000;
 }
+.closenode-btn {
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  background-color: white;
+  border: 2px solid red;
+  border-radius: 50%;
+  color: red;
+  font-size: 20px;
+  font-family: "graphik", Arial,  sans-serif;
+  font-weight: bolder;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* border: none; */
+  /* border-radius: 5px; */
+  cursor: pointer;
+  z-index: 10;
+}
 .close-btn {
   position: absolute;
   top: -35px;
@@ -1114,17 +1136,17 @@ button {
     fill: white; /* Change color on hover */
   }
 
-  .close-btn svg,.close-btn1 svg {
+  .close-btn svg,.close-btn1 svg,.closenode-btn svg {
     width: 20px;
     height: 20px;
     fill: red; /* Color for the close icon */
   }
 
-  .close-btn:hover,.close-btn1:hover {
+  .close-btn:hover, .closenode-btn:hover,.close-btn1:hover {
     background-color: #da2127;
   }
 
-  .close-btn:hover svg,.close-btn1:hover svg {
+  .close-btn:hover svg,.close-btn1:hover svg,.closenode-btn:hover svg {
     fill: white; /* Change color on hover */
   }
   .input-groupg {
