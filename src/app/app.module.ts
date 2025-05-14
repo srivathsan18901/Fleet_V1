@@ -146,7 +146,6 @@ import { DeveloperOptionsComponent } from './user-management/developer-options/d
     NgApexchartsModule,
     BrowserModule,
     AppRoutingModule,
-    BrowserAnimationsModule,
     RadioButtonModule,
     FormsModule,
     BrowserModule,
