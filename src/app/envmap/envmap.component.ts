@@ -25,6 +25,7 @@ interface Node {
   sequenceId: number;
   nodeDescription: string;
   released: boolean;
+  disabled:boolean;
   nodePosition: { x: number; y: number; orientation: number };
   quaternion: { x: number; y: number; z: number; w: number };
   actions: any[];
@@ -587,11 +588,23 @@ export class EnvmapComponent implements AfterViewInit {
   }
   isConfirmingDelete: boolean = false;
   isConfirmationVisible: boolean = false;
+  isBlockpopup: boolean = false;
   isRoboConfirmationVisible: boolean = false;
   showDeleteConfirmation(): void {
     this.isConfirmingDelete = true;
   }
-
+  disableNode(){
+    this.isBlockpopup = true;
+  }
+  confirmBlock(){
+    if(this.selectedNode){
+    this.selectedNode.disabled=!this.selectedNode.disabled;
+    }
+    this.isBlockpopup = false;
+  }
+  cancelBlock(){
+    this.isBlockpopup = false;
+  }
   deleteSelectedNode(): void {
     if (this.selectedNode) {
       // Show confirmation dialog
@@ -804,6 +817,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.nodes = this.nodes.map((node) => {
       if (this.selectedNode?.nodeId === node.nodeId) {
         node.actions = this.actions;
+        node.disabled = this.selectedNode.disabled;
         node.quaternion = quaternion ? quaternion : { x: 0, y: 0, z: 0, w: 1 };
         if (this.selectedPredockPose)
           node.pre_dockNodeId = parseInt(this.selectedPredockPose);
@@ -2472,7 +2486,13 @@ export class EnvmapComponent implements AfterViewInit {
       const transformedY = canvas.height - node.nodePosition.y; // Flip the Y-axis
       ctx.beginPath();
       ctx.arc(node.nodePosition.x, transformedY, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = selected ? color : 'blue';
+      
+      if (node.disabled) {
+        ctx.fillStyle = 'red';
+      } else {
+        ctx.fillStyle = selected ? color : 'blue';
+      }
+      
       ctx.lineWidth = selected ? 3 : 1;
       ctx.fill();
 
@@ -2813,6 +2833,7 @@ export class EnvmapComponent implements AfterViewInit {
         sequenceId: 0,
         nodeDescription: '',
         released: true,
+        disabled: false,
         nodePosition: { x: x, y: transformedY, orientation: 0 },
         quaternion: { x: 0, y: 0, z: 0, w: 1 },
         intermediate_node: false,
@@ -2846,6 +2867,7 @@ export class EnvmapComponent implements AfterViewInit {
       sequenceId: this.nodeCounter,
       nodeDescription: 'Intermediate Node',
       released: true,
+      disabled: false,
       nodePosition: {
         x: x,
         y: transformedY,
@@ -2920,6 +2942,7 @@ export class EnvmapComponent implements AfterViewInit {
         sequenceId: 0,
         nodeDescription: '',
         released: true,
+        disabled: false,
         nodePosition: { x: x, y: transformedY, orientation: 0 },
         quaternion: { x: 0, y: 0, z: 0, w: 1 },
         actions: [],
@@ -2941,7 +2964,8 @@ export class EnvmapComponent implements AfterViewInit {
         nodeId: this.nodeCounter.toString(),
         sequenceId: this.nodeCounter,
         nodeDescription: 'Intermediate Node',
-        released: true,
+        released: true,        
+        disabled: false,
         nodePosition: { x: x, y: transformedY, orientation: 0 },
         quaternion: { x: 0, y: 0, z: 0, w: 1 },
         actions: [],
@@ -2963,6 +2987,7 @@ export class EnvmapComponent implements AfterViewInit {
         sequenceId: this.nodeCounter,
         nodeDescription: 'Intermediate Node',
         released: true,
+        disabled: false,        
         nodePosition: { x: x, y: transformedY, orientation: 0 },
         quaternion: { x: 0, y: 0, z: 0, w: 1 },
         actions: [],
@@ -3088,6 +3113,7 @@ export class EnvmapComponent implements AfterViewInit {
             sequenceId: this.nodeCounter,
             nodeDescription: 'Intermediate Node',
             released: true,
+            disabled: false,
             nodePosition: {
               x: x,
               y: y,
