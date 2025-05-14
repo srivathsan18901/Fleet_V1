@@ -1890,7 +1890,7 @@ export class DashboardComponent implements AfterViewInit {
     // this.liveRobos = // yet to look at it..
   }
 
-  async enable_robot(robot: any) {
+  async enable_robot(robot: any, enableState: boolean) {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/stream-data/enable-robot`,
       {
@@ -1901,7 +1901,7 @@ export class DashboardComponent implements AfterViewInit {
           mapId: this.selectedMap.id,
           roboToEnable: {
             robotId: this.isFleet ? robot.roboDet.id : robot.amrId,
-            enable: true,
+            enable: enableState,
           },
         }),
       }
@@ -1909,60 +1909,68 @@ export class DashboardComponent implements AfterViewInit {
     return await response.json();
   }
 
-  async activateRobot(robot: any) {
-    let fleetUp = this.projectService.getIsFleetUp();
-    if (!fleetUp) return;
+async activateRobot(robot: any) {
+  const fleetUp = this.projectService.getIsFleetUp();
+  if (!fleetUp) return;
 
-    robot.enabled = true;
-    this.enable  = true
-    let data = await this.enable_robot(robot);
+  // Save current toggle state
+  const desiredState = robot.isActive;
 
-    if (!this.isFleet)
-      this.simMode = this.simMode.map((robo) => {
-        if (robo.amrId === robot.amrId && data.isRoboEnabled){
-          robo.isActive = true;
-          this.enable  = true;
-          }
-        else if (robo.amrId === robot.amrId && !data.isRoboEnabled){
-          robo.isActive = false;
-          this.enable  = false;
-        }
-        return robo;
-      });
+  // Attempt to update on server
+  const data = await this.enable_robot(robot, desiredState);
 
-    if (this.isFleet)
-      this.robos = this.robos.map((robo) => {
-        if (robo.roboDet.id === robot.roboDet.id && data.isRoboEnabled){
-          robo.isActive = true;
-          this.enable  = true;
-          }
-        else if (robo.roboDet.id === robot.roboDet.id && !data.isRoboEnabled){
-          robo.isActive = false;
-          this.enable  = false;
-          }
-        return robo;
-      });
-    if (data.isRoboEnabled) {
-      this.enable  = true;
-      this.messageService.add({
-        severity: 'info',
-        summary: `${robot.roboName || robot.roboDet.roboName} `,
-        detail: this.getTranslation('Robot has been Enabled'),
-        life: 4000,
-      });
-    } else {
-      this.enable = false
-      this.messageService.add({
-        severity: 'error',
-        summary: `${robot.roboName || robot.roboDet.roboName}`,
-        detail: this.getTranslation(
-          'The robot is not initialized, so it cannot be Enabled'
-        ),
-        life: 4000,
-      });
-    }
-    console.log(`${robot.roboName} has been enabled.`);
+  const robotName = robot.roboName || robot.roboDet?.roboName || 'Robot';
+
+  // If backend confirms it was enabled/disabled successfully
+  if (this.isFleet) {
+    this.robos = this.robos.map((robo) => {
+      if (robo.roboDet.id === robot.roboDet.id) {
+        robo.isActive = data.isRoboEnabled;
+      }
+      return robo;
+    });
+  } else {
+    this.simMode = this.simMode.map((robo) => {
+      if (robo.amrId === robot.amrId) {
+        robo.isActive = data.isRoboEnabled;
+      }
+      return robo;
+    });
   }
+
+  // Show success/failure toast
+  if (data.isRoboEnabled === desiredState) {
+    this.enable = desiredState;
+    this.messageService.add({
+      severity: desiredState ? 'info' : 'warn',
+      summary: robotName,
+      detail: this.getTranslation(
+        desiredState
+          ? 'Robot has been Enabled'
+          : 'Robot has been Disabled'
+      ),
+      life: 4000,
+    });
+  } else {
+    // If backend failed, revert the toggle
+    robot.isActive = !desiredState;
+    this.enable = !desiredState;
+    this.messageService.add({
+      severity: 'error',
+      summary: robotName,
+      detail: this.getTranslation(
+        desiredState
+          ? 'The robot is not initialized, so it cannot be Enabled'
+          : 'Disabling the robot failed'
+      ),
+      life: 4000,
+    });
+  }
+
+  console.log(`${robotName} has been ${data.isRoboEnabled ? 'enabled' : 'disabled'}.`);
+}
+
+
 
   async getMapDetails() {
     if (this.mapDetailsController) this.mapDetailsController.abort(); // abort prev req..
