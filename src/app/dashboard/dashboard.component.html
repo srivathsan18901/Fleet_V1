@@ -331,8 +331,10 @@
                   type="checkbox"
                   [(ngModel)]="robot.isActive"
                   (change)="activateRobot(robot)"
-                  [disabled]="!isFleetUp || robot.isActive"
+                  [disabled]="!isFleetUp"
                 />
+
+
                 <div class="slider"></div>
                 <div class="slider-card">
                   <div class="slider-card-face slider-card-front"></div>
@@ -372,11 +374,7 @@
                   type="checkbox"
                   [(ngModel)]="robot.isActive"
                   (change)="activateRobot(robot)"
-                  [disabled]="!isFleetUp || robot.isActive"
-                  [ngClass]="{
-                    active: robot.isActive,
-                    inactive: !robot.isActive
-                  }"
+                  [disabled]="!isFleetUp"
                 />
                 <div class="slider"></div>
                 <div class="slider-card">
