@@ -24,8 +24,8 @@
     button {
       margin-left: 10px; /* Changed from margin-bottom to margin-left */
       border-radius: 50%; /* Ensures circular shape */
-      width: 50px; /* Fixed width for perfect circle */
-      height: 50px; /* Fixed height for perfect circle */
+      width: 40px; /* Fixed width for perfect circle */
+      height: 40px; /* Fixed height for perfect circle */
       min-width: auto; /* Override Material default */
       padding: 0; /* Remove default padding */
       display: flex;
@@ -50,8 +50,8 @@
 .fab-toggler {
   margin-left: 10px; /* Changed from margin-bottom to margin-left */
   border-radius: 50%; /* Ensures circular shape */
-  width: 60px; /* Fixed width for perfect circle */
-  height: 60px; /* Fixed height for perfect circle */
+  width: 55px; /* Fixed width for perfect circle */
+  height: 55px; /* Fixed height for perfect circle */
   min-width: auto; /* Override Material default */
   padding: 0; /* Remove default padding */
   display: flex;
