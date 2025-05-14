@@ -164,10 +164,18 @@
                             {{ getTranslation('assign') }}
                           </button>
                           <ng-container *ngIf="item.showDropdown">
-                            <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
-                              <option value="" disabled selected>{{ getTranslation('select') }}</option>
-                              <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                            <select
+                              [(ngModel)]="item.selectedRobot"
+                              style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;"
+                            >
+                              <option [ngValue]="null" disabled selected hidden>
+                                {{ getTranslation('select') }}
+                              </option>
+                              <option *ngFor="let robot of robotList" [ngValue]="robot">
+                                {{ robot }}
+                              </option>
                             </select>
+
                             <div class="icon-buttons">
                               <!-- Confirm Button -->
                               <button

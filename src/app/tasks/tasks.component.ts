@@ -636,13 +636,13 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   toggleDropdown(item: any) {
     // console.log(item.selectedRobot);
-    item.selectedRobot = '';
+    item.selectedRobot = null;
     item.showDropdown = true;
     this.isTaskDropDowned = true;
   }
 
   reassignRobot(item: any) {
-    item.selectedRobot = '';
+    item.selectedRobot = null;
     item.showReassDropdown = true; // Clear the previously assigned robot
     // console.log(`Re-assigned Task ID: ${item.taskId}`);
     this.isTaskDropDowned = true;
