@@ -24,6 +24,7 @@ import { Router } from '@angular/router';
 import { TranslationService } from '../services/translation.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { response } from 'express';
+import { speedDialFabAnimations } from './dashboard.animation';
 
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
@@ -49,6 +50,7 @@ enum ZoneType {
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css'],
+  animations: speedDialFabAnimations,
 })
 export class DashboardComponent implements AfterViewInit {
   @ViewChild('dashboardContainer', { static: false })
