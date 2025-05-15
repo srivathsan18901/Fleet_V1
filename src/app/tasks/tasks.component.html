@@ -128,15 +128,15 @@
               <tbody>
                 <!-- Loader shown only during the initial load -->
                 <!-- <tr *ngIf="!isLoading && isFirstLoad"> -->
-                <tr >
-                  <div >
-                    <ngx-spinner class="spinner" bdColor = "rgba(0, 0, 0, 0)" size = "default" color = "red" type = "ball-spin" [fullScreen] = "false">
+                <tr  *ngIf="isFleetUp == true && isLoading ">
+                  <div>
+                    <ngx-spinner  class="spinner" bdColor = "rgba(0, 0, 0, 0)" size = "default" color = "red" type = "ball-spin" [fullScreen] = "false">
                     </ngx-spinner>
                   </div>
                 </tr>
               
                 <!-- Show No Data Row -->
-                <tr *ngIf="paginatedData.length === 0">
+                <tr *ngIf="paginatedData.length === 0 ">
                   <td colspan="8" class="no-data">
                     <div class="no-data-container">
                       <img src="../assets/no-data.svg" alt="No Data" class="no-data-image" />
@@ -166,7 +166,7 @@
                           <ng-container *ngIf="item.showDropdown">
                             <select
                               [(ngModel)]="item.selectedRobot"
-                              style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;"
+                              style="height: 24px; border: 1px solid #ccc; border-radius: 5px; padding: 0 4px; margin-right: 6px;"
                             >
                               <option [ngValue]="null" disabled selected hidden>
                                 {{ getTranslation('select') }}
@@ -181,7 +181,7 @@
                               <button
                                 *ngIf="item.selectedRobot"
                                 (click)="assignRobot(item)"
-                                class="icon-btn confirm"
+                                class="icon-button confirm"
                                 pTooltip="Confirm"
                                 tooltipPosition="top"
                                 aria-label="Confirm assignment"
@@ -194,7 +194,7 @@
                               <!-- Cancel Button -->
                               <button
                                 (click)="cancelAssign(item)"
-                                class="icon-btn cancel"
+                                class="icon-button cancel"
                                 pTooltip="Cancel"
                                 tooltipPosition="top"
                                 aria-label="Cancel assignment"
@@ -204,8 +204,6 @@
                                 <i class="pi pi-times"></i>
                               </button>
                             </div>
-                            
-                            
                           </ng-container>
                         </ng-container>
                         <ng-template #assigned>
@@ -214,17 +212,30 @@
                               {{ getTranslation('re_assign') }}
                             </button>
                             <ng-container *ngIf="item.showReassDropdown">
-                              <select [(ngModel)]="item.selectedRobot" style="height: 20px; border-bottom: 1px solid; background: transparent; border-radius: 5px;">
-                                <option value="" disabled selected>{{ getTranslation('select') }}</option>
-                                <option *ngFor="let robot of robotList" [value]="robot">{{ robot }}</option>
+                              <select
+                                [(ngModel)]="item.selectedRobot"
+                                style="height: 24px; border: 1px solid #ccc; border-radius: 5px; padding: 0 4px; margin-right: 6px;"
+                              >
+                                <option [ngValue]="null" disabled selected hidden>{{ getTranslation('select') }}</option>
+                                <option *ngFor="let robot of robotList" [ngValue]="robot">{{ robot }}</option>
                               </select>
-                              <div>
+                              <div style="display: inline-flex; gap: 4px;">
                                 <!-- Confirm icon (check) -->
-                                <button *ngIf="item.selectedRobot" (click)="assignRobot(item)" class="Assibtn-common Assibtn-cancel" title="Confirm">
+                                <button
+                                  *ngIf="item.selectedRobot"
+                                  (click)="assignRobot(item)"
+                                  class="icon-button confirm"
+                                  title="Confirm"
+                                >
                                   <i class="pi pi-check"></i>
                                 </button>
-                                <!-- Cancel icon (close) -->
-                                <button (click)="cancelAssign(item)" class="btn-common btn-cancel" title="Cancel">
+
+                                <!-- Cancel icon (cross) -->
+                                <button
+                                  (click)="cancelAssign(item)"
+                                  class="icon-button cancel"
+                                  title="Cancel"
+                                >
                                   <i class="pi pi-times"></i>
                                 </button>
                               </div>

@@ -20,6 +20,29 @@
   height: 100%;
   }
 
+  .icon-button {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.icon-button.confirm {
+  background-color: #28a745; /* Green */
+}
+
+.icon-button.cancel {
+  background-color: #dc3545; /* Red */
+}
+
+.icon-button i {
+  font-size: 14px;
+}
 
 
   /* Header section styles */

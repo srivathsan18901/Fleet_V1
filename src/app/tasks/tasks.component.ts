@@ -70,6 +70,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
 
   robos: any[] = [];
   simRobos: any[] = [];
+  isFleetUp: Boolean = false;
 
   // Mapping statuses to step index
   statusStepMap: { [key: string]: number } = {
@@ -115,6 +116,11 @@ export class TasksComponent implements OnInit, AfterViewInit {
     private spinner: NgxSpinnerService
   ) {
     this.filteredTaskData = [];
+        const isFleetUp = this.projectService.isFleetUp$.subscribe((status) => {
+      this.isFleetMode = status;
+      this.isFleetUp = status;
+      console.log(this.isFleetMode);
+    });
   }
 
   async ngOnInit() {
@@ -122,10 +128,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.isButtonDisabled = false;
     this.mapData = this.projectService.getMapData();
 
-    const isFleetUp = this.projectService.isFleetUp$.subscribe((status) => {
-      this.isFleetMode = status;
-      console.log(this.isFleetMode);
-    });
+
 
     if (!this.mapData) this.nodata = this.getTranslation('no_map_selected');
     else this.nodata = this.getTranslation('No data found');
