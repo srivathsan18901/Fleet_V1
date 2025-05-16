@@ -2034,7 +2034,22 @@ export class DashboardComponent implements AfterViewInit {
 
 async activateRobot(robot: any) {
   const fleetUp = this.projectService.getIsFleetUp();
-  if (!fleetUp) return;
+
+  // If fleet is down, disable and uncheck the checkbox immediately
+  if (!fleetUp) {
+    robot.isActive = false;
+    robot.enabled = false;
+
+    this.messageService.add({
+      severity: 'warn',
+      summary: `${robot.roboName || robot.roboDet?.roboName}`,
+      detail: this.getTranslation('Fleet is not Up. Cannot activate robot.'),
+      life: 4000,
+    });
+
+    return;
+  }
+
 
   // Save current toggle state
   const desiredState = robot.isActive;

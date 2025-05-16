@@ -375,6 +375,7 @@
                   [(ngModel)]="robot.isActive"
                   (change)="activateRobot(robot)"
                   [disabled]="!isFleetUp"
+                  [ngStyle]="{ cursor: isFleetUp ? 'pointer' : 'not-allowed' }"
                 />
                 <div class="slider"></div>
                 <div class="slider-card">
