@@ -1532,16 +1532,11 @@ export class EnvmapComponent implements AfterViewInit {
       (canvas.height / rect.height);
     const dx = this.startPoint.x - finalX;
     const dy = this.startPoint.y - finalY;
-    const angle = Math.atan2(dy, dx) * (180 / Math.PI);
-
-    console.log('X:', finalX, 'Y:', canvas.height - finalY, 'Angle:', angle);
+    let angle = Math.atan2(-dy, dx) * (180 / Math.PI); 
+    angle = (angle + 180) % 360;
 
     this.origin.w = angle;
-    // this.origin = {
-    //   x: this.startPoint.x * this.ratio!,
-    //   y: (canvas.height - this.startPoint.y) * this.ratio!,
-    //   w: angle,
-    // };
+
     this.isDrawing = false;
     this.startPoint = null;
     this.showOriginPopup = false;
