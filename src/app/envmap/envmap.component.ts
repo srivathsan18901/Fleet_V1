@@ -404,31 +404,48 @@ export class EnvmapComponent implements AfterViewInit {
       };
       const angleRad = (this.origin.w * Math.PI) / 180;
       this.nodes = this.currEditMapDet.nodes.map((node: Node) => {
-        node.nodePosition.x =
-          (node.nodePosition.x + (this.origin.x || 0)) / (this.ratio || 1);
-        node.nodePosition.y =
-          (node.nodePosition.y + (this.origin.y || 0)) / (this.ratio || 1);
+        const nodeX = node.nodePosition.x * Math.cos(angleRad) + node.nodePosition.y * Math.sin(angleRad);
+        const nodeY = node.nodePosition.x * Math.sin(angleRad) - node.nodePosition.y * Math.cos(angleRad);
+        
+        node.nodePosition.x = 
+            ((nodeX + this.origin.x || 0) / this.ratio! || 1);
+        node.nodePosition.y = 
+            ((nodeY + this.origin.y || 0) / this.ratio! || 1);
         return node;
       });
-      console.log(this.nodes);
-      
+      console.log("open",this.nodes);      
       this.edges = this.currEditMapDet.edges;
       this.assets = this.currEditMapDet.assets.map((asset: asset) => {
-        asset.x = (asset.x + (this.origin.x || 0)) / (this.ratio || 1);
-        asset.y = (asset.y + (this.origin.y || 0)) / (this.ratio || 1);
+        const assetX = asset.x * Math.cos(angleRad) + asset.y * Math.sin(angleRad);
+        const assetY = asset.x * Math.sin(angleRad) - asset.y * Math.cos(angleRad);
+        
+        asset.x = 
+            ((assetX + this.origin.x || 0) / this.ratio! || 1);
+        asset.y = 
+            ((assetY + this.origin.y || 0) / this.ratio! || 1);
         return asset;
       });
       this.zones = this.currEditMapDet.zones.map((zone: Zone) => {
         zone.pos = zone.pos.map((pos) => {
-          pos.x = (pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-          pos.y = (pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+          const zoneX = pos.x * Math.cos(angleRad) + pos.y * Math.sin(angleRad);
+          const zoneY = pos.x * Math.sin(angleRad) - pos.y * Math.cos(angleRad);
+          
+          pos.x = 
+              ((zoneX + this.origin.x || 0) / this.ratio! || 1);
+          pos.y = 
+              ((zoneY + this.origin.y || 0) / this.ratio! || 1);
           return pos;
         });
         return zone;
       });
       this.robos = this.currEditMapDet.robos.map((robo: Robo) => {
-        robo.pos.x = robo.pos.x / (this.ratio || 1);
-        robo.pos.y = robo.pos.y / (this.ratio || 1);
+          const roboX = robo.pos.x * Math.cos(angleRad) + robo.pos.y * Math.sin(angleRad);
+          const roboY = robo.pos.x * Math.sin(angleRad) - robo.pos.y * Math.cos(angleRad);
+          
+          robo.pos.x = 
+              ((roboX + this.origin.x || 0) / this.ratio! || 1);
+          robo.pos.y = 
+              ((roboY + this.origin.y || 0) / this.ratio! || 1);
         return robo;
       });
 
@@ -866,18 +883,20 @@ export class EnvmapComponent implements AfterViewInit {
     if (this.selectedNode) {
       const nodeIndex = this.nodes.findIndex(
         (node) => node.nodeId === this.selectedNode!.nodeId
-      );
-      this.selectedNode.nodePosition.x =
-        ((parsedX + this.origin.x || 0) / this.ratio! || 1)/ Math.cos(angleRad) + ((parsedY + this.origin.y || 0) / this.ratio! || 1)/Math.sin(angleRad);
-      this.selectedNode.nodePosition.y =
-        ((parsedX + this.origin.x || 0) / this.ratio! || 1)/ Math.sin(angleRad) + ((parsedY + this.origin.y || 0) / this.ratio! || 1)/Math.cos(angleRad);      
-      this.selectedNode.nodePosition.orientation = parsedOrientation;
-
+      );    
+    const rotatedX = parsedX * Math.cos(angleRad) + parsedY * Math.sin(angleRad);
+    const rotatedY = parsedX * Math.sin(angleRad) - parsedY * Math.cos(angleRad);
+    
+    this.selectedNode.nodePosition.x = 
+        ((rotatedX + this.origin.x || 0) / this.ratio! || 1);
+    this.selectedNode.nodePosition.y = 
+        ((rotatedY + this.origin.y || 0) / this.ratio! || 1);
+    this.selectedNode.nodePosition.orientation = parsedOrientation;
+      
       // console.log( this.selectedNode.nodePosition.x, this.selectedNode.nodePosition.y );
       if (nodeIndex !== -1) {
         this.nodes[nodeIndex].nodeDescription = this.nodeDetails.description;
-        this.nodes[nodeIndex].intermediate_node =
-          this.nodeDetails.intermediate_node;
+        this.nodes[nodeIndex].intermediate_node = this.nodeDetails.intermediate_node;
         this.nodes[nodeIndex].Waiting_node = this.nodeDetails.waiting_node;
         this.nodes[nodeIndex].charge_node = this.nodeDetails.charge_node;
         this.nodes[nodeIndex].dock_node = this.nodeDetails.dock_node;
@@ -1864,13 +1883,15 @@ export class EnvmapComponent implements AfterViewInit {
     }
     const angleRad = (this.origin.w * Math.PI) / 180;
     this.nodes = this.nodes.map((node) => {
+      console.log("save",node.nodePosition.x,node.nodePosition.y);
       node.nodePosition.x =
         (node.nodePosition.x * (this.ratio || 1) - (this.origin.x || 0))* Math.cos(angleRad) - (node.nodePosition.y * (this.ratio || 1) - (this.origin.y || 0))* Math.sin(angleRad);
       node.nodePosition.y =
         (node.nodePosition.x * (this.ratio || 1) - (this.origin.x || 0))*Math.sin(angleRad) - (node.nodePosition.y * (this.ratio || 1) - (this.origin.y || 0))* Math.cos(angleRad);
       return node;
     });
-
+    console.log("save",this.nodes);
+    
     this.assets = this.assets.map((asset) => {
       asset.x =
         (asset.x * (this.ratio || 1) - (this.origin.x || 0))* Math.cos(angleRad) - (asset.y * (this.ratio || 1) - (this.origin.y || 0))* Math.sin(angleRad);
@@ -2525,7 +2546,7 @@ export class EnvmapComponent implements AfterViewInit {
     maxHeight: number = 50, // Maximum allowed height
     maxWidth: number = 50 // Maximum allowed width
   ): void {
-    console.log(startX, startY);
+    // console.log(startX, startY);
 
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = canvas.getContext('2d');

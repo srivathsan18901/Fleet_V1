@@ -33,15 +33,15 @@ export class IdleTrackerService implements OnDestroy {
     if (this.isIdle) {
       this.isIdle = false;
       clearInterval(this.idleInterval);
-      console.log('User is active');
+      // console.log('User is active');
     }
     
     this.idleTimeout = setTimeout(() => {
       this.isIdle = true;
-      console.log('User is idle');
+      // console.log('User is idle');
       this.idleInterval = setInterval(() => {
         if (this.isIdle) {
-          console.log('User is still idle');
+          // console.log('User is still idle');
         } else {
           clearInterval(this.idleInterval);
         }
