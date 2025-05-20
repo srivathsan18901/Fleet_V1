@@ -1989,10 +1989,11 @@ export class DashboardComponent implements AfterViewInit {
         imgY >= 0 &&
         imgY <= this.mapImageHeight / this.zoomLevel;
       if (isInsideMap) {
-        const formattedX = (imgX * this.ratio - this.origin.x).toFixed(2);
-        const formattedY = (imgY * this.ratio - this.origin.y).toFixed(2);
+        const angleRad = (this.origin.w * Math.PI) / 180;
+        const formattedX = (imgX * this.ratio - this.origin.x)* Math.cos(angleRad) - (imgY * this.ratio! - this.origin.y) * Math.sin(angleRad);
+        const formattedY = (imgX * this.ratio - this.origin.y)* Math.sin(angleRad) - (imgY * this.ratio! - this.origin.y) * Math.cos(angleRad);
         //Set tooltip content and position
-        tooltip.textContent = `X = ${formattedX}, Y = ${formattedY}`;
+        tooltip.textContent = `X = ${formattedX.toFixed(2)}, Y = ${formattedY.toFixed(2)}`;
         tooltip.style.display = 'block';
         tooltip.style.left = `${event.clientX}`;
         tooltip.style.top = `${event.clientY}`; // Adjust 10px below the cursor
