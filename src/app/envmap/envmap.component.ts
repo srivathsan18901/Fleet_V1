@@ -885,7 +885,7 @@ export class EnvmapComponent implements AfterViewInit {
         (node) => node.nodeId === this.selectedNode!.nodeId
       );    
     const rotatedX = parsedX * Math.cos(angleRad) + parsedY * Math.sin(angleRad);
-    const rotatedY = parsedX * Math.sin(angleRad) - parsedY * Math.cos(angleRad);
+    const rotatedY = (-parsedX) * Math.sin(angleRad) + parsedY * Math.cos(angleRad);
     
     this.selectedNode.nodePosition.x = 
         ((rotatedX + this.origin.x || 0) / this.ratio! || 1);
@@ -3291,7 +3291,7 @@ export class EnvmapComponent implements AfterViewInit {
       const angleRad = (this.origin.w * Math.PI) / 180;
       const calculatedY =
         // this.selectedNode.nodePosition.y * this.ratio - this.origin.y;
-        (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.sin(angleRad) - (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.cos(angleRad);
+        (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.sin(angleRad) + (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.cos(angleRad);
 
       return parseFloat(calculatedY.toFixed(3));
     }
@@ -3301,7 +3301,7 @@ export class EnvmapComponent implements AfterViewInit {
   set nodePositionY(value: number) {
     const angleRad = (this.origin.w * Math.PI) / 180;
     if (this.selectedNode?.nodePosition) {
-        (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.sin(angleRad) - (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.cos(angleRad);
+        (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.sin(angleRad) + (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.cos(angleRad);
 
       // this.selectedNode.nodePosition.y = value / this.ratio! - this.origin.y;
     }
@@ -4195,7 +4195,7 @@ export class EnvmapComponent implements AfterViewInit {
     // Rotate the coordinates based on the angle
     const rotatedX = (x * this.ratio! - this.origin.x) * Math.cos(angleRad) - 
                      (transformedY * this.ratio! - this.origin.y) * Math.sin(angleRad);
-    const rotatedY = (x * this.ratio! - this.origin.x) * Math.sin(angleRad) - 
+    const rotatedY = (x * this.ratio! - this.origin.x) * Math.sin(angleRad) +
                      (transformedY * this.ratio! - this.origin.y) * Math.cos(angleRad);
 
     tooltip.innerHTML = `X: ${rotatedX.toFixed(2)}, Y: ${rotatedY.toFixed(2)}`;
