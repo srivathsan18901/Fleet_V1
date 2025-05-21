@@ -1197,10 +1197,14 @@ export class DashboardComponent implements AfterViewInit {
         0
       );
     });
+    const angleRad = (this.origin.w * Math.PI) / 180;
 
     this.chargeNodes.forEach((station) => {
-      let x = (station.pose.x + (this.origin.x || 0)) / (this.ratio || 1);
-      let y = (station.pose.y + (this.origin.y || 0)) / (this.ratio || 1);
+      const nodeX = station.pose.x * Math.cos(angleRad) + station.pose.y * Math.sin(angleRad);
+      const nodeY = station.pose.x * Math.sin(angleRad) + station.pose.y * Math.cos(angleRad);
+        
+      let x = (nodeX + (this.origin.x || 0)) / (this.ratio || 1);
+      let y = (nodeY + (this.origin.y || 0)) / (this.ratio || 1);
 
       const transformedY = img.height - y;
       this.drawChargeNode(
@@ -1639,8 +1643,9 @@ export class DashboardComponent implements AfterViewInit {
                 break;
               }
             }
-            let posX = (localizePos.x * this.ratio || 1) - (this.origin.x || 0);
-            let posY = (localizePos.y * this.ratio || 1) - (this.origin.y || 0);
+            const angleRad = (this.origin.w * Math.PI) / 180;            
+            let posX = (localizePos.x * this.ratio || 1) - (this.origin.x || 0)* Math.cos(angleRad) - (localizePos.y * this.ratio || 1) - (this.origin.y || 0) * Math.sin(angleRad);
+            let posY = (localizePos.x * this.ratio || 1) - (this.origin.y || 0)*Math.sin(angleRad)- (localizePos.y * this.ratio || 1) - (this.origin.y || 0) * Math.cos(angleRad);
             this.localizationPos = {
               x: posX,
               y: posY,
@@ -1778,8 +1783,12 @@ export class DashboardComponent implements AfterViewInit {
 
       // Check if mouse is over any charge node
       for (let node of this.chargeNodes) {
-        let x = (node.pose.x + (this.origin.x || 0)) / (this.ratio || 1);
-        let y = (node.pose.y + (this.origin.y || 0)) / (this.ratio || 1);
+        const angleRad = (this.origin.w * Math.PI) / 180;
+        const rotatedX = node.pose.x * Math.cos(angleRad) + node.pose.y * Math.sin(angleRad);
+        const rotatedY = node.pose.x * Math.sin(angleRad) + node.pose.y * Math.cos(angleRad);
+        let x = (rotatedX + (this.origin.x || 0)) / (this.ratio || 1);
+        let y = (rotatedY + (this.origin.y || 0)) / (this.ratio || 1);
+        
         const nodeX = x;
         const nodeY = y;
         const nodeSize = 20; // Charge node size
@@ -1991,7 +2000,7 @@ export class DashboardComponent implements AfterViewInit {
       if (isInsideMap) {
         const angleRad = (this.origin.w * Math.PI) / 180;
         const formattedX = (imgX * this.ratio - this.origin.x)* Math.cos(angleRad) - (imgY * this.ratio! - this.origin.y) * Math.sin(angleRad);
-        const formattedY = (imgX * this.ratio - this.origin.y)* Math.sin(angleRad) - (imgY * this.ratio! - this.origin.y) * Math.cos(angleRad);
+        const formattedY = (imgX * this.ratio - this.origin.y)* Math.sin(angleRad) + (imgY * this.ratio! - this.origin.y) * Math.cos(angleRad);
         //Set tooltip content and position
         tooltip.textContent = `X = ${formattedX.toFixed(2)}, Y = ${formattedY.toFixed(2)}`;
         tooltip.style.display = 'block';
@@ -2143,13 +2152,21 @@ async activateRobot(robot: any) {
         pos: { ...node.nodePosition }, // which creates a new object (deep copying).. / instead of referencing it
       };
     });
-
+    const angleRad = (this.origin.w * Math.PI) / 180;   
     // yet to interface in this component..
-    this.nodes = mapData.nodes.map((node: any) => {
-      node.nodePosition.x =
-        (node.nodePosition.x + (this.origin.x || 0)) / (this.ratio || 1);
-      node.nodePosition.y =
-        (node.nodePosition.y + (this.origin.y || 0)) / (this.ratio || 1);
+    this.nodes = mapData.nodes.map((node: any) => { 
+        const x = node.nodePosition.x;
+        const y = node.nodePosition.y;
+
+        // Reverse rotation
+        const xRotated = x * Math.cos(-angleRad) - y * Math.sin(-angleRad);
+        const yRotated = x * Math.sin(-angleRad) + y * Math.cos(-angleRad);
+
+        // Reverse translation and scaling
+        node.nodePosition.x = (xRotated + (this.origin.x || 0)) / (this.ratio! || 1);
+        node.nodePosition.y = (yRotated + (this.origin.y || 0)) / (this.ratio! || 1);
+
+        // console.log("Open", node.nodePosition.x, node.nodePosition.y);
       return node;
     });
 
@@ -2160,8 +2177,11 @@ async activateRobot(robot: any) {
     this.nodeGraphService.setEdges(this.edges); // in use..
 
     this.assets = mapData.stations.map((asset: any) => {
-      asset.x = (asset.x + (this.origin.x || 0)) / (this.ratio || 1);
-      asset.y = (asset.y + (this.origin.y || 0)) / (this.ratio || 1);
+        const assetX = asset.x * Math.cos(-angleRad) - asset.y * Math.sin(-angleRad);
+        const assetY = asset.x * Math.sin(-angleRad) + asset.y * Math.cos(-angleRad);
+        
+        asset.x = ((assetX + this.origin.x || 0) / this.ratio! || 1);
+        asset.y = ((assetY + this.origin.y || 0) / this.ratio! || 1);
       return asset;
     });
 
@@ -2169,8 +2189,11 @@ async activateRobot(robot: any) {
 
     this.zones = mapData.zones.map((zone: any) => {
       zone.pos = zone.pos.map((pos: any) => {
-        pos.x = (pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-        pos.y = (pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+          const zoneX = pos.x * Math.cos(-angleRad) - pos.y * Math.sin(-angleRad);
+          const zoneY = pos.x * Math.sin(-angleRad) + pos.y * Math.cos(-angleRad);
+          
+          pos.x = ((zoneX + this.origin.x || 0) / this.ratio! || 1);
+          pos.y = ((zoneY + this.origin.y || 0) / this.ratio! || 1);
         return pos;
       });
       return zone;
@@ -2179,18 +2202,22 @@ async activateRobot(robot: any) {
     this.nodeGraphService.setZones(this.zones);
 
     this.robos = mapData.roboPos.map((robo: any) => {
-      robo.pos.x = robo.pos.x / (this.ratio || 1);
-      robo.pos.y = robo.pos.y / (this.ratio || 1);
-
+          const roboX = robo.pos.x * Math.cos(-angleRad) - robo.pos.y * Math.sin(-angleRad);
+          const roboY = robo.pos.x * Math.sin(-angleRad) + robo.pos.y * Math.cos(-angleRad);
+          
+          robo.pos.x = ((roboX + this.origin.x || 0) / this.ratio! || 1);
+          robo.pos.y = ((roboY + this.origin.y || 0) / this.ratio! || 1);
       return robo;
     });
 
     // yet to check..
     // if(!this.isInLive)
     this.simMode = mapData.simMode.map((robo: any) => {
-      robo.pos.x = robo.pos.x / (this.ratio || 1);
-      robo.pos.y = robo.pos.y / (this.ratio || 1);
-
+          const roboX = robo.pos.x * Math.cos(-angleRad) - robo.pos.y * Math.sin(-angleRad);
+          const roboY = robo.pos.x * Math.sin(-angleRad) + robo.pos.y * Math.cos(-angleRad);
+          
+          robo.pos.x = ((roboX + this.origin.x || 0) / this.ratio! || 1);
+          robo.pos.y = ((roboY + this.origin.y || 0) / this.ratio! || 1);
       return robo;
     });
     this.updateRoboClrs(); // temp. right ig
@@ -2303,12 +2330,12 @@ async activateRobot(robot: any) {
         // Loop through each robot to update their pose and position
         if (data.robots?.length) {
           data.robots.forEach(async (robot: any) => {
-            let posX =
-              (robot.pose.position.x + (this.origin.x || 0)) /
-              (this.ratio || 1);
-            let posY =
-              (robot.pose.position.y + (this.origin.y || 0)) /
-              (this.ratio || 1);
+            
+            const angleRad = (this.origin.w * Math.PI) / 180; 
+            const robotPosX = robot.pose.position.x * Math.cos(-angleRad) - robot.pose.position.y * Math.sin(-angleRad);
+            const robotPosY = robot.pose.position.x * Math.sin(-angleRad) + robot.pose.position.y * Math.cos(-angleRad);
+            let posX = (robotPosX + (this.origin.x || 0)) / (this.ratio || 1);
+            let posY = (robotPosY + (this.origin.y || 0)) / (this.ratio || 1);
 
             let yaw = this.quaternionToYaw(
               robot.pose.orientation.w,
@@ -2722,8 +2749,11 @@ async activateRobot(robot: any) {
     });
 
     this.chargeNodes.forEach((station) => {
-      let scaledX = (station.pose.x + (this.origin.x || 0)) / (this.ratio || 1);
-      let scaledY = (station.pose.y + (this.origin.y || 0)) / (this.ratio || 1);
+      const angleRad = (this.origin.w * Math.PI) / 180; 
+      const stationPosX = station.pose.position.x * Math.cos(-angleRad) - station.pose.position.y * Math.sin(-angleRad);
+      const stationPosY = station.pose.position.x * Math.sin(-angleRad) + station.pose.position.y * Math.cos(-angleRad);
+      let scaledX = (stationPosX + (this.origin.x || 0)) / (this.ratio || 1);
+      let scaledY = (stationPosY + (this.origin.y || 0)) / (this.ratio || 1);
 
       // Adjust Y-coordinate if needed (flipping the Y-axis)
       let transformedY = imgHeight / this.zoomLevel - scaledY;
@@ -2756,8 +2786,11 @@ async activateRobot(robot: any) {
     const centerY = (canvas.height - imgHeight) / 2 + this.offsetY;
 
     this.racks = assets.map((rack: any) => {
-      let posX = (rack.x + (this.origin.x || 0)) / (this.ratio || 1);
-      let posY = (rack.y + (this.origin.y || 0)) / (this.ratio || 1);
+      const angleRad = (this.origin.w * Math.PI) / 180; 
+      const rackPosX = rack.x * Math.cos(-angleRad) - rack.y * Math.sin(-angleRad);
+      const rackPosY = rack.x * Math.sin(-angleRad) + rack.y * Math.cos(-angleRad);
+      let posX = (rackPosX + (this.origin.x || 0)) / (this.ratio || 1);
+      let posY = (rackPosY + (this.origin.y || 0)) / (this.ratio || 1);
 
       const scaledPosX = posX;
       const scaledPosY = posY;
@@ -2784,8 +2817,12 @@ async activateRobot(robot: any) {
 
     if (!path) return;
     path.forEach((path: any) => {
-      let pathX = (path.x + (this.origin.x || 0)) / (this.ratio || 1);
-      let pathY = (path.y + (this.origin.y || 0)) / (this.ratio || 1);
+      
+      const angleRad = (this.origin.w * Math.PI) / 180; 
+      const rackPosX = path.x * Math.cos(-angleRad) - path.y * Math.sin(-angleRad);
+      const rackPosY = path.x * Math.sin(-angleRad) + path.y * Math.cos(-angleRad);
+      let pathX = (rackPosX + (this.origin.x || 0)) / (this.ratio || 1);
+      let pathY = (rackPosY + (this.origin.y || 0)) / (this.ratio || 1);
       // Non-simulation mode
       const transformedPathY = !this.simMode
         ? this.mapImageHeight - pathX
@@ -3444,15 +3481,18 @@ async activateRobot(robot: any) {
 
     this.localizePoses = await this.getLocalizePos();
     console.log(this.localizePoses);
+    const angleRad = (this.origin.w * Math.PI) / 180;
 
     this.localizePoses = this.localizePoses.map((pos: any) => {
-      pos.x = (pos.x + (this.origin.x || 0)) / (this.ratio || 1);
-      pos.y = (pos.y + (this.origin.y || 0)) / (this.ratio || 1);
+      const posX = pos.x * Math.cos(-angleRad) - pos.y * Math.sin(-angleRad);
+      const posY = pos.x * Math.sin(-angleRad) + pos.y * Math.cos(-angleRad);
+          
+      pos.x = (posX + (this.origin.x || 0)) / (this.ratio || 1);
+      pos.y = (posY + (this.origin.y || 0)) / (this.ratio || 1);
       return pos;
     });
     this.redrawCanvas();
     // console.log(this.localizePoses);
-
     this.hidePopup();
   }
 
