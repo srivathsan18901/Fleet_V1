@@ -103,15 +103,13 @@ export class HeatmapComponent implements OnChanges {
     const data = [];
     let len = heatmap.length;
     while (len--) {
-      // if (this.mapImageHeight && heatmap[len].x !== 0 && heatmap[len].x !== 0) {
-        let posX =
-          (((heatmap[len].x + (this.origin.x || 0)) * this.zoomLevel) /
-            (this.ratio || 1)) >>
-          0;
-        let posY =
-          (((heatmap[len].y + (this.origin.y || 0)) * this.zoomLevel) /
-            (this.ratio || 1)) >>
-          0;
+        // if (this.mapImageHeight && heatmap[len].x !== 0 && heatmap[len].x !== 0) {
+        
+        const angleRad = (this.origin.w * Math.PI) / 180;
+        const xRotated = heatmap[len].x * Math.cos(-angleRad) - heatmap[len].y * Math.sin(-angleRad);
+        const yRotated = heatmap[len].x * Math.sin(-angleRad) + heatmap[len].y * Math.cos(-angleRad);
+        let posX = (((xRotated + (this.origin.x || 0)) * this.zoomLevel) / (this.ratio || 1)) >> 0;
+        let posY = (((yRotated + (this.origin.y || 0)) * this.zoomLevel) / (this.ratio || 1)) >> 0;
         let transY = this.mapImageHeight - posY; // Adjust for Y-axis inversion
 
         let val = heatmap[len].intensity >> 0;

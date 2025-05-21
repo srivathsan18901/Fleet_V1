@@ -1200,8 +1200,8 @@ export class DashboardComponent implements AfterViewInit {
     const angleRad = (this.origin.w * Math.PI) / 180;
 
     this.chargeNodes.forEach((station) => {
-      const nodeX = station.pose.x * Math.cos(angleRad) + station.pose.y * Math.sin(angleRad);
-      const nodeY = station.pose.x * Math.sin(angleRad) + station.pose.y * Math.cos(angleRad);
+      const nodeX = station.pose.x * Math.cos(-angleRad) - station.pose.y * Math.sin(-angleRad);
+      const nodeY = station.pose.x * Math.sin(-angleRad) + station.pose.y * Math.cos(-angleRad);
         
       let x = (nodeX + (this.origin.x || 0)) / (this.ratio || 1);
       let y = (nodeY + (this.origin.y || 0)) / (this.ratio || 1);
