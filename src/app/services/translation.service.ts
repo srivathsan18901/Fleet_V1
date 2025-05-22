@@ -1315,9 +1315,9 @@ export class TranslationService {
   };
   private errorLogsTranslations: Record<'ENG' | 'JAP' | 'FRE' | 'GER', Record<string, string>> = {
     ENG: {
-      "Task Logs": "Task Logs",
-      "Robot Logs": "Robot Logs",
-      "Fleet Logs": "Fleet Logs",
+      "Task Logs": "Task Error Logs",
+      "Robot Logs": "Robot Error Logs",
+      "Fleet Logs": "Fleet Error Logs",
       "Create and edit logs": "Create and edit logs",
       "taskErrorLogs" : "Displays Task log records",
       "robotErrorLogs" : "Displays Robot log records",
@@ -1349,9 +1349,9 @@ export class TranslationService {
       "Export as Excel": "Export as Excel"
     },
     JAP: {
-      "Task Logs": "タスクログ",
-      "Robot Logs": "ロボットログ",
-      "Fleet Logs": "フリートログ",
+      "Task Logs": "タスクエラーログ",
+      "Robot Logs": "ロボットエラーログ",
+      "Fleet Logs": "フリートエラーログ",
       "Create and edit logs": "ログの作成と編集",
       "taskErrorLogs" : "タスクログレコードを表示します",
       "robotErrorLogs" : "ロボットのログ記録を表示します",
@@ -1383,9 +1383,9 @@ export class TranslationService {
       "Export as Excel": "Excelとしてエクスポート"
     },
     FRE: {
-      "Task Logs": "Journaux de tâches",
-      "Robot Logs": "Journaux de robots",
-      "Fleet Logs": "Journaux de flotte",
+      "Task Logs": "Journaux d'erreurs des tâches",
+      "Robot Logs": "JJournaux d'erreurs des robots",
+      "Fleet Logs": "Journaux d'erreurs de la flotte",
       "Create and edit logs": "Créer et modifier des journaux",
       "Task": "Tâche",
       "taskErrorLogs" : "Afficher les enregistrements du journal des tâches",
@@ -1417,9 +1417,9 @@ export class TranslationService {
       "Export as Excel": "Exporter en Excel"
     },
     GER: {
-      "Task Logs": "Aufgabenprotokolle",
-      "Robot Logs": "Roboterprotokolle",
-      "Fleet Logs": "Flottenprotokolle",
+      "Task Logs": "Aufgaben-Fehlerprotokolle",
+      "Robot Logs": "Roboter-Fehlerprotokolle",
+      "Fleet Logs": "Flotten-Fehlerprotokolle",
       "Create and edit logs": "Protokolle erstellen und bearbeiten",
       "Task": "Aufgabe",
       'duration': 'Dauer (in Minuten)',
