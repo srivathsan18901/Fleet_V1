@@ -913,7 +913,7 @@ canvas {
   transform: translateX(-50%);
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   background-color: #c0b3b372;
   padding: 2px;
   gap: 10px;
@@ -923,7 +923,7 @@ canvas {
 }
 .calibration-layer button{
   pointer-events: auto;
-
+  height: 40px;
 }
 h2{
   font-family: "graphik", Arial,  sans-serif;

@@ -4621,13 +4621,59 @@ export class EnvmapComponent implements AfterViewInit {
       this.redrawCanvas();
     }
   }
-
+  private drawGrid(ctx: CanvasRenderingContext2D): void {
+    if (!this.ratio) return; // Skip if ratio isn't set
+    
+    const canvas = this.overlayCanvas.nativeElement;
+    const gridSizeInMeters = 0.5; // 1 meter grid
+    const gridSizeInPixels = gridSizeInMeters / this.ratio;
+    
+    // Grid styling
+    ctx.strokeStyle = 'rgba(200, 200, 200, 0.7)'; // Light gray with transparency
+    ctx.lineWidth = 0.5;
+    
+    // Draw vertical grid lines
+    for (let x = 0; x <= canvas.width; x += gridSizeInPixels) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    
+    // Draw horizontal grid lines
+    for (let y = 0; y <= canvas.height; y += gridSizeInPixels) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+    
+    // Draw thicker lines every 5 meters
+    const majorGridSizeInPixels = (gridSizeInMeters * 10) / this.ratio;
+    ctx.strokeStyle = 'rgba(150, 150, 150, 0.8)';
+    ctx.lineWidth = 1;
+    
+    for (let x = 0; x <= canvas.width; x += majorGridSizeInPixels) {
+      ctx.beginPath();
+      ctx.moveTo(x, 0);
+      ctx.lineTo(x, canvas.height);
+      ctx.stroke();
+    }
+    
+    for (let y = 0; y <= canvas.height; y += majorGridSizeInPixels) {
+      ctx.beginPath();
+      ctx.moveTo(0, y);
+      ctx.lineTo(canvas.width, y);
+      ctx.stroke();
+    }
+  }
   private redrawCanvas(): void {
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = canvas.getContext('2d');
     if (ctx) {
       this.cdRef.detectChanges;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
+      this.drawGrid(ctx);
       this.assets.forEach((asset) =>
         this.plotAsset(asset.x, asset.y, asset.type)
       );

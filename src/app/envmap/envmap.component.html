@@ -640,24 +640,36 @@
         </button>
       </div> -->
       <div class="calibration-layer" *ngIf="!isEdgeDrawingInProgress && !isPlottingEnabled && !isZonePlottingEnabled && !isDeleteModeEnabled && !isPlottingAsset">
+        <div style="margin-left: 10px;justify-content: center; display: flex ; gap: 5px;">
         <div class="dropdown">
-          <button class="c-button">{{getTranslation('Add Node')}}</button>
+          <!-- <button class="c-button">{{getTranslation('Add Node')}}</button> -->
+        <button pButton pRipple class="c-button">
+          <i class="pi pi-map-marker" pButtonIcon style="margin-right: 5px;"></i>
+          <span pButtonLabel>{{getTranslation('Add Node')}}</span>
+        </button>
           <div class="dropdown-content">
             <button (click)="setPlottingMode('single')">{{getTranslation('Single Node')}}</button>
             <button (click)="setPlottingMode('multi')">{{getTranslation('Multi Node')}}</button>
+            <button class="mul-del c-button" style="font-size: 13px;" (click)="MuldelMode()">{{getTranslation('Delete Multiple Nodes')}}</button>
           </div>
         </div>
-        <button class="mul-del c-button" (click)="MuldelMode()">{{getTranslation('Delete Multiple Nodes')}}</button>
         <div class="dropdown">
-          <button class="">{{getTranslation('Connectivity')}}</button>
+        <button pButton pRipple>
+          <i class="pi pi-arrows-alt" pButtonIcon style="margin-right: 5px;"></i>
+          <span pButtonLabel>{{getTranslation('Connectivity')}}</span>
+        </button>
+          <!-- <button class="">{{getTranslation('Connectivity')}}</button> -->
           <div class="dropdown-content">
             <button (click)="setDirection('uni')">{{getTranslation('Uni-Directional')}}</button>
             <button (click)="setDirection('bi')">{{getTranslation('Bi-Directional')}}</button>
           </div>
         </div>
-        <button (click)="startZonePlotting()">{{getTranslation('Zones')}}</button>
-
-        <div class="dropdown">
+        <button pButton pRipple (click)="startZonePlotting()">
+          <i class="pi pi-qrcode" pButtonIcon style="margin-right: 5px;"></i>
+          <span pButtonLabel>{{getTranslation('Zones')}}</span>
+        </button>
+        <!-- <button (click)="startZonePlotting()">{{getTranslation('Zones')}}</button> -->
+        <!-- <div class="dropdown">
           <button class="">{{getTranslation('Add Assets')}}</button>
           <div class="dropdown-content">
             <button (click)="selectAssetType('docking')">
@@ -667,12 +679,24 @@
               {{getTranslation('Charging Station')}}
             </button>
           </div>
+        </div> -->
+        <!-- <button (click)="openRobotPopup()">{{getTranslation('Add Robots')}}</button> -->
+        <button pButton pRipple (click)="openRobotPopup()">
+          <img src="../../assets/Asseticon/roboicon.svg" alt="Robot Icon" style="width: 20px; height: 20px; margin-right: 5px;" />
+          <span pButtonLabel>{{getTranslation('Add Robots')}}</span>
+        </button>
         </div>
 
-        <button (click)="openRobotPopup()">{{getTranslation('Add Robots')}}</button>
+        <div style="margin-right: 10px;">
         <!-- <button (click)="removeRobots()">Remove Robots</button> -->
-        <button (click)="saveOpt()">{{getTranslation('Save')}}</button>
+        <!-- <button (click)="saveOpt()">{{getTranslation('Save')}}</button> -->
+        <button pButton pRipple severity="success" (click)="saveOpt()">
+          <i class="pi pi-save" pButtonIcon style="margin-right: 5px;"></i>
+          <span pButtonLabel>{{getTranslation('Save')}}</span>
+        </button>
+
         <!-- <button (click)="toggleOptionsMenu()">Back</button> -->
+         </div>
       </div>
     </div>
     <!-- <button class="close-button" (click)="close()">
