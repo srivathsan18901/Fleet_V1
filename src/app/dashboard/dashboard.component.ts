@@ -282,7 +282,7 @@ export class DashboardComponent implements AfterViewInit {
     this.buttons = [];
   }
   onClick(btn: any) {
-    console.log(btn.information);
+    // console.log(btn.information);
     if (btn.action) {
       btn.action();
     }

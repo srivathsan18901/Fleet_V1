@@ -416,7 +416,7 @@ export class EnvmapComponent implements AfterViewInit {
         node.nodePosition.x = (xRotated + (this.origin.x || 0)) / (this.ratio || 1);
         node.nodePosition.y = (yRotated + (this.origin.y || 0)) / (this.ratio || 1);
 
-        console.log("Open", node.nodePosition.x, node.nodePosition.y);
+        // console.log("Open", node.nodePosition.x, node.nodePosition.y);
         return node;
       });
 
@@ -1730,7 +1730,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.nodes = this.nodes.map((node) => {
       const x = node.nodePosition.x;
       const y = node.nodePosition.y;
-      console.log("save1", x, y);
+      // console.log("save1", x, y);
 
       const xScaled = (x * (this.ratio || 1)) - (this.origin.x || 0);
       const yScaled = (y * (this.ratio || 1)) - (this.origin.y || 0);
@@ -1898,7 +1898,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.nodes = this.nodes.map((node) => {
       const x = node.nodePosition.x;
       const y = node.nodePosition.y;
-      console.log("save1", x, y);
+      // console.log("save1", x, y);
 
       const xScaled = (x * (this.ratio || 1)) - (this.origin.x || 0);
       const yScaled = (y * (this.ratio || 1)) - (this.origin.y || 0);
