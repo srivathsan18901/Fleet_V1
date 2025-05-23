@@ -650,7 +650,7 @@
           <div class="dropdown-content">
             <button (click)="setPlottingMode('single')">{{getTranslation('Single Node')}}</button>
             <button (click)="setPlottingMode('multi')">{{getTranslation('Multi Node')}}</button>
-            <button class="mul-del c-button" style="font-size: 13px;" (click)="MuldelMode()">{{getTranslation('Delete Multiple Nodes')}}</button>
+            <button class="mul-del c-button" (click)="MuldelMode()">{{getTranslation('Delete Multiple Nodes')}}</button>
           </div>
         </div>
         <div class="dropdown">
@@ -687,9 +687,34 @@
         </button>
         </div>
 
-        <div style="margin-right: 10px;">
-        <!-- <button (click)="removeRobots()">Remove Robots</button> -->
-        <!-- <button (click)="saveOpt()">{{getTranslation('Save')}}</button> -->
+        <div style="margin-right: 10px; display: flex ; height: 40px; gap: 5px;">
+
+        <div class="dropdown">
+            <div class="gridpop">
+            <p style="font-size: 15px; color: white; font-family: Arial,  sans-serif;">{{getTranslation('Grid size in Meters')}}</p>
+            <div>
+            <input
+              type="number"
+              [(ngModel)]="gridSizeInMeters"
+              min="0"
+              style="width: 60px; height: 30px;font-size: 15px; font-weight: bold;color: white; background: #fdfcfc4d; border: 0px; border-bottom: 2px solid white; border-radius: 5px; text-align: center;"
+            />
+            <button 
+                style="border-radius: 50%;width: 35px;background-color: transparent;color: white;" 
+                (click)="applyGridSize()"
+                onmouseover="this.style.color='green'" 
+                onmouseout="this.style.color='white'">✔</button>
+
+            <button 
+                style="border-radius: 50%;width: 35px;background-color: transparent;color: white;" 
+                (click)="resetGridSize()"
+                onmouseover="this.style.color='red'" 
+                onmouseout="this.style.color='white'">✘</button>
+            </div>
+            </div>
+        </div>
+
+
         <button pButton pRipple severity="success" (click)="saveOpt()">
           <i class="pi pi-save" pButtonIcon style="margin-right: 5px;"></i>
           <span pButtonLabel>{{getTranslation('Save')}}</span>

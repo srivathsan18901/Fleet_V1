@@ -4621,12 +4621,29 @@ export class EnvmapComponent implements AfterViewInit {
       this.redrawCanvas();
     }
   }
+  gridSizeInMeters: number = 1; // default value
+
+  applyGridSize(): void {
+    if (this.gridSizeInMeters <= 0) {
+      this.gridSizeInMeters = 1; // prevent invalid value
+    }
+    this.redrawCanvas();
+  }
+
+  resetGridSize(): void {
+    this.gridSizeInMeters = 1;
+    this.redrawCanvas();
+  }
+  gridSetup:boolean=false;
+  openPop():void{
+    this.gridSetup = !this.gridSetup;
+  }
   private drawGrid(ctx: CanvasRenderingContext2D): void {
     if (!this.ratio) return; // Skip if ratio isn't set
     
     const canvas = this.overlayCanvas.nativeElement;
-    const gridSizeInMeters = 0.5; // 1 meter grid
-    const gridSizeInPixels = gridSizeInMeters / this.ratio;
+    // const gridSizeInMeters = 1; // 1 meter grid
+    const gridSizeInPixels = this.gridSizeInMeters / this.ratio;
     
     // Grid styling
     ctx.strokeStyle = 'rgba(200, 200, 200, 0.7)'; // Light gray with transparency
@@ -4649,7 +4666,7 @@ export class EnvmapComponent implements AfterViewInit {
     }
     
     // Draw thicker lines every 5 meters
-    const majorGridSizeInPixels = (gridSizeInMeters * 10) / this.ratio;
+    const majorGridSizeInPixels = (this.gridSizeInMeters * 5) / this.ratio;
     ctx.strokeStyle = 'rgba(150, 150, 150, 0.8)';
     ctx.lineWidth = 1;
     

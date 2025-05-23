@@ -969,7 +969,17 @@ h2{
   text-align: center;
   flex-direction: column; /* Stack buttons vertically */
 }
-
+.gridpop{
+    background: #00000045;
+    padding: 0px 10px;
+    border-radius: 5px;
+    display: flex;
+    gap: 10px;
+}
+/* .dropdown:hover .grid-dropdown-content {
+  display: flex;
+} */
+ 
 .dropdown:hover .dropdown-content {
   display: flex;
 }
@@ -986,7 +996,7 @@ input[type='number'] {
   -webkit-appearance: none;   /* Chrome, Safari */
 }
 
-.dropdown-content button {
+.dropdown-content button , .grid-dropdown-content button{
   background-color:transparent;
   color: rgb(255, 255, 255);
   padding: 5px;
@@ -996,7 +1006,7 @@ input[type='number'] {
   box-sizing: border-box;
   cursor: pointer;
 }
-.dropdown-content button:hover {
+.dropdown-content button:hover , .grid-dropdown-content button:hover{
   background-color: #b93636;
 }
 /* .close-btn:hover {
