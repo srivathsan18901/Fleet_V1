@@ -4624,7 +4624,7 @@ export class EnvmapComponent implements AfterViewInit {
   gridSizeInMeters: number = 1; // default value
 
   applyGridSize(): void {
-    if (this.gridSizeInMeters <= 0) {
+    if (this.gridSizeInMeters < 0) {
       this.gridSizeInMeters = 1; // prevent invalid value
     }
     this.redrawCanvas();
@@ -4639,8 +4639,7 @@ export class EnvmapComponent implements AfterViewInit {
     this.gridSetup = !this.gridSetup;
   }
   private drawGrid(ctx: CanvasRenderingContext2D): void {
-    if (!this.ratio) return; // Skip if ratio isn't set
-    
+    if (!this.ratio || this.gridSizeInMeters <= 0) return;     
     const canvas = this.overlayCanvas.nativeElement;
     // const gridSizeInMeters = 1; // 1 meter grid
     const gridSizeInPixels = this.gridSizeInMeters / this.ratio;
