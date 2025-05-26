@@ -1760,6 +1760,7 @@ export class DashboardComponent implements AfterViewInit {
       return;
     }
     const robottooltip = document.getElementById('roboTooltip')!;
+    const nodeTooltip = document.getElementById('nodeTooltip')!;
     canvas.addEventListener('mousemove', (event) => {
       const rect = canvas.getBoundingClientRect();
       const mouseX = event.clientX - rect.left;
@@ -1780,7 +1781,37 @@ export class DashboardComponent implements AfterViewInit {
       let isOverChargeNode = false;
       let chargeNodeId = null;
       let isOccupied = false;
+      let isOverNode = false; // Add this flag
+      let hoveredNodeId = null; // Add this variable
+     if(this.nodeGraphService.getShowModelCanvas()){
+      for (let node of this.nodes) {
+        const nodeX = node.nodePosition.x;
+        const nodeY =  node.nodePosition.y;
+        const nodeSize = 15; // Adjust based on your node size
 
+        if (
+          imgX >= nodeX - nodeSize &&
+          imgX <= nodeX + nodeSize &&
+          imgY >= nodeY - nodeSize &&
+          imgY <= nodeY + nodeSize
+        ) {
+          isOverNode = true;
+          hoveredNodeId = node.nodeId;
+          nodeTooltip.style.left = `${event.clientX - 50}px`;
+          nodeTooltip.style.top = `${event.clientY - 30}px`;
+          nodeTooltip.innerHTML = `
+            <div class="node-tooltip">
+              <label class="idlabel">${this.getTranslation('ID')}: ${hoveredNodeId}</label>
+            </div>
+          `;
+          nodeTooltip.style.display = 'block';
+          break;
+        }
+      }
+}
+      if (!isOverNode) {
+        nodeTooltip.style.display = 'none';
+      }
       // Check if mouse is over any charge node
       for (let node of this.chargeNodes) {
         const angleRad = (this.origin.w * Math.PI) / 180;
@@ -2014,6 +2045,8 @@ export class DashboardComponent implements AfterViewInit {
     canvas.addEventListener('mouseleave', () => {
       tooltip.style.display = 'none';
       chargeTooltip.style.display = 'none';
+      robottooltip.style.display = 'none';
+      nodeTooltip.style.display = 'none';
     });
   }
 
@@ -2042,84 +2075,81 @@ export class DashboardComponent implements AfterViewInit {
     return await response.json();
   }
 
-async activateRobot(robot: any) {
-  const fleetUp = this.projectService.getIsFleetUp();
+  async activateRobot(robot: any) {
+    const fleetUp = this.projectService.getIsFleetUp();
 
-  // If fleet is down, disable and uncheck the checkbox immediately
-  if (!fleetUp) {
-    robot.isActive = false;
-    robot.enabled = false;
+    // If fleet is down, disable and uncheck the checkbox immediately
+    if (!fleetUp) {
+      robot.isActive = false;
+      robot.enabled = false;
 
-    this.messageService.add({
-      severity: 'warn',
-      summary: `${robot.roboName || robot.roboDet?.roboName}`,
-      detail: this.getTranslation('Fleet is not Up. Cannot activate robot.'),
-      life: 4000,
-    });
+      this.messageService.add({
+        severity: 'warn',
+        summary: `${robot.roboName || robot.roboDet?.roboName}`,
+        detail: this.getTranslation('Fleet is not Up. Cannot activate robot.'),
+        life: 4000,
+      });
 
-    return;
+      return;
+    }
+
+
+    // Save current toggle state
+    const desiredState = robot.isActive;
+
+    // Attempt to update on server
+    const data = await this.enable_robot(robot, desiredState);
+
+    const robotName = robot.roboName || robot.roboDet?.roboName || 'Robot';
+
+    // If backend confirms it was enabled/disabled successfully
+    if (this.isFleet) {
+      this.robos = this.robos.map((robo) => {
+        if (robo.roboDet.id === robot.roboDet.id) {
+          robo.isActive = data.isRoboEnabled;
+        }
+        return robo;
+      });
+    } else {
+      this.simMode = this.simMode.map((robo) => {
+        if (robo.amrId === robot.amrId) {
+          robo.isActive = data.isRoboEnabled;
+        }
+        return robo;
+      });
+    }
+
+    // Show success/failure toast
+    if (data.isRoboEnabled === desiredState) {
+      this.enable = desiredState;
+      this.messageService.add({
+        severity: desiredState ? 'info' : 'warn',
+        summary: robotName,
+        detail: this.getTranslation(
+          desiredState
+            ? 'Robot has been Enabled'
+            : 'Robot has been Disabled'
+        ),
+        life: 4000,
+      });
+    } else {
+      // If backend failed, revert the toggle
+      robot.isActive = !desiredState;
+      this.enable = !desiredState;
+      this.messageService.add({
+        severity: 'error',
+        summary: robotName,
+        detail: this.getTranslation(
+          desiredState
+            ? 'The robot is not initialized, so it cannot be Enabled'
+            : 'Disabling the robot failed'
+        ),
+        life: 4000,
+      });
+    }
+
+    console.log(`${robotName} has been ${data.isRoboEnabled ? 'enabled' : 'disabled'}.`);
   }
-
-
-  // Save current toggle state
-  const desiredState = robot.isActive;
-
-  // Attempt to update on server
-  const data = await this.enable_robot(robot, desiredState);
-
-  const robotName = robot.roboName || robot.roboDet?.roboName || 'Robot';
-
-  // If backend confirms it was enabled/disabled successfully
-  if (this.isFleet) {
-    this.robos = this.robos.map((robo) => {
-      if (robo.roboDet.id === robot.roboDet.id) {
-        robo.isActive = data.isRoboEnabled;
-      }
-      return robo;
-    });
-  } else {
-    this.simMode = this.simMode.map((robo) => {
-      if (robo.amrId === robot.amrId) {
-        robo.isActive = data.isRoboEnabled;
-      }
-      return robo;
-    });
-  }
-
-  // Show success/failure toast
-  if (data.isRoboEnabled === desiredState) {
-    this.enable = desiredState;
-    this.messageService.add({
-      severity: desiredState ? 'info' : 'warn',
-      summary: robotName,
-      detail: this.getTranslation(
-        desiredState
-          ? 'Robot has been Enabled'
-          : 'Robot has been Disabled'
-      ),
-      life: 4000,
-    });
-  } else {
-    // If backend failed, revert the toggle
-    robot.isActive = !desiredState;
-    this.enable = !desiredState;
-    this.messageService.add({
-      severity: 'error',
-      summary: robotName,
-      detail: this.getTranslation(
-        desiredState
-          ? 'The robot is not initialized, so it cannot be Enabled'
-          : 'Disabling the robot failed'
-      ),
-      life: 4000,
-    });
-  }
-
-  console.log(`${robotName} has been ${data.isRoboEnabled ? 'enabled' : 'disabled'}.`);
-}
-
-
-
   async getMapDetails() {
     if (this.mapDetailsController) this.mapDetailsController.abort(); // abort prev req..
     this.mapDetailsController = new AbortController();
