@@ -747,23 +747,23 @@ border-radius: 15px; /* Rounded edges matching the container */
   height: 40px;
   border-radius: 50px;
 }
-
 .robot-utilization-label {
   color: #000000;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
 }
 
 .robot-utilization-value {
-  font-size: 35px;
-  font-family: "graphik", Arial,  sans-serif;
-  font-weight: medium;
+  font-family: "graphik", Arial, sans-serif;
+  font-weight: 500;
   color: #000;
   margin-top: 20px;
   width: 100%;
   text-align: center;
+  transition: font-size 0.2s ease-in-out;
 }
+
 
 /* memory */
 .memory-container {

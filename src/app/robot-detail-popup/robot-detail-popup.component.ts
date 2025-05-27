@@ -110,6 +110,27 @@ export class RobotDetailPopupComponent {
     if (this.data.isConnected) this.disConnectRobot(this.data.id);
     this.connectRobot(this.data.id);
   }
+  // Font size logic remains the same
+  getFontSize(value: number): number {
+    if (!value) return 35;
+    const formatted = Math.floor(value).toLocaleString(); // no decimals
+    const length = formatted.length;
+
+    if (length <= 6) return 35;
+    if (length <= 8) return 30;
+    if (length <= 10) return 25;
+    return 20;
+  }
+
+  // Display whole number, sliced if too long
+  getDisplayValueWithoutDecimal(value: number): string {
+    if (!value) return '0';
+    const formatted = Math.floor(value).toLocaleString(); // removes decimals
+    return formatted.length > 10 ? formatted.slice(0, 10) + '...' : formatted;
+  }
+
+
+
 
   localize() {
     this.nodeGraphService.setRoboToLocalize(this.data.id);

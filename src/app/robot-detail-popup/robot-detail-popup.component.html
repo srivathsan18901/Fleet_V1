@@ -344,48 +344,51 @@
 
     <!-- Robot utilization -->
     <!-- Robot utilization -->
-<div class="robot-utilization-container">
-  <div class="robot-utilization-content">
-    <div class="robot-utilization-header">
-      <div class="utilization-icon-container">
-        <div class="utilization-icon">
-          <svg
-            width="25"
-            height="26"
-            viewBox="0 0 25 26"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-          >
-            <rect y="0.5" width="25" height="25" fill="url(#utilization-pattern)" />
-            <defs>
-              <pattern
-                id="utilization-pattern"
-                patternContentUnits="objectBoundingBox"
-                width="1"
-                height="1"
+    <div class="robot-utilization-container">
+      <div class="robot-utilization-content">
+        <div class="robot-utilization-header">
+          <div class="utilization-icon-container">
+            <div class="utilization-icon">
+              <svg
+                width="25"
+                height="26"
+                viewBox="0 0 25 26"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
               >
-                <use xlink:href="#utilization-image" transform="scale(0.02)" />
-              </pattern>
-              <image
-                id="utilization-image"
-                width="50"
-                height="50"
-                xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACLElEQVR4nO2ZvUscQRiHpwtBDMFCrYwfjf+DinYBTZEmcGrKgFqKH2WQw16xlDPp/RuS9EmwE4uQYAo/QfBObRT1CYMjTIbb3N7uOze7YX+wcLw78/7m2Xf2dndGKU8CXgGfgSvg0vyeUHkSsEq0yioP4qESjTSusi7gizXgc2ABWASqVvyTyrqAC2vAi1Z8yYrXQg5wAPgIHMWYOvVAlpvodwR8APqlIUb0VaR5VU0llhP2rwHDUhDPgBPC6RholwCZcxJvAiXgjTnKAoMtW/lKQMU5PyMBoufqo77WOd8FXKeA0H076+T9brXZkgDZthJuR7TRf7H3CSB0n/mkvk0pbkJgDFg37eMcuu1oWt/YEk8YypcCJJ0oKtLiqQW0AS+jXkPIQ0WAXuCHyXkDvPPui3BC4Dmw7zxP7oCpPFZkpc7D8cCrr1RC4EkDmN8+fEUTmnviJzAZAXMLvJb2VZIJDcS+NWAX5r0byxwI0AP8cqaQhnnr01c0YQREbBiyANIAIh8gCEAEB5GCCP1hJQYRDEQaIiSIXvfa+wfEpA9fX1NrUKISWbnZN4CzNJUIAgJ0Ay+cWAdwmgYiBMiCeY/qdeLdPn19gOyY+C7wNJlD874+QNaAaf39nSx7Mt9EKta1UoqiIhHSS/rWXP2mWiT+3laoSCScdZ7WFWejR/ooORdPbKOn/b/YetPSG5LOPnmrVAWGlKT0Gq0p+WELAA6MV58oRKFChVTu9QepzRwrzYBP9AAAAABJRU5ErkJggg=="
-              />
-            </defs>
-          </svg>
+                <rect y="0.5" width="25" height="25" fill="url(#utilization-pattern)" />
+                <defs>
+                  <pattern
+                    id="utilization-pattern"
+                    patternContentUnits="objectBoundingBox"
+                    width="1"
+                    height="1"
+                  >
+                    <use xlink:href="#utilization-image" transform="scale(0.02)" />
+                  </pattern>
+                  <image
+                    id="utilization-image"
+                    width="50"
+                    height="50"
+                    xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAACXBIWXMAAAsTAAALEwEAmpwYAAACLElEQVR4nO2ZvUscQRiHpwtBDMFCrYwfjf+DinYBTZEmcGrKgFqKH2WQw16xlDPp/RuS9EmwE4uQYAo/QfBObRT1CYMjTIbb3N7uOze7YX+wcLw78/7m2Xf2dndGKU8CXgGfgSvg0vyeUHkSsEq0yioP4qESjTSusi7gizXgc2ABWASqVvyTyrqAC2vAi1Z8yYrXQg5wAPgIHMWYOvVAlpvodwR8APqlIUb0VaR5VU0llhP2rwHDUhDPgBPC6RholwCZcxJvAiXgjTnKAoMtW/lKQMU5PyMBoufqo77WOd8FXKeA0H076+T9brXZkgDZthJuR7TRf7H3CSB0n/mkvk0pbkJgDFg37eMcuu1oWt/YEk8YypcCJJ0oKtLiqQW0AS+jXkPIQ0WAXuCHyXkDvPPui3BC4Dmw7zxP7oCpPFZkpc7D8cCrr1RC4EkDmN8+fEUTmnviJzAZAXMLvJb2VZIJDcS+NWAX5r0byxwI0AP8cqaQhnnr01c0YQREbBiyANIAIh8gCEAEB5GCCP1hJQYRDEQaIiSIXvfa+wfEpA9fX1NrUKISWbnZN4CzNJUIAgJ0Ay+cWAdwmgYiBMiCeY/qdeLdPn19gOyY+C7wNJlD874+QNaAaf39nSx7Mt9EKta1UoqiIhHSS/rWXP2mWiT+3laoSCScdZ7WFWejR/ooORdPbKOn/b/YetPSG5LOPnmrVAWGlKT0Gq0p+WELAA6MV58oRKFChVTu9QepzRwrzYBP9AAAAABJRU5ErkJggg=="
+                  />
+                </defs>
+              </svg>
+            </div>
+          </div>
+          <span class="robot-utilization-label">{{getTranslation("total_distance_meters")}}</span>
         </div>
+        <span
+          class="robot-utilization-value"
+          [ngStyle]="{ 'font-size.px': getFontSize(data.distance) }"
+          [title]="data.distance ? (data.distance | number:'1.2-2') : '0'"
+        >
+          {{ getDisplayValueWithoutDecimal(data.distance) }}
+        </span>
+
       </div>
-      <span class="robot-utilization-label">{{getTranslation("total_distance_meters")}}</span>
     </div>
-    <span class="robot-utilization-value" [title]="((data.distance| number:'1.2-2')|| 0)">{{ data.distance ? (data.distance | number:'1.1-1')?.slice(0, 4) + '...' : '0' }}</span>
-  </div>
-</div>
-
-
-
-
     <!-- memory  -->
     <div class="memory-container">
       <div class="memory-content">
