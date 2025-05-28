@@ -2167,7 +2167,9 @@ export class DashboardComponent implements AfterViewInit {
     this.heatmapService.setHeatmap(mapData.heatMap);
 
     this.ratio = data.map.mpp;
-    this.rackSize = 0.9 / this.ratio; // change to 0.9
+    const robotBaseHeight = 30; // This is the same base height used in plotRobo
+    const robotHeight = robotBaseHeight ;
+    this.rackSize = robotHeight * 1.2; 
     this.origin = {
       x: mapData.origin.x,
       y: mapData.origin.y,
