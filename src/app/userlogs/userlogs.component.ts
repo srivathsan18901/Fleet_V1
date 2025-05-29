@@ -96,7 +96,105 @@ export class Userlogscomponent {
   getTranslation(key: string) {
     return this.translationService.getErrorTranslation(key);
   }
+  isFilterPopupVisible = false;
+  filterOptions = {
+    startDateTime: '',
+    endDateTime: '',
+    status: '',
+    errorCode: '',
+    robotId: '',
+  };
+  getUniqueErrorCodes(): string[] {
+    const codes = new Set<string>();
+    this.errData.forEach(item => {
+      if (item.Error_Code) {
+        codes.add(item.Error_Code);
+      }
+    });
+    return Array.from(codes).sort();
+  }
 
+  openFilterPopup() {
+    this.isFilterPopupVisible = !this.isFilterPopupVisible;
+  }
+  closeFilterPopup() {
+    this.isFilterPopupVisible = false;
+  }
+  getMinDate(): string {
+    const fiveYearsAgo = new Date();
+    fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
+    return this.formatDateandtimeForInput(fiveYearsAgo);
+  }
+
+  getMaxDate(): string {
+    const today = new Date();
+    return this.formatDateandtimeForInput(today);
+  }
+applyFilters() {
+  this.filteredErrLogsData = this.errData.filter(item => {
+    // Date filter
+    if (this.filterOptions.startDateTime || this.filterOptions.endDateTime) {
+      const itemDate = new Date(item.Date_and_Time);
+      const startDate = this.filterOptions.startDateTime ? new Date(this.filterOptions.startDateTime) : null;
+      const endDate = this.filterOptions.endDateTime ? new Date(this.filterOptions.endDateTime) : null;
+      
+      if (startDate && itemDate < startDate) return false;
+      if (endDate && itemDate > endDate) return false;
+    }
+    
+    // Criticality filter
+    if (this.filterOptions.status && item.criticality !== this.filterOptions.status) {
+      return false;
+    }
+    
+    // Error Code filter
+    if (this.filterOptions.errorCode && item.Error_Code !== this.filterOptions.errorCode) {
+      return false;
+    }
+    
+    // Robot ID filter (only for robot tab)
+    if (this.currentTable === 'robot' && this.filterOptions.robotId && item.id !== this.filterOptions.robotId) {
+      return false;
+    }
+    
+    return true;
+  });
+  
+  // Reset paginator to first page
+  if (this.paginator) {
+    this.paginator.firstPage();
+  }
+  
+  this.setPaginatedData();
+  this.closeFilterPopup();
+}
+
+// Modify your clearFilters method
+clearFilters() {
+  this.filterOptions = {
+    startDateTime: '',
+    endDateTime: '',
+    status: '',
+    errorCode: '',
+    robotId: '',
+  };
+  
+  this.searchQuery = '';
+  this.searchInput = '';
+  
+  this.filteredErrLogsData = [...this.errData];
+  
+  if (this.paginator) {
+    this.paginator.firstPage();
+  }
+  
+  this.setPaginatedData();
+  this.closeFilterPopup();
+}
+
+  formatDateandtimeForInput(date: Date): string {
+    return date.toISOString().slice(0, 16);
+  }
   async ngAfterViewInit() {
     this.setPaginatedData();
   }
@@ -142,66 +240,60 @@ export class Userlogscomponent {
     return `${day} ${month} ${year}, ${hours}:${minutes} ${ampm}`;
   }
   
-  async getTaskLogs() {
-    if (!this.mapData) return;
-    let establishedTime = new Date(this.mapData.createdAt);
-    let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
-  
-    if (this.taskErrorController) this.taskErrorController.abort();
-    this.taskErrorController = new AbortController();
-  
-    try {
-      let response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          credentials: 'include',
-          body: JSON.stringify({
-            type: this.currentTable,
-            timeStamp1: timeStamp1,
-            timeStamp2: timeStamp2,
-          }),
-          signal: this.taskErrorController.signal,
-        }
-      );
-      let data = await response.json();
-  
-      if (!data.map || data.error) return;
-      let { errLogs } = data;
-      
-      this.errData = errLogs.map((error: any) => {
-        const errorDate = new Date(error.timestamp * 1000);
-        const formattedDate = this.formatDate(errorDate);
-        return {
-          id: error.id,
-          Date_and_Time: formattedDate,
-          Error_Code: error.code,
-          criticality: error.criticality,
-          description: error.description,
-          duration_in_Minutes: error.duration,
-        };
-      });
-      if (this.searchInput) {
-        this.filteredErrLogsData = this.errData.filter((item) =>
-          Object.values(item).some((val) =>
-            String(val).toLowerCase().includes(this.searchInput.toLowerCase())
-          )
-        );
-      } else {
-        this.filteredErrLogsData = this.errData;
+async getTaskLogs() {
+  if (!this.mapData) return;
+  let establishedTime = new Date(this.mapData.createdAt);
+  let { timeStamp1, timeStamp2 } = this.getTimeStampsOfDay(establishedTime);
+
+  if (this.taskErrorController) this.taskErrorController.abort();
+  this.taskErrorController = new AbortController();
+
+  try {
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/err-logs/${this.mapData.id}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          type: this.currentTable,
+          timeStamp1: timeStamp1,
+          timeStamp2: timeStamp2,
+        }),
+        signal: this.taskErrorController.signal,
       }
-      
-      // Force change detection and reset paginator after data is loaded
-      this.cdRef.detectChanges();
-      if (this.paginator) {
-        this.paginator.firstPage();
-      }
-      this.setPaginatedData();
-    } catch (error) {
-      console.error('Error fetching task logs:', error);
+    );
+    let data = await response.json();
+
+    if (!data.map || data.error) return;
+    let { errLogs } = data;
+    
+    this.errData = errLogs.map((error: any) => {
+      const errorDate = new Date(error.timestamp * 1000);
+      const formattedDate = this.formatDate(errorDate);
+      return {
+        id: error.id,
+        Date_and_Time: formattedDate,
+        Error_Code: error.code,
+        criticality: error.criticality,
+        description: error.description,
+        duration_in_Minutes: error.duration,
+      };
+    });
+    
+    // Initialize filtered data
+    this.filteredErrLogsData = [...this.errData];
+    
+    // Force change detection and reset paginator after data is loaded
+    this.cdRef.detectChanges();
+    if (this.paginator) {
+      this.paginator.firstPage();
     }
+    this.setPaginatedData();
+  } catch (error) {
+    console.error('Error fetching task logs:', error);
   }
+}
 
   async fetchAllRobos(): Promise<any[]> {
     const response = await fetch(

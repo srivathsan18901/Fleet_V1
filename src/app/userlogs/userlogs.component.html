@@ -75,6 +75,69 @@
             />
           </div>
         </div> -->
+        
+      </div>
+      
+      <div style="display: flex ; position: absolute; gap: 10px; top: 150px; right: 45px;">
+        <div style="position: relative;">
+          <div style="display: flex; position: absolute; gap: 10px; top: -15px; right: -25px;; border-radius: 10px; padding: 10px; background-color: #f7f7f7; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+            <button (click)="openFilterPopup()" class="filter-btn">
+              <img src="../../assets/filter.svg" class="filter-img">
+              {{ getTranslation('Filter') }}
+            </button>
+            <button (click)="clearFilters()" class="clr-fil-btn">{{ getTranslation('Clear') }}</button>
+          </div>
+
+          <div *ngIf="isFilterPopupVisible" class="filter-popup">
+            <div class="filter-content">
+              <div style="display: flex; align-items: center; justify-content: space-between;">
+                <h3 style="margin: 0;font-weight: bold;color: #FF5C5C;">{{ getTranslation('filter_options') }}</h3>
+                <button class="close-btn" (click)="closeFilterPopup()" style="color: red;font-weight:bold;padding: 5px 8px; border-radius: 50%;">✖</button>
+              </div>
+              
+              <!-- Date Range Filter -->
+              <div style="display: flex; gap: 15px;">
+                <div>
+                  <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
+                  <input type="datetime-local" [(ngModel)]="filterOptions.startDateTime" [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+                </div>
+                <div>
+                  <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
+                  <input type="datetime-local" [(ngModel)]="filterOptions.endDateTime" [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+                </div>
+              </div>
+              
+              <div style="display: flex; gap: 15px;">
+                <!-- Criticality Filter -->
+                <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
+                  <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('Criticality') }}:</label>
+                  <select [(ngModel)]="filterOptions.status" style="border: 1px solid #ff5c5c; width: 163px; border-radius: 5px; color: #FF5C5C;padding: 5px;">
+                    <option value="">{{ getTranslation('All') }}</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                  </select>
+                </div>
+                
+                <!-- Error Code Filter -->
+                <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
+                  <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('Error code') }}:</label>
+                  <select [(ngModel)]="filterOptions.errorCode" style="border: 1px solid #ff5c5c; width: 163px; border-radius: 5px; color: #FF5C5C;padding: 5px;">
+                    <option value="">{{ getTranslation('All') }}</option>
+                    <option *ngFor="let code of getUniqueErrorCodes()" [value]="code">
+                      {{ code }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <!-- Buttons -->
+              <div class="filter-actions">
+                <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters()">{{ getTranslation('apply') }}</button>
+                <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="clearFilters()">{{ getTranslation('Clear') }}</button>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <!--  -->
 
