@@ -550,7 +550,7 @@ tr:nth-child(even) {
 
 .filter-popup {
   position: absolute;
-  top: 170px;
+  top: 205px;
   left: -165px;
   transform: translate(-50%, -50%);
   background: #FF7373;

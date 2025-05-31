@@ -130,6 +130,15 @@
                   </select>
                 </div>
               </div>
+              <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
+                <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('ID') }}:</label>
+                <select [(ngModel)]="filterOptions.id" style="border: 1px solid #ff5c5c; width: 163px; border-radius: 5px; color: #FF5C5C;padding: 5px;">
+                  <option value="">{{ getTranslation('All') }}</option>
+                  <option *ngFor="let id of getUniqueIds()" [value]="id">
+                    {{ id }}
+                  </option>
+                </select>
+              </div>
               <!-- Buttons -->
               <div class="filter-actions">
                 <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters()">{{ getTranslation('apply') }}</button>

@@ -102,7 +102,7 @@ export class Userlogscomponent {
     endDateTime: '',
     status: '',
     errorCode: '',
-    robotId: '',
+    id: '',
   };
   getUniqueErrorCodes(): string[] {
     const codes = new Set<string>();
@@ -153,7 +153,7 @@ applyFilters() {
     }
     
     // Robot ID filter (only for robot tab)
-    if (this.currentTable === 'robot' && this.filterOptions.robotId && item.id !== this.filterOptions.robotId) {
+    if (this.filterOptions.id && item.id !== this.filterOptions.id) {
       return false;
     }
     
@@ -169,6 +169,19 @@ applyFilters() {
   this.closeFilterPopup();
 }
 
+getUniqueIds(): string[] {
+  const ids = new Set<string>();
+  this.errData.forEach(item => {
+    if (item.id) {
+      ids.add(item.id);
+    }
+  });
+  return Array.from(ids).sort((a, b) => {
+    // Sort numerically if possible, otherwise alphabetically
+    return isNaN(Number(a)) ? a.localeCompare(b) : Number(a) - Number(b);
+  });
+}
+
 // Modify your clearFilters method
 clearFilters() {
   this.filterOptions = {
@@ -176,7 +189,7 @@ clearFilters() {
     endDateTime: '',
     status: '',
     errorCode: '',
-    robotId: '',
+    id: '',
   };
   
   this.searchQuery = '';
