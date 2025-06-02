@@ -243,7 +243,7 @@ export class SidenavbarComponent implements OnInit {
       // this.isFleetService.abortFleetStatusSignal(); // yet to uncomment..
       await this.getFleetStatus();
     } catch (error) {
-      console.log(error);
+      // console.log(error);
     }
     setTimeout(() => this.startGetFleetStatus(), 1000 * 3);
   }

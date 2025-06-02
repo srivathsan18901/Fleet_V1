@@ -443,14 +443,7 @@ export class EnvmapComponent implements AfterViewInit {
         return zone;
       });
       
-      this.robos = this.currEditMapDet.robos.map((robo: Robo) => {
-          const roboX = robo.pos.x * Math.cos(-angleRad) - robo.pos.y * Math.sin(-angleRad);
-          const roboY = robo.pos.x * Math.sin(-angleRad) + robo.pos.y * Math.cos(-angleRad);
-          
-          robo.pos.x = ((roboX + this.origin.x || 0) / this.ratio! || 1);
-          robo.pos.y = ((roboY + this.origin.y || 0) / this.ratio! || 1);
-        return robo;
-      });
+    this.robos = this.currEditMapDet.robos;
 
       this.nodeCounter =
         parseInt(this.nodes[this.nodes.length - 1]?.nodeId) + 1
@@ -531,6 +524,32 @@ export class EnvmapComponent implements AfterViewInit {
 
       this.setupCanvas();
       this.isCanvasInitialized = true; // Avoid re-initializing the canvas
+      if (this.currEditMap) {
+      const angleRad = (this.origin.w * Math.PI) / 180;
+      
+      this.robos = this.robos.map((robo: Robo) => {
+        console.log("initmeter", robo.pos.x, robo.pos.y);
+        // Inverse rotation
+        const cos = Math.cos(-angleRad);
+        const sin = Math.sin(-angleRad);
+        const rotatedX = robo.pos.x * cos - robo.pos.y * sin;
+        const rotatedY = robo.pos.x * sin - robo.pos.y * cos;
+
+        // Undo translation and scaling
+        const unscaledX = (rotatedX + this.origin.x) / this.ratio!;
+        const unscaledY = (rotatedY + this.origin.y) / this.ratio!;
+        console.log("in-btw",unscaledX,unscaledY,rotatedX,rotatedY,this.origin.x,this.origin.y);
+        
+        // Invert Y-axis (back from transformedY)
+        robo.pos.x = unscaledX;
+        robo.pos.y = canvas.height + unscaledY + canvas.height - this.origin.x - rotatedX;
+
+        console.log("initpixels", robo.pos.x, robo.pos.y);
+        return robo;
+      });
+
+
+    }
     } else {
       console.error('Canvas element(s) still not found');
     }
@@ -1764,15 +1783,39 @@ export class EnvmapComponent implements AfterViewInit {
         return pos;
       });
       return zone;
-    });
-    this.robos = this.robos.map((robo) => {
-      robo.pos.x =
-        (robo.pos.x * (this.ratio || 1) - (this.origin.x || 0))* Math.cos(angleRad) - (robo.pos.y * (this.ratio || 1) - (this.origin.y || 0))* Math.sin(angleRad);
-      robo.pos.y =
-        (robo.pos.x * (this.ratio || 1) - (this.origin.x || 0))*Math.sin(angleRad) + (robo.pos.y * (this.ratio || 1) - (this.origin.y || 0))* Math.cos(angleRad);
+        });
+          
+      const canvas = this.overlayCanvas.nativeElement;
+      const ctx = canvas.getContext('2d');
 
-      return robo;
-    });
+      this.robos = this.robos.map((robo) => {
+        const transformedY = canvas.height - robo.pos.y;
+        const ratio = this.ratio || 1;
+        const originX = this.origin.x || 0;
+        const originY = this.origin.y || 0;
+
+        console.log("Savepixel", robo.pos.x, robo.pos.y, transformedY, ratio, originX, originY);
+
+        // Store original values before modifying
+        const originalX = robo.pos.x;
+        const originalY = transformedY;
+
+        // Translate and rotate
+        const translatedX = originalX * ratio - originX;
+        const translatedY = originalY * ratio - originY;
+
+        const rotatedX = translatedX * Math.cos(angleRad) - translatedY * Math.sin(angleRad);
+        const rotatedY = translatedX * Math.sin(angleRad) + translatedY * Math.cos(angleRad);
+
+        // Update position
+        robo.pos.x = rotatedX;
+        robo.pos.y = rotatedY;
+
+        console.log("Savemeter", robo.pos.x, robo.pos.y);
+
+        return robo;
+      });
+
 
     let editedMap = {
       mapName: null,
@@ -1934,14 +1977,36 @@ export class EnvmapComponent implements AfterViewInit {
       });
       return zone;
     });
-    this.robos = this.robos.map((robo) => {
-      robo.pos.x =
-        (robo.pos.x * (this.ratio || 1) - (this.origin.x || 0))* Math.cos(angleRad) - (robo.pos.y * (this.ratio || 1) - (this.origin.y || 0))* Math.sin(angleRad);
-      robo.pos.y =
-        (robo.pos.x * (this.ratio || 1) - (this.origin.x || 0))*Math.sin(angleRad) + (robo.pos.y * (this.ratio || 1) - (this.origin.y || 0))* Math.cos(angleRad);
 
-      return robo;
-    });
+      const canvas = this.overlayCanvas.nativeElement;
+
+      this.robos = this.robos.map((robo) => {
+        const transformedY = canvas.height - robo.pos.y;
+        const ratio = this.ratio || 1;
+        const originX = this.origin.x || 0;
+        const originY = this.origin.y || 0;
+
+        // console.log("Savepixel", robo.pos.x, robo.pos.y, transformedY, ratio, originX, originY);
+
+        // Store original values before modifying
+        const originalX = robo.pos.x;
+        const originalY = transformedY;
+
+        // Translate and rotate
+        const translatedX = originalX * ratio - originX;
+        const translatedY = originalY * ratio - originY;
+
+        const rotatedX = translatedX * Math.cos(angleRad) - translatedY * Math.sin(angleRad);
+        const rotatedY = translatedX * Math.sin(angleRad) + translatedY * Math.cos(angleRad);
+
+        // Update position
+        robo.pos.x = rotatedX;
+        robo.pos.y = rotatedY;
+
+        // console.log("Savemeter", robo.pos.x, robo.pos.y);
+
+        return robo;
+      });
 
     let orientation = { x: 0, y: 0, z: 0, w: 0 };
 

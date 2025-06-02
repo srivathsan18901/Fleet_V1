@@ -825,12 +825,18 @@ export class DashboardComponent implements AfterViewInit {
 
     let ratio = this.ratio ? this.ratio : 1;
     let quaternion = { x: 0, y: 0, z: 0, w: 1 };
+    const angleRad = (this.origin.w * Math.PI) / 180;
     const transformedY = mapImg.height - this.robotToInitialize.pos.y;
-    this.robotToInitialize.pos.x =
-      this.robotToInitialize.pos.x * ratio - this.origin.x;
-    this.robotToInitialize.pos.y = transformedY * ratio - this.origin.y;
 
-    // quaternion = this.positionToQuaternion(this.robotToInitialize.pos);
+    const xScaled = (this.robotToInitialize.pos.x * (this.ratio || 1)) - (this.origin.x || 0);
+    const yScaled = (transformedY * (this.ratio || 1)) - (this.origin.y || 0);
+
+    const rotatedX = xScaled * Math.cos(angleRad) - yScaled * Math.sin(angleRad);
+    const rotatedY = xScaled * Math.sin(angleRad) + yScaled * Math.cos(angleRad);
+
+    this.robotToInitialize.pos.x = rotatedX;
+    this.robotToInitialize.pos.y = rotatedY;
+
     let initializeRobo = {
       id: this.robotToInitialize.amrId,
       pose: {
@@ -1905,7 +1911,7 @@ export class DashboardComponent implements AfterViewInit {
             imgY >= roboY - imageSize &&
             imgY <= roboY + imageSize
           ) {
-            console.log(this.simMode);
+            // console.log(this.simMode);
             
             isOverRobot = true;
             robotName = robo.roboName;

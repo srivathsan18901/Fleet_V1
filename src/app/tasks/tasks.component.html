@@ -152,7 +152,6 @@
 
               
                 <!-- Display data rows -->
-
                 <ng-container *ngFor="let item of paginatedData; index as i; trackBy: trackByTaskId">
                   <tr [class.paused]="item.paused">
                     <td>{{ item.sNo }}</td>
