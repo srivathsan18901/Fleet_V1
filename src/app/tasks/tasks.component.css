@@ -11,14 +11,14 @@
   height: 100vh;
   overflow: hidden;
 }
-.clear_task{
+/* .clear_task{
     font-size: 15px;
     background: #ff7373;
     border-radius: 5px;
     padding: 0px 10px;
     color: white;
     font-weight: bold;
-}
+} */
 .mainContent {
   display: flex;
   flex-direction: column;
@@ -1181,4 +1181,60 @@ animation-delay: calc(var(--uib-speed) * -0.125);
 
 .cancel-btn:hover {
   background-color: #bbb;
+}
+/* From Uiverse.io by vinodjangid07 */ 
+.clear_task {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background-color: #ff7373;
+  border: none;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.164);
+  cursor: pointer;
+  transition-duration: .5s;
+  overflow: hidden;
+  position: relative;
+}
+
+.svgIcon {
+  width: 12px;
+  transition-duration: .5s;
+}
+
+.svgIcon path {
+  fill: white;
+}
+
+.clear_task:hover {
+  width: 140px;
+  border-radius: 50px;
+  transition-duration: .5s;
+  background-color: rgb(255, 69, 69);
+  align-items: center;
+}
+
+.clear_task:hover .svgIcon {
+  width: 50px;
+  transition-duration: .5s;
+  transform: translateY(60%);
+}
+
+.clear_task::before {
+  position: absolute;
+  top: -20px;
+  content: "Clear Task";
+  color: white;
+  transition-duration: .5s;
+  font-size: 2px;
+}
+
+.clear_task:hover::before {
+  font-size: 13px;
+  opacity: 1;
+  transform: translateY(30px);
+  transition-duration: .5s;
 }
