@@ -29,6 +29,7 @@
         </div>
 
       </div>
+      <button class="clear_task" (click)="showClearTask = true">Clear Task</button>
       <div *ngIf="isButtonDisabled" class="AT-CLS">
         <button class="AT-Btn" (click)="toggleAssignTask()">
           <div class="svg-wrapper-1">
@@ -340,6 +341,40 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showClearTask" class="confirmation-popup-overlay">
+  <div class="confirmation-popup">
+    <div class="Img">
+      <img class="WarningImg" src="../../assets/Warning.svg" />
+      <!-- <img class="SWImg" src="../../assets/shared image.jpeg"> -->
+    </div>
+    <p class="P1">{{ getTranslation('confirmLogout') }}</p>
+    <p class="P2">{{ getTranslation('logoutMessage') }}</p>
+    <div class="button-container">
+      <button class="confirm-btn" (click)="clearTask()">{{ getTranslation('confirm') }}</button>
+      <button class="cancel-btn" (click)="showClearTask = false">
+        {{ getTranslation('cancel') }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="showClearTask" class="confirmation-popup-overlay">
+  <div class="confirmation-popup">
+    <div class="Img">
+      <img class="WarningImg" src="../../assets/Warning.svg" />
+      <!-- <img class="SWImg" src="../../assets/shared image.jpeg"> -->
+    </div>
+    <p class="P1">{{ getTranslation('confirmLogout') }}</p>
+    <p class="P2">{{ getTranslation('logoutMessage') }}</p>
+    <div class="button-container">
+      <button class="confirm-btn" (click)="clearTask()">{{ getTranslation('confirm') }}</button>
+      <button class="cancel-btn" (click)="showClearTask = false">
+        {{ getTranslation('cancel') }}
+      </button>
     </div>
   </div>
 </div>

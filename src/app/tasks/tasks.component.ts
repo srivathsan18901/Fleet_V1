@@ -61,6 +61,7 @@ export class TasksComponent implements OnInit, AfterViewInit {
   dropdownLocked = false;
 
 
+  showClearTask:boolean=false;
   isFilterApplied: boolean = false;
   isOnSearchApplied: boolean = false;
   isTaskDropDowned: boolean = false;
@@ -352,7 +353,20 @@ export class TasksComponent implements OnInit, AfterViewInit {
     const action = item.paused ? 'Paused' : 'Activated';
     console.log(`${action} task: ${item.taskId}`);
   }
-
+  async clearTask(){
+    let response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/clear-task`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          mapId: this.mapData.id,
+        }),
+      }
+    );
+    let data = await response.json();
+  }
   async onCancel(item: any) {
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/cancel-task`,
