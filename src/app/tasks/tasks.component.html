@@ -29,8 +29,9 @@
         </div>
 
       </div>
-      <button class="clear_task" (click)="showClearTask = true">Clear Task</button>
-      <div *ngIf="isButtonDisabled" class="AT-CLS">
+      
+      <div *ngIf="isButtonDisabled" class="AT-CLS" style="display: flex ; gap: 10px;">
+        <button class="clear_task" (click)="showClearTask = true">Clear Task</button>
         <button class="AT-Btn" (click)="toggleAssignTask()">
           <div class="svg-wrapper-1">
             <div class="svg-wrapper">
