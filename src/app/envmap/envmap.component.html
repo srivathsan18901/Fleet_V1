@@ -650,6 +650,7 @@
           <div class="dropdown-content">
             <button (click)="setPlottingMode('single')">{{getTranslation('Single Node')}}</button>
             <button (click)="setPlottingMode('multi')">{{getTranslation('Multi Node')}}</button>
+            <button (click)="showImpNodes()">{{getTranslation('importNodes')}}</button>
             <button class="mul-del c-button" (click)="MuldelMode()">{{getTranslation('Delete Multiple Nodes')}}</button>
           </div>
         </div>
@@ -1116,6 +1117,31 @@
         <button type="button" (click)="confirmRoboDelete()">{{getTranslation("Confirm")}}</button>
         <button type="button" (click)="cancelDelete()">{{getTranslation("Cancel")}}</button>
       </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="openImpNodes" class="popup-overlay1">
+  <div class="popup-content1">    
+    <h3 style="color:#ff7373">{{getTranslation('importNodefile')}}</h3>
+    <!-- Image for file upload -->
+    <label for="fileInput" class="upload-image">
+      <img src="../../assets/icons/arrow-down-circle.svg" alt="Upload" />
+      <input
+        type="file"
+        id="fileInput"
+        hidden
+        accept=".json,.txt,application/json,text/plain"
+        (change)="onNodeFileSelected($event)"
+      />
+    </label>
+    <div *ngIf="nodefileName" class="file-name">{{ nodefileName }}</div>
+    <div *ngIf="invalidFileType" class="error-message">
+      {{getTranslation('Please upload only JSON or TXT files')}}
+    </div>
+    <div>
+      <button type="button" (click)="confirmnodefile()">{{getTranslation("Confirm")}}</button>
+      <button type="button" (click)="cancelnodefile()">{{getTranslation("Cancel")}}</button>
     </div>
   </div>
 </div>

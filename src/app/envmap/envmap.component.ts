@@ -74,6 +74,51 @@ interface Robo {
   roboDet: any;
   pos: { x: number; y: number; orientation: number };
 }
+interface Position {
+  x: number;
+  y: number;
+  z: number;
+}
+
+interface Orientation {
+  x: number;
+  y: number;
+  z: number;
+  w: number;
+}
+
+interface DockParams {
+  xOffset: number;
+  yOffset: number;
+  dockingType: number;
+}
+
+interface Pose {
+  position: Position;
+  orientation: Orientation;
+  dockParams?: DockParams;
+}
+
+interface GraphNode {
+  name: string;
+  locationDescription: string;
+  type: number;
+  preDockPose: Pose;
+  dockPose: Pose;
+  unDockPose: Pose;
+}
+
+interface GraphEdge {
+  from: string;
+  isUniDirectional: boolean;
+  name: string;
+  to: string;
+}
+
+interface GraphData {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
   MEDIUM_SPEED_ZONE = 'Medium Speed Zone',
@@ -131,6 +176,7 @@ export class EnvmapComponent implements AfterViewInit {
   form: FormData | null = null;
   selectedImage: File | null = null;
   anotherFileName: string | null = null;
+  nodefileName: string | null = null;
   fileName: string | null = null;
   public mapName: string = '';
   public siteName: string = '';
@@ -324,9 +370,106 @@ export class EnvmapComponent implements AfterViewInit {
   inputOrientationAngle: number = 0; // The value entered by the user
   // selectedNodeId: string; // Variable to store the selected node
   public selectedNodeId: string | null = null;
-
+  openImpNodes:boolean=false;
   isFullScreen: boolean = false;
+  selectedFile: File | null = null;
+  invalidFileType = false;
+
+  onNodeFileSelected(event: any) {
+    const file = event.target.files[0];
+    if (file) {
+      const validExtensions = ['.json', '.txt'];
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      
+      if (fileExtension && validExtensions.includes('.' + fileExtension)) {
+        this.selectedFile = file;
+        this.nodefileName = file.name;
+        this.invalidFileType = false;
+      } else {
+        this.selectedFile = null;
+        this.invalidFileType = true;
+        // Optional: Clear the file input
+        event.target.value = '';
+      }
+    }
+  }
   // New property
+  showImpNodes(){
+    this.openImpNodes=!this.openImpNodes
+  }
+async confirmnodefile() {
+  if (!this.selectedFile) {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'No File Selected',
+      detail: 'Please select a file before confirming.',
+    });
+    return;
+  }
+
+  try {
+    const fileContent = await this.readFile(this.selectedFile);
+    const graphData: GraphData = JSON.parse(fileContent);
+    
+    if (!graphData.nodes || !Array.isArray(graphData.nodes)) {
+      throw new Error('Invalid file format: Missing nodes array');
+    }
+
+    const angleRad = (this.origin?.w || 0) * Math.PI / 180;
+    const originX = this.origin?.x || 0;
+    const originY = this.origin?.y || 0;
+    const ratio = this.ratio || 1;
+
+    graphData.nodes.forEach((node: GraphNode) => {
+      if (node.preDockPose?.position) {
+        let x = node.preDockPose.position.x;
+        let y = node.preDockPose.position.y;
+
+        // Apply rotation
+        const xRotated = x * Math.cos(-angleRad) - y * Math.sin(-angleRad);
+        const yRotated = x * Math.sin(-angleRad) + y * Math.cos(-angleRad);
+
+        // Apply translation and scaling
+        x = (xRotated + originX) / ratio;
+        y = (yRotated + originY) / ratio;
+
+        // Pass true to indicate file import
+        this.plotSingleNode(x, y, true);
+        this.redrawCanvas();
+      }
+    });
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Nodes Imported',
+      detail: `Successfully imported ${graphData.nodes.length} nodes.`,
+    });
+
+    this.openImpNodes = false;
+  } catch (error) {
+    console.error('Error processing file:', error);
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Import Error',
+      detail: 'Failed to process the file. Please ensure it contains valid node data.',
+    });
+  }
+}
+  private readFile(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        resolve(event.target?.result as string);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsText(file);
+    });
+  }
+  cancelnodefile(){
+    this.openImpNodes=!this.openImpNodes
+  }
   toggleFullScreen() {
     this.isFullScreen = !this.isFullScreen;
   }
@@ -528,7 +671,7 @@ export class EnvmapComponent implements AfterViewInit {
       const angleRad = (this.origin.w * Math.PI) / 180;
       
       this.robos = this.robos.map((robo: Robo) => {
-        console.log("initmeter", robo.pos.x, robo.pos.y);
+        // console.log("initmeter", robo.pos.x, robo.pos.y);
         // Inverse rotation
         const cos = Math.cos(-angleRad);
         const sin = Math.sin(-angleRad);
@@ -538,13 +681,13 @@ export class EnvmapComponent implements AfterViewInit {
         // Undo translation and scaling
         const unscaledX = (rotatedX + this.origin.x) / this.ratio!;
         const unscaledY = (rotatedY + this.origin.y) / this.ratio!;
-        console.log("in-btw",unscaledX,unscaledY,rotatedX,rotatedY,this.origin.x,this.origin.y);
+        // console.log("in-btw",unscaledX,unscaledY,rotatedX,rotatedY,this.origin.x,this.origin.y);
         
         // Invert Y-axis (back from transformedY)
         robo.pos.x = unscaledX;
         robo.pos.y = canvas.height + unscaledY + canvas.height - this.origin.x - rotatedX;
 
-        console.log("initpixels", robo.pos.x, robo.pos.y);
+        // console.log("initpixels", robo.pos.x, robo.pos.y);
         return robo;
       });
 
@@ -1747,6 +1890,7 @@ export class EnvmapComponent implements AfterViewInit {
     const angleRad = (this.origin.w * Math.PI) / 180;
 
     this.nodes = this.nodes.map((node) => {
+      // console.log(node.nodePosition.x,node.nodePosition.y)
       const x = node.nodePosition.x;
       const y = node.nodePosition.y;
       // console.log("save1", x, y);
@@ -2934,20 +3078,24 @@ export class EnvmapComponent implements AfterViewInit {
     this.sessionService.storeMapDetails(mapDetails);
   }
 
-  plotSingleNode(x: number, y: number): void {
+
+  plotSingleNode(x: number, y: number, isFileImport: boolean = false): void {
     const canvas = this.overlayCanvas.nativeElement;
     const ctx = canvas.getContext('2d')!;
-    const transformedY = canvas.height - y; // Flip the Y-axis
-    if (this.isPositionOccupied(x, y, 'node')) {
-      // alert('This position is already occupied by a node or asset. Please choose a different location.');
+    
+    // Only transform Y if not a file import
+    const displayY = isFileImport ? y : canvas.height - y;
+
+    if (this.isPositionOccupied(x, displayY, 'node')) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Please choose different Location',
-        detail: 'This position is already occupies by a node or asset.',
+        detail: 'This position is already occupied by a node or asset.',
       });
       return;
     }
-    const color = 'blue'; // Color for single nodes
+
+    const color = 'blue';
     this.drawNode(
       {
         nodeId: '',
@@ -2955,7 +3103,7 @@ export class EnvmapComponent implements AfterViewInit {
         nodeDescription: '',
         released: true,
         disabled: false,
-        nodePosition: { x: x, y: transformedY, orientation: 0 },
+        nodePosition: { x: x, y: displayY, orientation: 0 },
         quaternion: { x: 0, y: 0, z: 0, w: 1 },
         intermediate_node: false,
         Waiting_node: false,
@@ -2972,8 +3120,8 @@ export class EnvmapComponent implements AfterViewInit {
 
     this.nodeDetails = {
       id: this.nodeCounter,
-      x: x * (this.ratio || 1), // Adjust for ratio if present
-      y: transformedY * (this.ratio || 1),
+      x: x * (this.ratio || 1),
+      y: displayY * (this.ratio || 1),
       description: '',
       actions: [],
       intermediate_node: false,
@@ -2981,6 +3129,7 @@ export class EnvmapComponent implements AfterViewInit {
       dock_node: false,
       charge_node: false,
     };
+
     let quaternion = this.ToQuaternion_(0, 0, this.orientationAngle);
 
     let node = {
@@ -2991,7 +3140,7 @@ export class EnvmapComponent implements AfterViewInit {
       disabled: false,
       nodePosition: {
         x: x,
-        y: transformedY,
+        y: displayY,
         orientation: this.orientationAngle,
       },
       quaternion: quaternion,
@@ -3005,27 +3154,30 @@ export class EnvmapComponent implements AfterViewInit {
       dockNodeId: null,
     };
 
-    //{ id: this.nodeCounter.toString(), x, y: transformedY,type: 'single' }
     this.nodes.push(node);
     this.Nodes.push({ ...this.nodeDetails, type: 'single' });
     this.storeNodestoLocal();
 
-    this.nodeCounter++; // Increment the node counter after assignment
-    this.isPlottingEnabled = false; // Disable plotting after placing a single node
+    this.nodeCounter++;
+    this.isPlottingEnabled = false;
 
-    this.isDrawingLine = true;
-    this.lineStartX = x;
-    this.lineStartY = y;
+    // Only set up line drawing if not a file import
+    if (!isFileImport) {
+      this.isDrawingLine = true;
+      this.lineStartX = x;
+      this.lineStartY = y;
 
-    this.overlayCanvas.nativeElement.addEventListener(
-      'mousemove',
-      this.onMouseMove.bind(this)
-    );
-    this.overlayCanvas.nativeElement.addEventListener(
-      'mouseup',
-      this.onMouseUp.bind(this)
-    );
+      this.overlayCanvas.nativeElement.addEventListener(
+        'mousemove',
+        this.onMouseMove.bind(this)
+      );
+      this.overlayCanvas.nativeElement.addEventListener(
+        'mouseup',
+        this.onMouseUp.bind(this)
+      );
+    }
   }
+
 
   setPlottingMode(mode: 'single' | 'multi'): void {
     this.plottingMode = mode;
