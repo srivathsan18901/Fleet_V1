@@ -39,7 +39,7 @@ export class Userlogscomponent {
   roboErr: any[] = [];
 
   robotList: number[] = [];
-
+  filterApplied: boolean = false;
   isFleet: boolean = false; // Store the emitted value
 
   robots: any[] = [];
@@ -130,9 +130,10 @@ export class Userlogscomponent {
     const today = new Date();
     return this.formatDateandtimeForInput(today);
   }
-applyFilters() {
+applyFilters(closePopup: boolean = true) {
+  this.filterApplied = true;
+
   this.filteredErrLogsData = this.errData.filter(item => {
-    // Date filter
     if (this.filterOptions.startDateTime || this.filterOptions.endDateTime) {
       const itemDate = new Date(item.Date_and_Time);
       const startDate = this.filterOptions.startDateTime ? new Date(this.filterOptions.startDateTime) : null;
@@ -141,32 +142,31 @@ applyFilters() {
       if (startDate && itemDate < startDate) return false;
       if (endDate && itemDate > endDate) return false;
     }
-    
-    // Criticality filter
+
     if (this.filterOptions.status && item.criticality !== this.filterOptions.status) {
       return false;
     }
-    
-    // Error Code filter
+
     if (this.filterOptions.errorCode && item.Error_Code !== this.filterOptions.errorCode) {
       return false;
     }
-    
-    // Robot ID filter (only for robot tab)
+
     if (this.filterOptions.id && item.id !== this.filterOptions.id) {
       return false;
     }
-    
+
     return true;
   });
-  
-  // Reset paginator to first page
+
   if (this.paginator) {
     this.paginator.firstPage();
   }
-  
+
   this.setPaginatedData();
-  this.closeFilterPopup();
+
+  if (closePopup) {
+    this.closeFilterPopup();
+  }
 }
 
 getUniqueIds(): string[] {
@@ -200,8 +200,9 @@ clearFilters() {
   if (this.paginator) {
     this.paginator.firstPage();
   }
-  
+  this.filterApplied = false;
   this.setPaginatedData();
+  this.fetchErrorLogs();
   this.closeFilterPopup();
 }
 
@@ -227,17 +228,27 @@ clearFilters() {
 
   showTable(table: string) {
     this.currentTable = table;
+    this.applyFilters();
     this.fetchErrorLogs();
   }
 
   taskErrorController: AbortController | null = null;
   robotErrorController: AbortController | null = null;
 
-  async fetchErrorLogs() {
-    await this.getTaskLogs();
+async fetchErrorLogs() {
+  await this.getTaskLogs();
+  
+  // Only apply filters if user had previously applied any
+  if (this.filterApplied) {
+    this.applyFilters(false); // Don't close popup
+  } else {
+    this.filteredErrLogsData = [...this.errData];
     this.setPaginatedData();
-    setTimeout(() => this.fetchErrorLogs(), 1000 * 4);
   }
+
+  setTimeout(() => this.fetchErrorLogs(), 1000 * 4);
+}
+
   private formatDate(date: Date): string {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     const day = date.getDate();
@@ -631,5 +642,5 @@ async getTaskLogs() {
     // Implement your date range filtering logic here
   }
 
-  ngOnDestroy() {}
+
 }
