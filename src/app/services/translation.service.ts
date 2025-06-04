@@ -1114,7 +1114,7 @@ export class TranslationService {
       "Status": "Status",
       "All": "All",
       confirmLogout: 'Are you sure?',
-      logoutMessage: 'Are you sure you want to clear all tasks?',
+      logoutMessage: 'Are you sure you want to purge all tasks?',
       confirm: 'Confirm',
       cancel: 'Cancel',
       "Completed": "Completed",
