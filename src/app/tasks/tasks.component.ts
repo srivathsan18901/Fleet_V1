@@ -353,19 +353,26 @@ export class TasksComponent implements OnInit, AfterViewInit {
     const action = item.paused ? 'Paused' : 'Activated';
     console.log(`${action} task: ${item.taskId}`);
   }
-  async clearTask(){
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/clear-task`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          mapId: this.mapData.id,
-        }),
-      }
-    );
-    let data = await response.json();
+  async clearTask() {
+    this.showClearTask = !this.showClearTask;
+    try {
+      let response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/fleet-tasks/clear-all-tasks`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            mapId: this.mapData.id,
+          }),
+        }
+      );
+
+      let data = await response.json();
+      await this.fetchTasks();
+    } catch (err) {
+      console.error("⚠️ Error while clearing task:", err);
+    }
   }
   async onCancel(item: any) {
     let response = await fetch(

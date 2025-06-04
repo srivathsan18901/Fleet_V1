@@ -1226,7 +1226,7 @@ animation-delay: calc(var(--uib-speed) * -0.125);
 .clear_task::before {
   position: absolute;
   top: -20px;
-  content: "Clear Task";
+  content: "Purge Tasks";
   color: white;
   transition-duration: .5s;
   font-size: 2px;
