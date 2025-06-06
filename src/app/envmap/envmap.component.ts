@@ -401,8 +401,8 @@ async confirmnodefile() {
   if (!this.selectedFile) {
     this.messageService.add({
       severity: 'warn',
-      summary: 'No File Selected',
-      detail: 'Please select a file before confirming.',
+      summary: this.getTranslation(`noFileSelected`),
+      detail: this.getTranslation(`selectFileBeforeConfirming`),
     });
     return;
   }
@@ -475,8 +475,8 @@ async confirmnodefile() {
 
     this.messageService.add({
       severity: 'success',
-      summary: 'Nodes Imported',
-      detail: `Successfully imported ${nodes.length} nodes.`,
+      summary: this.getTranslation(`nodesImported`),
+      detail: this.getTranslation(`successfullyImportedNodes`),
     });
 
     this.openImpNodes = false;
@@ -485,8 +485,8 @@ async confirmnodefile() {
     console.error('File processing error:', error);
     this.messageService.add({
       severity: 'error',
-      summary: 'Import Error',
-      detail: 'Failed to process the file. Please ensure it contains valid node data in the expected format.',
+      summary: this.getTranslation(`importError`),
+      detail: this.getTranslation(`failedToProcessFile`),
     });
   }
 }
@@ -829,11 +829,11 @@ async confirmnodefile() {
       // Show confirmation dialog
       this.isConfirmationVisible = true;
     } else {
-      console.log('No node selected to delete.');
+      // console.log('No node selected to delete.');
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'No node selected to delete.',
+        summary: this.getTranslation(`error`),
+        detail: this.getTranslation(`noNodeSelectedToDelete`),
         life: 4000,
       });
     }
@@ -877,19 +877,19 @@ async confirmnodefile() {
 
       this.messageService.add({
         severity: 'success',
-        summary: 'Deleted',
-        detail: 'Nodes Deleted Successfully',
+        summary: this.getTranslation(`deleted`),
+        detail: this.getTranslation(`nodesDeletedSuccessfully`),
         life: 4000,
       });
 
       // Redraw the canvas
       this.redrawCanvas();
     } else {
-      console.log('No nodes selected for deletion.');
+      // console.log('No nodes selected for deletion.');
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warning',
-        detail: 'No items selected for deletion.',
+        summary: this.getTranslation(`warning`),
+        detail: this.getTranslation(`noItemsSelectedForDeletion`),
       });
     }
     1;
@@ -916,8 +916,8 @@ async confirmnodefile() {
       );
       this.messageService.add({
         severity: 'success',
-        summary: 'Deleted',
-        detail: 'Node Deleted Successfully',
+        summary:  this.getTranslation(`deleted`),
+        detail:  this.getTranslation(`nodesDeletedSuccessfully`),
         life: 4000,
       });
       if (this.isDeleteModeEnabled) {
@@ -1073,7 +1073,7 @@ async confirmnodefile() {
     if (parsedX > mapWidth || parsedY > mapHeight) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warning',
+        summary:  this.getTranslation(`warning`),
         detail: `Coordinates out of bounds: X should be between 0 and ${mapWidth.toFixed(
           3
         )}, Y should be between 0 and ${mapHeight.toFixed(3)}.`,
@@ -1363,8 +1363,8 @@ async confirmnodefile() {
         // reader.readAsDataURL(file);
         this.messageService.add({
           severity: 'error',
-          summary: 'Invalid File Type',
-          detail: 'Please upload a valid PGM file.',
+          summary: this.getTranslation(`invalidFileType`),
+          detail: this.getTranslation(`pleaseUploadValidPgm`),
         });
 
         // Reset the input field and file name
@@ -1485,8 +1485,8 @@ async confirmnodefile() {
     if (!this.ratio) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Warning',
-        detail: 'Please Enter Resolution before Locating Origin',
+        summary: this.getTranslation(`error`),
+        detail: this.getTranslation(`pleaseEnterResolutionBeforeLocatingOrigin`),
       });
       return;
     }
@@ -1496,8 +1496,8 @@ async confirmnodefile() {
       if (!isPgmFile) {
         this.messageService.add({
           severity: 'error',
-          summary: 'Invalid File',
-          detail: 'Only PGM files are allowed. Please upload a valid PGM file.',
+          summary: this.getTranslation(`invalidFile`),
+          detail: this.getTranslation(`onlyPgmAllowed`),
         });
         return;
       }
@@ -1581,8 +1581,8 @@ async confirmnodefile() {
     } else {
       this.messageService.add({
         severity: 'error',
-        summary: 'Warning',
-        detail: 'No image uploaded!',
+        summary: this.getTranslation(`error`),
+        detail: this.getTranslation(`noImageUploaded`),
       });
     }
   }
@@ -1906,8 +1906,8 @@ async confirmnodefile() {
       // alert('No image uploaded.');
       this.messageService.add({
         severity: 'error',
-        summary: 'Warning',
-        detail: 'No image uploaded.!',
+        summary: this.getTranslation(`error`),
+        detail: this.getTranslation(`noImageUploaded`),
       });
     }
   }
@@ -2032,8 +2032,8 @@ async confirmnodefile() {
         // Success Toast
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Map updated successfully!',
+          summary: this.getTranslation(`success`),
+          detail: this.getTranslation(`mapUpdatedSuccessfully`),
         });
         this.closePopup.emit(); // Close the popup after update
       })
@@ -2043,8 +2043,8 @@ async confirmnodefile() {
         // Error Toast
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to update the map. Please try again later.',
+          summary: this.getTranslation(`error`),
+          detail: this.getTranslation(`failedToUpdateMap`),
         });
       });
   }
@@ -2075,8 +2075,8 @@ async confirmnodefile() {
     if (!this.nodes || this.nodes.length === 0) {
       this.messageService.add({
         severity: 'error',
-        summary: 'Error',
-        detail: 'No Nodes are plotted',
+        summary: this.getTranslation(`error`),
+        detail: this.getTranslation(`noNodesPlotted`),
         life: 4000,
       });
       return;
@@ -2092,9 +2092,8 @@ async confirmnodefile() {
     if (unconnectedNodes.length > 0) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warning',
-        detail:
-          'Some nodes are not connected to any edges. Please connect all nodes before saving.',
+        summary: this.getTranslation(`warning`),
+        detail: this.getTranslation(`someNodesNotConnected`),
         life: 4000,
       });
       return;
@@ -2110,8 +2109,8 @@ async confirmnodefile() {
     if (!this.selectedImage) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warning',
-        detail: 'File missing!',
+        summary: this.getTranslation(`warning`),
+        detail: this.getTranslation(`fileMissing`),
         life: 4000,
       });
       return;
@@ -2229,7 +2228,7 @@ async confirmnodefile() {
         if (data.exists === true || data.isFileExist === false) {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Warning',
+            summary: this.getTranslation(`warning`),
             detail: data.msg,
             life: 4000,
           });
@@ -2270,8 +2269,8 @@ async confirmnodefile() {
         // Success toast notification
         this.messageService.add({
           severity: 'success',
-          summary: 'Success',
-          detail: 'Map saved successfully',
+          summary: this.getTranslation(`success`),
+          detail: this.getTranslation(`mapUpdatedSuccessfully`),
           life: 4000,
         });
         this.closePopup.emit();
@@ -2282,8 +2281,8 @@ async confirmnodefile() {
         // Error toast notification
         this.messageService.add({
           severity: 'error',
-          summary: 'Error',
-          detail: 'Failed to save map. Please try again.',
+          summary: this.getTranslation(`error`),
+          detail: this.getTranslation(`failedToSaveMap`),
           life: 4000,
         });
       });
@@ -2392,9 +2391,8 @@ async confirmnodefile() {
         if (distance === 0) {
           this.messageService.add({
             severity: 'error',
-            summary: 'Two points are plotted in a same located',
-            detail:
-              'Both Points are plotted in a same location, so kindly re-point it',
+            summary: this.getTranslation(`error`),
+            detail: this.getTranslation(`twoPointsSameLocation`)
           });
           // Clear the points and re-draw the canvas to remove the second point
           this.points = [];
@@ -2569,8 +2567,8 @@ async confirmnodefile() {
       event.preventDefault(); // Block right-click interaction
       this.messageService.add({
         severity: 'info',
-        summary: 'Action Restricted',
-        detail: 'Right-click is disabled while plotting multiple nodes.',
+        summary: this.getTranslation(`actionRestricted`),
+        detail: this.getTranslation(`rightClickDisabledPlotting`),
       });
       return;
     }
@@ -2963,8 +2961,8 @@ async confirmnodefile() {
       if (this.robos.some((robo) => robo.roboDet.id === robot.id)) {
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
-          detail: 'Robot already in map!',
+          summary: this.getTranslation(`warning`),
+          detail: this.getTranslation(`robotAlreadyInMap`),
         });
         return;
       }
@@ -3124,8 +3122,8 @@ async confirmnodefile() {
     if (this.isPositionOccupied(x, displayY, 'node')) {
       this.messageService.add({
         severity: 'warn',
-        summary: 'Please choose different Location',
-        detail: 'This position is already occupied by a node or asset.',
+        summary: this.getTranslation(`warning`),
+        detail: this.getTranslation(`pleaseChooseDifferentLocation1`),
       });
       return;
     }
@@ -3236,8 +3234,8 @@ async confirmnodefile() {
       // alert('This position is already occupied by a node or asset. Please choose a different location.');
       this.messageService.add({
         severity: 'warn',
-        summary: 'Please choose different Location',
-        detail: 'This position is already occupies by a node or asset.',
+        summary: this.getTranslation(`warning`),
+        detail: this.getTranslation(`pleaseChooseDifferentLocation1`),
       });
       return;
     }
@@ -3382,9 +3380,9 @@ async confirmnodefile() {
             // alert('Nodes cannot plotted as there are nodes or assets are between them');
             this.messageService.add({
               severity: 'warn',
-              summary: 'Warning',
+              summary: this.getTranslation(`warning`),
               detail:
-                'Nodes Cannot plotted as there are nodes or assets are between them',
+                this.getTranslation(`nodesCannotBePlotted`),
             });
             this.nodes = this.nodes.filter(
               (node) =>
@@ -3400,9 +3398,9 @@ async confirmnodefile() {
             // alert('Nodes cannot plotted as there are nodes or assets are between them');
             this.messageService.add({
               severity: 'warn',
-              summary: 'Warning',
+              summary: this.getTranslation(`warning`),
               detail:
-                'Nodes cannot plotted as there are nodes or assets are between them.',
+                this.getTranslation(`nodesCannotBePlotted`),
             });
             this.nodes = this.nodes.filter(
               (node) =>
@@ -4057,14 +4055,14 @@ async confirmnodefile() {
       // alert('Zone overlaps with an existing zone!');
       this.messageService.add({
         severity: 'warn',
-        summary: 'Warning',
-        detail: 'Zone overlaps with an existing zone!.',
+        summary: this.getTranslation(`warning`),
+        detail: this.getTranslation(`zoneOverlap`),
       });
       return; // Do not allow drawing
     } else {
       this.messageService.add({
         severity: 'info',
-        summary: 'information on zone',
+        summary: this.getTranslation(`infoOnZone`),
         detail: `${this.zoneType} is plotted`,
       });
     }
@@ -4258,8 +4256,8 @@ async confirmnodefile() {
               // alert('should at least minimum 3 zone points to plot!');
               this.messageService.add({
                 severity: 'warn',
-                summary: 'Warning',
-                detail: 'Should atleast minimum 3 zone points to plot!.',
+                summary: this.getTranslation(`warning`),
+                detail: this.getTranslation(`minThreeZonePoints`),
               });
               return;
             }
@@ -4285,8 +4283,8 @@ async confirmnodefile() {
         if (this.isPositionOccupied(x, y, 'asset')) {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Position Occupied',
-            detail: 'Cannot place an asset at an occupied position.',
+            summary: this.getTranslation(`positionOccupied`),
+            detail: this.getTranslation(`cannotPlaceAssetOccupied`),
           });
           return; // Exit early if position is occupied
         }
@@ -4315,9 +4313,9 @@ async confirmnodefile() {
         if (removeAsset) {
           this.messageService.add({
             severity: 'warn',
-            summary: 'Asset Not Plotted',
+            summary: this.getTranslation(`assetNotPlotted`),
             detail:
-              'The asset cannot be plotted too close to a node, place it on any other place.',
+              this.getTranslation(`assetTooCloseToNode`),
           });
           return; // Exit early to prevent further processing
         }
@@ -4396,8 +4394,8 @@ async confirmnodefile() {
         this.isMultiNodePlotting = false; // Keep multi-node plotting enabled
         this.messageService.add({
           severity: 'info',
-          summary: 'First Node Removed',
-          detail: 'The first node has been removed. You can plot again.',
+          summary: this.getTranslation(`firstNodeRemoved`),
+          detail: this.getTranslation(`firstNodeRemovedInfo`),
         });
         return; // Exit the method to prevent further processing
       }
@@ -4411,9 +4409,9 @@ async confirmnodefile() {
             this.isMultiNodePlotting = false; // Disable multi-node plotting mode
             this.messageService.add({
               severity: 'info',
-              summary: 'Multi-Node Plotting Disabled',
+              summary: this.getTranslation(`multiNodePlottingDisabled`),
               detail:
-                'You cannot plot more nodes while another node is selected.',
+                this.getTranslation(`multiNodePlottingInfo`),
             });
           }
           this.onNodeClick(node.nodePosition.x, node.nodePosition.y);
@@ -4496,11 +4494,11 @@ async confirmnodefile() {
     if (this.draggingZonePoint && this.selectedZonePoint && this.selectedZone) {
       if (this.isPointTooClose(x, y, this.plottedPoints)) {
         // Optionally show an alert or message
-        console.warn('The point is too close to an existing zone point');
+        // console.warn('The point is too close to an existing zone point');
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
-          detail: 'The point is too close to an existing zone point.',
+          summary: this.getTranslation(`warning`),
+          detail: this.getTranslation(`pointTooCloseToZone`),
         });
         return;
       }
@@ -4616,8 +4614,8 @@ async confirmnodefile() {
         // alert('Zone point overlaps with another zone!');
         this.messageService.add({
           severity: 'error',
-          summary: 'Warning',
-          detail: 'Zone point overlaps with another zone!',
+          summary: this.getTranslation(`error`),
+          detail: this.getTranslation(`zonePointOverlap`),
           life: 4000,
         });
         // this.selectedZonePoint = null;
@@ -4698,9 +4696,9 @@ async confirmnodefile() {
         // alert('Overlapping detected! Asset has been reset to its original position.');
         this.messageService.add({
           severity: 'error',
-          summary: 'Warning',
+          summary:  this.getTranslation(`warning`),
           detail:
-            'Overlapping detected! Asset has been reset to its original position.',
+             this.getTranslation(`overlapDetectedAssetReset`),
         });
         this.redrawCanvas();
       }
@@ -4710,9 +4708,9 @@ async confirmnodefile() {
         // alert('Overlapping detected! Asset has been reset to its original position.');
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
+          summary:  this.getTranslation(`warning`),
           detail:
-            'Overlapping detected! Asset has been reset to its original position.',
+             this.getTranslation(`overlapDetectedAssetReset`),
         });
         this.redrawCanvas();
       }
@@ -4735,9 +4733,9 @@ async confirmnodefile() {
         // alert('Overlapping detected! Robot has been reset to its original position.');
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
+          summary:  this.getTranslation(`warning`),
           detail:
-            'Overlapping detected! Asset has been reset to its original position.',
+             this.getTranslation(`overlapDetectedAssetReset`),
         });
         this.redrawCanvas();
         return;
@@ -4767,8 +4765,8 @@ async confirmnodefile() {
         // alert('node lapping with other assets');
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
-          detail: 'Node lapping with other assets',
+          summary: this.getTranslation(`warning`),
+          detail: this.getTranslation(`nodeLappingWithAssets`),
         });
       }
 
@@ -4778,9 +4776,9 @@ async confirmnodefile() {
         // alert('Overlapping detected! node has been reset to its original position.');
         this.messageService.add({
           severity: 'warn',
-          summary: 'Warning',
+          summary:  this.getTranslation(`warning`),
           detail:
-            'Overlapping detected! Asset has been reset to its original position.',
+             this.getTranslation(`overlapDetectedAssetReset`),
         });
       }
       this.redrawCanvas();
