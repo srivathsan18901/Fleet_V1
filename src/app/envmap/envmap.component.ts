@@ -396,9 +396,10 @@ export class EnvmapComponent implements AfterViewInit {
   showImpNodes(){
     this.openImpNodes=!this.openImpNodes
   }
-
+nonodefile:boolean=false;
 async confirmnodefile() {
   if (!this.selectedFile) {
+    this.nonodefile=true;
     this.messageService.add({
       severity: 'warn',
       summary: this.getTranslation(`noFileSelected`),
