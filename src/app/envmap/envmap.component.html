@@ -1121,9 +1121,7 @@
   </div>
 </div>
 
-<div *ngIf="openImpNodes" class="popup-overlay1">
-
-  
+<div *ngIf="openImpNodes" class="popup-overlay1">  
   <div class="popup-content1">    
     <h3 style="color:#ff7373">{{getTranslation('importNodefile')}}</h3>
     <!-- Image for file upload -->
@@ -1139,10 +1137,10 @@
     </label>
     <div *ngIf="nodefileName" class="file-name">{{ nodefileName }}</div>
 
-    <div *ngIf="invalidFileType" class="error-message">
+    <div *ngIf="invalidFileType" class="error-message" [@fadeOut]="invalidFileType ? 'visible' : 'hidden'">
       {{getTranslation('Please upload only JSON or TXT files')}}
     </div>
-    <div *ngIf="nonodefile && !nodefileName" class="error-message">
+    <div *ngIf="nonodefile && !nodefileName" class="error-message" [@fadeOut]="nonodefile ? 'visible' : 'hidden'">
       {{getTranslation('selectFileBeforeConfirming')}}
     </div>
     <div>

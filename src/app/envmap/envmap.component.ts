@@ -392,105 +392,116 @@ export class EnvmapComponent implements AfterViewInit {
     this.selectedFile = file;
     this.nodefileName = file.name;
   }
-  // New property
+
   showImpNodes(){
     this.openImpNodes=!this.openImpNodes
-  }
-nonodefile:boolean=false;
-async confirmnodefile() {
-  if (!this.selectedFile) {
-    this.nonodefile=true;
-    this.messageService.add({
-      severity: 'warn',
-      summary: this.getTranslation(`noFileSelected`),
-      detail: this.getTranslation(`selectFileBeforeConfirming`),
-    });
-    return;
+    this.nodefileName = null;
+    this.selectedFile = null;
   }
 
-  try {
-    const fileContent = await this.readFile(this.selectedFile);
-    let nodes: any[] = [];
-    
-    if (this.selectedFile.name.endsWith('.yaml') || this.selectedFile.name.endsWith('.yml')) {
-      try {
-        // First try parsing as single document
-        try {
-          const parsedData = YAML.parse(fileContent);
-          if (parsedData) {
-            if (Array.isArray(parsedData)) {
-              nodes = parsedData;
-            } else if (parsedData.nodes && Array.isArray(parsedData.nodes)) {
-              nodes = parsedData.nodes;
-            } else if (parsedData.position) {
-              nodes = [parsedData];
-            }
-          }
-        } catch (singleDocError) {
-          // If single document parse fails, try multi-document
-          const docs = YAML.parseAllDocuments(fileContent);
-          nodes = docs
-            .map(doc => doc.toJSON())
-            .filter(doc => doc && (doc.position || (doc.preDockPose && doc.preDockPose.position)));
-        }
-      } catch (yamlError) {
-        console.error('YAML parsing error:', yamlError);
-        throw new Error('Invalid YAML format');
+  nonodefile:boolean=false;
+  errorTimeout: any;
+  async confirmnodefile() {
+    if (!this.selectedFile) {
+      this.nonodefile=true;
+      if (this.errorTimeout) {
+        clearTimeout(this.errorTimeout);
       }
-    } else {
-      // Handle JSON files
-      const graphData = JSON.parse(fileContent);
-      nodes = graphData.nodes || [];
-    }
-    
-    // Filter out any invalid nodes and ensure we have positions
-    nodes = nodes.filter(node => {
-      const position = node.position || (node.preDockPose && node.preDockPose.position);
-      return position && position.x !== undefined && position.y !== undefined;
-    });
-
-    if (nodes.length === 0) {
-      throw new Error('No valid nodes found in file (missing position data)');
+      // Set new timeout to hide message after 5 seconds
+      this.errorTimeout = setTimeout(() => {
+        this.nonodefile = false;
+      }, 5000);
+      this.messageService.add({
+        severity: 'warn',
+        summary: this.getTranslation(`noFileSelected`),
+        detail: this.getTranslation(`selectFileBeforeConfirming`),
+      });
+      return;
     }
 
-    const angleRad = (this.origin?.w || 0) * Math.PI / 180;
-    const originX = this.origin?.x || 0;
-    const originY = this.origin?.y || 0;
-    const ratio = this.ratio || 1;
+    try {
+      const fileContent = await this.readFile(this.selectedFile);
+      let nodes: any[] = [];
+      
+      if (this.selectedFile.name.endsWith('.yaml') || this.selectedFile.name.endsWith('.yml')) {
+        try {
+          // First try parsing as single document
+          try {
+            const parsedData = YAML.parse(fileContent);
+            if (parsedData) {
+              if (Array.isArray(parsedData)) {
+                nodes = parsedData;
+              } else if (parsedData.nodes && Array.isArray(parsedData.nodes)) {
+                nodes = parsedData.nodes;
+              } else if (parsedData.position) {
+                nodes = [parsedData];
+              }
+            }
+          } catch (singleDocError) {
+            // If single document parse fails, try multi-document
+            const docs = YAML.parseAllDocuments(fileContent);
+            nodes = docs
+              .map(doc => doc.toJSON())
+              .filter(doc => doc && (doc.position || (doc.preDockPose && doc.preDockPose.position)));
+          }
+        } catch (yamlError) {
+          console.error('YAML parsing error:', yamlError);
+          throw new Error('Invalid YAML format');
+        }
+      } else {
+        // Handle JSON files
+        const graphData = JSON.parse(fileContent);
+        nodes = graphData.nodes || [];
+      }
+      
+      // Filter out any invalid nodes and ensure we have positions
+      nodes = nodes.filter(node => {
+        const position = node.position || (node.preDockPose && node.preDockPose.position);
+        return position && position.x !== undefined && position.y !== undefined;
+      });
 
-    nodes.forEach((node: any) => {
-      const position = node.position || node.preDockPose.position;
-      let x = position.x;
-      let y = position.y;
+      if (nodes.length === 0) {
+        throw new Error('No valid nodes found in file (missing position data)');
+      }
 
-      // Apply rotation
-      const xRotated = x * Math.cos(-angleRad) - y * Math.sin(-angleRad);
-      const yRotated = x * Math.sin(-angleRad) + y * Math.cos(-angleRad);
+      const angleRad = (this.origin?.w || 0) * Math.PI / 180;
+      const originX = this.origin?.x || 0;
+      const originY = this.origin?.y || 0;
+      const ratio = this.ratio || 1;
 
-      // Apply translation and scaling
-      x = (xRotated + originX) / ratio;
-      y = (yRotated + originY) / ratio;
+      nodes.forEach((node: any) => {
+        const position = node.position || node.preDockPose.position;
+        let x = position.x;
+        let y = position.y;
 
-      this.plotSingleNode(x, y, true);
-    });
+        // Apply rotation
+        const xRotated = x * Math.cos(-angleRad) - y * Math.sin(-angleRad);
+        const yRotated = x * Math.sin(-angleRad) + y * Math.cos(-angleRad);
 
-    this.messageService.add({
-      severity: 'success',
-      summary: this.getTranslation(`nodesImported`),
-      detail: this.getTranslation(`successfullyImportedNodes`),
-    });
+        // Apply translation and scaling
+        x = (xRotated + originX) / ratio;
+        y = (yRotated + originY) / ratio;
 
-    this.openImpNodes = false;
-    this.redrawCanvas();
-  } catch (error) {
-    console.error('File processing error:', error);
-    this.messageService.add({
-      severity: 'error',
-      summary: this.getTranslation(`importError`),
-      detail: this.getTranslation(`failedToProcessFile`),
-    });
+        this.plotSingleNode(x, y, true);
+      });
+
+      this.messageService.add({
+        severity: 'success',
+        summary: this.getTranslation(`nodesImported`),
+        detail: this.getTranslation(`successfullyImportedNodes`),
+      });
+
+      this.openImpNodes = false;
+      this.redrawCanvas();
+    } catch (error) {
+      console.error('File processing error:', error);
+      this.messageService.add({
+        severity: 'error',
+        summary: this.getTranslation(`importError`),
+        detail: this.getTranslation(`failedToProcessFile`),
+      });
+    }
   }
-}
   private readFile(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
