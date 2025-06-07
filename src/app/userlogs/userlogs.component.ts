@@ -107,7 +107,7 @@ export class Userlogscomponent {
   getUniqueErrorCodes(): string[] {
     const codes = new Set<string>();
     this.errData.forEach(item => {
-      if (item.Error_Code) {
+      if (item.Error_Code) {  
         codes.add(item.Error_Code);
       }
     });
@@ -130,7 +130,23 @@ export class Userlogscomponent {
     const today = new Date();
     return this.formatDateandtimeForInput(today);
   }
-applyFilters(closePopup: boolean = true) {
+applyFilters(
+  startDateTime: string,
+  endDateTime: string,
+  status: string,
+  errorCode: string,
+  id: string,
+  closePopup: boolean = true
+) {
+  // Update filterOptions with current values
+  this.filterOptions = {
+    startDateTime,
+    endDateTime,
+    status,
+    errorCode,
+    id
+  };
+
   this.filterApplied = true;
 
   this.filteredErrLogsData = this.errData.filter(item => {
@@ -147,8 +163,14 @@ applyFilters(closePopup: boolean = true) {
       return false;
     }
 
-    if (this.filterOptions.errorCode && item.Error_Code !== this.filterOptions.errorCode) {
-      return false;
+    if (this.filterOptions.errorCode) {
+      // Convert both values to string for comparison
+      const itemErrorCode = item.Error_Code?.toString();
+      const filterErrorCode = this.filterOptions.errorCode.toString();
+      
+      if (itemErrorCode !== filterErrorCode) {
+        return false;
+      }
     }
 
     if (this.filterOptions.id && item.id !== this.filterOptions.id) {
@@ -169,21 +191,8 @@ applyFilters(closePopup: boolean = true) {
   }
 }
 
-getUniqueIds(): string[] {
-  const ids = new Set<string>();
-  this.errData.forEach(item => {
-    if (item.id) {
-      ids.add(item.id);
-    }
-  });
-  return Array.from(ids).sort((a, b) => {
-    // Sort numerically if possible, otherwise alphabetically
-    return isNaN(Number(a)) ? a.localeCompare(b) : Number(a) - Number(b);
-  });
-}
-
-// Modify your clearFilters method
 clearFilters() {
+  // Reset filter options
   this.filterOptions = {
     startDateTime: '',
     endDateTime: '',
@@ -205,6 +214,20 @@ clearFilters() {
   this.fetchErrorLogs();
   this.closeFilterPopup();
 }
+getUniqueIds(): string[] {
+  const ids = new Set<string>();
+  this.errData.forEach(item => {
+    if (item.id) {
+      ids.add(item.id);
+    }
+  });
+  return Array.from(ids).sort((a, b) => {
+    // Sort numerically if possible, otherwise alphabetically
+    return isNaN(Number(a)) ? a.localeCompare(b) : Number(a) - Number(b);
+  });
+}
+
+// Modify your clearFilters method
 
   formatDateandtimeForInput(date: Date): string {
     return date.toISOString().slice(0, 16);
@@ -227,8 +250,14 @@ clearFilters() {
   }
 
   showTable(table: string) {
-    this.currentTable = table;
-    this.applyFilters();
+    this.currentTable = table;    
+    this.applyFilters(
+      this.filterOptions.startDateTime,
+      this.filterOptions.endDateTime,
+      this.filterOptions.status,
+      this.filterOptions.errorCode,
+      this.filterOptions.id
+    );
     this.fetchErrorLogs();
   }
 
@@ -237,10 +266,16 @@ clearFilters() {
 
 async fetchErrorLogs() {
   await this.getTaskLogs();
-  
   // Only apply filters if user had previously applied any
   if (this.filterApplied) {
-    this.applyFilters(false); // Don't close popup
+   this.applyFilters(
+      this.filterOptions.startDateTime,
+      this.filterOptions.endDateTime,
+      this.filterOptions.status,
+      this.filterOptions.errorCode,
+      this.filterOptions.id,
+      false // Don't close popup
+    );// Don't close popup
   } else {
     this.filteredErrLogsData = [...this.errData];
     this.setPaginatedData();
@@ -641,6 +676,4 @@ async getTaskLogs() {
 
     // Implement your date range filtering logic here
   }
-
-
 }
