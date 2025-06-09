@@ -149,43 +149,7 @@ applyFilters(
 
   this.filterApplied = true;
 
-  this.filteredErrLogsData = this.errData.filter(item => {
-    if (this.filterOptions.startDateTime || this.filterOptions.endDateTime) {
-      const itemDate = new Date(item.Date_and_Time);
-      const startDate = this.filterOptions.startDateTime ? new Date(this.filterOptions.startDateTime) : null;
-      const endDate = this.filterOptions.endDateTime ? new Date(this.filterOptions.endDateTime) : null;
-      
-      if (startDate && itemDate < startDate) return false;
-      if (endDate && itemDate > endDate) return false;
-    }
-
-    if (this.filterOptions.status && item.criticality !== this.filterOptions.status) {
-      return false;
-    }
-
-    if (this.filterOptions.errorCode) {
-      // Convert both values to string for comparison
-      const itemErrorCode = item.Error_Code?.toString();
-      const filterErrorCode = this.filterOptions.errorCode.toString();
-      
-      if (itemErrorCode !== filterErrorCode) {
-        return false;
-      }
-    }
-
-    if (this.filterOptions.id && item.id !== this.filterOptions.id) {
-      return false;
-    }
-
-    return true;
-  });
-
-  if (this.paginator) {
-    this.paginator.firstPage();
-  }
-
-  this.setPaginatedData();
-
+  this.applyAllFilters();
   if (closePopup) {
     this.closeFilterPopup();
   }
@@ -266,23 +230,13 @@ getUniqueIds(): string[] {
 
 async fetchErrorLogs() {
   await this.getTaskLogs();
-  // Only apply filters if user had previously applied any
-  if (this.filterApplied) {
-   this.applyFilters(
-      this.filterOptions.startDateTime,
-      this.filterOptions.endDateTime,
-      this.filterOptions.status,
-      this.filterOptions.errorCode,
-      this.filterOptions.id,
-      false // Don't close popup
-    );// Don't close popup
-  } else {
-    this.filteredErrLogsData = [...this.errData];
-    this.setPaginatedData();
-  }
 
-  setTimeout(() => this.fetchErrorLogs(), 1000 * 4);
+  // Always apply both search & advanced filters
+  this.applyAllFilters();
+
+  setTimeout(() => this.fetchErrorLogs(), 4_000);
 }
+
 
   private formatDate(date: Date): string {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -403,26 +357,44 @@ async getTaskLogs() {
       // );
     }
   }
+applyAllFilters(): void {
+  let data = [...this.errData];
 
-  onSearch(event: Event): void {
-    this.searchQuery = (event.target as HTMLInputElement).value.toLowerCase();
-    this.searchInput = this.searchQuery; // Store the search input value
-
-    if (!this.searchQuery) {
-      this.resetSearch(); // Reset data if input is cleared
-    } else {
-      // Filter the taskData, robotData, and fleetData based on the search input
-      this.filteredErrLogsData = this.errData.filter((item) =>
-        Object.values(item).some((val) =>
-          String(val).toLowerCase().includes(this.searchQuery)
-        )
-      );
-    }
-
-    if (this.paginator) this.paginator.firstPage();
-
-    this.setPaginatedData(); // Update paginated data after filtering
+  // 1. Basic search filter
+  if (this.searchQuery) {
+    const sq = this.searchQuery.toLowerCase();
+    data = data.filter(item =>
+      Object.values(item).some(val =>
+        String(val).toLowerCase().includes(sq)
+      )
+    );
   }
+
+  // 2. Advanced filter popup
+  if (this.filterApplied) {
+    data = data.filter(item => {
+      const dt = new Date(item.Date_and_Time);
+      const { startDateTime, endDateTime, status, errorCode, id } = this.filterOptions;
+
+      if (startDateTime && dt < new Date(startDateTime)) return false;
+      if (endDateTime && dt > new Date(endDateTime)) return false;
+      if (status && item.criticality !== status) return false;
+      if (errorCode && String(item.Error_Code) !== String(errorCode)) return false;
+      if (id && item.id !== id) return false;
+
+      return true;
+    });
+  }
+
+  this.filteredErrLogsData = data;
+  if (this.paginator) this.paginator.firstPage();
+  this.setPaginatedData();
+}
+
+onSearch(event: Event): void {
+  this.searchQuery = (event.target as HTMLInputElement).value;
+  this.applyAllFilters();
+}
 
   // Function to reset the search input and data
   resetSearch(): void {
