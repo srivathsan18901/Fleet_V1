@@ -10,6 +10,7 @@ import { IsFleetService } from '../services/shared/is-fleet.service';
 import { Subscription } from 'rxjs';
 // import { clearInterval } from 'timers';
 import { TranslationService } from '../services/translation.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-userlogs',
@@ -53,6 +54,7 @@ export class Userlogscomponent {
     private exportService: ExportService,
     private projectService: ProjectService,
     private modeService: ModeService,
+    private messageService: MessageService,
     private isFleetService: IsFleetService,
     private translationService: TranslationService
   ) {
@@ -138,6 +140,32 @@ applyFilters(
   id: string,
   closePopup: boolean = true
 ) {
+  const start = new Date(startDateTime);
+  const end = new Date(endDateTime);
+
+  // Check if both dates are present and end < start
+  if (startDateTime && endDateTime && end < start) {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Invalid Date Range',
+      detail: 'End date/time cannot be before start date/time',
+      life: 3000,
+    });
+
+    // Clear invalid date values from both UI and internal state
+    this.filterOptions.startDateTime = '';
+    this.filterOptions.endDateTime = '';
+
+    // Clear the actual input fields as well
+    const startInput = document.querySelector('input[type="datetime-local"]#startDateTime') as HTMLInputElement;
+    const endInput = document.querySelector('input[type="datetime-local"]#endDateTime') as HTMLInputElement;
+
+    if (startInput) startInput.value = '';
+    if (endInput) endInput.value = '';
+
+    return; // Stop filter from applying
+  }
+
   // Update filterOptions with current values
   this.filterOptions = {
     startDateTime,
