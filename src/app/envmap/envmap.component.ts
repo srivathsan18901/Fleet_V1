@@ -1333,7 +1333,20 @@ export class EnvmapComponent implements AfterViewInit {
   inputY: number | null = 0;
   private startPoint: { x: number; y: number } | null = null; // Store the initial point
   showOriginCanvas = false;
+  hasSelectedNavOption: boolean = false;
+  withNavImage: boolean = false;
   // imageBase64: string | null = null;
+  // Add this method to handle the selection
+  selectNavOption(withNavImage: boolean): void {
+    this.withNavImage = withNavImage;
+    this.hasSelectedNavOption = true;
+    
+    // If without NAV image is selected, clear any existing NAV image data
+    if (!withNavImage) {
+      this.anotherFileName = '';
+      this.anotherImageSrc = '';
+    }
+  }
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files && input.files[0]) {
@@ -1784,6 +1797,8 @@ export class EnvmapComponent implements AfterViewInit {
     if ((this.showOriginPopup = true)) {
       this.showOriginPopup = false;
       this.showOriginCanvas = false;
+      this.hasSelectedNavOption = false;
+      this.withNavImage = false;
       this.anotherFileName = '';
       this.rotationAngle = 0;
       this.panStart = null;
@@ -1801,6 +1816,10 @@ export class EnvmapComponent implements AfterViewInit {
     }
     this.validationError = null;
     this.resetZoom();
+  }
+  backToOpt(){    
+      this.hasSelectedNavOption = false;
+      this.withNavImage = false;
   }
   private renderCanvas(): void {
     const originCanvas = this.OriginPopupCanvas.nativeElement;

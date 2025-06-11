@@ -153,7 +153,30 @@
     <div *ngIf="showOriginPopup && this.ratio" class="image-popup-overlay" [ngStyle]="{ 'pointer-events': this.showOriginCanvas ? 'none' : 'auto' }">
       <div class="image-popup-content">
 
-        <div class="origin-fileupload" *ngIf="!this.showOriginCanvas">
+      <!-- Add selection option before upload -->
+      <div class="origin-selection" *ngIf="!hasSelectedNavOption && !this.showOriginCanvas">
+        <h3>{{getTranslation('selectOriginFindingMethod')}}</h3>
+      <div class="nav-options">
+        <button class="nav-option-btn" (click)="selectNavOption(true)">
+          <img src="../../assets/ConfigurationOptions/overlay.svg" alt="Navigation" class="nav-icon" />
+          {{ getTranslation('overlayingWithNavigationImage') }}
+        </button>
+        
+        <button class="nav-option-btn" (click)="selectNavOption(false)">
+          <img src="../../assets/ConfigurationOptions/layout.svg" alt="Layout Map" class="nav-icon" />
+          {{ getTranslation('usingLayoutMap') }}
+        </button>
+      </div>
+
+        <button class="close-btn1" (click)="closeImagePopup()">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+            <path fill="none" d="M0 0h24v24H0z" />
+            <path d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z" />
+          </svg>
+        </button>
+      </div>
+
+        <div class="origin-fileupload" *ngIf="hasSelectedNavOption && withNavImage && !this.showOriginCanvas">
           <h3 *ngIf="showOriginPopup && this.ratio">{{getTranslation('SelectNavImage')}}</h3>
           
           <label for="anotherFileInput" class="upload-image">
@@ -204,6 +227,22 @@
             />
           </div> -->
           <button (click)="openOrigin()" class="originBTN" *ngIf="anotherFileName">{{getTranslation('Open')}}</button>
+          <button (click)="backToOpt()" class="originBTN">{{getTranslation('back')}}</button>
+        </div>
+
+        <div class="origin-without-upload" *ngIf="hasSelectedNavOption && !withNavImage && !this.showOriginCanvas">
+          <h3>{{getTranslation('proceedUsingLayoutMap')}}</h3>
+          <img src="../../assets/ConfigurationOptions/map_2.svg" style="height: 100px;"/>
+          <div style="display: flex;">
+          <button (click)="openOrigin()" class="originBTN">{{getTranslation('Open')}}</button>
+          <button (click)="backToOpt()" class="originBTN">{{getTranslation('back')}}</button>
+          </div>
+          <button class="close-btn1" (click)="closeImagePopup()">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+              <path fill="none" d="M0 0h24v24H0z" />
+              <path d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z" />
+            </svg>
+          </button>
         </div>
 
         <div class="originCanvas" >
@@ -211,7 +250,7 @@
         <canvas class="OriginPopupCanvas" #OriginPopupCanvas *ngIf="this.showOriginCanvas" ></canvas>
         <canvas class="OriginOverlayCanvas" #OriginOverlayCanvas *ngIf="this.showOriginCanvas" style="position: absolute;top: 0;z-index: -1;"></canvas>
         </div>
-        <div class="toolbar" *ngIf="this.showOriginCanvas">
+        <div class="toolbar" *ngIf="this.showOriginCanvas && withNavImage">
           <button (click)="zoomIn()">{{getTranslation('ZoomIn')}}</button>
           <button (click)="zoomOut()">{{getTranslation('ZoomOut')}}</button>
           <button (click)="togglePanMode()" [ngStyle]="{ 'pointer-events': this.isRotating ? 'none' : 'auto', 'filter': isRotating ? 'blur(2px)' : 'none' }">{{ isPanning ? getTranslation('DisablePan') : getTranslation('EnablePan') }}</button>
