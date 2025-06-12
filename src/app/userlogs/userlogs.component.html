@@ -92,7 +92,19 @@
   <div class="filter-content">
     <div style="display: flex; align-items: center; justify-content: space-between;">
       <h3 style="margin: 0;font-weight: bold;color: #FF5C5C;">{{ getTranslation('filter_options') }}</h3>
-      <button class="close-btn" (click)="closeFilterPopup()" style="color: red;font-weight:bold;padding: 5px 8px; border-radius: 50%;">✖</button>
+      <button class="close-button" (click)="closeFilterPopup()">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path
+                  d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                />
+              </svg>
+      </button>
     </div>
     
     <!-- Date Range Filter -->

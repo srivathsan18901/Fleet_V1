@@ -204,7 +204,7 @@ clearFilters() {
   this.filterApplied = false;
   this.setPaginatedData();
   this.fetchErrorLogs();
-  this.closeFilterPopup();
+  // this.closeFilterPopup();
 }
 getUniqueIds(): string[] {
   const ids = new Set<string>();

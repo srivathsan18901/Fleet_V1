@@ -32,9 +32,20 @@
       
       <div *ngIf="isButtonDisabled" class="AT-CLS" style="display: flex ; gap: 10px;">
         <!-- <button class="clear_task" (click)="showClearTask = true">Clear Task</button> -->
-        <button class="clear_task" (click)="showClearTask = true" [attr.data-tooltip]="getTranslation('purgeTasks')">
+        <!-- <button class="clear_task" (click)="showClearTask = true" [attr.data-tooltip]="getTranslation('purgeTasks')">
           <svg viewBox="0 0 448 512" class="svgIcon"><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"></path></svg>
-        </button>
+        </button> -->
+        <button class="AT-Btn" (click)="showClearTask = true">
+          <div class="svg-wrapper-1">
+            <div class="svg-wrapper">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24">
+                <path fill="none" d="M0 0h24v24H0z"/>
+                <path fill="currentColor" d="M7 4V2h10v2h5v2H2V4h5zm2 4h2v10H9V8zm4 0h2v10h-2V8zm-7 0h14l-1.5 12.5A2 2 0 0 1 16.5 22h-9a2 2 0 0 1-1.99-1.5L4 8z"/>
+              </svg>
+            </div>
+          </div>
+          <span>{{getTranslation('purgeTasks')}}</span>
+        </button> 
         <button class="AT-Btn" (click)="toggleAssignTask()">
           <div class="svg-wrapper-1">
             <div class="svg-wrapper">
@@ -60,7 +71,19 @@
             <div class="filter-content">
               <div style="display: flex ; align-items: center; justify-content: space-between;">
               <h3 style="margin: 0;font-weight: bold;color: #FF5C5C;">{{ getTranslation('filter_options') }}</h3>
-              <button class="close-btn" (click)="closeFilterPopup()" style=" color: red;font-weight:bold ;padding: 5px 8px; border-radius: 50%;">✖</button>
+              <button class="close-button" (click)="closeFilterPopup()">
+                <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+              >
+                <path fill="none" d="M0 0h24v24H0z" />
+                <path
+                  d="M12 10.586l4.95-4.95 1.414 1.414L13.414 12l4.95 4.95-1.414 1.414L12 13.414l-4.95 4.95-1.414-1.414L10.586 12 5.636 7.05l1.414-1.414L12 10.586z"
+                />
+              </svg>
+              </button>
               </div>
               <!-- Date Range Filter -->
               <div style="display: flex;gap: 15px;">

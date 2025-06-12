@@ -266,6 +266,7 @@
     bottom: 20px;
     z-index: 4;
     right: 20px;
+    z-index: 1000;
   }
 
   .export-button {
@@ -839,8 +840,8 @@
 
 .filter-popup {
   position: absolute;
-  top: 170px;
-  left: -165px;
+  top: 185px;
+  left: -200px;
   transform: translate(-50%, -50%);
   background: #FF7373;
   background: linear-gradient(180deg,rgb(255, 203, 203) 0%, rgba(255, 255, 255, 1) 50%);
