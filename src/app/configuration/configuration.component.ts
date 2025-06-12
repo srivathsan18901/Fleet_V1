@@ -475,7 +475,7 @@ export class ConfigurationComponent implements AfterViewInit {
         // this.filteredEnvData = this.EnvData;
         this.messageService.add({
           severity: 'success',
-          detail: 'mapSiteUpdated',
+          detail: this.getTranslation('mapSiteUpdated'),
         });
       }
 
