@@ -112,7 +112,7 @@
               <div>
                 <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
                 <p-calendar 
-                  [(ngModel)]="filterOptions.startDateTime" 
+                  [(ngModel)]="tempFilterOptions.startDateTime" 
                   [showTime]="true" 
                   [hourFormat]="'12'" 
                   [minDate]="minDate"
@@ -128,7 +128,7 @@
               <div>
                 <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
                 <p-calendar 
-                  [(ngModel)]="filterOptions.endDateTime" 
+                  [(ngModel)]="tempFilterOptions.endDateTime" 
                   [showTime]="true" 
                   [hourFormat]="'12'" 
                   [minDate]="minDate"
@@ -177,7 +177,7 @@
             </div>
             <!-- Buttons -->
             <div class="filter-actions">
-              <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters(filterOptions.startDateTime, filterOptions.endDateTime, status.value, errorCode.value, id.value)">{{ getTranslation('apply') }}</button>
+              <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters( status.value, errorCode.value, id.value)">{{ getTranslation('apply') }}</button>
               <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="clearFilters()">{{ getTranslation('Clear') }}</button>
             </div>
           </div>

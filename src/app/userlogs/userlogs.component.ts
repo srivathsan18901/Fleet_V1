@@ -111,6 +111,10 @@ export class Userlogscomponent {
     errorCode: '',
     id: '',
   };
+  tempFilterOptions = {
+  startDateTime: null as Date | null,
+  endDateTime: null as Date | null
+  };
   getUniqueErrorCodes(): string[] {
     const codes = new Set<string>();
     this.errData.forEach(item => {
@@ -122,6 +126,10 @@ export class Userlogscomponent {
   }
 
   openFilterPopup() {
+      this.tempFilterOptions = {
+        startDateTime: this.filterOptions.startDateTime,
+        endDateTime: this.filterOptions.endDateTime
+      };
     this.isFilterPopupVisible = !this.isFilterPopupVisible;
   }
   closeFilterPopup() {
@@ -138,13 +146,12 @@ export class Userlogscomponent {
     return this.formatDateandtimeForInput(today);
   }
   applyFilters(
-    startDateTime: Date | null,
-    endDateTime: Date | null,
     status: string,
     errorCode: string,
     id: string,
     closePopup: boolean = true
   ) {
+    const { startDateTime, endDateTime } = this.tempFilterOptions;
     // Check if both dates are present and end < start
     if (startDateTime && endDateTime && endDateTime < startDateTime) {
       this.messageService.add({
@@ -185,6 +192,11 @@ export class Userlogscomponent {
       status: '',
       errorCode: '',
       id: '',
+    };
+      // Also reset temp options
+    this.tempFilterOptions = {
+      startDateTime: null,
+      endDateTime: null
     };
     
     this.searchQuery = '';
@@ -239,8 +251,6 @@ export class Userlogscomponent {
   showTable(table: string) {
     this.currentTable = table;    
     this.applyFilters(
-      this.filterOptions.startDateTime,
-      this.filterOptions.endDateTime,
       this.filterOptions.status,
       this.filterOptions.errorCode,
       this.filterOptions.id
