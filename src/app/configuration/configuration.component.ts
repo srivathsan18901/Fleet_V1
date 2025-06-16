@@ -425,71 +425,84 @@ export class ConfigurationComponent implements AfterViewInit {
     this.cancelEditingMap();
   }
 
-  async updateEditMap(map: any, mapNameEdit: boolean, siteNameEdit: boolean) {
-    if (
-      this.editedMapName.toLocaleLowerCase() ==
-        map.mapName.toLocaleLowerCase() ||
-      this.editedSiteName.toLocaleLowerCase() ==
-        map.siteName.toLocaleLowerCase()
-    )
-      return;
+async updateEditMap(map: any, mapNameEdit: boolean, siteNameEdit: boolean) {
+  if (
+    this.editedMapName.toLocaleLowerCase() === map.mapName.toLocaleLowerCase() &&
+    this.editedSiteName.toLocaleLowerCase() === map.siteName.toLocaleLowerCase()
+  )
+    return;
 
-    let bodyData = {
-      newMapName: mapNameEdit ? this.editedMapName : null,
-      newSiteName: siteNameEdit ? this.editedSiteName : null,
-      mapNameWithSite: map.mapName,
-      projectName: this.mapData.projectName,
-    };
+  const bodyData = {
+    newMapName: mapNameEdit ? this.editedMapName : null,
+    newSiteName: siteNameEdit ? this.editedSiteName : null,
+    mapNameWithSite: map.mapName,
+    projectName: this.mapData.projectName,
+  };
 
-    try {
-      let response = await fetch(
-        `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/edit-MapSite-name/${map.mapName}`,
-        {
-          method: 'POST',
-          credentials: 'include',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(bodyData),
-        }
-      );
-      let data = await response.json();
+  try {
+    const response = await fetch(
+      `http://${environment.API_URL}:${environment.PORT}/dashboard/maps/edit-MapSite-name/${map.mapName}`,
+      {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bodyData),
+      }
+    );
+    const data = await response.json();
 
-      if (data.nameUpdated) {
-        if (mapNameEdit) {
-          this.projectService.updateMapNameInCookie(
-            this.editedMapName,
-            this.editedSiteName
-          );
-          if (this.selectedMap) this.selectedMap.mapName = this.editedMapName;
-          this.EnvData = this.EnvData.map((envMap: any) => {
-            if (envMap.mapName == map.mapName)
-              envMap.mapName = this.editedMapName;
-            return envMap;
-          });
-        } else
-          this.EnvData = this.EnvData.map((envMap: any) => {
-            if (envMap.mapName == map.mapName)
-              envMap.siteName = this.editedSiteName;
-            return envMap;
-          });
+    if (data.nameUpdated) {
+      if (mapNameEdit) {
+        this.projectService.updateMapNameInCookie(
+          this.editedMapName,
+          this.editedSiteName
+        );
+        if (this.selectedMap) this.selectedMap.mapName = this.editedMapName;
 
-        // this.filteredEnvData = this.EnvData;
+        this.EnvData = this.EnvData.map((envMap: any) => {
+          if (envMap.mapName === map.mapName) {
+            envMap.mapName = this.editedMapName;
+          }
+          return envMap;
+        });
+
+        // Toast for map name updated
         this.messageService.add({
           severity: 'success',
-          detail: this.getTranslation('mapSiteUpdated'),
+          summary: this.getTranslation('Success'),
+          detail: this.getTranslation('mapNameUpdated'), 
         });
       }
 
-      if (data.error)
-        console.log('error while updating map/site name : ', data.error);
-    } catch (error) {
-      console.error('Error editing map name:', error);
+      if (siteNameEdit) {
+        this.EnvData = this.EnvData.map((envMap: any) => {
+          if (envMap.mapName === map.mapName) {
+            envMap.siteName = this.editedSiteName;
+          }
+          return envMap;
+        });
 
-      this.messageService.add({
-        severity: 'error',
-        detail: this.getTranslation('editMapFailed'),
-      });
+        // Toast for site name updated
+        this.messageService.add({
+          severity: 'success',
+          summary: this.getTranslation('Success'),
+          detail: this.getTranslation('siteNameUpdated'), 
+        });
+      }
     }
+
+    if (data.error)
+      console.log('error while updating map/site name : ', data.error);
+  } catch (error) {
+    console.error('Error editing map name:', error);
+
+    this.messageService.add({
+      severity: 'error',
+      detail: this.getTranslation('editMapFailed'),
+    });
   }
+}
+
 
   startEditingSite(index: number, siteName: string) {
     // Close any open map name editor

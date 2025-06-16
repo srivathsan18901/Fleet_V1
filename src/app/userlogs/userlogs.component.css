@@ -1,4 +1,22 @@
+.custom-calendar {
+  border: 1px solid #ff5c5c;
+  border-radius: 5px;
+  color: #FF5C5C;
+}
 
+.custom-calendar .p-inputtext {
+  color: #FF5C5C;
+}
+
+.custom-calendar .p-button {
+  background: #ff5c5c;
+  border-color: #ff5c5c;
+}
+
+.custom-calendar .p-button:hover {
+  background: #e04c4c;
+  border-color: #e04c4c;
+}
 /* Main Content Styling */
 .layout-container {
   display: flex;

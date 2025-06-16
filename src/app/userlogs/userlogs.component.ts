@@ -33,7 +33,8 @@ export class Userlogscomponent {
   filteredErrLogsData: any[] = [];
   initialRoboInfos: any[] = []; // to store data of initial robo details..
   mapDetails: any | null = null;
-
+  minDate: Date;
+  maxDate: Date;
   errData: any[] = [];
   filteredRobots: any[] = []; // To store filtered robots
   paginatedData: any[] = [];
@@ -59,6 +60,10 @@ export class Userlogscomponent {
     private translationService: TranslationService
   ) {
     this.mapData = this.projectService.getMapData();
+    this.minDate = new Date();
+    this.minDate.setFullYear(this.minDate.getFullYear() - 5); // 5 years ago
+    
+    this.maxDate = new Date(); // Today
   }
   activeHeaderKey: string = 'Task Logs'; // Store the key instead
   activeHeader: string = this.getTranslation(this.activeHeaderKey);
