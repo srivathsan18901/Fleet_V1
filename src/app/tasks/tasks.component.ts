@@ -43,7 +43,8 @@ export class TasksComponent implements OnInit, AfterViewInit {
   autoRefreshInterval: any;
   taskData: any;
   liveTasksInterval: ReturnType<typeof setInterval> | null = null;
-
+  minDate: Date = new Date();
+  maxDate: Date = new Date();
   tasksSignalController: AbortController | null = null;
   isFilterPopupVisible = false;
   filterOptions = {
@@ -129,7 +130,9 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.isButtonDisabled = false;
     this.mapData = this.projectService.getMapData();
 
-
+    this.minDate = new Date();
+    this.minDate.setFullYear(this.minDate.getFullYear() - 5);
+    this.maxDate = new Date();
 
     if (!this.mapData) this.nodata = this.getTranslation('no_map_selected');
     else this.nodata = this.getTranslation('No data found');
@@ -233,29 +236,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
       }
     }
 
-    // this.filteredTaskData = this.tasks.filter((task: any) => {
-    //   // Convert task timestamp to Date object for comparison
-    //   const taskDate = new Date(task.TimeStamp);
-
-    //   // Date Range Filter
-    //   const dateMatch =
-    //     (!this.filterOptions.startDateTime ||
-    //       taskDate >= new Date(this.filterOptions.startDateTime)) &&
-    //     (!this.filterOptions.endDateTime ||
-    //       taskDate <= new Date(this.filterOptions.endDateTime));
-
-    //   // Status Filter
-    //   const statusMatch =
-    //     !this.filterOptions.status || task.status === this.filterOptions.status;
-
-    //   // Robot Filter (if you have this field)
-    //   const robotMatch =
-    //   !this.filterOptions.robotId ||
-    //   task.roboName == this.filterOptions.robotId;
-
-    //   return dateMatch && statusMatch && robotMatch;
-    // });
-
     this.isFilterApplied = true;
     this.updateFilteredData();
     this.setPaginatedData();
@@ -306,7 +286,20 @@ export class TasksComponent implements OnInit, AfterViewInit {
       this.expandedRowId = item.taskId;
     }
   }
+  getMinDate(): string {
+    const fiveYearsAgo = new Date();
+    fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
+    return this.formatDateandtimeForInput(fiveYearsAgo);
+  }
 
+  getMaxDate(): string {
+    const today = new Date();
+    return this.formatDateandtimeForInput(today);
+  }
+
+  formatDateandtimeForInput(date: Date): string {
+    return date.toISOString().slice(0, 16);
+  }
   // Listen for clicks outside the table to close the expanded row
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: Event) {
@@ -419,20 +412,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
     } else {
       this.setPaginatedData(); // Just update the paginated data
     }
-  }
-  getMinDate(): string {
-    const fiveYearsAgo = new Date();
-    fiveYearsAgo.setFullYear(fiveYearsAgo.getFullYear() - 5);
-    return this.formatDateandtimeForInput(fiveYearsAgo);
-  }
-
-  getMaxDate(): string {
-    const today = new Date();
-    return this.formatDateandtimeForInput(today);
-  }
-
-  formatDateandtimeForInput(date: Date): string {
-    return date.toISOString().slice(0, 16);
   }
   async fetchTasks() {
     try {

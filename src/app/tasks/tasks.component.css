@@ -1,3 +1,28 @@
+::ng-deep .custom-calendar .p-inputtext {
+  color: #FF5C5C !important;
+  border: 1px solid #ff5c5c !important;
+  height: 33px !important;
+  width: 130px !important;
+  padding: 8px !important;
+  font-size: 12px !important;
+}
+
+::ng-deep .custom-calendar .p-button {
+  background: #ff5c5c !important;
+  border: none !important;
+  color: white !important;
+  height: 33px !important;
+  width: 30px !important;
+}
+
+::ng-deep .custom-calendar .p-button:hover {
+  background: #e04b4b !important;
+}
+
+::ng-deep .custom-calendar .p-inputtext::placeholder {
+  color: #FF5C5C !important;
+  opacity: 0.6 !important;
+}
 /* Main Content Styling */
 .layout-container {
   display: flex;

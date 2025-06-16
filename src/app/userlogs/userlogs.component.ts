@@ -137,83 +137,84 @@ export class Userlogscomponent {
     const today = new Date();
     return this.formatDateandtimeForInput(today);
   }
-applyFilters(
-  startDateTime: Date | null,
-  endDateTime: Date | null,
-  status: string,
-  errorCode: string,
-  id: string,
-  closePopup: boolean = true
-) {
-  // Check if both dates are present and end < start
-  if (startDateTime && endDateTime && endDateTime < startDateTime) {
-    this.messageService.add({
-      severity: 'error',
-      summary: 'Invalid Date Range',
-      detail: 'End date/time cannot be before start date/time',
-      life: 3000,
-    });
+  applyFilters(
+    startDateTime: Date | null,
+    endDateTime: Date | null,
+    status: string,
+    errorCode: string,
+    id: string,
+    closePopup: boolean = true
+  ) {
+    // Check if both dates are present and end < start
+    if (startDateTime && endDateTime && endDateTime < startDateTime) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Invalid Date Range',
+        detail: 'End date/time cannot be before start date/time',
+        life: 3000,
+      });
 
-    // Clear invalid date values
-    this.filterOptions.startDateTime = null;
-    this.filterOptions.endDateTime = null;
-    return;
-  }
-
-  // Update filterOptions with current values
-  this.filterOptions = {
-    startDateTime,
-    endDateTime,
-    status,
-    errorCode,
-    id
-  };
-
-  this.filterApplied = true;
-  this.applyAllFilters();
-  
-  if (closePopup) {
-    this.closeFilterPopup();
-  }
-}
-
-clearFilters() {
-  // Reset filter options
-  this.filterOptions = {
-    startDateTime: null,
-    endDateTime: null,
-    status: '',
-    errorCode: '',
-    id: '',
-  };
-  
-  this.searchQuery = '';
-  this.searchInput = '';
-  
-  this.filteredErrLogsData = [...this.errData];
-  
-  if (this.paginator) {
-    this.paginator.firstPage();
-  }
-  this.filterApplied = false;
-  this.setPaginatedData();
-  this.fetchErrorLogs();
-  // this.closeFilterPopup();
-}
-getUniqueIds(): string[] {
-  const ids = new Set<string>();
-  this.errData.forEach(item => {
-    if (item.id) {
-      ids.add(item.id);
+      // Clear invalid date values
+      this.filterOptions.startDateTime = null;
+      this.filterOptions.endDateTime = null;
+      return;
     }
-  });
-  return Array.from(ids).sort((a, b) => {
-    // Sort numerically if possible, otherwise alphabetically
-    return isNaN(Number(a)) ? a.localeCompare(b) : Number(a) - Number(b);
-  });
-}
 
-// Modify your clearFilters method
+    // Update filterOptions with current values
+    this.filterOptions = {
+      startDateTime,
+      endDateTime,
+      status,
+      errorCode,
+      id
+    };
+
+    this.filterApplied = true;
+    this.applyAllFilters();
+    
+    if (closePopup) {
+      this.closeFilterPopup();
+    }
+  }
+
+  clearFilters() {
+    // Reset filter options
+    this.filterOptions = {
+      startDateTime: null,
+      endDateTime: null,
+      status: '',
+      errorCode: '',
+      id: '',
+    };
+    
+    this.searchQuery = '';
+    this.searchInput = '';
+    
+    this.filteredErrLogsData = [...this.errData];
+    
+    if (this.paginator) {
+      this.paginator.firstPage();
+    }
+    this.filterApplied = false;
+    this.setPaginatedData();
+    this.fetchErrorLogs();
+    // this.closeFilterPopup();
+  }
+
+  getUniqueIds(): string[] {
+    const ids = new Set<string>();
+    this.errData.forEach(item => {
+      if (item.id) {
+        ids.add(item.id);
+      }
+    });
+    return Array.from(ids).sort((a, b) => {
+      // Sort numerically if possible, otherwise alphabetically
+      return isNaN(Number(a)) ? a.localeCompare(b) : Number(a) - Number(b);
+    });
+  }
+
+  // Modify your clearFilters method 
 
   formatDateandtimeForInput(date: Date): string {
     return date.toISOString().slice(0, 16);

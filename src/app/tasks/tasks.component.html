@@ -85,17 +85,41 @@
               </svg>
               </button>
               </div>
-              <!-- Date Range Filter -->
-              <div style="display: flex;gap: 15px;">
+            <!-- Date Range Filter -->
+            <div style="display: flex;gap: 15px;">
               <div>
-              <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
-              <input type="datetime-local" [(ngModel)]="filterOptions.startDateTime" [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+                <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
+                <p-calendar 
+                  [(ngModel)]="filterOptions.startDateTime" 
+                  [showTime]="true" 
+                  [hourFormat]="'12'"
+                  [minDate]="minDate"
+                  [maxDate]="maxDate"
+                  dateFormat="dd-mm-yy"
+                  [showIcon]="true"
+                  inputId="end-date-time"
+                  styleClass="custom-calendar"
+                  [placeholder]="'DD-MM-YY HH:MM:--'"
+                  inputStyleClass="calendar-input"
+                />
               </div>
               <div>
-              <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
-              <input type="datetime-local" [(ngModel)]="filterOptions.endDateTime"  [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+                <label style="font-size: 12px; font-weight:bold ; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
+                <p-calendar 
+                  [(ngModel)]="filterOptions.endDateTime" 
+                  [showTime]="true" 
+                  [hourFormat]="'12'"
+                  [minDate]="minDate"
+                  [maxDate]="maxDate"
+                  dateFormat="dd-mm-yy"
+                  [showIcon]="true"
+                  inputId="end-date-time"
+                  styleClass="custom-calendar"
+                  [placeholder]="'DD-MM-YY HH:MM:--'"
+                  inputStyleClass="calendar-input"
+                />
               </div>
-              </div>
+            </div>
             <div style="display: flex; gap: 15px;">
               <!-- Status Filter -->
               <div style="display: flex;justify-content: space-between;align-items: start; flex-direction: column;">
