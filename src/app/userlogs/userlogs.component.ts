@@ -164,6 +164,8 @@ export class Userlogscomponent {
       // Clear invalid date values
       this.filterOptions.startDateTime = null;
       this.filterOptions.endDateTime = null;
+      this.tempFilterOptions.startDateTime = null;
+      this.tempFilterOptions.endDateTime = null;
       return;
     }
 
