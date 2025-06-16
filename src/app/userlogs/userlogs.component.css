@@ -1,21 +1,28 @@
-.custom-calendar {
-  border: 1px solid #ff5c5c;
-  border-radius: 5px;
-  color: #FF5C5C;
+/* In your component's CSS file (using ::ng-deep) */
+::ng-deep .custom-calendar .p-inputtext {
+  color: #FF5C5C !important;
+  border: 1px solid #ff5c5c !important;
+  height: 33px !important;
+  width: 130px !important;
+  padding: 8px !important;
+  font-size: 12px !important;
 }
 
-.custom-calendar .p-inputtext {
-  color: #FF5C5C;
+::ng-deep .custom-calendar .p-button {
+  background: #ff5c5c !important;
+  border: none !important;
+  color: white !important;
+  height: 33px !important;
+  width: 30px !important;
 }
 
-.custom-calendar .p-button {
-  background: #ff5c5c;
-  border-color: #ff5c5c;
+::ng-deep .custom-calendar .p-button:hover {
+  background: #e04b4b !important;
 }
 
-.custom-calendar .p-button:hover {
-  background: #e04c4c;
-  border-color: #e04c4c;
+::ng-deep .custom-calendar .p-inputtext::placeholder {
+  color: #FF5C5C !important;
+  opacity: 0.6 !important;
 }
 /* Main Content Styling */
 .layout-container {

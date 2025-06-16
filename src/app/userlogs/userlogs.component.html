@@ -111,11 +111,35 @@
             <div style="display: flex; gap: 15px;">
               <div>
                 <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('start_date_time') }}:</label>
-                <input type="datetime-local" #startDateTime [ngModel]="filterOptions.startDateTime" [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+                <p-calendar 
+                  [(ngModel)]="filterOptions.startDateTime" 
+                  [showTime]="true" 
+                  [hourFormat]="'12'" 
+                  [minDate]="minDate"
+                  [maxDate]="maxDate"
+                  dateFormat="dd-mm-yy"
+                  [showIcon]="true"
+                  inputId="start-date-time"
+                  styleClass="custom-calendar"
+                  [placeholder]="'DD-MM-YY HH:MM:--'"
+                  inputStyleClass="calendar-input"
+                />
               </div>
               <div>
                 <label style="font-size: 12px; font-weight:bold; color: #FF5C5C;">{{ getTranslation('end_date_time') }}:</label>
-                <input type="datetime-local" #endDateTime [ngModel]="filterOptions.endDateTime" [min]="getMinDate()" [max]="getMaxDate()" style="border: 1px solid;color: #FF5C5C; padding: 5px; border-radius: 5px;">
+                <p-calendar 
+                  [(ngModel)]="filterOptions.endDateTime" 
+                  [showTime]="true" 
+                  [hourFormat]="'12'" 
+                  [minDate]="minDate"
+                  [maxDate]="maxDate"
+                  dateFormat="dd-mm-yy"
+                  [showIcon]="true"
+                  inputId="end-date-time"
+                  styleClass="custom-calendar"
+                  [placeholder]="'DD-MM-YY HH:MM:--'"
+                  inputStyleClass="calendar-input"
+                />
               </div>
             </div>
             
@@ -153,7 +177,7 @@
             </div>
             <!-- Buttons -->
             <div class="filter-actions">
-              <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters(startDateTime.value, endDateTime.value, status.value, errorCode.value, id.value)">{{ getTranslation('apply') }}</button>
+              <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="applyFilters(filterOptions.startDateTime, filterOptions.endDateTime, status.value, errorCode.value, id.value)">{{ getTranslation('apply') }}</button>
               <button style="background: #ff5c5c; color: white; border-radius: 5px; padding: 5px;" (click)="clearFilters()">{{ getTranslation('Clear') }}</button>
             </div>
           </div>

@@ -105,8 +105,8 @@ export class Userlogscomponent {
   }
   isFilterPopupVisible = false;
   filterOptions = {
-    startDateTime: '',
-    endDateTime: '',
+    startDateTime: null as Date | null,
+    endDateTime: null as Date | null,
     status: '',
     errorCode: '',
     id: '',
@@ -138,18 +138,15 @@ export class Userlogscomponent {
     return this.formatDateandtimeForInput(today);
   }
 applyFilters(
-  startDateTime: string,
-  endDateTime: string,
+  startDateTime: Date | null,
+  endDateTime: Date | null,
   status: string,
   errorCode: string,
   id: string,
   closePopup: boolean = true
 ) {
-  const start = new Date(startDateTime);
-  const end = new Date(endDateTime);
-
   // Check if both dates are present and end < start
-  if (startDateTime && endDateTime && end < start) {
+  if (startDateTime && endDateTime && endDateTime < startDateTime) {
     this.messageService.add({
       severity: 'error',
       summary: 'Invalid Date Range',
@@ -157,18 +154,10 @@ applyFilters(
       life: 3000,
     });
 
-    // Clear invalid date values from both UI and internal state
-    this.filterOptions.startDateTime = '';
-    this.filterOptions.endDateTime = '';
-
-    // Clear the actual input fields as well
-    const startInput = document.querySelector('input[type="datetime-local"]#startDateTime') as HTMLInputElement;
-    const endInput = document.querySelector('input[type="datetime-local"]#endDateTime') as HTMLInputElement;
-
-    if (startInput) startInput.value = '';
-    if (endInput) endInput.value = '';
-
-    return; // Stop filter from applying
+    // Clear invalid date values
+    this.filterOptions.startDateTime = null;
+    this.filterOptions.endDateTime = null;
+    return;
   }
 
   // Update filterOptions with current values
@@ -181,8 +170,8 @@ applyFilters(
   };
 
   this.filterApplied = true;
-
   this.applyAllFilters();
+  
   if (closePopup) {
     this.closeFilterPopup();
   }
@@ -191,8 +180,8 @@ applyFilters(
 clearFilters() {
   // Reset filter options
   this.filterOptions = {
-    startDateTime: '',
-    endDateTime: '',
+    startDateTime: null,
+    endDateTime: null,
     status: '',
     errorCode: '',
     id: '',
@@ -390,44 +379,45 @@ async getTaskLogs() {
       // );
     }
   }
-applyAllFilters(): void {
-  let data = [...this.errData];
 
-  // 1. Basic search filter
-  if (this.searchQuery) {
-    const sq = this.searchQuery.toLowerCase();
-    data = data.filter(item =>
-      Object.values(item).some(val =>
-        String(val).toLowerCase().includes(sq)
-      )
-    );
+  applyAllFilters(): void {
+    let data = [...this.errData];
+
+    // 1. Basic search filter
+    if (this.searchQuery) {
+      const sq = this.searchQuery.toLowerCase();
+      data = data.filter(item =>
+        Object.values(item).some(val =>
+          String(val).toLowerCase().includes(sq)
+        )
+      );
+    }
+
+    // 2. Advanced filter popup
+    if (this.filterApplied) {
+      data = data.filter(item => {
+        const dt = new Date(item.Date_and_Time);
+        const { startDateTime, endDateTime, status, errorCode, id } = this.filterOptions;
+
+        if (startDateTime && dt < new Date(startDateTime)) return false;
+        if (endDateTime && dt > new Date(endDateTime)) return false;
+        if (status && item.criticality !== status) return false;
+        if (errorCode && String(item.Error_Code) !== String(errorCode)) return false;
+        if (id && item.id !== id) return false;
+
+        return true;
+      });
+    }
+
+    this.filteredErrLogsData = data;
+    if (this.paginator) this.paginator.firstPage();
+    this.setPaginatedData();
   }
 
-  // 2. Advanced filter popup
-  if (this.filterApplied) {
-    data = data.filter(item => {
-      const dt = new Date(item.Date_and_Time);
-      const { startDateTime, endDateTime, status, errorCode, id } = this.filterOptions;
-
-      if (startDateTime && dt < new Date(startDateTime)) return false;
-      if (endDateTime && dt > new Date(endDateTime)) return false;
-      if (status && item.criticality !== status) return false;
-      if (errorCode && String(item.Error_Code) !== String(errorCode)) return false;
-      if (id && item.id !== id) return false;
-
-      return true;
-    });
+  onSearch(event: Event): void {
+    this.searchQuery = (event.target as HTMLInputElement).value;
+    this.applyAllFilters();
   }
-
-  this.filteredErrLogsData = data;
-  if (this.paginator) this.paginator.firstPage();
-  this.setPaginatedData();
-}
-
-onSearch(event: Event): void {
-  this.searchQuery = (event.target as HTMLInputElement).value;
-  this.applyAllFilters();
-}
 
   // Function to reset the search input and data
   resetSearch(): void {
