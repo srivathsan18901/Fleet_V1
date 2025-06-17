@@ -990,6 +990,7 @@ export class DashboardComponent implements AfterViewInit {
 
   cancelAction() {
     this.hidePopup();
+    this.triggerToCharge=false;
   }
 
   enableMove() {
@@ -3032,7 +3033,7 @@ export class DashboardComponent implements AfterViewInit {
   }
 
   disableMoveTocharge: boolean = false;
-
+  triggerToCharge:boolean=false;
   async moveToCharge() {
     let map = this.projectService.getMapData();
 
@@ -3085,7 +3086,79 @@ export class DashboardComponent implements AfterViewInit {
     //   life: 4000,
     // });
   }
+  triggerCharge(){
+    this.triggerToCharge = !this.triggerToCharge;
+    this.selectedRegister = "";
+    this.selectedRobotId = "";
+  }
+  selectedRegister: string | number = '';
+  selectedRobotId: string | number = '';
+  isLoading:boolean=false;
 
+  async confirmTrigger() {
+    this.isLoading = true;
+  
+    try {
+      const robotId = parseInt(this.selectedRobotId.toString(), 10);
+      const register = parseInt(this.selectedRegister.toString(), 10);
+  
+      if (isNaN(robotId) || isNaN(register)) {
+        throw new Error("Invalid input: robotId or register is not a number");
+      }
+  
+      console.log("Attempting to trigger charger with selected values from popup:");
+      console.log("📦 Payload:", { robotId, register });
+  
+      this.messageService.add({
+        severity: 'info',
+        summary: this.getTranslation('triggeringCharger'),
+        detail: this.getTranslation('pleaseWait'),
+        life: 3000
+      });
+  
+      const response = await fetch(
+        `http://${environment.API_URL}:${environment.PORT}/stream-data/triggercharger-robot`,
+        {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ robotId, register })
+        }
+      );
+  
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.msg || `HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      console.log("Charger triggered successfully:", data);
+  
+      this.messageService.add({
+        severity: 'success',
+        summary: this.getTranslation('success'),
+        detail: this.getTranslation('chargerTriggeredSuccessfully'),
+        life: 5000,
+        closable: true
+      });
+  
+    } catch (error: any) {
+      console.error("Error triggering charger:", error);
+  
+      this.messageService.add({
+        severity: 'error',
+        summary: this.getTranslation('error'),
+        detail: error.message || this.getTranslation('failedToTriggerCharger'),
+        life: 6000,
+        closable: true
+      });
+  
+    } finally {
+      this.isLoading = false;
+      this.triggerToCharge = false;
+    }
+  }
+  
   async fetchChargePositions(): Promise<any[]> {
     let mapData = this.projectService.getMapData();
     let response = await fetch(
