@@ -26,7 +26,7 @@ import { TranslationService } from '../services/translation.service';
 import { map, Subscription } from 'rxjs';
 import { IsFleetService } from '../services/shared/is-fleet.service';
 import e from 'express';
-
+import * as XLSX from 'xlsx';
 interface Robo {
   roboName: string;
   roboId: number;
@@ -148,25 +148,31 @@ export class ChartTimelineComponent implements OnInit {
   ) {
     this.chartOptions = {
       series: [{ name: '', data: this.cpuUtilArr }],
-      chart: {
-        // id: 'area-datetime',
-        type: 'area',
-        height: 250,
-        events: {
-          zoomed: (chart, options) => {
-            this.clearIntervals();
-          },
-          scrolled: (chart, options) => {
-            this.clearIntervals();
-          },
-        },
-        toolbar: {
-          show: true, // Keep the toolbar visible
-          tools: {
-            download: false, // Disable only the download menu
-          },
-        },
-      },
+chart: {
+  type: 'area',
+  height: 250,
+  events: {
+    zoomed: (chart, options) => {
+      this.clearIntervals();
+    },
+    scrolled: (chart, options) => {
+      this.clearIntervals();
+    },
+    mounted: (chartContext, config) => {
+      this.addCustomDownloadButton(chartContext);
+    },
+    updated: (chartContext, config) => {
+      this.addCustomDownloadButton(chartContext);
+    }
+
+  },
+  toolbar: {
+    show: true,
+    tools: {
+      download: false, // Disable default download
+    },
+  },
+},
       xaxis: {
         categories: this.cpuXaxisSeries,
         type: 'datetime', // Important: Uses timestamps directly
@@ -256,6 +262,145 @@ export class ChartTimelineComponent implements OnInit {
       },
     };
   }
+private addCustomDownloadButton(chartContext: any): void {
+  const toolbar = chartContext.el.querySelector('.apexcharts-toolbar');
+  if (!toolbar) return;
+
+  // Remove any existing custom download button first
+  const existingBtn = toolbar.querySelector('.apexcharts-custom-download');
+  if (existingBtn) {
+    existingBtn.remove();
+  }
+
+  // Create custom download button
+  const downloadBtn = document.createElement('div');
+  downloadBtn.className = 'apexcharts-menu-icon apexcharts-custom-download';
+  downloadBtn.innerHTML = `
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+      <polyline points="7 10 12 15 17 10"></polyline>
+      <line x1="12" y1="15" x2="12" y2="3"></line>
+    </svg>
+  `;
+  downloadBtn.title = this.getTranslation("Export as Excel");
+  downloadBtn.addEventListener('click', () => this.downloadExcel());
+
+  // Add button to toolbar
+  toolbar.appendChild(downloadBtn);
+}
+// Add these properties to store all historical data
+private allCpuData: {value: number, timestamp: number}[] = [];
+private allRoboUtilData: {value: number, timestamp: number}[] = [];
+private allBatteryData: {value: number, timestamp: number}[] = [];
+private allMemoryData: {value: number, timestamp: number}[] = [];
+private allNetworkData: {value: number, timestamp: number}[] = [];
+private allIdleTimeData: {value: number, timestamp: number}[] = [];
+private allErrorData: {value: number, timestamp: number}[] = [];
+
+private downloadExcel(): void {
+  try {
+    // Get all data for the current metric
+    let allData: {value: number, timestamp: number}[] = [];
+    let metricName = '';
+
+    switch(this.selectedMetric) {
+      case 'CPU Utilization':
+        allData = this.allCpuData;
+        metricName = 'CPU_Utilization';
+        break;
+      case 'Robot Utilization':
+        allData = this.allRoboUtilData;
+        metricName = 'Robot_Utilization';
+        break;
+      case 'Memory':
+        allData = this.allMemoryData;
+        metricName = 'Memory';
+        break;
+      case 'Network':
+        allData = this.allNetworkData;
+        metricName = 'Network';
+        break;
+      case 'Idletime':
+        allData = this.allIdleTimeData;
+        metricName = 'Idle_Time';
+        break;
+      case 'Error':
+        allData = this.allErrorData;
+        metricName = 'Error';
+        break;
+      case 'Battery':
+        allData = this.allBatteryData;
+        metricName = 'Battery';
+        break;
+      default:
+        console.warn('Unknown metric:', this.selectedMetric);
+        return;
+    }
+
+    if (!allData || allData.length === 0) {
+      console.warn('No data available to download');
+      return;
+    }
+
+    // Prepare worksheet data
+    const wsData = [
+      // Header row with styling
+      [
+        { v: 'Date', t: 's', s: { font: { bold: true }, fill: { fgColor: { rgb: "FFD3D3D3" } } } },
+        { v: 'Time', t: 's', s: { font: { bold: true }, fill: { fgColor: { rgb: "FFD3D3D3" } } } },
+        { v: metricName, t: 's', s: { font: { bold: true }, fill: { fgColor: { rgb: "FFD3D3D3" } } } }
+      ],
+      // Data rows
+      ...allData.map(dataPoint => {
+        const date = new Date(dataPoint.timestamp);
+        
+        // Create separate date and time strings
+        const dateStr = `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+        const timeStr = `${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}:${date.getSeconds().toString().padStart(2, '0')}`;
+        
+        return [
+          { v: dateStr, t: 's' }, // Date as string in yyyy-mm-dd format
+          { v: timeStr, t: 's' }, // Time as string in hh:mm:ss format
+          { v: dataPoint.value, t: 'n', s: { numFmt: '0.00' } }
+        ];
+      })
+    ];
+
+    // Create worksheet
+    const ws = XLSX.utils.aoa_to_sheet(wsData);
+
+    // Set column widths
+    ws['!cols'] = [
+      { wch: 12 }, // Date column width
+      { wch: 10 }, // Time column width
+      { wch: 15 }  // Value column width
+    ];
+
+    // Create workbook
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, metricName);
+
+    // Generate Excel file
+    const excelBuffer = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+    this.saveAsExcelFile(excelBuffer, `${metricName}_Data_${new Date().toISOString().slice(0,10)}`);
+  } catch (error) {
+    console.error('Error generating Excel:', error);
+  }
+}
+
+private saveAsExcelFile(buffer: any, fileName: string): void {
+  const data: Blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const link = document.createElement('a');
+  link.href = window.URL.createObjectURL(data);
+  link.download = `${fileName}.xlsx`;
+  link.click();
+  
+  // Clean up
+  setTimeout(() => {
+    window.URL.revokeObjectURL(link.href);
+    link.remove();
+  }, 100);
+}
   getMetricTooltip(): string {
     switch(this.selectedMetric) {
       case 'CPU Utilization':
@@ -476,49 +621,32 @@ export class ChartTimelineComponent implements OnInit {
 
   // < ---------- >
 
-  async updateCpuUtil() {
-    this.clearAllIntervals(this.cpuUtilTimeInterval);
-    if (this.cpuUtilTimeInterval) return;
+async updateCpuUtil() {
+  this.clearAllIntervals(this.cpuUtilTimeInterval);
+  if (this.cpuUtilTimeInterval) return;
 
-    const data = await this.fetchChartData(
-      'cpu-utilization',
-      this.currentFilter
+  const data = await this.fetchChartData('cpu-utilization', this.currentFilter);
+
+  if (data?.cpuUtil?.CPU_Utilization) {
+    this.cpuUtilArr = data.cpuUtil.CPU_Utilization?.map(
+      (stat: any) => stat.CPU_Utilization
     );
-
-    if (data?.cpuUtil?.CPU_Utilization) {
-      this.cpuUtilArr = data.cpuUtil.CPU_Utilization?.map(
-        (stat: any) => stat.CPU_Utilization
-      );
-      this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization?.map(
-        (stat: any) => stat.TimeStamp * 1000
-      );
-    } else {
-      this.cpuUtilArr.length = 0;
-      this.cpuXaxisSeries.length = 0;
-    }
-
-    this.plotChart('CPU Utilization', this.cpuUtilArr, this.cpuXaxisSeries);
-
-    // this.cpuUtilTimeInterval = setInterval(async () => {
-    //   const data = await this.fetchChartData(
-    //     'cpu-utilization',
-    //     this.currentFilter
-    //   );
-    //   if (data?.cpuUtil?.CPU_Utilization) {
-    //     this.cpuUtilArr = data.cpuUtil.CPU_Utilization?.map(
-    //       (stat: any) => stat.CPU_Utilization
-    //     );
-    //     this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization?.map(
-    //       (stat: any) => stat.TimeStamp * 1000
-    //     );
-    //   } else {
-    //     this.cpuUtilArr.length = 0;
-    //     this.cpuXaxisSeries.length = 0;
-    //   }
-
-    //   this.plotChart('CPU Utilization', this.cpuUtilArr, this.cpuXaxisSeries);
-    // }, 1000 * 2);
+    this.cpuXaxisSeries = data.cpuUtil.CPU_Utilization?.map(
+      (stat: any) => stat.TimeStamp * 1000
+    );    
+    // Store all data points
+    this.allCpuData = data.cpuUtil.CPU_Utilization?.map((stat: any) => ({
+      value: stat.CPU_Utilization,
+      timestamp: stat.TimeStamp * 1000
+    }));
+  } else {
+    this.cpuUtilArr.length = 0;
+    this.cpuXaxisSeries.length = 0;
+    this.allCpuData = [];
   }
+
+  this.plotChart('CPU Utilization', this.cpuUtilArr, this.cpuXaxisSeries);
+}
 
   async updateRoboUtil() {
     this.clearAllIntervals(this.roboUtilTimeInterval);
@@ -536,6 +664,10 @@ export class ChartTimelineComponent implements OnInit {
       this.roboXaxisSeries = data.roboUtil.Robot_Utilization.map(
         (stat: any) => stat.TimeStamp * 1000
       );
+      this.allRoboUtilData = data.roboUtil.Robot_Utilization?.map((stat: any) => ({
+      value: stat.Robot_Utilization,
+      timestamp: stat.TimeStamp * 1000
+      }));
     } else {
       this.roboUtilArr.length = 0;
       this.roboXaxisSeries.length = 0;
@@ -577,6 +709,10 @@ export class ChartTimelineComponent implements OnInit {
       this.batteryXaxisSeries = data.batteryStat.BatteryPercentage.map(
         (stat: any) => stat.TimeStamp * 1000
       );
+      this.allBatteryData = data.batteryStat.BatteryPercentage?.map((stat: any) => ({
+        value: stat.BatteryPercentage,
+        timestamp: stat.TimeStamp * 1000
+      }));
     } else {
       this.batteryArr.length = 0;
       this.batteryXaxisSeries.length = 0;
@@ -609,6 +745,11 @@ export class ChartTimelineComponent implements OnInit {
       this.memoryXaxisSeries = data.memoryStat.Memory.map(
         (stat: any) => stat.TimeStamp * 1000
       );
+      
+      this.allMemoryData = data.memoryStat.Memory?.map((stat: any) => ({
+      value: stat.Memory,
+      timestamp: stat.TimeStamp * 1000
+      }));
     } else {
       this.memoryArr.length = 0;
       this.memoryXaxisSeries.length = 0;
@@ -641,6 +782,10 @@ export class ChartTimelineComponent implements OnInit {
       this.networkXaxisSeries = data.networkUtil.Network.map(
         (stat: any) => stat.TimeStamp * 1000
       );
+      this.allNetworkData = data.networkUtil.Network?.map((stat: any) => ({
+      value: stat.Network,
+      timestamp: stat.TimeStamp * 1000
+      }));
     } else {
       this.networkArr.length = 0;
       this.networkXaxisSeries.length = 0;
@@ -675,6 +820,10 @@ export class ChartTimelineComponent implements OnInit {
       this.idleTimeXaxisSeries = data.idleTime.IdleTime.map(
         (stat: any) => stat.TimeStamp * 1000
       );
+      this.allIdleTimeData = data.idleTime.IdleTime?.map((stat: any) => ({
+      value: stat.IdleTime,
+      timestamp: stat.TimeStamp * 1000
+      }));
     } else {
       this.idleTimeArr.length = 0;
       this.idleTimeXaxisSeries.length = 0;
@@ -709,6 +858,10 @@ export class ChartTimelineComponent implements OnInit {
       this.errRateXaxisSeries = data.roboErr.RobotError.map(
         (stat: any) => stat.TimeStamp * 1000
       );
+      this.allErrorData = data.roboErr.RobotError?.map((stat: any) => ({
+      value: stat.RobotError,
+      timestamp: stat.TimeStamp * 1000
+      }));
     } else {
       this.errorArr.length = 0;
       this.errRateXaxisSeries.length = 0;

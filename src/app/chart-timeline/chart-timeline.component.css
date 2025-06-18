@@ -1,5 +1,23 @@
 
-  
+  /* Add this to your chart-timeline.component.css */
+:host ::ng-deep .apexcharts-custom-download {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  margin-left: 5px;
+}
+
+:host ::ng-deep .apexcharts-custom-download svg {
+  color: #6E8192;
+  transition: color 0.2s;
+}
+
+:host ::ng-deep .apexcharts-custom-download:hover svg {
+  color: #000;
+}
 
   /* Container to center the dropdown */
   .header {

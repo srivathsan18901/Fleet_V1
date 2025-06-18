@@ -46,7 +46,7 @@
     "ngx-apexcharts": "^0.6.6",
     "ngx-capture": "^0.14.0",
     "ngx-spinner": "^17.0.0",
-    "pdfmake": "^0.2.18",
+    "pdfmake": "^0.2.20",
     "pgm": "^1.0.8",
     "pgmjs": "^1.1.6",
     "primeicons": "^7.0.0",

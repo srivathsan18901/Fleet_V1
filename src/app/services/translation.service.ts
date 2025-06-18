@@ -548,6 +548,7 @@ export class TranslationService {
       'utilisation_desc': 'How effectively the robot is being utilised by the system.',
       'bandwidth_desc': 'The measure of how good the network bandwidth is.',
       robot: "Robot",
+      "Export as Excel": "Export as Excel",
       'tasks_per_hour_desc': 'Number of tasks expected to be completed per hour.',
       'uptime_percentage_desc': 'The percentage of total time that the system is up and running.',
       'task_success_rate_desc': 'The measure of successful completion of tasks.',
@@ -649,6 +650,7 @@ export class TranslationService {
       robot: "ロボット",
       'operations_per_day': '1日あたりの操作回数',
       'numberOfPicks': 'ピック数',
+      "Export as Excel": "Excelとしてエクスポート",
       'tasks_per_hour_desc': '1時間あたりに完了することが期待されるタスク数。',
       'uptime_percentage_desc': 'システムが稼働している合計時間の割合。',
       'task_success_rate_desc': 'タスクの正常完了率の指標。',
@@ -755,6 +757,7 @@ export class TranslationService {
     FRE: {
       operation: "Opération",
       robot: "Robot",
+      "Export as Excel": "Exporter en Excel",
       'operations_per_day': 'Opérations par jour',
       systemThroughput: "Débit du système",
       systemUptime: "Temps de disponibilité",
@@ -863,6 +866,7 @@ export class TranslationService {
     GER: {
       operation: "Betrieb",
       robot: "Roboter",
+      "Export as Excel": "Als Excel exportieren",
       'avg_speed_desc': 'Die durchschnittliche Geschwindigkeit des Roboters im System.',
       'distance_covered_desc': 'Die vom Roboter im System zurückgelegte Strecke.',
       'utilisation_desc': 'Wie effektiv der Roboter vom System genutzt wird.',
