@@ -481,7 +481,7 @@
     <!-- Floor Selector -->
     <div class="FloorSelector" *ngIf="ONBtn"></div>
 
-    <div class="fab-container2">
+    <div class="fab-container2" *ngIf="isImage">
       <button mat-fab class="fab-toggler" (click)="onToggleFab()" >
         <i class="material-icons" [@fabToggler]="{value: fabTogglerState}">settings</i>
       </button>
