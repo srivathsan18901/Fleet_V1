@@ -1565,10 +1565,14 @@ export class DashboardComponent implements AfterViewInit {
           // Show the popup at the clicked position
           await this.isChargingNode();
           this.updatedrobo = robo;
-          this.showPathButton = robo.showPath === true; // 👈 check if showPath is true
+          this.showPathButton = robo.showPath === true;
           this.showPopup(event.clientX, event.clientY);
-          this.updatedrobo = robo;
-
+          this.updatedrobo = robo;  
+          if(this.updatedrobo.imgState == "CHARGESTATE"){
+            this.isAnyRobotCharging=true;
+          }
+          else this.isAnyRobotCharging=false;
+          
           return;
         }
       }
@@ -1586,7 +1590,13 @@ export class DashboardComponent implements AfterViewInit {
           await this.isChargingNode();
           this.showPopup(event.clientX, event.clientY);
           this.updatedrobo = robo;
-
+          console.log(this.updatedrobo);
+          
+          if(this.updatedrobo.imgState == "CHARGESTATE"){
+            this.isAnyRobotCharging=true;
+          }
+          else this.isAnyRobotCharging=false;
+          
           return;
         }
       }
@@ -2484,6 +2494,7 @@ export class DashboardComponent implements AfterViewInit {
 
   roboIDColor = new Map<number, string>();
   fleetRoboIdColor = new Map<number, string>();
+  isAnyRobotCharging: boolean = false;
 
   plotRobo(
     ctx: CanvasRenderingContext2D,
@@ -2518,7 +2529,6 @@ export class DashboardComponent implements AfterViewInit {
         ctx.fill();
         ctx.closePath();
       }
-
       // Draw the rounded rectangle (manually if roundRect is unsupported)
       ctx.beginPath();
       ctx.moveTo(-width / 2 + borderRadius, -height / 2);
@@ -2636,7 +2646,6 @@ export class DashboardComponent implements AfterViewInit {
         battery,
         current_task,
       } = robotsData[robotId];
-
       const scaledPosX = posX;
       const scaledPosY = posY;
 

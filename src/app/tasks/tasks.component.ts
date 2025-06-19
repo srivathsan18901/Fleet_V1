@@ -121,7 +121,6 @@ export class TasksComponent implements OnInit, AfterViewInit {
         const isFleetUp = this.projectService.isFleetUp$.subscribe((status) => {
       this.isFleetMode = status;
       this.isFleetUp = status;
-      console.log(this.isFleetMode);
     });
   }
 
@@ -362,9 +361,23 @@ export class TasksComponent implements OnInit, AfterViewInit {
       );
 
       let data = await response.json();
+      console.log(data);
+      if(data.taskStatus.messageText=="REJECTED"){
+          this.messageService.add({
+          severity: 'info',
+          summary: this.getTranslation('Info'),
+          detail: 'Task not able to cancel, may be task is assigned to some robot',
+        });
+      }else{
+        this.messageService.add({
+          severity: 'success',
+          summary: this.getTranslation('Success'),
+          detail: 'all unassigned Tasks are purged',
+        });
+      }
       await this.fetchTasks();
     } catch (err) {
-      console.error("⚠️ Error while clearing task:", err);
+      console.log("⚠️ Error while clearing task:", err);
     }
   }
   async onCancel(item: any) {
