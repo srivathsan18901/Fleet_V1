@@ -1178,6 +1178,7 @@ export class DashboardComponent implements AfterViewInit {
     }
 
     if (this.isFleet) {
+      console.log(this.robos);      
       this.robos.forEach((robo) => {
         let clr = this.fleetRoboIdColor.get(robo.roboDet.id) || 'black';
         this.plotRobo(
@@ -2249,13 +2250,24 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     this.nodeGraphService.setZones(this.zones);
-
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
     this.robos = mapData.roboPos.map((robo: any) => {
           const roboX = robo.pos.x * Math.cos(-angleRad) - robo.pos.y * Math.sin(-angleRad);
-          const roboY = robo.pos.x * Math.sin(-angleRad) + robo.pos.y * Math.cos(-angleRad);
+          const roboY = robo.pos.x * Math.sin(-angleRad) - robo.pos.y * Math.cos(-angleRad);
           
-          robo.pos.x = ((roboX + this.origin.x || 0) / this.ratio! || 1);
-          robo.pos.y = ((roboY + this.origin.y || 0) / this.ratio! || 1);
+    // Step 2: Undo translation and scaling
+    const ratio = this.ratio || 1;
+    const originX = this.origin.x || 0;
+    const originY = this.origin.y || 0;
+
+    const originalX = (roboX + originX) / ratio;
+    const originalYInverted = (roboY + originY) / ratio;
+
+    // Step 3: Re-invert Y
+    const canvas = document.getElementById('myCanvas') as HTMLCanvasElement;
+    robo.pos.x = originalX;
+    robo.pos.y = canvas.height + canvas.height + originalYInverted;
       return robo;
     });
 
@@ -2650,9 +2662,7 @@ export class DashboardComponent implements AfterViewInit {
       const scaledPosY = posY;
 
       // Flip Y-axis for canvas and calculate actual canvas positions
-      const transformedPosY = !this.simMode
-        ? this.mapImageHeight - scaledPosY
-        : imgHeight / this.zoomLevel - scaledPosY;
+      const transformedPosY = !this.simMode ? this.mapImageHeight - scaledPosY : imgHeight / this.zoomLevel - scaledPosY;
       const robotCanvasX = scaledPosX;
       const robotCanvasY = transformedPosY;
       this.setPaths(path, imgHeight, centerX, centerY, parseInt(robotId));
@@ -2675,6 +2685,7 @@ export class DashboardComponent implements AfterViewInit {
       if (this.isFleet) {
         this.robos = this.robos.map((robo) => {
           if (robo.roboDet.id === parseInt(robotId)) {
+            
             robo.pos.x = robotCanvasX;
             robo.pos.y = robotCanvasY;
             robo.pos.orientation = -yaw;
