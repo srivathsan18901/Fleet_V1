@@ -2498,6 +2498,7 @@ export class DashboardComponent implements AfterViewInit {
     UNLOADSTATE: '#533621',
     CHARGESTATE: '#9900cc',
     FAILEDSTATE: '#ff0800',
+    INACTIVESTATE: '#d1d1c5',
   };
 
   errorColorMap: { [key: string]: string } = {
@@ -2734,13 +2735,14 @@ export class DashboardComponent implements AfterViewInit {
         const yaw = robo.pos.orientation;
 
         // Draw the robot on the canvas with updated positions and orientation
-        let clr = this.roboIDColor.get(robo.amrId) || 'white';
+        let clr = !robo.isActive ? '#d1d1c5' : (this.roboIDColor.get(robo.amrId) || 'white');
+        const stateForColor = robo.isActive ? robo.imgState : 'INACTIVESTATE';
         this.plotRobo(
           ctx,
           robotPosX,
           robotPosY,
           yaw,
-          robo.imgState,
+          stateForColor,
           robo.errState,
           clr
         );
@@ -2768,13 +2770,14 @@ export class DashboardComponent implements AfterViewInit {
         const yaw = robo.pos.orientation;
 
         // Draw the robot on the canvas with updated positions and orientation
-        let clr = this.fleetRoboIdColor.get(robo.roboDet.id) || 'white';
+        let clr = !robo.isActive ? '#d1d1c5' : (this.fleetRoboIdColor.get(robo.roboDet.id) || 'white');
+        const stateForColor = robo.isActive ? robo.imgState : 'INACTIVESTATE';
         this.plotRobo(
           ctx,
           robotPosX,
           robotPosY,
           yaw,
-          robo.imgState,
+          stateForColor,
           robo.errState,
           clr
         );
