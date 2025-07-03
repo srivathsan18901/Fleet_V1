@@ -134,6 +134,7 @@ export class TranslationService {
       noMapButtonText: "Configuration",
       noMapsFoundText: "- No Maps Found -",
       initialization: "Initialization",
+      AreYouSureToRemoveTheRobot: "Are You Sure To Remove the Selected Robot ?",
       triggeringCharger: 'Triggering Charger...',
       pleaseWait: 'Please wait while we process the request.',
       success: 'Success',

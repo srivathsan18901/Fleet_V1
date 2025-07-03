@@ -401,7 +401,7 @@
               <!-- Delete icon with click event -->
               <button
                 class="enable-delete-button"
-                (click)="deleteRobot(robot, i)"
+                (click)="showConfirmation(i, robot)"
               >
                 <svg
                   width="25"
@@ -427,7 +427,15 @@
         </ng-template>
       </div>
     </div>
-
+    <div *ngIf="isConfirmationVisible" class="popup-overlay1">
+      <div class="popup-content1">
+        <p>{{ getTranslation('AreYouSureToRemoveTheRobot') }}</p>
+        <div>
+          <button style="margin-right: 10px;" type="button" (click)="confirmDelete()">{{ getTranslation('Confirm') }}</button>
+          <button type="button" (click)="cancelDelete()">{{ getTranslation('Cancel') }}</button>
+        </div>
+      </div>
+    </div>
     <!-- fleet and simulation -->
     <!-- <button
       class="indication-button"

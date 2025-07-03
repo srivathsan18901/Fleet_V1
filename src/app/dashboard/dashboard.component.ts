@@ -3784,4 +3784,31 @@ export class DashboardComponent implements AfterViewInit {
     if (this.posEventSource) this.posEventSource.close(); // ONLY comment.. if interrupting on other operations..
     if (this.assetEventSource) this.assetEventSource.close();
   }
+  isConfirmationVisible = false;
+robotToDelete: any = null;
+indexToDelete: number | null = null;
+
+showConfirmation(index: number, robot: any): void {
+  this.indexToDelete = index;
+  this.robotToDelete = robot;
+  this.isConfirmationVisible = true;
+}
+
+confirmDelete(): void {
+  if (this.robotToDelete !== null && this.indexToDelete !== null) {
+    this.deleteRobot(this.robotToDelete, this.indexToDelete);
+  }
+  this.resetConfirmation();
+}
+
+cancelDelete(): void {
+  this.resetConfirmation();
+}
+
+resetConfirmation(): void {
+  this.isConfirmationVisible = false;
+  this.robotToDelete = null;
+  this.indexToDelete = null;
+}
+
 }
