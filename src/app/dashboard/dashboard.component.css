@@ -134,7 +134,7 @@ app-sidenavbar{
   overflow: auto; /* Enables scrolling within the content */
 }
 
-button {
+.button {
   padding: 6px 26px;
   background-color: #ff3333;
   color: #fff;
