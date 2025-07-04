@@ -2426,6 +2426,7 @@ export class DashboardComponent implements AfterViewInit {
               current_task: robot.current_task,
               path: robot.robot_state === 'MOVESTATE' ? robot.agentPath : [], // robot.agentPath.length = 0,
               payload: robot.payload_status,
+              isConnected: robot.isConnected,
             };
             this.simMode = this.nodeGraphService.getsimMode();
             this.roboIDColor = this.nodeGraphService.getRoboIdClr();
@@ -2658,6 +2659,7 @@ export class DashboardComponent implements AfterViewInit {
         payload,
         battery,
         current_task,
+        isConnected
       } = robotsData[robotId];
       const scaledPosX = posX;
       const scaledPosY = posY;
@@ -2685,8 +2687,7 @@ export class DashboardComponent implements AfterViewInit {
       }
       if (this.isFleet) {
         this.robos = this.robos.map((robo) => {
-          if (robo.roboDet.id === parseInt(robotId)) {
-            
+          if (robo.roboDet.id === parseInt(robotId)) {            
             robo.pos.x = robotCanvasX;
             robo.pos.y = robotCanvasY;
             robo.pos.orientation = -yaw;
@@ -2696,6 +2697,7 @@ export class DashboardComponent implements AfterViewInit {
             robo.battery = battery;
             robo.showPath = state === 'MOVESTATE' ? true : false;
             robo.current_task = current_task;
+            robo.isConnected = isConnected;
             if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
               robo.isActive = true;
               this.toast  = true;
@@ -2717,6 +2719,7 @@ export class DashboardComponent implements AfterViewInit {
           robo.showPath = state === 'MOVESTATE' ? true : false;
           robo.battery = battery;
           robo.current_task = current_task;
+          robo.isConnected = isConnected;
           if (state !== 'INITSTATE' && state !== 'NO RESERVATION')
             robo.isActive = true;
             this.toast  = true;
@@ -2735,8 +2738,8 @@ export class DashboardComponent implements AfterViewInit {
         const yaw = robo.pos.orientation;
 
         // Draw the robot on the canvas with updated positions and orientation
-        let clr = !robo.isActive ? '#d1d1c5' : (this.roboIDColor.get(robo.amrId) || 'white');
-        const stateForColor = robo.isActive ? robo.imgState : 'INACTIVESTATE';
+        let clr = !robo.isConnected ? '#d1d1c5' : (this.roboIDColor.get(robo.amrId) || 'white');
+        const stateForColor = robo.isConnected ? robo.imgState : 'INACTIVESTATE';
         this.plotRobo(
           ctx,
           robotPosX,
@@ -2770,8 +2773,8 @@ export class DashboardComponent implements AfterViewInit {
         const yaw = robo.pos.orientation;
 
         // Draw the robot on the canvas with updated positions and orientation
-        let clr = !robo.isActive ? '#d1d1c5' : (this.fleetRoboIdColor.get(robo.roboDet.id) || 'white');
-        const stateForColor = robo.isActive ? robo.imgState : 'INACTIVESTATE';
+        let clr = !robo.isConnected ? '#d1d1c5' : (this.fleetRoboIdColor.get(robo.roboDet.id) || 'white');
+        const stateForColor = robo.isConnected ? robo.imgState : 'INACTIVESTATE';
         this.plotRobo(
           ctx,
           robotPosX,
