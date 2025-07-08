@@ -464,7 +464,7 @@ export class EnvmapComponent implements AfterViewInit {
         throw new Error('No valid nodes found in file (missing position data)');
       }
 
-      const angleRad = (this.origin?.w || 0) * Math.PI / 180;
+      const angleRad = -(this.origin?.w || 0) * Math.PI / 180;
       const originX = this.origin?.x || 0;
       const originY = this.origin?.y || 0;
       const ratio = this.ratio || 1;
@@ -592,7 +592,7 @@ export class EnvmapComponent implements AfterViewInit {
         y: this.currEditMapDet.origin.y,
         w: this.currEditMapDet.origin.w,
       };
-      const angleRad = (this.origin.w * Math.PI) / 180;
+      const angleRad = -(this.origin.w * Math.PI) / 180;
 
       this.nodes = this.currEditMapDet.nodes.map((node: Node) => {
         const x = node.nodePosition.x;
@@ -715,7 +715,7 @@ export class EnvmapComponent implements AfterViewInit {
       this.setupCanvas();
       this.isCanvasInitialized = true; // Avoid re-initializing the canvas
       if (this.currEditMap) {
-      const angleRad = (this.origin.w * Math.PI) / 180;
+      const angleRad = -(this.origin.w * Math.PI) / 180;
       
       this.robos = this.robos.map((robo: Robo) => {
         // console.log("initmeter", robo.pos.x, robo.pos.y);
@@ -1080,7 +1080,7 @@ export class EnvmapComponent implements AfterViewInit {
     // Validation: Check if coordinates are within map boundaries
     const mapWidth = canvas.width * this.ratio! - this.origin.x; // Assuming the map image width
     const mapHeight = canvas.height * this.ratio! - this.origin.y; // Assuming the map image height
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
     // console.log("map",mapWidth,mapHeight);
     if (parsedX > mapWidth || parsedY > mapHeight) {
       this.messageService.add({
@@ -1953,13 +1953,11 @@ export class EnvmapComponent implements AfterViewInit {
   }
   updateEditedMap() {
     this.isFleetService.abortFleetStatusSignal();
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
 
     this.nodes = this.nodes.map((node) => {
-      // console.log(node.nodePosition.x,node.nodePosition.y)
       const x = node.nodePosition.x;
       const y = node.nodePosition.y;
-      // console.log("save1", x, y);
 
       const xScaled = (x * (this.ratio || 1)) - (this.origin.x || 0);
       const yScaled = (y * (this.ratio || 1)) - (this.origin.y || 0);
@@ -2146,7 +2144,7 @@ export class EnvmapComponent implements AfterViewInit {
       });
       return;
     }
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
     this.nodes = this.nodes.map((node) => {
       const x = node.nodePosition.x;
       const y = node.nodePosition.y;
@@ -3569,7 +3567,7 @@ export class EnvmapComponent implements AfterViewInit {
 
   get nodePositionX(): number {
     if (this.selectedNode?.nodePosition && this.ratio) {
-      const angleRad = (this.origin.w * Math.PI) / 180;
+      const angleRad = -(this.origin.w * Math.PI) / 180;
       const calculatedX =
         // this.selectedNode.nodePosition.x * this.ratio - this.origin.x;
         (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.cos(angleRad) - (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.sin(angleRad);
@@ -3582,7 +3580,7 @@ export class EnvmapComponent implements AfterViewInit {
     // console.log(this.ratio);
 
     if (this.selectedNode?.nodePosition && this.ratio) {
-      const angleRad = (this.origin.w * Math.PI) / 180;
+      const angleRad = -(this.origin.w * Math.PI) / 180;
       (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.cos(angleRad) - (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.sin(angleRad);
       // this.selectedNode.nodePosition.x = value / this.ratio - this.origin.x;
     }
@@ -3590,7 +3588,7 @@ export class EnvmapComponent implements AfterViewInit {
 
   get nodePositionY(): number {
     if (this.selectedNode?.nodePosition && this.ratio) {
-      const angleRad = (this.origin.w * Math.PI) / 180;
+      const angleRad = -(this.origin.w * Math.PI) / 180;
       const calculatedY =
         // this.selectedNode.nodePosition.y * this.ratio - this.origin.y;
         (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.sin(angleRad) + (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.cos(angleRad);
@@ -3601,7 +3599,7 @@ export class EnvmapComponent implements AfterViewInit {
   }
 
   set nodePositionY(value: number) {
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
     if (this.selectedNode?.nodePosition) {
         (this.selectedNode.nodePosition.x * this.ratio! - this.origin.x) * Math.sin(angleRad) + (this.selectedNode.nodePosition.y * this.ratio! - this.origin.y) * Math.cos(angleRad);
 
@@ -4492,7 +4490,7 @@ export class EnvmapComponent implements AfterViewInit {
     const transformedY = canvas.height - y; // yet to remove..
 
     // Calculate the angle in radians
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
     
     // Rotate the coordinates based on the angle
     const rotatedX = (x * this.ratio! - this.origin.x) * Math.cos(angleRad) - 

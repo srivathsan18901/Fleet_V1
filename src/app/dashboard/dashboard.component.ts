@@ -825,7 +825,7 @@ export class DashboardComponent implements AfterViewInit {
 
     let ratio = this.ratio ? this.ratio : 1;
     let quaternion = { x: 0, y: 0, z: 0, w: 1 };
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
     const transformedY = mapImg.height - this.robotToInitialize.pos.y;
 
     const xScaled = (this.robotToInitialize.pos.x * (this.ratio || 1)) - (this.origin.x || 0);
@@ -1205,7 +1205,7 @@ export class DashboardComponent implements AfterViewInit {
         0
       );
     });
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
 
     this.chargeNodes.forEach((station) => {
       const nodeX = station.pose.x * Math.cos(-angleRad) - station.pose.y * Math.sin(-angleRad);
@@ -1661,7 +1661,7 @@ export class DashboardComponent implements AfterViewInit {
                 break;
               }
             }
-            const angleRad = (this.origin.w * Math.PI) / 180;            
+            const angleRad = -(this.origin.w * Math.PI) / 180;            
             let posX = (localizePos.x * this.ratio || 1) - (this.origin.x || 0)* Math.cos(angleRad) - (localizePos.y * this.ratio || 1) - (this.origin.y || 0) * Math.sin(angleRad);
             let posY = (localizePos.x * this.ratio || 1) - (this.origin.y || 0)*Math.sin(angleRad)- (localizePos.y * this.ratio || 1) - (this.origin.y || 0) * Math.cos(angleRad);
             this.localizationPos = {
@@ -1832,7 +1832,7 @@ export class DashboardComponent implements AfterViewInit {
       }
       // Check if mouse is over any charge node
       for (let node of this.chargeNodes) {
-        const angleRad = (this.origin.w * Math.PI) / 180;
+        const angleRad = -(this.origin.w * Math.PI) / 180;
         const rotatedX = node.pose.x * Math.cos(angleRad) + node.pose.y * Math.sin(angleRad);
         const rotatedY = node.pose.x * Math.sin(angleRad) + node.pose.y * Math.cos(angleRad);
         let x = (rotatedX + (this.origin.x || 0)) / (this.ratio || 1);
@@ -2047,7 +2047,7 @@ export class DashboardComponent implements AfterViewInit {
         imgY >= 0 &&
         imgY <= this.mapImageHeight / this.zoomLevel;
       if (isInsideMap) {
-        const angleRad = (this.origin.w * Math.PI) / 180;
+        const angleRad = -(this.origin.w * Math.PI) / 180;
         const formattedX = (imgX * this.ratio - this.origin.x)* Math.cos(angleRad) - (imgY * this.ratio! - this.origin.y) * Math.sin(angleRad);
         const formattedY = (imgX * this.ratio - this.origin.y)* Math.sin(angleRad) + (imgY * this.ratio! - this.origin.y) * Math.cos(angleRad);
         //Set tooltip content and position
@@ -2202,7 +2202,7 @@ export class DashboardComponent implements AfterViewInit {
         pos: { ...node.nodePosition }, // which creates a new object (deep copying).. / instead of referencing it
       };
     });
-    const angleRad = (this.origin.w * Math.PI) / 180;   
+    const angleRad = -(this.origin.w * Math.PI) / 180;   
     // yet to interface in this component..
     this.nodes = mapData.nodes.map((node: any) => { 
         const x = node.nodePosition.x;
@@ -2392,7 +2392,7 @@ export class DashboardComponent implements AfterViewInit {
         if (data.robots?.length) {
           data.robots.forEach(async (robot: any) => {
             
-            const angleRad = (this.origin.w * Math.PI) / 180; 
+            const angleRad = -(this.origin.w * Math.PI) / 180; 
             const robotPosX = robot.pose.position.x * Math.cos(-angleRad) - robot.pose.position.y * Math.sin(-angleRad);
             const robotPosY = robot.pose.position.x * Math.sin(-angleRad) + robot.pose.position.y * Math.cos(-angleRad);
             let posX = (robotPosX + (this.origin.x || 0)) / (this.ratio || 1);
@@ -2814,7 +2814,7 @@ export class DashboardComponent implements AfterViewInit {
     });
 
     this.chargeNodes.forEach((station) => {
-      const angleRad = (this.origin.w * Math.PI) / 180; 
+      const angleRad = -(this.origin.w * Math.PI) / 180; 
       const stationPosX = station.pose.position.x * Math.cos(-angleRad) - station.pose.position.y * Math.sin(-angleRad);
       const stationPosY = station.pose.position.x * Math.sin(-angleRad) + station.pose.position.y * Math.cos(-angleRad);
       let scaledX = (stationPosX + (this.origin.x || 0)) / (this.ratio || 1);
@@ -2851,7 +2851,7 @@ export class DashboardComponent implements AfterViewInit {
     const centerY = (canvas.height - imgHeight) / 2 + this.offsetY;
 
     this.racks = assets.map((rack: any) => {
-      const angleRad = (this.origin.w * Math.PI) / 180; 
+      const angleRad = -(this.origin.w * Math.PI) / 180; 
       const rackPosX = rack.x * Math.cos(-angleRad) - rack.y * Math.sin(-angleRad);
       const rackPosY = rack.x * Math.sin(-angleRad) + rack.y * Math.cos(-angleRad);
       let posX = (rackPosX + (this.origin.x || 0)) / (this.ratio || 1);
@@ -2883,7 +2883,7 @@ export class DashboardComponent implements AfterViewInit {
     if (!path) return;
     path.forEach((path: any) => {
       
-      const angleRad = (this.origin.w * Math.PI) / 180; 
+      const angleRad = -(this.origin.w * Math.PI) / 180; 
       const rackPosX = path.x * Math.cos(-angleRad) - path.y * Math.sin(-angleRad);
       const rackPosY = path.x * Math.sin(-angleRad) + path.y * Math.cos(-angleRad);
       let pathX = (rackPosX + (this.origin.x || 0)) / (this.ratio || 1);
@@ -3618,7 +3618,7 @@ export class DashboardComponent implements AfterViewInit {
 
     this.localizePoses = await this.getLocalizePos();
     console.log(this.localizePoses);
-    const angleRad = (this.origin.w * Math.PI) / 180;
+    const angleRad = -(this.origin.w * Math.PI) / 180;
 
     this.localizePoses = this.localizePoses.map((pos: any) => {
       const posX = pos.x * Math.cos(-angleRad) - pos.y * Math.sin(-angleRad);
