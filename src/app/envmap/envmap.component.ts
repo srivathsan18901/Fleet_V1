@@ -401,107 +401,134 @@ export class EnvmapComponent implements AfterViewInit {
 
   nonodefile:boolean=false;
   errorTimeout: any;
-  async confirmnodefile() {
-    if (!this.selectedFile) {
-      this.nonodefile=true;
-      if (this.errorTimeout) {
-        clearTimeout(this.errorTimeout);
-      }
-      // Set new timeout to hide message after 5 seconds
-      this.errorTimeout = setTimeout(() => {
-        this.nonodefile = false;
-      }, 5000);
-      this.messageService.add({
-        severity: 'warn',
-        summary: this.getTranslation(`noFileSelected`),
-        detail: this.getTranslation(`selectFileBeforeConfirming`),
-      });
-      return;
+async confirmnodefile() {
+  if (!this.selectedFile) {
+    this.nonodefile = true;
+    if (this.errorTimeout) {
+      clearTimeout(this.errorTimeout);
     }
-
-    try {
-      const fileContent = await this.readFile(this.selectedFile);
-      let nodes: any[] = [];
-      
-      if (this.selectedFile.name.endsWith('.yaml') || this.selectedFile.name.endsWith('.yml')) {
-        try {
-          // First try parsing as single document
-          try {
-            const parsedData = YAML.parse(fileContent);
-            if (parsedData) {
-              if (Array.isArray(parsedData)) {
-                nodes = parsedData;
-              } else if (parsedData.nodes && Array.isArray(parsedData.nodes)) {
-                nodes = parsedData.nodes;
-              } else if (parsedData.position) {
-                nodes = [parsedData];
-              }
-            }
-          } catch (singleDocError) {
-            // If single document parse fails, try multi-document
-            const docs = YAML.parseAllDocuments(fileContent);
-            nodes = docs
-              .map(doc => doc.toJSON())
-              .filter(doc => doc && (doc.position || (doc.preDockPose && doc.preDockPose.position)));
-          }
-        } catch (yamlError) {
-          console.error('YAML parsing error:', yamlError);
-          throw new Error('Invalid YAML format');
-        }
-      } else {
-        // Handle JSON files
-        const graphData = JSON.parse(fileContent);
-        nodes = graphData.nodes || [];
-      }
-      
-      // Filter out any invalid nodes and ensure we have positions
-      nodes = nodes.filter(node => {
-        const position = node.position || (node.preDockPose && node.preDockPose.position);
-        return position && position.x !== undefined && position.y !== undefined;
-      });
-
-      if (nodes.length === 0) {
-        throw new Error('No valid nodes found in file (missing position data)');
-      }
-
-      const angleRad = -(this.origin?.w || 0) * Math.PI / 180;
-      const originX = this.origin?.x || 0;
-      const originY = this.origin?.y || 0;
-      const ratio = this.ratio || 1;
-
-      nodes.forEach((node: any) => {
-        const position = node.position || node.preDockPose.position;
-        let x = position.x;
-        let y = position.y;
-
-        // Apply rotation
-        const xRotated = x * Math.cos(-angleRad) - y * Math.sin(-angleRad);
-        const yRotated = x * Math.sin(-angleRad) + y * Math.cos(-angleRad);
-
-        // Apply translation and scaling
-        x = (xRotated + originX) / ratio;
-        y = (yRotated + originY) / ratio;
-
-        this.plotSingleNode(x, y, true);
-      });
-
-      this.messageService.add({
-        severity: 'success',
-        summary: this.getTranslation(`nodesImported`),
-        detail: this.getTranslation(`successfullyImportedNodes`),
-      });
-
-      this.openImpNodes = false;
-      this.redrawCanvas();
-    } catch (error) {
-      console.error('File processing error:', error);
-      this.messageService.add({
-        severity: 'error',
-        summary: this.getTranslation(`importError`),
-        detail: this.getTranslation(`failedToProcessFile`),
-      });
-    }
+    this.errorTimeout = setTimeout(() => {
+      this.nonodefile = false;
+    }, 5000);
+    this.messageService.add({
+      severity: 'warn',
+      summary: this.getTranslation(`noFileSelected`),
+      detail: this.getTranslation(`selectFileBeforeConfirming`),
+    });
+    return;
   }
+
+  try {
+    const fileContent = await this.readFile(this.selectedFile);
+    let nodes: any[] = [];
+    let edges: any[] = [];
+
+    // ─── 1. Parse JSON or YAML ────────────────────────────────
+    if (this.selectedFile.name.endsWith('.yaml') || this.selectedFile.name.endsWith('.yml')) {
+      try {
+        const parsedData = YAML.parse(fileContent);
+        if (Array.isArray(parsedData)) {
+          nodes = parsedData;
+        } else if (parsedData.nodes && Array.isArray(parsedData.nodes)) {
+          nodes = parsedData.nodes;
+          edges = parsedData.edges || [];
+        } else if (parsedData.position) {
+          nodes = [parsedData];
+        }
+      } catch (yamlError) {
+        const docs = YAML.parseAllDocuments(fileContent);
+        nodes = docs.map(doc => doc.toJSON()).filter(doc => doc && (doc.position || (doc.preDockPose && doc.preDockPose.position)));
+      }
+    } else {
+      const graphData = JSON.parse(fileContent);
+      nodes = graphData.nodes || [];
+      edges = graphData.edges || [];
+    }
+
+    // ─── 2. Validate and Filter Nodes ─────────────────────────
+    nodes = nodes.filter(node => {
+      const position = node.position || (node.preDockPose && node.preDockPose.position);
+      return position && position.x !== undefined && position.y !== undefined;
+    });
+
+    if (nodes.length === 0) {
+      throw new Error('No valid nodes found in file (missing position data)');
+    }
+
+    // ─── 3. Transform Coordinates ─────────────────────────────
+    const angleRad = -(this.origin?.w || 0) * Math.PI / 180;
+    const originX = this.origin?.x || 0;
+    const originY = this.origin?.y || 0;
+    const ratio = this.ratio || 1;
+
+    const nodeMap = new Map<string, { x: number; y: number }>();
+
+    nodes.forEach((node: any) => {
+      const position = node.position || node.preDockPose.position;
+      let x = position.x;
+      let y = position.y;
+
+      const xRotated = x * Math.cos(-angleRad) - y * Math.sin(-angleRad);
+      const yRotated = x * Math.sin(-angleRad) + y * Math.cos(-angleRad);
+
+      x = (xRotated + originX) / ratio;
+      y = (yRotated + originY) / ratio;
+
+      nodeMap.set(node.name, { x, y });
+      this.plotSingleNode(x, y, true);
+    });
+
+    // ─── 4. Process and Store Edges ───────────────────────────
+    this.edges = edges.map((edge: any, index: number) => {
+      return {
+        edgeId: edge.name || `edge-${index}`,
+        sequenceId: index,
+        edgeDescription: '',
+        released: true,
+        startNodeId: edge.from,
+        endNodeId: edge.to,
+        maxSpeed: 1,
+        maxHeight: 1,
+        minHeight: 0,
+        orientation: 0,
+        orientationType: 'global',
+        direction: edge.isUniDirectional ? 'UN_DIRECTIONAL' : 'BI_DIRECTIONAL',
+        rotationAllowed: true,
+        maxRotationSpeed: 1,
+        length: 0,
+        action: []
+      } as Edge;
+    });
+
+    // ─── 5. Draw Edges ────────────────────────────────────────
+    this.edges.forEach(edge => {
+      const startPos = nodeMap.get(edge.startNodeId);
+      const endPos = nodeMap.get(edge.endNodeId);
+      if (startPos && endPos) {
+        this.drawEdge(startPos, endPos, edge.direction, edge.startNodeId, edge.endNodeId);
+      }
+    });
+
+    // ─── 6. Final UI Updates ──────────────────────────────────
+    this.messageService.add({
+      severity: 'success',
+      summary: this.getTranslation(`nodesImported`),
+      detail: this.getTranslation(`successfullyImportedNodes`),
+    });
+
+    this.openImpNodes = false;
+    this.redrawCanvas();
+
+  } catch (error) {
+    console.error('File processing error:', error);
+    this.messageService.add({
+      severity: 'error',
+      summary: this.getTranslation(`importError`),
+      detail: this.getTranslation(`failedToProcessFile`),
+    });
+  }
+}
+
   private readFile(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
