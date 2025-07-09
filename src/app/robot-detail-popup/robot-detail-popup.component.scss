@@ -2,13 +2,12 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;  /* Full width */
+  width: 100vw; /* Full width */
   height: 100vh; /* Full height */
   background: rgba(0, 0, 0, 0.7); /* Semi-transparent black background */
   backdrop-filter: blur(4.1px); /* Blur effect */
   z-index: 999; /* Below the popup */
 }
-
 
 .popup-content {
   display: flex;
@@ -16,12 +15,11 @@
   width: 90vw; /* 90% of the viewport width */
   max-width: 1300px; /* Maximum width */
   height: 625px; /* Auto height to accommodate content */
-
   position: fixed;
   top: 50%; /* Centers vertically */
   left: 50%; /* Centers horizontally */
   transform: translate(-50%, -50%); /* Adjusts for element's own width and height */
-  background-color: rgb(232, 230, 230); 
+  background-color: rgb(232, 230, 230);
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 15px; /* Optional: adds rounded corners */
   z-index: 1000; /* Ensure it's above other content */
@@ -29,12 +27,11 @@
   box-sizing: border-box; /* Ensures padding is included in width/height calculations */
 }
 
-.button-container{
+.button-container {
   position: relative;
   width: 100%;
   height: 100%;
 }
-
 
 .id-info-item {
   position: absolute;
@@ -45,7 +42,7 @@
   justify-content: flex-start;
   color: #000000;
   font-size: 32px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   letter-spacing: 0;
   white-space: nowrap;
@@ -57,9 +54,9 @@
 .popup-header h2 {
   margin: 20px;
   font-size: 38px; /* Adjust font size as needed */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 700; /* Slightly bolder text */
-  color: #DA2127; /* Dark color for readability */
+  color: #da2127; /* Dark color for readability */
 }
 
 .robot-detail-container {
@@ -81,89 +78,13 @@
   filter: drop-shadow(7px 7px 4px rgba(0, 0, 0, 0.7));
 }
 
-/* Emergency stop */
-.switch-holder {
-  width: max-content;
-  padding: 10px;
-  border-radius: 20px;
-  position: absolute;
-  z-index: 1;
-  top: 240px;
-  left: 725px;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  align-content: center;
-}
-.switch-holder:hover{
-  transition: 0.3s ease-in-out;
-  background-color: #f81e1e88;
-  color: white;
-}
-.switch-label {
-  font-size: 16px;
-  font-weight: bold;
-  padding: 10px;
-  text-align: center;
-} 
-
-.switch-toggle {
-  height: 40px;
-  width:auto
-}
-
-.switch-toggle input[type="checkbox"] {
-  position: absolute;
-  opacity: 0;
-  z-index: -2;
-}
-
-.switch-toggle input[type="checkbox"]+label {
-  position: relative;
-  display: inline-block;
-  width: 140px;
-  height: 40px;
-  border-radius: 20px;
-  margin: 0;
-  background-color: white;
-  cursor: pointer;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-}
-
-.switch-toggle input[type="checkbox"]+label::before {
-  position: absolute;
-  content: '|';
-  color: #000;
-  font-size: 13px;
-  font-weight: bold;
-  text-align: center;
-  line-height: 25px;
-  top: 8px;
-  left: 8px;
-  width: 45px;
-  height: 25px;
-  border-radius: 20px;
-  background-color: #eeeeee;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  transition: .3s ease-in-out;
-}
-
-
-.switch-toggle input[type="checkbox"]:checked+label::before {
-  left: 60%;
-  content: 'X';
-  font-weight: bold;
-  color: #fff;
-  background-color: #b30000;
-  box-shadow: #53525267 0px 5px 15px;        
-}
-
 /* connect and disconnect */
-.connect{
+.connect {
   width: 7em;
   height: 7em;
   top: 120px;
   left: 830px;
   position: relative;
-
 }
 
 .frame-1597881856_1861-1757 {
@@ -182,8 +103,8 @@
   display: flex;
   color: #000000;
   font-size: 24px;
-  font-family: "graphik", Arial,  sans-serif;
-  
+  font-family: "graphik", Arial, sans-serif;
+
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 600;
@@ -247,7 +168,7 @@
 .text-40-km_1864-1777 {
   color: #000000;
   font-size: 24px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -259,7 +180,7 @@
 .text-left_1864-1775 {
   color: #6e6e6e;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -267,10 +188,6 @@
   text-wrap: wrap;
   width: -webkit-fill-available;
 }
-
-
-
-
 
 .frame-1597881862_1864-1782 {
   display: flex;
@@ -285,7 +202,7 @@
 .text-126_1864-1778 {
   color: #000000;
   font-size: 24px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -297,7 +214,7 @@
 .text-average-charging-time_1864-1779 {
   color: #6e6e6e;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -306,24 +223,21 @@
   width: -webkit-fill-available;
 }
 
-/* batter percentage  */
-/* battery container */
-
 .battery {
   position: relative;
   margin-left: 30px;
   width: 120px; /* Narrower width for vertical orientation */
   height: 210px; /* Taller height */
   border: 3px solid #fff; /* White border for outer frame */
-border-radius: 15px; /* Rounded corners like in the image */
-background-color: transparent; /* Transparent background */
-margin-bottom: 8px;
-overflow: hidden;
-box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Slight shadow for 3D effect */
+  border-radius: 15px; /* Rounded corners like in the image */
+  background-color: transparent; /* Transparent background */
+  margin-bottom: 8px;
+  overflow: hidden;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Slight shadow for 3D effect */
 }
 
 .battery::after {
-  content: '';
+  content: "";
   position: absolute;
   top: -10px; /* Slightly above the container */
   left: 25%;
@@ -334,13 +248,11 @@ box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5); /* Slight shadow for 3D effect */
 }
 
 .battery-level {
-  width: 100%; /* Full width */
-// height: 100%; /* Full height, starts from bottom */
-/* background-color: #76c7c0; */
-transition: height 0.3s ease-in-out;
-position: absolute;
-bottom: 0; /* Fill from bottom to top */
-border-radius: 15px; /* Rounded edges matching the container */
+  width: 100%;
+  transition: height 0.3s ease-in-out;
+  position: absolute;
+  bottom: 0; /* Fill from bottom to top */
+  border-radius: 15px; /* Rounded edges matching the container */
 }
 
 .battery-level.low {
@@ -386,8 +298,7 @@ border-radius: 15px; /* Rounded edges matching the container */
   }
 }
 
-
- /* map */
+/* map */
 .frame-1597881883_1874-1899 {
   top: 140px;
   left: 22px;
@@ -415,20 +326,6 @@ border-radius: 15px; /* Rounded edges matching the container */
   transition: transform 0.3s ease-in-out;
 }
 
-
-// .details-container {
-//   position: relative;
-//   box-sizing: border-box;
-//   border-radius: 20px;
-//   background: linear-gradient(135deg, #4facfe, #00f2fe); 
-//   width: 450px;
-//   height: 160px;
-//   padding: 10px;
-//   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); 
-//   transition: transform 0.3s ease-in-out;
-// }
-
-
 .details-container:hover {
   transform: translateY(-5px); /* Lift the container on hover */
 }
@@ -442,7 +339,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .details-title {
   color: #ffffff;
   font-size: 20px; /* Slightly larger font */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 600; /* Bold for emphasis */
   text-align: left;
   width: 100%;
@@ -459,7 +356,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .current-map {
   display: flex;
   flex-direction: row;
-  // justify-content: space-between; 
+  // justify-content: space-between;
   gap: 10px;
   align-items: center;
   width: 100%;
@@ -472,7 +369,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .current-map-label {
   color: #ffffff;
   font-size: 14px; /* Slightly larger */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   text-align: left;
 }
@@ -481,17 +378,10 @@ border-radius: 15px; /* Rounded edges matching the container */
 .current-map-value {
   color: #ffffff;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   text-align: right;
 }
-
-
-
-
-
-
-/* error */
 
 .cpu_1864-1820 {
   padding: 14px 18px 14px 18px;
@@ -530,7 +420,7 @@ border-radius: 15px; /* Rounded edges matching the container */
   display: flex;
   color: #000000;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   letter-spacing: 0%;
   text-decoration: none;
   font-weight: 500;
@@ -562,26 +452,22 @@ border-radius: 15px; /* Rounded edges matching the container */
 .text-37--_1864-1826 {
   color: #000000;
   font-size: 48px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   width: 100%;
   text-align: left;
-} 
-.error-value{
+}
+.error-value {
   color: #000000;
   font-size: 35px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   width: 80%;
   text-align: left;
   margin-top: 20px;
   text-align: center;
-
 }
 
-/* new css in progress */
-
-/* network stength */
 .networkstrength-container {
   padding: 14px 18px;
   display: flex;
@@ -615,29 +501,25 @@ border-radius: 15px; /* Rounded edges matching the container */
   height: 40px;
   border-radius: 50px;
   padding: 7px;
-  
+
   background: #5b8ff9;
-  
 }
 
 .networkstrength-label {
   color: #000000;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
 }
 
 .networkstrength-value {
   font-size: 35px;
   font-weight: medium;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   color: #000;
   margin-top: 10px;
   text-align: center;
 }
-
-
-/* Battery temperature */
 
 .robottemperature-container {
   padding: 14px 18px;
@@ -689,13 +571,13 @@ border-radius: 15px; /* Rounded edges matching the container */
 .robottemperature-label {
   color: #000000;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif; 
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
 }
 
 .robottemperature-value {
   font-size: 35px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: medium;
   color: #000;
   margin-top: 20px;
@@ -703,8 +585,6 @@ border-radius: 15px; /* Rounded edges matching the container */
   width: 85%;
 }
 
-
-/* Robot-utilizaton */
 .robot-utilization-container {
   padding: 14px 18px;
   cursor: default;
@@ -764,8 +644,6 @@ border-radius: 15px; /* Rounded edges matching the container */
   transition: font-size 0.2s ease-in-out;
 }
 
-
-/* memory */
 .memory-container {
   padding: 14px 18px;
   display: flex;
@@ -800,29 +678,26 @@ border-radius: 15px; /* Rounded edges matching the container */
   width: 40px;
   height: 40px;
   border-radius: 50px;
-  background: #08970e; /* Example background color */
+  background: #08970e;
 }
 
 .memory-text {
   color: #000000;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
 }
 
 .memory-value {
   color: #000000;
   font-size: 35px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   width: 100%;
   text-align: center;
   margin-top: 10px;
 }
 
-
-
-/* Cpu utilization */
 .cpu-utilization-container {
   padding: 14px 18px;
   display: flex;
@@ -865,88 +740,26 @@ border-radius: 15px; /* Rounded edges matching the container */
 
 .cpu-utilization-text {
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   color: #000000;
 }
 
 .cpu-utilization-percentage {
   font-size: 35px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   color: #000000;
 }
-.cpu-utilization-value{
+.cpu-utilization-value {
   color: #000000;
   font-size: 35px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   width: 100%;
   text-align: center;
   margin-top: 20px;
 }
-
-
-/* error */
-/* 
-.error-container {
-  padding: 14px 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-  box-sizing: border-box;
-  border-radius: 15px;
-  background: #ffffff;
-  width: 180px;
-  height: 100px;
-}
-
-.error-content {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 16px;
-  width: 100%;
-}
-
-.error-icon-container {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 14px;
-  width: 100%;
-}
-
-.error-icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 20px;
-  background: #ffbe00;
-  
-  width: 40px;
-  height: 40px;
-}
-
-
-.error-text {
-  color: #000000;
-  font-size: 14px;
-  font-family: Inter, sans-serif;
-  font-weight: 500;
-}
-
-.error-value {
-  color: #000000;
-  font-size: 48px;
-  font-family: Inter, sans-serif;
-  font-weight: 500;
-  width: 100%;
-  text-align: left;
-} */
-
-
 
 .battery-details {
   position: absolute;
@@ -960,7 +773,8 @@ border-radius: 15px; /* Rounded edges matching the container */
   box-sizing: border-box;
 }
 
-.discharge-info, .charging-info {
+.discharge-info,
+.charging-info {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -969,21 +783,23 @@ border-radius: 15px; /* Rounded edges matching the container */
   width: 100%;
 }
 
-.distance, .charging-time {
+.distance,
+.charging-time {
   color: #000;
   font-size: 24px;
-  font-family: "graphik", Arial,  sans-serif;
- 
+  font-family: "graphik", Arial, sans-serif;
+
   font-weight: 600;
   text-align: left;
   width: 100%;
 }
 
-.discharge-label, .charging-label {
+.discharge-label,
+.charging-label {
   color: #6e6e6e;
   font-size: 14px;
-  font-family: "graphik", Arial,  sans-serif;
- 
+  font-family: "graphik", Arial, sans-serif;
+
   font-weight: 500;
   text-align: left;
   width: 100%;
@@ -999,8 +815,8 @@ border-radius: 15px; /* Rounded edges matching the container */
 .battery-percentage {
   color: #000000;
   font-size: 24px;
-  font-family: "graphik", Arial,  sans-serif;
-  
+  font-family: "graphik", Arial, sans-serif;
+
   font-weight: 500;
   text-align: center;
 }
@@ -1008,13 +824,12 @@ border-radius: 15px; /* Rounded edges matching the container */
 .battery-label {
   color: #6e6e6e;
   font-size: 15px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   text-align: left;
   width: 100%;
 }
 
-/* Pick and drop  */
 .pick-drop-container {
   padding: 22px 8px;
   display: flex;
@@ -1026,7 +841,6 @@ border-radius: 15px; /* Rounded edges matching the container */
   background: #ffffff;
   width: 200px;
   height: 158px;
-  
 }
 
 .pick-drop-info {
@@ -1043,12 +857,12 @@ border-radius: 15px; /* Rounded edges matching the container */
   align-items: center;
   justify-content: center;
   border-radius: 50px;
-  background: #f00e0e; /* Red background for the forklift icon */
+  background: #f00e0e;
 }
 
 .pick-drop-label {
   font-size: 16px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   color: #000000;
 }
@@ -1056,24 +870,19 @@ border-radius: 15px; /* Rounded edges matching the container */
 .pick-drop-values {
   color: #000000;
   font-size: 35px;
-  font-family: "graphik", Arial,  sans-serif;
- 
+  font-family: "graphik", Arial, sans-serif;
+
   margin-top: 40px;
   text-align: center;
   width: 100%;
-  white-space: nowrap; /* Prevent text from wrapping */
+  white-space: nowrap;
 }
-
-
-
-/* Container for the entire speed information section */
 
 .speed-container {
   display: flex;
   flex-direction: column;
   padding: 10px;
-  background: linear-gradient(135deg, #faf4f4 0%, #dddddd 100%); /* Red gradient background */
-
+  background: linear-gradient(135deg, #faf4f4 0%, #dddddd 100%);
   border-radius: 15px;
 }
 
@@ -1084,7 +893,9 @@ border-radius: 15px; /* Rounded edges matching the container */
   margin-bottom: 15px;
 }
 
-.speed-value-container, .transfer-value-container, .docking-value-container {
+.speed-value-container,
+.transfer-value-container,
+.docking-value-container {
   display: flex;
   align-items: baseline;
 }
@@ -1112,16 +923,15 @@ border-radius: 15px; /* Rounded edges matching the container */
   width: 116px; /* Adjust width as needed */
 }
 
-/* Label styling */
 .label {
   color: #6e6e6e;
   font-size: 14px; /* Reduced font size */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 600;
   text-align: center;
   width: -webkit-fill-available;
 }
-/* Container for speed value and unit */
+
 .speed-value-container,
 .transfer-value-container,
 .docking-value-container {
@@ -1133,28 +943,25 @@ border-radius: 15px; /* Rounded edges matching the container */
   width: auto; /* Adjust width dynamically */
 }
 
-/* Speed value styling */
 .speed-value,
 .time-value {
   color: #000000;
   font-size: 16px; /* Adjust size as needed */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 600;
   text-align: right; /* Align text to the right */
 }
 
-/* Unit styling */
 .unit {
   color: #000000;
   font-size: 16px; /* Adjust size as needed */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   text-align: left; /* Align text to the left */
   margin-left: 4px; /* Add margin between value and unit */
   width: auto; /* Auto width for flexibility */
 }
 
-/* Container for average speed and other details */
 .speed-details-container {
   display: flex;
   flex-direction: row;
@@ -1164,7 +971,6 @@ border-radius: 15px; /* Rounded edges matching the container */
   width: 100%; /* Full width for the container */
 }
 
-/* Container for average speed */
 .average-speed-container,
 .transfer-time-container,
 .maximum-speed-container,
@@ -1180,7 +986,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .label {
   color: #6e6e6e;
   font-size: 15px; /* Adjust font size as needed */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   text-align: center;
   width: auto; /* Auto width for dynamic adjustment */
@@ -1191,7 +997,7 @@ border-radius: 15px; /* Rounded edges matching the container */
 .time-value {
   color: #000000;
   font-size: 20px; /* Adjust as needed */
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 600;
   text-align: right;
 }
@@ -1208,10 +1014,10 @@ border-radius: 15px; /* Rounded edges matching the container */
   gap: 12px;
   box-sizing: border-box;
   width: 124px;
-  
 }
 
-.average-discharge, .average-charging-time {
+.average-discharge,
+.average-charging-time {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -1220,350 +1026,412 @@ border-radius: 15px; /* Rounded edges matching the container */
   box-sizing: border-box;
 }
 
-.discharge-distance, .charging-time {
+.discharge-distance,
+.charging-time {
   color: #000000;
   font-size: 24px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
   text-align: left;
   width: 100%;
 }
 
-.discharge-label, .charging-time-label {
+.discharge-label,
+.charging-time-label {
   color: #6e6e6e;
   font-size: 15px;
-  font-family: "graphik", Arial,  sans-serif;
+  font-family: "graphik", Arial, sans-serif;
   font-weight: 500;
-  
+
   text-align: left;
   width: 100%;
 }
-
-
 
 /* wifi signal */
 
-  /* Style for the WiFi signal section */
-  
-  .wifi-signal {
-    display: flex;
-    justify-content: center;
-    align-items: center; 
-    
-  }
+/* Style for the WiFi signal section */
 
-  
-    @mixin getWifi($size) {
-      $anim: 1.5s linear infinite;
-      $border-width: $size/2.35;
-      $line-color: #4bed22;
-      $line-color-weak: rgba($line-color, 0.4);
-      $trans: 0.3s linear;
-  
-      box-sizing: border-box;
-      background-color: transparent;
-      border: $size / 2 solid transparent;
-      border-top-color: $line-color;
-      border-radius: $size / 2;
-      height: $size;
-      left: 50%;
-      position: absolute;
-      top: 50%;
-      transition: border-top-color $trans;
-      width: $size;
-  
-      &:before,
-      &:after {
-        content: '';
-        box-sizing: border-box;
-        background-color: transparent;
-        border: $border-width / 1.2 solid transparent;
-        border-top-color: $line-color;
-        position: absolute;
-        transition: border-top-color $trans;
-      }
-  
-      &:before {
-        border-radius: $size;
-        height: $size * 2;
-        left: -$size;
-        top: -$size;
-        width: $size * 2;
-      }
-  
-      &:after {
-        border-radius: $size * 3;
-        height: $size * 3;
-        left: -$size * 1.5;
-        top: -$size * 1.5;
-        width: $size * 3;
-      }
-  
-      &.loading {
-        animation: blink-1 $anim;
-  
-        &:before {
-          animation: blink-2 $anim;
-        }
-  
-        &:after {
-          animation: blink-3 $anim;
-        }
-      }
-  
-      &.none:not(.loading) {
-        border-top-color: $line-color-weak;
-  
-        &:before,
-        &:after {
-          border-top-color: $line-color-weak;
-        }
-      }
-  
-      &.weak:not(.loading) {
-        &:before,
-        &:after {
-          border-top-color: $line-color-weak;
-        }
-      }
-  
-      &.medium:not(.loading) {
-        &:after {
-          border-top-color: $line-color-weak;
-        }
-      }
-  
-      @at-root {
-        @keyframes blink-1 {
-          0% {
-            border-top-color: $line-color-weak;
-          }
-  
-          50%,
-          100% {
-            border-top-color: $line-color;
-          }
-        }
-  
-        @keyframes blink-2 {
-          0%,
-          100% {
-            border-top-color: $line-color;
-          }
-  
-          50% {
-            border-top-color: $line-color-weak;
-          }
-        }
-  
-        @keyframes blink-3 {
-          0%,
-          50% {
-            border-top-color: $line-color;
-          }
-  
-          100% {
-            border-top-color: $line-color-weak;
-          }
-        }
-      }
-    }
-  
-    .wifi {
-      @include getWifi(30px);  
-      transform: translate(-25%);
-      position: absolute;
-  
-   
-    left: 620px;
-    top: 110px;
-    }
-  
+.wifi-signal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
+@mixin getWifi($size) {
+  $anim: 1.5s linear infinite;
+  $border-width: $size/2.35;
+  $line-color: #4bed22;
+  $line-color-weak: rgba($line-color, 0.4);
+  $trans: 0.3s linear;
 
-  //  connect
-  .status-button {
-    position: absolute;
-    left: 730px;
-    top: 80px;
-    padding: 10px 20px;
-    font-size: 18px;
-    font-family: "graphik", Arial,  sans-serif;
-    font-weight: bold;
-    
-    color: rgb(34, 195, 69); /* Initial green color */
-    background-color: transparent;
-    cursor: pointer;
-    border-radius: 10px;
-    transition: all 0.3s ease; /* Smooth transition */
-  }
-  .status-button:hover {
-    color: rgb(255, 255, 255); /* White text on hover */
-  }
+  box-sizing: border-box;
+  background-color: transparent;
+  border: $size / 2 solid transparent;
+  border-top-color: $line-color;
+  border-radius: $size / 2;
+  height: $size;
+  left: 50%;
+  position: absolute;
+  top: 50%;
+  transition: border-top-color $trans;
+  width: $size;
 
-  /* When connected, change the text and background */
-  .status-button.connected {
-      color: rgb(225, 38, 38); /* White text */
-  }
-
-  .status-button.connected::before {
-      background-color: rgb(225, 38, 38) !important; /* Red background when connected */
-  }
-
-  .status-button.connected:hover {
-      color: rgb(255, 255, 255); /* White text */
-  }
-
-  .status-button:hover {
-    background-color: rgba(0, 128, 0, 0.1); /* Green hover effect */
-  }
-  
-  .status-button.connected:hover {
-    background-color: rgba(255, 0, 0, 0.1); /* Red hover effect */
-  }
-  
-  .Loc-BTN{
-    position: absolute;
-    left: 730px;
-    top: 170px;
-    display: flex ;
-    z-index: 1;
-    color: #7272f5;
-    font-size: 20px;
-    font-weight: bold;
-    align-items: center;
-    gap: 15px;
-    padding: 10px 20px;
-    border: 2px solid #7272f5;
-    border-radius: 10px;
-  }
-
-  // connect
-  .status-container {
-    // position: absolute;
-    // left: 250px;
-    // top: 30px;
-    display: flex;
-    align-items: center;
-    gap: 0px;
-    padding: 10px 20px;
-    border-radius: 10px;
-    // position: absolute;
-    // left: 730px;
-    // top: 170px;
-    // display: flex;
-    // align-items: center;
-    // gap: 15px;
-    // padding: 10px 20px;
-    // border: 2px solid #535353; /* Green border initially */
-    // border-radius: 10px;
-  }
-  
-  .status-indicator {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    margin-right: 10px;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .status-text {
-    font-size: 18px;
-    font-family: "graphik", Arial,  sans-serif;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  /* Active state (green circle) */
-  .active {
-    background-color: #08ff08; /* Green */
-  }
-  
-  /* Inactive state (glowing red circle) */
-  .inactive {
-    background-color: #fc0000; /* Red */
-    box-shadow: 0 0 8px #ff4560; /* Glowing red effect */
-  }
-  
-  /* Inactive state border change */
-  .status-container.inactive {
-    border-color: #ff4560; /* Red border when inactive */
-  }
-  
-
-  // close button
-
-  /* Close Button Styles */
-  .close-button {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background-color: white;
-    border: 2px solid red;
-    border-radius: 50%;
-    cursor: pointer;
-    padding: 5px;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10; /* Ensure it appears above other elements */
-  }
-
-  .close-button svg {
-    width: 20px;
-    height: 20px;
-    fill: red; /* Color for the close icon */
-  }
-
-  .close-button:hover {
-    background-color: #da2127;
-  }
-
-  .close-button:hover svg {
-    fill: white; /* Change color on hover */
-  }
-  .Loc-BTN {   
-    padding: 12px 32px;
-    font-size: 16px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: #000;
-    background-color: #fff;
-    border: none;
-    border-radius: 50px;
-    overflow: hidden;
-    z-index: 1;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-  }
-  
-  .Loc-BTN:hover {
-    transform: scale(1.05);
-    color: #fff;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  .Loc-BTN:active {
-    transform: scale(0.9);
-  }
-  
-  .Loc-BTN::before {
+  &:before,
+  &:after {
     content: "";
+    box-sizing: border-box;
+    background-color: transparent;
+    border: $border-width / 1.2 solid transparent;
+    border-top-color: $line-color;
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(to right, #007bff8c, #95bdca);
-    transition: all 0.4s ease-in-out;
-    z-index: -1;
-    border-radius: 50px;
+    transition: border-top-color $trans;
   }
-  
-  .Loc-BTN:hover::before {
-    left: 0;
+
+  &:before {
+    border-radius: $size;
+    height: $size * 2;
+    left: -$size;
+    top: -$size;
+    width: $size * 2;
   }
-  
+
+  &:after {
+    border-radius: $size * 3;
+    height: $size * 3;
+    left: -$size * 1.5;
+    top: -$size * 1.5;
+    width: $size * 3;
+  }
+
+  &.loading {
+    animation: blink-1 $anim;
+
+    &:before {
+      animation: blink-2 $anim;
+    }
+
+    &:after {
+      animation: blink-3 $anim;
+    }
+  }
+
+  &.none:not(.loading) {
+    border-top-color: $line-color-weak;
+
+    &:before,
+    &:after {
+      border-top-color: $line-color-weak;
+    }
+  }
+
+  &.weak:not(.loading) {
+    &:before,
+    &:after {
+      border-top-color: $line-color-weak;
+    }
+  }
+
+  &.medium:not(.loading) {
+    &:after {
+      border-top-color: $line-color-weak;
+    }
+  }
+
+  @at-root {
+    @keyframes blink-1 {
+      0% {
+        border-top-color: $line-color-weak;
+      }
+
+      50%,
+      100% {
+        border-top-color: $line-color;
+      }
+    }
+
+    @keyframes blink-2 {
+      0%,
+      100% {
+        border-top-color: $line-color;
+      }
+
+      50% {
+        border-top-color: $line-color-weak;
+      }
+    }
+
+    @keyframes blink-3 {
+      0%,
+      50% {
+        border-top-color: $line-color;
+      }
+
+      100% {
+        border-top-color: $line-color-weak;
+      }
+    }
+  }
+}
+
+.wifi {
+  @include getWifi(30px);
+  transform: translate(-25%);
+  position: absolute;
+
+  left: 620px;
+  top: 110px;
+}
+
+//  connect
+.status-button {
+  position: absolute;
+  left: 730px;
+  top: 80px;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-family: "graphik", Arial, sans-serif;
+  font-weight: bold;
+  color: rgb(34, 195, 69); /* Initial green color */
+  background-color: transparent;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: all 0.3s ease; /* Smooth transition */
+}
+.status-button:hover {
+  color: rgb(255, 255, 255); /* White text on hover */
+}
+
+.status-button.connected {
+  color: rgb(225, 38, 38); /* White text */
+}
+
+.status-button.connected::before {
+  background-color: rgb(225, 38, 38) !important; /* Red background when connected */
+}
+
+.status-button.connected:hover {
+  color: rgb(255, 255, 255); /* White text */
+}
+
+.status-button:hover {
+  background-color: rgba(0, 128, 0, 0.1); /* Green hover effect */
+}
+
+.status-button.connected:hover {
+  background-color: rgba(255, 0, 0, 0.1); /* Red hover effect */
+}
+
+.status-container {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  padding: 10px 20px;
+  border-radius: 10px;
+}
+
+.status-indicator {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 10px;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.status-text {
+  font-size: 18px;
+  font-family: "graphik", Arial, sans-serif;
+  font-weight: bold;
+  color: #333;
+}
+
+.active {
+  background-color: #08ff08; /* Green */
+}
+
+.inactive {
+  background-color: #fc0000; /* Red */
+  box-shadow: 0 0 8px #ff4560; /* Glowing red effect */
+}
+
+.status-container.inactive {
+  border-color: #ff4560; /* Red border when inactive */
+}
+
+.close-button {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  background-color: white;
+  border: 2px solid red;
+  border-radius: 50%;
+  cursor: pointer;
+  padding: 5px;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10; /* Ensure it appears above other elements */
+}
+
+.close-button svg {
+  width: 20px;
+  height: 20px;
+  fill: red; /* Color for the close icon */
+}
+
+.close-button:hover {
+  background-color: #da2127;
+}
+
+.close-button:hover svg {
+  fill: white; /* Change color on hover */
+}
+
+.rightSetup-container {
+  position: absolute;
+  right: 685px;
+  top: 0px;
+  width: 600px;
+  height: 500px;
+}
+
+.rightSetup {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.Loc-BTN {
+  position: absolute;
+  left: 730px;
+  top: 170px;
+  display: flex;
+  z-index: 1;
+  color: #7272f5;
+  font-size: 20px;
+  font-weight: bold;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 20px;
+  border: 2px solid #7272f5;
+  border-radius: 10px;
+}
+
+.Loc-BTN {
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #000;
+  background-color: #fff;
+  border: none;
+  border-radius: 50px;
+  overflow: hidden;
+  z-index: 1;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.Loc-BTN:hover {
+  transform: scale(1.05);
+  color: #fff;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.Loc-BTN:active {
+  transform: scale(0.9);
+}
+
+.Loc-BTN::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to right, #007bff8c, #95bdca);
+  transition: all 0.4s ease-in-out;
+  z-index: -1;
+  border-radius: 50px;
+}
+
+.Loc-BTN:hover::before {
+  left: 0;
+}
+
+.switch-holder {
+  width: max-content;
+  padding: 10px;
+  border-radius: 20px;
+  position: absolute;
+  z-index: 1;
+  top: 240px;
+  left: 725px;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  align-content: center;
+}
+
+.switch-holder:hover {
+  transition: 0.3s ease-in-out;
+  background-color: #f81e1e88;
+  color: white;
+}
+
+.switch-label {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px;
+  text-align: center;
+}
+
+.switch-toggle {
+  height: 40px;
+  width: auto;
+}
+
+.switch-toggle input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  z-index: -2;
+}
+
+.switch-toggle input[type="checkbox"] + label {
+  position: relative;
+  display: inline-block;
+  width: 140px;
+  height: 40px;
+  border-radius: 20px;
+  margin: 0;
+  background-color: white;
+  cursor: pointer;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.switch-toggle input[type="checkbox"] + label::before {
+  position: absolute;
+  content: "|";
+  color: #000;
+  font-size: 13px;
+  font-weight: bold;
+  text-align: center;
+  line-height: 25px;
+  top: 8px;
+  left: 8px;
+  width: 45px;
+  height: 25px;
+  border-radius: 20px;
+  background-color: #eeeeee;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  transition: 0.3s ease-in-out;
+}
+
+.switch-toggle input[type="checkbox"]:checked + label::before {
+  left: 60%;
+  content: "X";
+  font-weight: bold;
+  color: #fff;
+  background-color: #b30000;
+  box-shadow: #53525267 0px 5px 15px;
+}
