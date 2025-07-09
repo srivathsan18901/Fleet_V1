@@ -1104,21 +1104,32 @@ async confirmnodefile() {
     }
 
     const canvas = this.overlayCanvas.nativeElement;
-    // Validation: Check if coordinates are within map boundaries
-    const mapWidth = canvas.width * this.ratio! - this.origin.x; // Assuming the map image width
-    const mapHeight = canvas.height * this.ratio! - this.origin.y; // Assuming the map image height
+    // Calculate rotation angle
     const angleRad = -(this.origin.w * Math.PI) / 180;
-    // console.log("map",mapWidth,mapHeight);
-    if (parsedX > mapWidth || parsedY > mapHeight) {
+
+    // Rotate the input point according to the origin rotation
+    const rotatedX = parsedX * Math.cos(angleRad) - parsedY * Math.sin(angleRad);
+    const rotatedY = parsedX * Math.sin(angleRad) + parsedY * Math.cos(angleRad);
+
+    // Translate to map coordinate system
+    const finalX = (rotatedX + (this.origin.x || 0)) / (this.ratio || 1);
+    const finalY = (rotatedY + (this.origin.y || 0)) / (this.ratio || 1);
+
+    // Check against canvas boundaries (in meters)
+    const mapWidthMeters = canvas.width / (this.ratio || 1);
+    const mapHeightMeters = canvas.height / (this.ratio || 1);
+
+    if (finalX < 0 || finalX > mapWidthMeters || finalY < 0 || finalY > mapHeightMeters) {
       this.messageService.add({
         severity: 'warn',
-        summary:  this.getTranslation(`warning`),
-        detail: `Coordinates out of bounds: X should be between 0 and ${mapWidth.toFixed(
+        summary: this.getTranslation(`warning`),
+        detail: `Coordinates out of bounds: X should be between 0 and ${mapWidthMeters.toFixed(
           3
-        )}, Y should be between 0 and ${mapHeight.toFixed(3)}.`,
+        )}, Y should be between 0 and ${mapHeightMeters.toFixed(3)}.`,
       });
       return;
     }
+
     if (this.selectedNode) {
       const nodeIndex = this.nodes.findIndex(
         (node) => node.nodeId === this.selectedNode!.nodeId
