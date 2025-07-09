@@ -25,6 +25,7 @@ import { TranslationService } from '../services/translation.service';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { response } from 'express';
 import { speedDialFabAnimations } from './dashboard.animation';
+import { log } from 'util';
 
 enum ZoneType {
   HIGH_SPEED_ZONE = 'High Speed Zone',
@@ -561,7 +562,7 @@ export class DashboardComponent implements AfterViewInit {
     );
 
     let data = await response.json();
-    console.log(data);
+    // console.log(data);
     if (data.error) {
       if (showToast) {
         this.toastPopup('error', 'Error', 'Error whlie pausing fleet');
@@ -2398,14 +2399,14 @@ export class DashboardComponent implements AfterViewInit {
             let posX = (robotPosX + (this.origin.x || 0)) / (this.ratio || 1);
             let posY = (robotPosY + (this.origin.y || 0)) / (this.ratio || 1);
 
-            let yaw = this.quaternionToYaw(
+            let rawYaw  = this.quaternionToYaw(
               robot.pose.orientation.w,
               robot.pose.orientation.x,
               robot.pose.orientation.y,
               robot.pose.orientation.z
             );
-
-            // use Number constructor or (+) unary operator to perform with single operand
+            
+            let yaw = (rawYaw + this.origin.w + 360) % 360;
             this.heatmapService.accumulateCoors({
               x: Number(robot.pose.position.x?.toFixed(0)),
               y: Number(robot.pose.position.y?.toFixed(0)),
