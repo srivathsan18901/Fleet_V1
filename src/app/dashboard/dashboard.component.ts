@@ -3613,7 +3613,9 @@ export class DashboardComponent implements AfterViewInit {
       this.showModelCanvas = false;
       this.redrawCanvas();
     }
-    if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.roboDet.id;
+    console.log(this.updatedrobo);
+    
+    if (this.updatedrobo) this.roboToLocalize = this.updatedrobo.amrId;
     this.nodeGraphService.setLocalize(true);
     this.nodeGraphService.setAssignTask(false);
 
@@ -3630,7 +3632,7 @@ export class DashboardComponent implements AfterViewInit {
       return pos;
     });
     this.redrawCanvas();
-    // console.log(this.localizePoses);
+    console.log(this.localizePoses);
     this.hidePopup();
   }
 
