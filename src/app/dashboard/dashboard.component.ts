@@ -1986,7 +1986,7 @@ export class DashboardComponent implements AfterViewInit {
         for (let robo of this.robos) {
           const roboX = robo.pos.x;
           const roboY = this.mapImageHeight / this.zoomLevel - robo.pos.y;
-          const imageSize = 25; // Adjust to the size of the robot image
+          const imageSize = 25; 
 
           if (
             imgX >= roboX - imageSize &&
@@ -2050,8 +2050,10 @@ export class DashboardComponent implements AfterViewInit {
       if (isInsideMap) {
         const angleRad = -(this.origin.w * Math.PI) / 180;
         const formattedX = (imgX * this.ratio - this.origin.x)* Math.cos(angleRad) - (imgY * this.ratio! - this.origin.y) * Math.sin(angleRad);
-        const formattedY = (imgX * this.ratio - this.origin.y)* Math.sin(angleRad) + (imgY * this.ratio! - this.origin.y) * Math.cos(angleRad);
-        //Set tooltip content and position
+        
+       const formattedY = (imgX * this.ratio - this.origin.x) * Math.sin(angleRad) + ((this.mapImageHeight / this.zoomLevel - imgY) * this.ratio - this.origin.y) * Math.cos(angleRad);
+
+
         tooltip.textContent = `X = ${formattedX.toFixed(2)}, Y = ${formattedY.toFixed(2)}`;
         tooltip.style.display = 'block';
         tooltip.style.left = `${event.clientX}`;
