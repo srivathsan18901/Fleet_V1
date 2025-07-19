@@ -1647,14 +1647,13 @@ export class DashboardComponent implements AfterViewInit {
         for (let pos of this.localizePoses) {
           const nodeX = pos.x;
           const nodeY = pos.y;
-          const nodeRadius = 15; // Define a radius to detect clicks near the node (adjust as needed)
-
+          const nodeRadius = 15; 
           if (
             imgX >= nodeX - nodeRadius &&
             imgX <= nodeX + nodeRadius &&
             imgY >= nodeY - nodeRadius &&
             imgY <= nodeY + nodeRadius
-          ) {
+          ) {            
             let localizePos = null;
             for (let localPos of this.localizePoses) {
               if (pos.x == localPos.x && pos.y == localPos.y) {
@@ -1662,16 +1661,22 @@ export class DashboardComponent implements AfterViewInit {
                 break;
               }
             }
-            const angleRad = -(this.origin.w * Math.PI) / 180;            
-            let posX = (localizePos.x * this.ratio || 1) - (this.origin.x || 0)* Math.cos(angleRad) - (localizePos.y * this.ratio || 1) - (this.origin.y || 0) * Math.sin(angleRad);
-            let posY = (localizePos.x * this.ratio || 1) - (this.origin.y || 0)*Math.sin(angleRad)- (localizePos.y * this.ratio || 1) - (this.origin.y || 0) * Math.cos(angleRad);
+            
+            const angleRad = -(this.origin.w * Math.PI) / 180;
+
+            let posX = (localizePos.x * (this.ratio || 1)) - (this.origin.x || 0);
+            let posY = (localizePos.y * (this.ratio || 1)) - (this.origin.y || 0);
+
+            const meterX = posX * Math.cos(angleRad) - posY * Math.sin(angleRad);
+            const meterY = posX * Math.sin(angleRad) + posY * Math.cos(angleRad);
+
             this.localizationPos = {
-              x: posX,
-              y: posY,
+              x: meterX,
+              y: meterY,
               yaw: localizePos.yaw,
             };
+
             this.showLocPopup(event.clientX, event.clientY);
-            // this.sourceLocation = node.nodeId;
             return;
           }
         }
@@ -3633,6 +3638,7 @@ export class DashboardComponent implements AfterViewInit {
       pos.y = (posY + (this.origin.y || 0)) / (this.ratio || 1);
       return pos;
     });
+    
     this.redrawCanvas();
     console.log(this.localizePoses);
     this.hidePopup();
