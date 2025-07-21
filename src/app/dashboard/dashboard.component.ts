@@ -1592,9 +1592,9 @@ export class DashboardComponent implements AfterViewInit {
         ) {
           // Show the popup at the clicked position
           await this.isChargingNode();
+          this.showPathButton = robo.showPath === true;
           this.showPopup(event.clientX, event.clientY);
           this.updatedrobo = robo;
-          console.log(this.updatedrobo);
           
           if(this.updatedrobo.imgState == "CHARGESTATE"){
             this.isAnyRobotCharging=true;
