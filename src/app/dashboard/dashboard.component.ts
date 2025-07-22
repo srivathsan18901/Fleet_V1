@@ -919,15 +919,17 @@ export class DashboardComponent implements AfterViewInit {
     }
   }
 
-  toggleShowRoboPath() {
+  toggleShowRoboPath() { 
     this.hidePopup();
-    // console.log(this.roboPathIds.size);
 
-    if (this.roboPathIds.has(this.updatedrobo.amrId)) {
-      this.roboPathIds.delete(this.updatedrobo.amrId);
+    const amrId = this.isFleet ? this.updatedrobo.roboDet.id : this.updatedrobo.amrId;
+
+    if (this.roboPathIds.has(amrId)) {
+      this.roboPathIds.delete(amrId);
       return;
     }
-    this.roboPathIds.add(this.updatedrobo.amrId);
+
+    this.roboPathIds.add(amrId);
     this.isShowRoboPath = !this.isShowRoboPath;
     this.nodeGraphService.setIsShowRoboPath(this.roboPathIds.size);
   }
