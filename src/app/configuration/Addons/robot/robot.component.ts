@@ -1,13 +1,13 @@
-import { Component } from '@angular/core';
-import { TranslationService } from '../../../services/translation.service';
-import { environment } from '../../../../environments/environment.development';
-import { ProjectService } from '../../../services/project.service';
-import { MessageService, MenuItem } from 'primeng/api';
+import { Component } from "@angular/core";
+import { TranslationService } from "../../../services/translation.service";
+import { environment } from "../../../../environments/environment.development";
+import { ProjectService } from "../../../services/project.service";
+import { MessageService, MenuItem } from "primeng/api";
 
 @Component({
-  selector: 'app-robot',
-  templateUrl: './robot.component.html',
-  styleUrl: './robot.component.css',
+  selector: "app-robot",
+  templateUrl: "./robot.component.html",
+  styleUrl: "./robot.component.css",
 })
 export class RobotComponent {
   //Move Parameters
@@ -28,7 +28,7 @@ export class RobotComponent {
     maxToleranceAtGoalY: 0,
     maxToleranceAtGoalOrientation: 0,
     endPointOrientation: 0,
-    autoRobotOperationModeMOV: 'mode1',
+    autoRobotOperationModeMOV: "mode1",
     autoRobotModeDefault: 0,
     autoRobotModeNarrow1: 0,
   };
@@ -164,12 +164,12 @@ export class RobotComponent {
 
     let response = await fetch(
       `http://${environment.API_URL}:${environment.PORT}/config-fleet-params/get-robot-params/${project._id}`,
-      { method: 'GET', credentials: 'include' }
+      { method: "GET", credentials: "include" }
     );
 
     let data = await response.json();
     if (data.error) {
-      alert('Error in fetching robot params');
+      alert("Error in fetching robot params");
       return;
     }
     if (data.fleetStatus) {
@@ -177,9 +177,9 @@ export class RobotComponent {
       this.dockParams = robotParams.DockParam;
       this.chargeParams = robotParams.ChargeParam;
       this.batteryParams = robotParams.BatteryParam;
-      this.geometryParams = robotParams.GeometryParam;
+      this.geometryParams = robotParams.AgentParams;
       this.moveParams = robotParams.MoveParam;
-      this.unDockParams = robotParams.UndockParam;
+      this.unDockParams = robotParams.UnDockParam;
     }
   }
 
@@ -198,7 +198,7 @@ export class RobotComponent {
   }
 
   updateRobotOperationMode() {
-    if (this.moveParams.autoRobotOperationModeMOV === 'mode1') {
+    if (this.moveParams.autoRobotOperationModeMOV === "mode1") {
       this.moveParams.autoRobotModeDefault = 1;
       this.moveParams.autoRobotModeNarrow1 = 0;
     } else {
@@ -222,7 +222,7 @@ export class RobotComponent {
   }
 
   savDock() {
-    console.log('Dock Form Data:', this.dockParams);
+    console.log("Dock Form Data:", this.dockParams);
   }
 
   toggleUDEndPointOrientation() {
@@ -234,7 +234,7 @@ export class RobotComponent {
   }
 
   savUNDOCK() {
-    console.log('Undock Form Data:', this.unDockParams);
+    console.log("Undock Form Data:", this.unDockParams);
   }
 
   toggleCHARGEEndPointOrientation() {
@@ -246,11 +246,11 @@ export class RobotComponent {
   }
 
   savCHARGE() {
-    console.log('Charge Form Data:', this.chargeParams);
+    console.log("Charge Form Data:", this.chargeParams);
   }
 
   savGEOMETRY() {
-    console.log('Geometry Form Data:', this.geometryParams);
+    console.log("Geometry Form Data:", this.geometryParams);
   }
 
   toggleUSE_ONLY_PERCENTAGE() {
@@ -269,7 +269,7 @@ export class RobotComponent {
   }
 
   savBATTERY() {
-    console.log('Battery Form Data:', this.batteryParams);
+    console.log("Battery Form Data:", this.batteryParams);
   }
 
   async saveGrossRoboParams(project: any) {
@@ -284,38 +284,35 @@ export class RobotComponent {
         ChargeParam: this.chargeParams,
         MoveParam: this.moveParams,
         BatteryParam: this.batteryParams,
-        GeometryParam: this.geometryParams,
+        Geometry: this.geometryParams,
       },
     };
-    let response = await fetch(
-      `http://${environment.API_URL}:${environment.PORT}/config-fleet-params/robot`,
-      {
-        method: 'POST',
-        credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(bodyData),
-      }
-    );
+    let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/config-fleet-params/robot`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData),
+    });
 
     let data = await response.json();
 
     if (data.error) {
       this.messageService.add({
-        severity: 'error',
-        detail: this.getConfigTranslation('robotConfigError'),
+        severity: "error",
+        detail: this.getConfigTranslation("robotConfigError"),
       });
       return;
     }
 
     if (data.isRoboParamsConfigured) {
       this.messageService.add({
-        severity: 'success',
-        detail: this.getConfigTranslation('robotConfigSuccess'),
+        severity: "success",
+        detail: this.getConfigTranslation("robotConfigSuccess"),
       });
     } else {
       this.messageService.add({
-        severity: 'warn',
-        detail: this.getConfigTranslation('robotConfigNotSet'),
+        severity: "warn",
+        detail: this.getConfigTranslation("robotConfigNotSet"),
       });
     }
   }
