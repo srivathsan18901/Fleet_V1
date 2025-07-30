@@ -24,7 +24,7 @@ export class GeneralComponent {
   selectedProject: any | null = null;
 
   formData: any;
-  disableOtherFields: boolean = true;
+  disableOtherFields: boolean = false;
 
   fleetModes = [
     { name: this.getTranslation("fleet_mode"), value: 0 },
