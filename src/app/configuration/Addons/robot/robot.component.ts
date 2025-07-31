@@ -148,6 +148,40 @@ export class RobotComponent {
     useCurrent: 0,
   };
 
+  operationParams: {
+    NOT_SET: number;
+    LOAD: number;
+    LOADLEFT: number;
+    LOADRIGHT: number;
+    LOADLEFTFRONT: number;
+    LOADRIGHTFRONT: number;
+    LOADLEFTREAR: number;
+    LOADRIGHTREAR: number;
+    UNLOAD: number;
+    UNLOADLEFT: number;
+    UNLOADRIGHT: number;
+    UNLOADLEFTFRONT: number;
+    UNLOADRIGHTFRONT: number;
+    UNLOADLEFTREAR: number;
+    UNLOADRIGHTREAR: number;
+  } = {
+    NOT_SET: 0,
+    LOAD: 0,
+    LOADLEFT: 0,
+    LOADRIGHT: 0,
+    LOADLEFTFRONT: 0,
+    LOADRIGHTFRONT: 0,
+    LOADLEFTREAR: 0,
+    LOADRIGHTREAR: 0,
+    UNLOAD: 0,
+    UNLOADLEFT: 0,
+    UNLOADRIGHT: 0,
+    UNLOADLEFTFRONT: 0,
+    UNLOADRIGHTFRONT: 0,
+    UNLOADLEFTREAR: 0,
+    UNLOADRIGHTREAR: 0,
+  };
+
   constructor(
     private translationService: TranslationService,
     private projectService: ProjectService,
@@ -180,6 +214,7 @@ export class RobotComponent {
       this.geometryParams = robotParams.AgentParams;
       this.moveParams = robotParams.MoveParam;
       this.unDockParams = robotParams.UnDockParam;
+      this.operationParams = robotParams.OperationParam || this.operationParams;
     }
   }
 
@@ -272,6 +307,10 @@ export class RobotComponent {
     console.log("Battery Form Data:", this.batteryParams);
   }
 
+  getOperationParamKeys(): string[] {
+    return Object.keys(this.operationParams);
+  }
+
   async saveGrossRoboParams(project: any) {
     this.dockParams.dockingType = Number(this.dockParams.dockingType);
     this.chargeParams.dockingType = Number(this.chargeParams.dockingType);
@@ -280,11 +319,12 @@ export class RobotComponent {
       projectId: project._id,
       robotParams: {
         DockParam: this.dockParams,
-        UndockParam: this.unDockParams,
+        UnDockParam: this.unDockParams,
         ChargeParam: this.chargeParams,
         MoveParam: this.moveParams,
         BatteryParam: this.batteryParams,
         Geometry: this.geometryParams,
+        OperationParam: this.operationParams,
       },
     };
     let response = await fetch(`http://${environment.API_URL}:${environment.PORT}/config-fleet-params/robot`, {

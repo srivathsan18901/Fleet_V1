@@ -1,260 +1,730 @@
 <div class="container1">
-    <div class="content-fluid1">
-        <p-tabView>
-          <p-tabPanel header="{{getTranslation('MOVE')}}">
-            <div class="input-groupg">
-                <label>{{getTranslation('max_linear_velocity')}}</label>
-                <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.maxLinearVelocity" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}"/><br />
-        
-                <label>{{getTranslation('max_angular_velocity')}}</label>
-                <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.maxAngularVelocity" placeholder="{{getTranslation('enter_maximum_angular_velocity')}}" /><br />
-            </div>
-            
-            <div class="input-groupg">
-                <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
-                <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.maxToleranceAtGoalX" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
-        
-                <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-                <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.maxToleranceAtGoalY" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
-            </div>
-            
-            <div class="input-groupg" style="gap: 0.75em;">
-                <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-                <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.maxToleranceAtGoalOrientation" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
-            </div>
-            <div class="input-groupg">      
-              <label>{{getTranslation('end_point_orientation')}}</label>
-              <div class="checkbox-group">
-              <input type="checkbox" [(ngModel)]="moveParams.endPointOrientation" (change)="toggleMOVEndPointOrientation()"  style="height: 20px;"/><br />
-              </div>
+  <div class="content-fluid1">
+    <p-tabView>
+      <p-tabPanel header="{{ getTranslation('MOVE') }}">
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_linear_velocity") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="moveParams.maxLinearVelocity"
+            placeholder="{{ getTranslation('enter_maximum_linear_velocity') }}"
+          /><br />
+
+          <label>{{ getTranslation("max_angular_velocity") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="moveParams.maxAngularVelocity"
+            placeholder="{{ getTranslation('enter_maximum_angular_velocity') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_tolerance_at_goal_x") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="moveParams.maxToleranceAtGoalX"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+
+          <label>{{ getTranslation("max_tolerance_at_goal_y") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="moveParams.maxToleranceAtGoalY"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg" style="gap: 0.75em">
+          <label>{{ getTranslation("max_tolerance_at_goal_orientation") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="moveParams.maxToleranceAtGoalOrientation"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("end_point_orientation") }}</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              [(ngModel)]="moveParams.endPointOrientation"
+              (change)="toggleMOVEndPointOrientation()"
+              style="height: 20px"
+            /><br />
           </div>
-            <div >
-              <label style="margin-bottom: 5px; font-weight: bold;">{{getTranslation('auto_robot_operation_mode')}}</label>
-              <div class="input-groupg">
-              <label>{{getTranslation('DEFAULT')}}</label>
-              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.autoRobotModeDefault" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
-      
-              <label>{{getTranslation('NARROW')}}</label>
-              <input pInputText type="number" min="0" max="1000" [(ngModel)]="moveParams.autoRobotModeNarrow1" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
-            </div>
-            </div>
-            <!-- <div class="input-groupg">
+        </div>
+        <div>
+          <label style="margin-bottom: 5px; font-weight: bold">{{ getTranslation("auto_robot_operation_mode") }}</label>
+          <div class="input-groupg">
+            <label>{{ getTranslation("DEFAULT") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="moveParams.autoRobotModeDefault"
+              placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+            /><br />
+
+            <label>{{ getTranslation("NARROW") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="moveParams.autoRobotModeNarrow1"
+              placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+            /><br />
+          </div>
+        </div>
+        <!-- <div class="input-groupg">
                 <label>{{getTranslation('auto_robot_operation_mode')}}:</label>
                 <select [(ngModel)]="moveParams.autoRobotOperationModeMOV" (change)="updateRobotOperationMode()" style="margin-right: 20.1rem; padding: 6px; border: 1px solid #ccc;">
                     <option value="mode1">{{getTranslation('DEFAULT')}}</option>
                     <option value="mode2">{{getTranslation('NARROW')}}</option>
                 </select><br/>
             </div> -->
-            
+      </p-tabPanel>
 
-        </p-tabPanel>
-        
-            <p-tabPanel header="{{getTranslation('DOCK')}}">
-                <div class="input-groupg">
-                    <label>{{getTranslation('max_linear_velocity')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.maxLinearVelocity" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}"/><br />
-      
-                    <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.maxToleranceAtGoalX" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
-                  </div>
-                  <div class="input-groupg">
-                    <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.maxToleranceAtGoalY" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
-      
-                    <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.maxToleranceAtGoalOrientation" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
-                  </div>
-                  <div class="input-groupg">
-                    <label>{{getTranslation('goal_offset_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.goalOffsetX" placeholder="{{getTranslation('enter_goal_offset_x')}}" /><br />
-      
-                    <label>{{getTranslation('goal_offset_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.goalOffsetY" placeholder="{{getTranslation('enter_goal_offset_y')}}"/><br />
-                  </div>
-                  <div class="input-groupg" style="gap: 0.75em;">
-                    <label>{{getTranslation('goal_offset_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="dockParams.goalOffsetOrientation" placeholder="{{getTranslation('enter_goal_offset_orientation')}}"/><br />
-      
-                  </div>
-                  <div class="input-groupg">
-                    <label>{{getTranslation('end_point_orientation')}}</label>
-                    <div class="checkbox-group">
-                    <input type="checkbox"  style="height: 20px;" (change)="toggleDOCEndPointOrientation()" [(ngModel)]="dockParams.endPointOrientation"/><br />
-                    </div>
-                  </div>
-                  <div class="input-groupg" style="gap: 0.75em;">
-                    <label>{{getTranslation('docking_type')}}</label>
-                    <select [(ngModel)]="dockParams.dockingType"  style="margin-right: 20.2rem; border: 1px solid #ccc; border-radius: 5px;padding:6px;" placeholder="Select Docking Type">
-                      <option [value]="0">0</option> 
-                      <option [value]="1">1</option>
-                      <option [value]="2">2</option>
-                      <option [value]="3">3</option>
-                      <option [value]="4">4</option>
-                    </select><br/>
-                  </div>
+      <p-tabPanel header="{{ getTranslation('DOCK') }}">
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_linear_velocity") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="dockParams.maxLinearVelocity"
+            placeholder="{{ getTranslation('enter_maximum_linear_velocity') }}"
+          /><br />
 
-            </p-tabPanel>
-            <p-tabPanel header="{{getTranslation('UNDOCK')}}" [headerStyleClass]="'custom-tab-header'">
-            <div class="input-groupg">
-              <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-              <input pInputText type="number" min="0" max="1000"  [(ngModel)]="unDockParams.maxToleranceAtGoalOrientation" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
+          <label>{{ getTranslation("max_tolerance_at_goal_x") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="dockParams.maxToleranceAtGoalX"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_tolerance_at_goal_y") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="dockParams.maxToleranceAtGoalY"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
 
-              <label>{{getTranslation('max_linear_velocity')}}</label>
-              <input pInputText type="number" min="0" max="1000" [(ngModel)]="unDockParams.maxLinearVelocity" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}" /><br />
+          <label>{{ getTranslation("max_tolerance_at_goal_orientation") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="dockParams.maxToleranceAtGoalOrientation"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("goal_offset_x") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="dockParams.goalOffsetX"
+            placeholder="{{ getTranslation('enter_goal_offset_x') }}"
+          /><br />
 
-            </div>
-            <div class="input-groupg">
-              <label >{{getTranslation('max_tolerance_at_goal_x')}}</label>
-              <input pInputText type="number" min="0" max="1000" [(ngModel)]="unDockParams.maxToleranceAtGoalX" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
+          <label>{{ getTranslation("goal_offset_y") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="dockParams.goalOffsetY"
+            placeholder="{{ getTranslation('enter_goal_offset_y') }}"
+          /><br />
+        </div>
+        <div class="input-groupg" style="gap: 0.75em">
+          <label>{{ getTranslation("goal_offset_orientation") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="dockParams.goalOffsetOrientation"
+            placeholder="{{ getTranslation('enter_goal_offset_orientation') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("end_point_orientation") }}</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              style="height: 20px"
+              (change)="toggleDOCEndPointOrientation()"
+              [(ngModel)]="dockParams.endPointOrientation"
+            /><br />
+          </div>
+        </div>
+        <div class="input-groupg" style="gap: 0.75em">
+          <label>{{ getTranslation("docking_type") }}</label>
+          <select
+            [(ngModel)]="dockParams.dockingType"
+            style="margin-right: 20.2rem; border: 1px solid #ccc; border-radius: 5px; padding: 6px"
+            placeholder="Select Docking Type"
+          >
+            <option [value]="0">0</option>
+            <option [value]="1">1</option>
+            <option [value]="2">2</option>
+            <option [value]="3">3</option>
+            <option [value]="4">4</option></select
+          ><br />
+        </div>
+      </p-tabPanel>
+      <p-tabPanel header="{{ getTranslation('UNDOCK') }}" [headerStyleClass]="'custom-tab-header'">
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_tolerance_at_goal_orientation") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="unDockParams.maxToleranceAtGoalOrientation"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
 
-              <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-              <input pInputText type="number" min="0" max="1000" [(ngModel)]="unDockParams.maxToleranceAtGoalY" placeholder="{{getTranslation('enter_maximum_tolerance')}}" /><br />
-            </div>
-            <div class="input-groupg">
-              <label>{{getTranslation('end_point_orientation')}}</label>
-              <div class="checkbox-group">
-                  <input type="checkbox" [(ngModel)]="unDockParams.endPointOrientation" (change)="toggleUDEndPointOrientation()" style="height: 20px;"/>
-              </div>
-            </div>
-          
-            <!-- <div class="input-groupg">
+          <label>{{ getTranslation("max_linear_velocity") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="unDockParams.maxLinearVelocity"
+            placeholder="{{ getTranslation('enter_maximum_linear_velocity') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_tolerance_at_goal_x") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="unDockParams.maxToleranceAtGoalX"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+
+          <label>{{ getTranslation("max_tolerance_at_goal_y") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="unDockParams.maxToleranceAtGoalY"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("end_point_orientation") }}</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              [(ngModel)]="unDockParams.endPointOrientation"
+              (change)="toggleUDEndPointOrientation()"
+              style="height: 20px"
+            />
+          </div>
+        </div>
+
+        <!-- <div class="input-groupg">
               <label>{{getTranslation('end_point_orientation')}}</label>
               <input pInputText type="number" min="0" max="1000" placeholder="Enter Maximum Linear Velocity" /><br />
             </div> -->
-            </p-tabPanel>
+      </p-tabPanel>
 
-            <p-tabPanel header="{{getTranslation('CHARGE')}}">
-                <div class="input-groupg">
-                    <label>{{getTranslation('max_linear_velocity')}}</label>
-                    <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.maxLinearVelocity" placeholder="{{getTranslation('enter_maximum_linear_velocity')}}"/><br />
-      
-                    <label>{{getTranslation('max_tolerance_at_goal_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.maxToleranceAtGoalX" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
-                  </div>
-                  <div class="input-groupg">
-                    <label>{{getTranslation('max_tolerance_at_goal_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.maxToleranceAtGoalY" placeholder="{{getTranslation('enter_maximum_tolerance')}}"/><br />
-      
-                    <label>{{getTranslation('max_tolerance_at_goal_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.maxToleranceAtGoalOrientation" placeholder="{{getTranslation('enter_maximum_tolerance')}}"  /><br />
-                  </div>
-                  <div class="input-groupg">
-                    <label>{{getTranslation('goal_offset_x')}}</label>
-                    <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.goalOffsetX" placeholder="{{getTranslation('enter_goal_offset_x')}}" /><br />
-      
-                    <label>{{getTranslation('goal_offset_y')}}</label>
-                    <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.goalOffsetY" placeholder="{{getTranslation('enter_goal_offset_y')}}"/><br />
-                  </div>
-                  <div class="input-groupg" style="gap: 0.75em;">
-                    <label>{{getTranslation('goal_offset_orientation')}}</label>
-                    <input pInputText type="number" min="0" max="1000"[(ngModel)]="chargeParams.goalOffsetOrientation" placeholder="{{getTranslation('enter_goal_offset_orientation')}}"/><br />
-      
-                  </div>
-                  <div class="input-groupg">
+      <p-tabPanel header="{{ getTranslation('CHARGE') }}">
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_linear_velocity") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="chargeParams.maxLinearVelocity"
+            placeholder="{{ getTranslation('enter_maximum_linear_velocity') }}"
+          /><br />
 
-                    <label>{{getTranslation('end_point_orientation')}}</label>
-                    <div class="checkbox-group">
-                    <input type="checkbox" (change)="toggleCHARGEEndPointOrientation()" [(ngModel)]="chargeParams.endPointOrientation" style="height: 20px;"/><br />
-                    </div>
-                  </div>
-                  <div class="input-groupg" style="gap: 0.75em;"> 
-                    <label>{{getTranslation('docking_type')}}</label>
-                    <select [(ngModel)]="chargeParams.dockingType" style="margin-right: 20.2rem; border: 1px solid #ccc;border-radius: 5px;padding:6px;">
-                      <option value="0">0</option>
-                      <option value="1">1</option>
-                      <option value="2">2</option>
-                      <option value="3">3</option>
-                    </select><br/>
-                  </div>
+          <label>{{ getTranslation("max_tolerance_at_goal_x") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="chargeParams.maxToleranceAtGoalX"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("max_tolerance_at_goal_y") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="chargeParams.maxToleranceAtGoalY"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
 
-            </p-tabPanel>
-            <p-tabPanel header="{{getTranslation('GEOMETRY')}}">
-                <div class="input-groupg">
-                    <label>{{getTranslation('WIDTH')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.Width" placeholder="{{getTranslation('enter_width')}}"/><br />
-                    <label>{{getTranslation('LENGTH')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.Length" placeholder="{{getTranslation('enter_length')}}"/><br />
-                </div>
-                <div class="newdiv">
-                  <div style="font-weight: bold;margin-bottom: 10px;">
-                    <label>{{getTranslation('SAFETY_ZONES_NORMAL')}}</label>
-                  </div> 
-                  <div class="input-groupg">
-                    <label>{{getTranslation('FRONT')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesNormal.Front" placeholder="{{getTranslation('enter_front')}}"/><br />
-                    <label>{{getTranslation('REAR')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesNormal.Rear" placeholder="{{getTranslation('enter_rear')}}"/><br />
-                    <label>{{getTranslation('LEFT')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesNormal.Left" placeholder="{{getTranslation('enter_left')}}"/><br />
-                    <label>{{getTranslation('RIGHT')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesNormal.Right" placeholder="{{getTranslation('enter_right')}}"/><br />
-                  </div>
-                </div>
-                <div class="newdiv">
-                  <div style="font-weight: bold;margin-bottom: 10px;">
-                    <label>{{getTranslation('SAFETY_ZONES_WITH_LOAD')}}</label>
-                  </div>
-                  <div class="input-groupg">
-                    <label>{{getTranslation('FRONT')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesWithLoad.Front" placeholder="{{getTranslation('enter_front')}}"/><br />
-                    <label>{{getTranslation('REAR')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesWithLoad.Rear" placeholder="{{getTranslation('enter_rear')}}"/><br />
-                    <label>{{getTranslation('LEFT')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesWithLoad.Left" placeholder="{{getTranslation('enter_left')}}"/><br />
-                    <label>{{getTranslation('RIGHT')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="geometryParams.SafetyZonesWithLoad.Right" placeholder="{{getTranslation('enter_right')}}"/><br />
-                  </div>
-                  </div>
+          <label>{{ getTranslation("max_tolerance_at_goal_orientation") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="chargeParams.maxToleranceAtGoalOrientation"
+            placeholder="{{ getTranslation('enter_maximum_tolerance') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("goal_offset_x") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="chargeParams.goalOffsetX"
+            placeholder="{{ getTranslation('enter_goal_offset_x') }}"
+          /><br />
 
-            </p-tabPanel>
+          <label>{{ getTranslation("goal_offset_y") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="chargeParams.goalOffsetY"
+            placeholder="{{ getTranslation('enter_goal_offset_y') }}"
+          /><br />
+        </div>
+        <div class="input-groupg" style="gap: 0.75em">
+          <label>{{ getTranslation("goal_offset_orientation") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="chargeParams.goalOffsetOrientation"
+            placeholder="{{ getTranslation('enter_goal_offset_orientation') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("end_point_orientation") }}</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              (change)="toggleCHARGEEndPointOrientation()"
+              [(ngModel)]="chargeParams.endPointOrientation"
+              style="height: 20px"
+            /><br />
+          </div>
+        </div>
+        <div class="input-groupg" style="gap: 0.75em">
+          <label>{{ getTranslation("docking_type") }}</label>
+          <select
+            [(ngModel)]="chargeParams.dockingType"
+            style="margin-right: 20.2rem; border: 1px solid #ccc; border-radius: 5px; padding: 6px"
+          >
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option></select
+          ><br />
+        </div>
+      </p-tabPanel>
+      <p-tabPanel header="{{ getTranslation('GEOMETRY') }}">
+        <div class="input-groupg">
+          <label>{{ getTranslation("WIDTH") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="geometryParams.Width"
+            placeholder="{{ getTranslation('enter_width') }}"
+          /><br />
+          <label>{{ getTranslation("LENGTH") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="geometryParams.Length"
+            placeholder="{{ getTranslation('enter_length') }}"
+          /><br />
+        </div>
+        <div class="newdiv">
+          <div style="font-weight: bold; margin-bottom: 10px">
+            <label>{{ getTranslation("SAFETY_ZONES_NORMAL") }}</label>
+          </div>
+          <div class="input-groupg">
+            <label>{{ getTranslation("FRONT") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesNormal.Front"
+              placeholder="{{ getTranslation('enter_front') }}"
+            /><br />
+            <label>{{ getTranslation("REAR") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesNormal.Rear"
+              placeholder="{{ getTranslation('enter_rear') }}"
+            /><br />
+            <label>{{ getTranslation("LEFT") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesNormal.Left"
+              placeholder="{{ getTranslation('enter_left') }}"
+            /><br />
+            <label>{{ getTranslation("RIGHT") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesNormal.Right"
+              placeholder="{{ getTranslation('enter_right') }}"
+            /><br />
+          </div>
+        </div>
+        <div class="newdiv">
+          <div style="font-weight: bold; margin-bottom: 10px">
+            <label>{{ getTranslation("SAFETY_ZONES_WITH_LOAD") }}</label>
+          </div>
+          <div class="input-groupg">
+            <label>{{ getTranslation("FRONT") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesWithLoad.Front"
+              placeholder="{{ getTranslation('enter_front') }}"
+            /><br />
+            <label>{{ getTranslation("REAR") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesWithLoad.Rear"
+              placeholder="{{ getTranslation('enter_rear') }}"
+            /><br />
+            <label>{{ getTranslation("LEFT") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesWithLoad.Left"
+              placeholder="{{ getTranslation('enter_left') }}"
+            /><br />
+            <label>{{ getTranslation("RIGHT") }}</label>
+            <input
+              pInputText
+              type="number"
+              min="0"
+              max="1000"
+              [(ngModel)]="geometryParams.SafetyZonesWithLoad.Right"
+              placeholder="{{ getTranslation('enter_right') }}"
+            /><br />
+          </div>
+        </div>
+      </p-tabPanel>
 
-            <p-tabPanel header="{{getTranslation('BATTERY')}}">
-                <div class="input-groupg">
-                    <label>{{getTranslation('MINIMUM_BATTERY')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="batteryParams.minimumbattery" placeholder="{{getTranslation('enter_minimum_battery')}}"/><br />
-      
-                    <label>{{getTranslation('MAXIMUM_BATTERY')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="batteryParams.maximumbattery" placeholder="{{getTranslation('enter_maximum_battery')}}"/><br />
-                </div>
-                <div class="input-groupg">
-                    <label>{{getTranslation('WARNING_BATTERY')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="batteryParams.warningbattery" placeholder="{{getTranslation('enter_warning_battery')}}"/><br />
-      
-                    <label>{{getTranslation('WARNING_VOLTAGE')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="batteryParams.warningVoltage" placeholder="{{getTranslation('enter_warning_voltage')}}"/><br />
-                </div>
-                <div class="input-groupg" style="gap: 0.75em;">
-                    <label>{{getTranslation('MINIMUM_VOLTAGE')}}</label>
-                    <input pInputText type="number" min="0" max="1000" [(ngModel)]="batteryParams.minimumVoltage" placeholder="{{getTranslation('enter_maximum_voltage')}}"/><br />
-                
-                </div>
-                <div class="input-groupg">
-                  <label>{{getTranslation('USE_ONLY_PERCENTAGE')}}</label>
-                  <div class="checkbox-group">
-                  <input type="checkbox" (change)="toggleUSE_ONLY_PERCENTAGE()" [(ngModel)]="batteryParams.useOnlyPercentage"  style="height: 20px;"/><br />
-                  </div>
+      <p-tabPanel header="{{ getTranslation('BATTERY') }}">
+        <div class="input-groupg">
+          <label>{{ getTranslation("MINIMUM_BATTERY") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="batteryParams.minimumbattery"
+            placeholder="{{ getTranslation('enter_minimum_battery') }}"
+          /><br />
 
-                </div>
-                <div class="input-groupg">
- 
-                  <label>{{getTranslation('USE_CURRENT')}}</label>
-                  <div class="checkbox-group">
-                    <input type="checkbox" (change)="toggleUSE_CURRENT()" [(ngModel)]="batteryParams.useCurrent"  style="height: 20px;"  /><br />
-                  </div>
-                </div>
+          <label>{{ getTranslation("MAXIMUM_BATTERY") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="batteryParams.maximumbattery"
+            placeholder="{{ getTranslation('enter_maximum_battery') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("WARNING_BATTERY") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="batteryParams.warningbattery"
+            placeholder="{{ getTranslation('enter_warning_battery') }}"
+          /><br />
 
-            </p-tabPanel>
-        </p-tabView>
-        
-    </div>
+          <label>{{ getTranslation("WARNING_VOLTAGE") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="batteryParams.warningVoltage"
+            placeholder="{{ getTranslation('enter_warning_voltage') }}"
+          /><br />
+        </div>
+        <div class="input-groupg" style="gap: 0.75em">
+          <label>{{ getTranslation("MINIMUM_VOLTAGE") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="batteryParams.minimumVoltage"
+            placeholder="{{ getTranslation('enter_maximum_voltage') }}"
+          /><br />
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("USE_ONLY_PERCENTAGE") }}</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              (change)="toggleUSE_ONLY_PERCENTAGE()"
+              [(ngModel)]="batteryParams.useOnlyPercentage"
+              style="height: 20px"
+            /><br />
+          </div>
+        </div>
+        <div class="input-groupg">
+          <label>{{ getTranslation("USE_CURRENT") }}</label>
+          <div class="checkbox-group">
+            <input
+              type="checkbox"
+              (change)="toggleUSE_CURRENT()"
+              [(ngModel)]="batteryParams.useCurrent"
+              style="height: 20px"
+            /><br />
+          </div>
+        </div>
+      </p-tabPanel>
 
+      <p-tabPanel header="{{ getTranslation('OPERATION') }}">
+        <div class="input-groupg">
+          <!-- <label>{{ getTranslation("NOT_SET") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.NOT_SET"
+            placeholder="{{ getTranslation('enter_NOT_SET') }}"
+          /><br /> -->
+          <!-- <div class="input-groupg"> -->
+          <!-- </div> -->
+
+          <label>{{ getTranslation("LOAD") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.LOAD"
+            placeholder="{{ getTranslation('enter_LOAD') }}"
+          /><br />
+
+          <label>{{ getTranslation("UNLOADRIGHTREAR") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.UNLOADRIGHTREAR"
+            placeholder="{{ getTranslation('enter_UNLOADRIGHTREAR') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg">
+          <label>{{ getTranslation("LOADLEFT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.LOADLEFT"
+            placeholder="{{ getTranslation('enter_LOADLEFT') }}"
+          /><br />
+
+          <label>{{ getTranslation("LOADRIGHT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.LOADRIGHT"
+            placeholder="{{ getTranslation('enter_LOADRIGHT') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg">
+          <label>{{ getTranslation("LOADLEFTFRONT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.LOADLEFTFRONT"
+            placeholder="{{ getTranslation('enter_LOADLEFTFRONT') }}"
+          /><br />
+
+          <label>{{ getTranslation("LOADRIGHTFRONT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.LOADRIGHTFRONT"
+            placeholder="{{ getTranslation('enter_LOADRIGHTFRONT') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg">
+          <label>{{ getTranslation("LOADLEFTREAR") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.LOADLEFTREAR"
+            placeholder="{{ getTranslation('enter_LOADLEFTREAR') }}"
+          /><br />
+
+          <label>{{ getTranslation("LOADRIGHTREAR") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.LOADRIGHTREAR"
+            placeholder="{{ getTranslation('enter_LOADRIGHTREAR') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg">
+          <label>{{ getTranslation("UNLOAD") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.UNLOAD"
+            placeholder="{{ getTranslation('enter_UNLOAD') }}"
+          /><br />
+
+          <label>{{ getTranslation("UNLOADLEFT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.UNLOADLEFT"
+            placeholder="{{ getTranslation('enter_UNLOADLEFT') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg">
+          <label>{{ getTranslation("UNLOADRIGHT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.UNLOADRIGHT"
+            placeholder="{{ getTranslation('enter_UNLOADRIGHT') }}"
+          /><br />
+
+          <label>{{ getTranslation("UNLOADLEFTFRONT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.UNLOADLEFTFRONT"
+            placeholder="{{ getTranslation('enter_UNLOADLEFTFRONT') }}"
+          /><br />
+        </div>
+
+        <div class="input-groupg">
+          <label>{{ getTranslation("UNLOADRIGHTFRONT") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.UNLOADRIGHTFRONT"
+            placeholder="{{ getTranslation('enter_UNLOADRIGHTFRONT') }}"
+          /><br />
+
+          <label>{{ getTranslation("UNLOADLEFTREAR") }}</label>
+          <input
+            pInputText
+            type="number"
+            min="0"
+            max="1000"
+            [(ngModel)]="operationParams.UNLOADLEFTREAR"
+            placeholder="{{ getTranslation('enter_UNLOADLEFTREAR') }}"
+          /><br />
+        </div>
+      </p-tabPanel>
+    </p-tabView>
+  </div>
 </div>
 <div class="input-groupgbtn">
   <p-button
-      label="{{getTranslation('submit')}}"
-      type="submit"
-      (onClick)="savDATA()"
-      class="block mt-2 pt-2"
-      styleClass="p-button-danger p-button1"
+    label="{{ getTranslation('submit') }}"
+    type="submit"
+    (onClick)="savDATA()"
+    class="block mt-2 pt-2"
+    styleClass="p-button-danger p-button1"
   ></p-button>
 </div>
