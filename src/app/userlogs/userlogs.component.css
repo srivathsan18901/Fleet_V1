@@ -81,7 +81,7 @@
 .table-container {
   width: 103%;
   border-radius: 10px;
-  max-height: 25rem;
+  /* max-height: 25rem; */
   overflow-y: auto;
   width: 102%;
   overflow: hidden;
