@@ -1104,12 +1104,16 @@ async confirmnodefile() {
     }
 
     const canvas = this.overlayCanvas.nativeElement;
-    // Calculate rotation angle
-    const angleRad = -(this.origin.w * Math.PI) / 180;
+    const transformedY = canvas.height - parsedY; // yet to remove..
 
-    // Rotate the input point according to the origin rotation
-    const rotatedX = parsedX * Math.cos(angleRad) - parsedY * Math.sin(angleRad);
-    const rotatedY = parsedX * Math.sin(angleRad) + parsedY * Math.cos(angleRad);
+    // Calculate the angle in radians
+    const angleRad = -(this.origin.w * Math.PI) / 180;
+    
+    // Rotate the coordinates based on the angle
+    const rotatedX = (parsedX * this.ratio! - this.origin.x) * Math.cos(angleRad) - 
+                     (transformedY * this.ratio! - this.origin.y) * Math.sin(angleRad);
+    const rotatedY = (parsedX * this.ratio! - this.origin.x) * Math.sin(angleRad) +
+                     (transformedY * this.ratio! - this.origin.y) * Math.cos(angleRad);
 
     // Translate to map coordinate system
     const finalX = (rotatedX + (this.origin.x || 0)) / (this.ratio || 1);
@@ -2376,7 +2380,7 @@ async confirmnodefile() {
 
     if (distanceInPixels !== 0) {
       this.ratio = this.distanceBetweenPoints / distanceInPixels;
-      console.log(`Resolution (meters per pixel): ${this.ratio.toFixed(2)}`);
+      console.log(`Resolution (meters per pixel): ${this.ratio}`);
 
       // Update the resolution input field
       if (this.resolutionInput) {
@@ -2446,11 +2450,12 @@ async confirmnodefile() {
     const rect = canvas.getBoundingClientRect();
     const x = (event.clientX - rect.left) * (canvas.width / rect.width);
     const y = (event.clientY - rect.top) * (canvas.height / rect.height);
+    console.log("hey",x,y);
 
     if (this.points.length < 2) {
       this.points.push({ x, y });
       this.plotPointOnImagePopupCanvas(x, y);
-
+      
       if (this.points.length === 2) {
         console.log('Two points plotted:', this.points);
         const distance = this.calculateDistance(this.points[0], this.points[1]);
